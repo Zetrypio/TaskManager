@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
@@ -10,8 +10,21 @@ class TacheEnCalendrier(Frame):
         bg = kwargs.get("bg", "#FFFFFF")
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers AffichageCalendrier
-        Label(self, text = task.nom, font = "Arial 12 bold", bg = bg).grid(sticky = "w")
-        Label(self, text = task.desc, bg = bg).grid(sticky = "w", row = 1)
+
+        self.texte = Text(self, wrap = "word", state = "normal", bg = bg, width=0, height=0)
+        
+        self.texte.insert(INSERT, task.nom) # On met le nom dedans
+        self.texte.tag_add("titre", "1.0", "1.%s"%int(len(task.nom)))
+        self.texte.tag_config("titre", font="Arial 12 bold") 
+        
+        self.texte.insert(END, "\n"+task.desc)
+        self.texte.tag_add("corps", "2.0", "2.%s"%int(len(task.desc)))
+        self.texte.tag_config("corps", font="Arial 10") 
+        
+        self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans
+        self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau, tout chaud  
+        self.pack_propagate(False)
+        
 
 class AffichageCalendrier(SuperCalendrier):
     def __init__(self, master = None, **kwargs):
@@ -34,7 +47,8 @@ class AffichageCalendrier(SuperCalendrier):
 
     def addTask(self, tache, region = None):
             '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
+            # ":=  on attribut la variable en plus de tester la condition
+            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
                 return
 
             # Calcul du début :
@@ -53,7 +67,7 @@ class AffichageCalendrier(SuperCalendrier):
             t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
             t.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
                    column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-            # TODO : Rajouter t à une liste.
+            t.grid_propagate(0)
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
         
@@ -92,8 +106,7 @@ class AffichageCalendrier(SuperCalendrier):
         for jour in range(self.getJourDebut(), self.getJourDebut()+self.getNbJour()):
             self.listeLabelJour.append(Label(self, text=JOUR[jour%7]))
             self.listeLabelJour[-1].grid(row=0, column=1+(jour-self.getJourDebut())*2, sticky="NSWE")
-
-            if jour != self.getJourDebut() + self.getNbJour() - 1:
+            if jour != self.getJourDebut()+self.getNbJour()-1:
                 self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
                 self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()), rowspan = 60*(self.getHeureFin()+1-self.getHeureDebut())+1, sticky="NS")
             
