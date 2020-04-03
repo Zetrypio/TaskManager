@@ -102,8 +102,12 @@ class TaskEditor(Frame):
         y -= panneau.winfo_rooty()
         if x >= 0 and y >= 0 and x < panneau.winfo_width() and y < panneau.winfo_height(): # s'assurer qu'on est au-dessus du panneau :
             region = panneau.identify_region(x, y)
-            # TODO : faire un dialogue pour l'heure exacte /
-            # TODO : arrondir l'heure ?
+            minute1 = region.minute
+            print("region avant :", region)
+            minute2 = int(round(minute1/5)*5)
+            region += datetime.timedelta(minutes = minute2 - minute1)
+            print("region après :", region)
+            # TODO : faire un dialogue pour l'heure exacte
             if region is not None:
                 tache = panneau.addTask(tache, region = region)
                 for p in self.master.getToutLesPanneaux():

@@ -66,8 +66,8 @@ class AffichageCalendrier(SuperCalendrier):
         minute = self.getHeureDebut()*60 +(ligne - 1)
         heure, minute = minute//60, minute%60
         #print("Jour, heure, minute : ", jour, heure, minute)
-        return datetime.datetime(2020, 4, # TODO : remplacer avce la future méthode getDebutPeriode() qui renvoie un datetime
-            jour+6, heure, minute) # +6 à changer aussi (c'est parce que le premier lundi du mois d'avril 2020 est le 6.
+        # TODO : A Changer :
+        return self.getDebutPeriode() + datetime.timedelta(days = jour, hours = heure, minutes = minute)
         
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :
