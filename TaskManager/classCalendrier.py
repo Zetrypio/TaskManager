@@ -56,6 +56,18 @@ class AffichageCalendrier(SuperCalendrier):
             # TODO : Rajouter t à une liste.
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+
+    def identify_region(self, x, y):
+        # On regarde si c'est trop à gauche (sur les heures):
+        colonne, ligne = self.grid_location(x, y)
+        colonne = (colonne-1)//2
+        #print("Case : ", ligne, colonne)
+        jour = self.getJourDebut() + colonne
+        minute = self.getHeureDebut()*60 +(ligne - 1)
+        heure, minute = minute//60, minute%60
+        #print("Jour, heure, minute : ", jour, heure, minute)
+        return datetime.datetime(2020, 4, # TODO : remplacer avce la future méthode getDebutPeriode() qui renvoie un datetime
+            jour+6, heure, minute) # +6 à changer aussi (c'est parce que le premier lundi du mois d'avril 2020 est le 6.
         
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :

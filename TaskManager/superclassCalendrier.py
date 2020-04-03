@@ -116,7 +116,7 @@ class SuperCalendrier(Frame):
             raise NotImplementedError
         if tache is None : return
         self.listeTaches.append(tache)
-        if region and tache.debut is not None:
+        if region and tache.debut is None:
             tache.debut = region
         if tache.duree <= datetime.timedelta():
             tache.duree = self.askDureeTache()
@@ -126,7 +126,6 @@ class SuperCalendrier(Frame):
         return tache
 
     def askDureeTache(self):
-        #pass
         # Fonction quand on ferme le dialogue :
         duree = None
         def onClose(bouton):

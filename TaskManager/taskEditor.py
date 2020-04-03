@@ -102,10 +102,13 @@ class TaskEditor(Frame):
         y -= panneau.winfo_rooty()
         if x >= 0 and y >= 0 and x < panneau.winfo_width() and y < panneau.winfo_height(): # s'assurer qu'on est au-dessus du panneau :
             region = panneau.identify_region(x, y)
-            tache = panneau.addTask(tache, region = region)
-            for p in self.master.getToutLesPanneaux():
-                if p != panneau:
-                    p.addTask(tache, region)
+            # TODO : faire un dialogue pour l'heure exacte /
+            # TODO : arrondir l'heure ?
+            if region is not None:
+                tache = panneau.addTask(tache, region = region)
+                for p in self.master.getToutLesPanneaux():
+                    if p != panneau:
+                        p.addTask(tache, region)
 
     def tri_alphabetique(self):
         pass
