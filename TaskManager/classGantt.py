@@ -32,6 +32,7 @@ class AffichageGantt(SuperCalendrier):
             self.listeLabelJour.append(Label(self, text=JOUR[jour%7]))
             self.listeLabelJour[-1].grid(row=0, column=(jour-self.getJourDebut())*2, sticky="NSWE")
             if jour != self.getJourDebut()+self.getNbJour()-1:
+                #hihihi je suis un vrai commentaire ninja
                 self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
                 self.listeSeparateurJour[-1].grid(row=0, column=1+2*(jour-self.getJourDebut()), rowspan = 2, sticky="NS") # le rowspan devra dépendre du nombre de tache a afficher
             
