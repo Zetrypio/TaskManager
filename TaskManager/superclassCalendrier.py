@@ -119,6 +119,10 @@ class SuperCalendrier(Frame):
         if tache is None : return
         self.listeTaches.append(tache)
         if region and tache.debut is None:
+            # Important pour ne pas altérer l'originelle :
+            # Cela permet de pouvoir Drag&Drop une même tâche
+            # plusieurs fois.
+            tache = tache.copy()
             tache.debut = region
         if tache.duree <= datetime.timedelta():
             tache.duree = self.askDureeTache()

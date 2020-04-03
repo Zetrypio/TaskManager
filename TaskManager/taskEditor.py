@@ -113,6 +113,8 @@ class TaskEditor(Frame):
                 for p in self.master.getToutLesPanneaux():
                     if p != panneau:
                         p.addTask(tache, region)
+                tache.updateStatut()
+                self.ajouter(tache)
 
     def tri_alphabetique(self):
         pass
