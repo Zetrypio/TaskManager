@@ -44,7 +44,7 @@ class MenuBar(Menu):
         self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl-Q", command = master.nouveau)
 
         # Menu Affichage/Style Horloge :
-        self.variableHorlogeStyle = StringVar(value="normal")
+        self.variableHorlogeStyle = StringVar(value="nombre")
         self.menuHorlogeStyle = Menu(self.menuAffichage, tearoff=0)
         self.menuHorlogeStyle.add_radiobutton(label = "Normal", command = master.nouveau, variable=self.variableHorlogeStyle, value = "normal")
         self.menuHorlogeStyle.add_radiobutton(label = "Nombre", command = master.nouveau, variable=self.variableHorlogeStyle, value = "nombre")
