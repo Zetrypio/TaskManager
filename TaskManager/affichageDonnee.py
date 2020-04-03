@@ -149,7 +149,7 @@ class DonneeCalendrier(SuperCalendrier):
         # Ajout graphique. #
         ####################
         for panneau in self.listPanneau:
-            panneau.addTask(tache, region)
+            tache = panneau.addTask(tache, region)
 
         return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
 

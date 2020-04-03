@@ -131,20 +131,21 @@ class SuperCalendrier(Frame):
         duree = None
         def onClose(bouton):
             nonlocal duree
-            duree = datetime.timedelta(days = d.get(), hour = h.get(), minute = m.get())
+            duree = datetime.timedelta(days = int(d.get()), hours = int(h.get()), minutes = int(m.get()))
+            print(duree)
             fen.destroy()
-        # Création du dialogue
+        # Création du dialogue :
         fen = Dialog(self, title = "Choix de la duree de la tâche",
                    buttons = ("Ok", "Annuler"), command = onClose)
         # Widgets du dialogue :
         Label(fen, text = "Choisissez la durée de la Tâche").pack(side = TOP, fill = X)
-        d = Spinbox(fen, from_ = 0, to = self.getLongueurPeriode(), increment = 1)
+        d = Spinbox(fen, from_ = 0, to = self.getLongueurPeriode(), increment = 1, width = 4)
         d.pack(side = LEFT)
         Label(fen, text = "Jours").pack(side = LEFT)
-        h = Spinbox(fen, from_ = 0, to = 23, increment = 1)
+        h = Spinbox(fen, from_ = 0, to = 23, increment = 1, width = 4)
         h.pack(side = LEFT)
         Label(fen, text = "Heures").pack(side = LEFT)
-        m = Spinbox(fen, from_ = 0, to = 59, increment = 1)
+        m = Spinbox(fen, from_ = 0, to = 59, increment = 1, width = 4)
         m.pack(side = LEFT)
         Label(fen, text = "Minutes").pack(side = LEFT)
         # lancement du dialogue:

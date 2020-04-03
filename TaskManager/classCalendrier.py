@@ -34,7 +34,7 @@ class AffichageCalendrier(SuperCalendrier):
 
     def addTask(self, tache, region = None):
             '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if not (tache := super().addTask(self, tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
+            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
                 return
 
             # Calcul du début :
@@ -53,6 +53,7 @@ class AffichageCalendrier(SuperCalendrier):
             t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
             t.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
                    column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
+            # TODO : Rajouter t à une liste.
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
         
