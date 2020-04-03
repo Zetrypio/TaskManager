@@ -36,6 +36,8 @@ class SuperCalendrier(Frame):
 
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
+    def getDebutPeriode(self):
+        return datetime.datetime(2020, 4, 6); # TODO : À mettre à la longueur de la période.    
         
     def getHeureDebut(self):
         return self.heureDebut
