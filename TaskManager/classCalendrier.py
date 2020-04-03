@@ -5,26 +5,10 @@ from tkinter import Label, Frame
 import datetime
 from superclassCalendrier import *
 
-class TacheEnCalendrier(Frame):
+class TacheEnCalendrier(SuperTache):
     def __init__(self, master, task, **kwargs):
-        bg = kwargs.get("bg", "#FFFFFF")
-        Frame.__init__(self, master, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendrier
-        self.task = task
-
-        self.texte = Text(self, wrap = "word", state = "normal", bg = bg, width=0, height=0)
-        
-        self.texte.insert(INSERT, task.nom) # On met le nom dedans
-        self.texte.tag_add("titre", "1.0", "1.%s"%int(len(task.nom)))
-        self.texte.tag_config("titre", font="Arial 12 bold") 
-        
-        self.texte.insert(END, "\n"+task.desc)
-        self.texte.tag_add("corps", "2.0", "2.%s"%int(len(task.desc)))
-        self.texte.tag_config("corps", font="Arial 10") 
-        
-        self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans
-        self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau, tout chaud  
-        self.pack_propagate(False)
+        super().__init__(master, task, **kwargs)
+        # Note : self.master est une référence vers AffichageCalendier
     
 
 class AffichageCalendrier(SuperCalendrier):
@@ -38,6 +22,9 @@ class AffichageCalendrier(SuperCalendrier):
         #
         # Le sticky dans tous les sens pour un expand dans tous les sens
         # self.bouton.grid(row=0, column=0, sticky ="NSWE")
+        self.listeLabelHeure = []       # \
+        self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
+        self.listeSeparateurJour = []   # /
         
         self.__afficherLesHeures() # à la fin pour avoir les variables créées.
         self.__afficherLesJours()

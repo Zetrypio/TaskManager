@@ -6,6 +6,26 @@ from tkinter import Label, Frame
 import datetime
 
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+class SuperTache(Frame):
+    def __init__(self, master, task, **kwargs):
+        bg = kwargs.get("bg", "#FFFFFF")
+        Frame.__init__(self, master, **kwargs)
+        # Note : self.master est une référence vers AffichageCalendrier
+        self.task = task
+
+        self.texte = Text(self, wrap = "word", state = "normal", bg = bg, width=0, height=0)
+        
+        self.texte.insert(INSERT, task.nom) # On met le nom dedans
+        self.texte.tag_add("titre", "1.0", "1.%s"%int(len(task.nom)))
+        self.texte.tag_config("titre", font="Arial 12 bold") 
+        
+        self.texte.insert(END, "\n"+task.desc)
+        self.texte.tag_add("corps", "2.0", "2.%s"%int(len(task.desc)))
+        self.texte.tag_config("corps", font="Arial 10") 
+        
+        self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans
+        self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau, tout chaud  
+        self.pack_propagate(False)
 
 class SuperCalendrier(Frame):
     def __init__(self, master = None, **kwargs):
@@ -30,9 +50,6 @@ class SuperCalendrier(Frame):
         # dans chaques sous-classes qui en ont besoins, c'est-à-dire PAS toutes.
         # Je dis aussi ça car les différentes sous-classes ont un affichage différent
         # et doivent par elles-mêmes gérer leur mode d'affichage avec leurs widgets.
-        self.listeLabelHeure = []       # \
-        self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
-        self.listeSeparateurJour = []   # /
 
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
