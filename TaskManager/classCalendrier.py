@@ -64,6 +64,18 @@ class AffichageCalendrier(SuperCalendrier):
             self.__listeTache.append(t)
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+
+    def identify_region(self, x, y):
+        # On regarde si c'est trop à gauche (sur les heures):
+        colonne, ligne = self.grid_location(x, y)
+        colonne = (colonne-1)//2
+        #print("Case : ", ligne, colonne)
+        jour = self.getJourDebut() + colonne
+        minute = self.getHeureDebut()*60 +(ligne - 1)
+        heure, minute = minute//60, minute%60
+        #print("Jour, heure, minute : ", jour, heure, minute)
+        # TODO : A Changer :
+        return self.getDebutPeriode() + datetime.timedelta(days = jour, hours = heure, minutes = minute)
         
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :

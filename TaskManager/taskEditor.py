@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from task import *
+from dialog import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
@@ -102,10 +103,55 @@ class TaskEditor(Frame):
         y -= panneau.winfo_rooty()
         if x >= 0 and y >= 0 and x < panneau.winfo_width() and y < panneau.winfo_height(): # s'assurer qu'on est au-dessus du panneau :
             region = panneau.identify_region(x, y)
-            tache = panneau.addTask(tache, region = region)
-            for p in self.master.getToutLesPanneaux():
-                if p != panneau:
-                    p.addTask(tache, region)
+            minute1 = region.minute
+            print("region avant :", region)
+            minute2 = int(round(minute1/5)*5)
+            region += datetime.timedelta(minutes = minute2 - minute1)
+            print("region après :", region)
+            region = self.__askHeureExacte(region)
+            if region is not None:
+                tache = panneau.addTask(tache, region = region)
+                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
+                    if p != panneau:
+                        p.addTask(tache, region)
+                tache.updateStatut()
+                self.ajouter(tache)
+    
+    def __askHeureExacte(self, region):
+        heure1 = region.hour
+        minute1 = region.minute
+        def onClose(bouton):
+            nonlocal region
+            if bouton == "Reset":
+                h.set(heure1)
+                m.set(minute1)
+                return
+            if bouton == "Ok":
+                heure2 = int(h.get())
+                minute2 = int(m.get())
+                region += datetime.timedelta(minutes = heure2*60 - heure1 * 60 + minute2 - minute1)
+            else:
+                region = None
+            fen.destroy()
+        def minutePres():
+            if var.get():
+                m.config(increment = 1)
+            else:
+                m.config(increment = 5)
+        fen = Dialog(self, "Confirmez l'heure exacte", ("Ok", "Annuler", "Reset"), command = onClose)
+        Label(fen, text = "Veuillez entrer l'heure exacte").pack(side = TOP, expand = YES, fill = BOTH)
+        var = BooleanVar(value = False)
+        c = Checkbutton(fen, text = "Précision à la minute près ?", command = minutePres, variable = var)
+        c.pack(side = TOP, fill = X)
+        Label(fen, text = "Heure :").pack(side = LEFT)
+        h = Spinbox(fen, from_ = 0, to = 23, increment = 1)
+        h.pack(side = LEFT, fill = X, expand = YES)
+        m = Spinbox(fen, from_ = 0, to = 59, increment = 5)
+        m.pack(side = RIGHT, fill = X, expand = YES)
+        Label(fen, text = "Minute :").pack(side = RIGHT)
+        onClose("Reset")
+        fen.activateandwait()
+        return region
 
     def tri_alphabetique(self):
         pass

@@ -122,6 +122,10 @@ class DonneeCalendrier(SuperCalendrier):
         # self.panneau.index() renvoie l'index d'un panneau selon son id
         # on peut donc utiliser notre liste avec cet index.
         return self.listPanneau[self.panneau.index(self.panneau.select())]
+    
+    def getToutLesPanneaux(self):
+        """Renvoie une copie de la liste de tout les panneaux."""
+        return self.listPanneau[:]
         
     
     def updateAffichage(self):

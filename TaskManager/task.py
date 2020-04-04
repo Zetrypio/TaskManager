@@ -11,13 +11,13 @@ class Task:
     """Classe définissant une tâche."""
     def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white"):
         """
-        nom : nom de la tâche.
-        debut : datetime. du début.
-        duree : datetime.
-        rep : répétition.
-        nbrep : nombre de répétitions.
-        desc : description.
-        color: couleur avec un nom compatible avec les noms de couleurs tkinter.
+        @param nom : nom de la tâche.
+        @param debut : datetime. du début.
+        @param duree : datetime.
+        @param rep : répétition.
+        @param nbrep : nombre de répétitions.
+        @param desc : description.
+        @param color: couleur avec un nom compatible avec les noms de couleurs tkinter.
         """
         self.nom = nom
         self.debut = debut
@@ -27,7 +27,17 @@ class Task:
         self.desc = desc    # descirption
         self.color = color
         self.dependences = []
-        self.statut = "Inconnu" if debut == None else "À faire" if nbrep == 0 else "Répétition"
+        self.updateStatut()
+    def copy(self):
+        t = Task(self.nom, self.debut, self.duree, self.rep, self.nbrep, self.desc, self.color)
+        # Doit-on copier les dépendances et le statut ?
+        t.dependences = self.dependences[:]
+        t.statut = self.statut
+        # On retourne la copie :
+        return t
+    def updateStatut(self):
+        """Permet de mettre à jour le statut de la tâche."""
+        self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
 
 class TaskAdder(Frame):
     """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""

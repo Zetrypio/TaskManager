@@ -99,10 +99,13 @@ class __TaskInDnd(Toplevel):
     def __vraieFin(self):
         try:
             self.__command(self.__task, self.__x, self.__y)
-            self.destroy()
         except:
             sys.stderr.write("Exception in Drag&Drop callback\nfrom ")
             self._report_exception()
+        try:
+            self.destroy()
+        except:
+            pass
 
 def TaskInDnd(pos, master, task, **kwargs):
     """

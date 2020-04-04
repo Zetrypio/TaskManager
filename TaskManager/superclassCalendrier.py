@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from tkinter.messagebox import *
 from dialog import *
 from tkinter import *
 from tkinter.ttk import *
@@ -135,7 +136,11 @@ class SuperCalendrier(Frame):
             raise NotImplementedError
         if tache is None : return
         self.listeTaches.append(tache)
-        if region and tache.debut is not None:
+        if region and tache.debut is None:
+            # Important pour ne pas altérer l'originelle :
+            # Cela permet de pouvoir Drag&Drop une même tâche
+            # plusieurs fois.
+            tache = tache.copy()
             tache.debut = region
         if tache.duree <= datetime.timedelta():
             tache.duree = self.askDureeTache()
@@ -145,17 +150,22 @@ class SuperCalendrier(Frame):
         return tache
 
     def askDureeTache(self):
-        #pass
         # Fonction quand on ferme le dialogue :
         duree = None
         def onClose(bouton):
             nonlocal duree
-            duree = datetime.timedelta(days = int(d.get()), hours = int(h.get()), minutes = int(m.get()))
-            print(duree)
-            fen.destroy()
+            if bouton == "Ok":
+                duree = datetime.timedelta(days = int(d.get()), hours = int(h.get()), minutes = int(m.get()))
+                if duree > datetime.timedelta():
+                    fen.quit()
+                    fen.destroy()
+                else:
+                    showerror("Durée invalide", "Veuillez mettre une durée plus grande que 0.")
+            else:
+                fen.destroy()
         # Création du dialogue :
         fen = Dialog(self, title = "Choix de la duree de la tâche",
-                   buttons = ("Ok", "Annuler"), command = onClose)
+                   buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Annuler',))
         # Widgets du dialogue :
         Label(fen, text = "Choisissez la durée de la Tâche").pack(side = TOP, fill = X)
         d = Spinbox(fen, from_ = 0, to = self.getLongueurPeriode(), increment = 1, width = 4)
@@ -167,6 +177,9 @@ class SuperCalendrier(Frame):
         m = Spinbox(fen, from_ = 0, to = 59, increment = 1, width = 4)
         m.pack(side = LEFT)
         Label(fen, text = "Minutes").pack(side = LEFT)
+        d.set(0)
+        h.set(0)
+        m.set(0)
         # lancement du dialogue:
         fen.activateandwait()
         return duree
