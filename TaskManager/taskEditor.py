@@ -111,7 +111,7 @@ class TaskEditor(Frame):
             region = self.__askHeureExacte(region)
             if region is not None:
                 tache = panneau.addTask(tache, region = region)
-                for p in self.master.getToutLesPanneaux():
+                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
                     if p != panneau:
                         p.addTask(tache, region)
                 tache.updateStatut()
