@@ -1,53 +1,84 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 import datetime
 from superclassCalendrier import *
 
+class TacheEnGantt(SuperTache):
+    def __init__(self, master, task, **kwargs):
+        super().__init__(master, task, **kwargs)
+        # Note : self.master est une référence vers AffichageGantt
+
+
 class AffichageGantt(SuperCalendrier):
     def __init__(self, master = None, **kwargs):
         SuperCalendrier.__init__(self, master, **kwargs)
         # Note : self.master est référence vers Notebook.
-        self.updateAffichage()
         
-    
+        self.__listeTache = []
+        
+        self.TAILLE_LIGNE = 50
+        self.tailleColonne = 0
+        
+        self.tailleBandeauJour = 20
+        
+        self.mainCanvas = Canvas(self, width=0, height=0)
+        self.mainCanvas.pack(fill=BOTH, expand=YES)
+        self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
+
+    def getNbTacheJour(self, jourSemaine, arret):
+        nombre = 0
+        for tache in self.__listeTache:
+            if self.__listeTache.index(tache) == arret:
+                return nombre
+            
+            if tache.task.debut.isoweekday() == jourSemaine:
+                nombre+=1
+        return nombre
+  
     def updateAffichage(self):
-        self.__afficherLesJours()
-    
+        if self.mainCanvas.winfo_width() != 0:
+            self.__afficherLesJours()
+            
+        self.__afficherLesTaches()
+
+
+    def addTask(self, tache, region = None):
+        if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
+            return
+        
+        t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
+        self.mainCanvas.create_window(self.tailleColonne*(t.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
+                                      self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.__listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
+                                      , width=(self.tailleColonne-1)*0.8, height=self.TAILLE_LIGNE ,anchor=NW, window=t)
+        
+        self.__listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
+        return tache
 
     def __afficherLesJours(self):
-        for indice, jour in enumerate(self.listeLabelJour): # on efface ceux déjà présent
-            jour.destroy()
-            self.columnconfigure(indice*2,weight=0)
-            
-        for indice, separator in enumerate(self.listeSeparateurJour): # on efface aussi les separator
-            separator.destroy()
-            self.columnconfigure(indice*2+1,weight=0)
+        self.mainCanvas.delete(ALL)
         
-        self.listeLabelJour = []
-        self.listeSeparateurJour = []
-        
-        for jour in range(self.getJourDebut(), self.getJourDebut()+self.getNbJour()):
-            self.listeLabelJour.append(Label(self, text=JOUR[jour%7]))
-            self.listeLabelJour[-1].grid(row=0, column=(jour-self.getJourDebut())*2, sticky="NSWE")
-            if jour != self.getJourDebut()+self.getNbJour()-1:
-                #hihihi je suis un vrai commentaire ninja
-                self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
-                self.listeSeparateurJour[-1].grid(row=0, column=1+2*(jour-self.getJourDebut()), rowspan = 2, sticky="NS") # le rowspan devra dépendre du nombre de tache a afficher
+        for jour in range(self.getNbJour()): # Traçage des lignes de division et des noms de jour
+            x = int(jour*self.mainCanvas.winfo_width()/self.getNbJour())
             
-        self.__adapteGrid()
+            self.mainCanvas.create_rectangle(x, 0, x+(self.mainCanvas.winfo_width()//self.getNbJour()), self.tailleBandeauJour, fill="#BBBBBB", outline="") # création de bandeau pour les jours
+            
+            if jour !=0:
+                self.mainCanvas.create_line(x, 0, x, self.mainCanvas.winfo_height())
+            
+            self.mainCanvas.create_text(x+(self.mainCanvas.winfo_width()//self.getNbJour())//2, 2, text=JOUR[(jour+self.getJourDebut())%7], anchor=N)
+            
+        self.tailleColonne = int(self.mainCanvas.winfo_width()/self.getNbJour())
 
-    def __adapteGrid(self):
-        # à mettre À LA FIN ! ! ! (pour les expands)
-        for column in range(self.nbJour*2):
-            if column%2 ==0:
-                self.columnconfigure(column,weight=1)
-            else:
-                self.columnconfigure(column, weight=0)
-        self.rowconfigure(ALL,weight=1)
-        self.rowconfigure(0, weight=0)
-
+    def __afficherLesTaches(self):
+        for tache in self.__listeTache:
+            if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
+                
+                self.mainCanvas.create_window(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
+                                              self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
+                                              , width=(self.tailleColonne-1)*0.8, height=self.TAILLE_LIGNE ,anchor=NW, window = tache)
+    
 if __name__=='__main__':
     import Application
     Application.main()

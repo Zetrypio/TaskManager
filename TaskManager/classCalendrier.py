@@ -1,17 +1,15 @@
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 import datetime
 from superclassCalendrier import *
 
-class TacheEnCalendrier(Frame):
+class TacheEnCalendrier(SuperTache):
     def __init__(self, master, task, **kwargs):
-        bg = kwargs.get("bg", "#FFFFFF")
-        Frame.__init__(self, master, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendrier
-        Label(self, text = task.nom, font = "Arial 12 bold", bg = bg).grid(sticky = "w")
-        Label(self, text = task.desc, bg = bg).grid(sticky = "w", row = 1)
+        super().__init__(master, task, **kwargs)
+        # Note : self.master est une référence vers AffichageCalendier
+    
 
 class AffichageCalendrier(SuperCalendrier):
     def __init__(self, master = None, **kwargs):
@@ -24,17 +22,23 @@ class AffichageCalendrier(SuperCalendrier):
         #
         # Le sticky dans tous les sens pour un expand dans tous les sens
         # self.bouton.grid(row=0, column=0, sticky ="NSWE")
+        self.listeLabelHeure = []       # \
+        self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
+        self.listeSeparateurJour = []   # /
         
         self.__afficherLesHeures() # à la fin pour avoir les variables créées.
         self.__afficherLesJours()
+        self.__listeTache = []
 
     def updateAffichage(self): # override
         self.__afficherLesHeures()
         self.__afficherLesJours()
-
+        self.__afficherLesTaches()
+    
     def addTask(self, tache, region = None):
             '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
+            # ":=  on attribut la variable en plus de tester la condition
+            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
                 return
 
             # Calcul du début :
@@ -50,10 +54,14 @@ class AffichageCalendrier(SuperCalendrier):
                 duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
                                                 
             # Ajout graphique :
+            
+            
             t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
             t.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
                    column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-            # TODO : Rajouter t à une liste.
+            t.grid_propagate(0)
+            
+            self.__listeTache.append(t)
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
 
@@ -90,6 +98,7 @@ class AffichageCalendrier(SuperCalendrier):
         self.__adapteGrid()
     
     def __afficherLesJours(self):
+        
         for indice, jour in enumerate(self.listeLabelJour): # on efface ceux déjà présent
             jour.destroy()
             self.columnconfigure(indice*2+1,weight=0)
@@ -104,12 +113,33 @@ class AffichageCalendrier(SuperCalendrier):
         for jour in range(self.getJourDebut(), self.getJourDebut()+self.getNbJour()):
             self.listeLabelJour.append(Label(self, text=JOUR[jour%7]))
             self.listeLabelJour[-1].grid(row=0, column=1+(jour-self.getJourDebut())*2, sticky="NSWE")
-
-            if jour != self.getJourDebut() + self.getNbJour() - 1:
+            if jour != self.getJourDebut()+self.getNbJour()-1:
                 self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
                 self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()), rowspan = 60*(self.getHeureFin()+1-self.getHeureDebut())+1, sticky="NS")
             
         self.__adapteGrid()
+
+    def __afficherLesTaches(self):
+        for tache in self.__listeTache:
+            tache.grid_forget()
+
+        for tache in self.__listeTache:
+            if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
+                
+                # Calcul du début :
+                debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
+                # Calcul du nombre de lignes :
+                # Si ça dépasse : on restreint
+                if (tache.task.debut + tache.task.duree).hour > self.getHeureFin() or tache.task.debut.date() != (tache.task.debut + tache.task.duree).date():
+                    fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
+                    duree = fin - tache.debut.time() # Conversion en duree
+                    duree = duree.total_seconds()//60%1440
+                    
+                else: # Si ça dépasse pas :
+                    duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
+                
+                tache.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
+                       column = (tache.task.debut.isoweekday()-1-self.getJourDebut())*2+1, sticky = "nesw")                    
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)
