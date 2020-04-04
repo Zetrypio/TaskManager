@@ -165,23 +165,26 @@ class TaskEditor(Frame):
     def tri_statut(self):
         if self.MODE_TRI == "Statut_importance":
             self.MODE_TRI = "Statut_prochain"
-            self.taches.sort(key=lambda t: t.debut)
+            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
             self.taches.sort(key=lambda t: 0 if t.statut == "À faire" or t.statut == "Répétition"
                                       else 1 if t.statut == "Inconnu"
                                       else 2)
         elif self.MODE_TRI == "Statut_prochain":
             self.MODE_TRI = "Statut_autre"
-            self.taches.sort(key=lambda t: t.nom) # Alphabétique pout les Inconnus -> tri alphabétique.
-            self.taches.sort(key=lambda t: t.debut) # Ne change pas l'ordre des noms des Inconnus
-                                                    # car ils ont tous le même debut qui est None
-                                                    # -> tri par début pour le reste.
+            # Alphabétique pout les Inconnus -> tri alphabétique :
+            self.taches.sort(key=lambda t: t.nom)
+            # Ne change pas l'ordre des noms des Inconnus
+            # car ils ont tous le même debut qui est None
+            # -> tri par début pour le reste :
+            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
+            # Tri selon le statut :
             self.taches.sort(key=lambda t: 0 if t.statut == "Inconnu"
                                       else 1 if t.statut == "Retard"
                                       else 2 if t.statut == "Répétition"
                                       else 3)
         else:
             self.MODE_TRI = "Statut_importance"
-            self.taches.sort(key=lambda t: t.debut)
+            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
             self.taches.sort(key=lambda t: 0 if t.statut == "Retard"
                                       else 1 if t.statut == "À faire" or t.statut == "Répétition"
                                       else 2)
