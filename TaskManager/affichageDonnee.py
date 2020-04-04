@@ -127,8 +127,8 @@ class DonneeCalendrier(SuperCalendrier):
     def updateAffichage(self):
         # Faire un parcour des panneaux pour pouvoir effectuer les changements
         # sur TOUTES les disposition de calendriers (gantt, calendrier classique etc)
-        #for panneau in self.listPanneau:
-        #    panneau.updateAffichage()
+        for panneau in self.listPanneau:
+            panneau.updateAffichage()
         
         if self.getJourDebut() == 0:
             self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période

@@ -10,7 +10,7 @@ class SuperTache(Frame):
     def __init__(self, master, task, **kwargs):
         bg = kwargs.get("bg", "#FFFFFF")
         Frame.__init__(self, master, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendrier
+        # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt
         self.task = task
 
         self.texte = Text(self, wrap = "word", state = "normal", bg = bg, width=0, height=0)
