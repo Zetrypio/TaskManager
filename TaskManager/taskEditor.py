@@ -25,6 +25,8 @@ class TaskEditor(Frame):
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
         self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
         self.tree.configure(yscrollcommand = self.scrollbar.set)
+        
+        self.MODE_TRI = "None"
 
         self.redessiner()
     def ajouter(self, tache):
@@ -154,7 +156,12 @@ class TaskEditor(Frame):
         return region
 
     def tri_alphabetique(self):
-        pass
+        if self.MODE_TRI == "Alpha":
+            self.MODE_TRI = "Alpha_reverse"
+        else:
+            self.MODE_TRI = "Alpha"
+        self.taches.sort(key=lambda t: t.nom, reverse=self.MODE_TRI=="Alpha_reverse")
+        self.redessiner()
     def tri_priorite(self):
         pass
 
