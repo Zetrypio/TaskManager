@@ -1,4 +1,4 @@
-# -*- coding:UTF-8 -*-
+# -*- coding:utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
@@ -8,7 +8,7 @@ from superclassCalendrier import *
 class TacheEnCalendrier(SuperTache):
     def __init__(self, master, task, **kwargs):
         super().__init__(master, task, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendier
+        # Note : self.master est une référence vers AffichageCalendrier
     
 
 class AffichageCalendrier(SuperCalendrier):

@@ -6,6 +6,7 @@ import datetime
 from superclassCalendrier import *
 from classCalendrier import *
 from classGantt import *
+from classCalendrierPeriode import *
 
 class ZoneAffichage(Frame): # Contient les paramètre et les données
     def __init__(self, master = None, **kwargs):
@@ -83,10 +84,12 @@ class DonneeCalendrier(SuperCalendrier):
         self.listPanneau = []
         self.listPanneau.append(AffichageCalendrier(self.panneau)) #liste de tout les panneaux pour appliquer un changement à tous
         self.listPanneau.append(AffichageGantt(self.panneau))
+        self.listPanneau.append(AffichageCalendrierPeriode(self.panneau))
 
         # Ajout des onglets au panneau
         self.panneau.add(self.listPanneau[0], text="Calendrier", padding=1) # padding optionnel
         self.panneau.add(self.listPanneau[1], text="Gantt", padding=1)
+        self.panneau.add(self.listPanneau[2], text="Gérer les périodes", padding = 1)
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
