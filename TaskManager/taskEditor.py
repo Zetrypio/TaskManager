@@ -48,7 +48,7 @@ class TaskEditor(Frame):
         self.tree.column("#0", width = 0)
         self.tree.column(0,    width = 0)
         self.tree.heading("#0", text="Tâche", command = self.tri_alphabetique)
-        self.tree.heading(0,    text="Statut", command = self.tri_priorite)
+        self.tree.heading(0,    text="Statut", command = self.tri_statut)
 
         self.NEW_ID = 0
         for t in self.taches:
@@ -162,8 +162,30 @@ class TaskEditor(Frame):
             self.MODE_TRI = "Alpha"
         self.taches.sort(key=lambda t: t.nom, reverse=self.MODE_TRI=="Alpha_reverse")
         self.redessiner()
-    def tri_priorite(self):
-        pass
+    def tri_statut(self):
+        if self.MODE_TRI == "Statut_importance":
+            self.MODE_TRI = "Statut_prochain"
+            self.taches.sort(key=lambda t: t.debut)
+            self.taches.sort(key=lambda t: 0 if t.statut == "À faire" or t.statut == "Répétition"
+                                      else 1 if t.statut == "Inconnu"
+                                      else 2)
+        elif self.MODE_TRI == "Statut_prochain":
+            self.MODE_TRI = "Statut_autre"
+            self.taches.sort(key=lambda t: t.nom) # Alphabétique pout les Inconnus -> tri alphabétique.
+            self.taches.sort(key=lambda t: t.debut) # Ne change pas l'ordre des noms des Inconnus
+                                                    # car ils ont tous le même debut qui est None
+                                                    # -> tri par début pour le reste.
+            self.taches.sort(key=lambda t: 0 if t.statut == "Inconnu"
+                                      else 1 if t.statut == "Retard"
+                                      else 2 if t.statut == "Répétition"
+                                      else 3)
+        else:
+            self.MODE_TRI = "Statut_importance"
+            self.taches.sort(key=lambda t: t.debut)
+            self.taches.sort(key=lambda t: 0 if t.statut == "Retard"
+                                      else 1 if t.statut == "À faire" or t.statut == "Répétition"
+                                      else 2)
+        self.redessiner()
 
 
 if __name__=='__main__':
