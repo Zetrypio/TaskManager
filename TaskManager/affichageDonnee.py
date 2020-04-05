@@ -24,6 +24,9 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         
         self.donneeCalendrierFrame.updateAffichage()
 
+    def getApplication(self):
+        return self.master.getApplication()
+
     def getPanneauActif(self):
         """Renvoie le mode d'affichage de calendrier actif."""
         return self.donneeCalendrierFrame.getPanneauActif()
@@ -113,6 +116,9 @@ class DonneeCalendrier(SuperCalendrier):
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
+
+    def getApplication(self):
+        return self.master.getApplication()
 
     def panneauChange(self, e):
         p = self.getPanneauActif()

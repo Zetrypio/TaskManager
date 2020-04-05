@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from espacevisuel import *
 from taskEditor import *
+from periode import *
 
 style = Style()
 
@@ -58,12 +59,15 @@ class Application(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
         self.winfo_toplevel().title("Gestionnaire de calendrier")
-        self.menu = MenuBar(self.master, self)
+        self.menu = MenuBar(self.winfo_toplevel(), self)
+        self.periodManager = PeriodManager(self)
         self.taskEditor = TaskEditor(self, self.menu)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
     def nouveau(self):pass
+    def getPeriodManager(self):
+        return self.periodManager
     def getPanneauActif(self):
         return self.calendar.getPanneauActif()
     def getDonneeCalendrier(self):

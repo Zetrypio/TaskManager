@@ -99,6 +99,9 @@ class CalendarZone(Frame):
         self.zoneDynamicCalendarFrame = ZoneAffichage(self) # frame avec la zone d'affichage des paramètre et la zone avec les données
         self.zoneDynamicCalendarFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
+    def getApplication(self):
+        return self.master
+
     def ajouterHeure(self):
         pass
     def ajouterJour(self):

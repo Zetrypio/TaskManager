@@ -52,6 +52,9 @@ class SuperCalendrier(Frame):
         # Je dis aussi ça car les différentes sous-classes ont un affichage différent
         # et doivent par elles-mêmes gérer leur mode d'affichage avec leurs widgets.
 
+    def getApplication(self):
+        return self.master.master.getApplication() # Skip le NoteBook
+
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
     def getDebutPeriode(self):
@@ -191,6 +194,7 @@ class SuperCalendrier(Frame):
         setHeureDebut, setHeureFin, setJourDebut et setNbJour
         """
         raise NotImplementedError
+
     def doConfiguration(self, paramAffichage):
         """
         Méthode pour éventuellement changer la barre d'outil
