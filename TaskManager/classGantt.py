@@ -2,13 +2,72 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from dialog import *
 import datetime
 from superclassCalendrier import *
+from RMenu import *
+
+
 
 class TacheEnGantt(SuperTache):
     def __init__(self, master, task, **kwargs):
         super().__init__(master, task, **kwargs)
         # Note : self.master est une référence vers AffichageGantt
+        
+        self.bind("<Button-1>", self.__clique) # On bind la frame
+        self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
+        # RMenu
+        self.RMenu = RMenu(self, tearoff=0)
+        self.RMenu.add_command(label="Ajouter un lien", command=self.__addDependance)
+        
+        self.jeCherche = False
+
+
+    def __addDependance(self): # Mise en mode recherche
+        self.master.searchADependance = True
+        self.jeCherche = True 
+    
+    def __destDependance(self):
+        self.master.searchDDependance = True
+        self.jeCherche = True
+        
+
+    def __clique(self, event):
+        chercheur = self.master.getQuiCherche() # Objet TacheEnGantt qui a la variable jeCherche = True
+        
+        if self.master.searchADependance == True: # On commence par savoir dans quelle mode on est
+            self.master.searchADependance = False # On réinitialise le mode
+            
+            if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
+                chercheur.task.dependences.append(self.task)
+            elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
+                self.task.dependences.append(chercheur.task)
+            elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
+                self.jeCherche = False
+                return
+            else:                                        # Si on est 2 taches commençant au même moment
+                showerror("Tache incorrecte", "Vous ne pouvez pas choisir 2 taches commençant au même moment.")
+            chercheur.jeCherche = False
+            self.master.updateAffichage()
+
+            self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
+            chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
+    
+        
+        elif self.master.searchDDependance == True:
+            self.master.searchDDependance = False
+            
+            for lien in self.task.dependences: # Parcour de la liste du cliqué 
+                if lien == chercheur.task: # SI c'est dans la liste du cliqué on le retire
+                    self.task.dependences.remove(lien)
+            for lien in chercheur.task.dependences: # Si c'est dans la liste du chercheur on retire retire self = lien
+                if lien == self.task:
+                    chercheur.task.dependences.remove(lien)
+            
+            self.jeCherche=False
+            self.master.updateAffichage()
+            self.RMenu.delete(1)
+            chercheur.RMenu.delete(1)
 
 
 class AffichageGantt(SuperCalendrier):
@@ -26,6 +85,15 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
+        
+
+        self.searchADependance = False # variable qui va vérifier notre mode   
+        self.searchDDependance = False # variable qui va vérifier notre mode         
+        
+    def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
+        for tache in self.__listeTache:
+            if tache.jeCherche == True:
+                return tache
 
     def getNbTacheJour(self, jourSemaine, arret):
         nombre = 0
@@ -37,11 +105,17 @@ class AffichageGantt(SuperCalendrier):
                 nombre+=1
         return nombre
   
+    def getTacheEnGantt(self, tacheT):
+        for tacheC in self.__listeTache:
+            if tacheC.task == tacheT:
+                return tacheC
+
     def updateAffichage(self):
         if self.mainCanvas.winfo_width() != 0:
             self.__afficherLesJours()
             
         self.__afficherLesTaches()
+        self.__afficherLesDependances()
 
 
     def addTask(self, tache, region = None):
@@ -78,7 +152,17 @@ class AffichageGantt(SuperCalendrier):
                 self.mainCanvas.create_window(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
                                               self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
                                               , width=(self.tailleColonne-1)*0.8, height=self.TAILLE_LIGNE ,anchor=NW, window = tache)
-    
+
+    def __afficherLesDependances(self):
+        for tache in self.__listeTache:
+            if tache.task.dependences != []:
+                for lien in tache.task.dependences:
+                    self.mainCanvas.create_line(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2 + tache.winfo_width(), # X1
+                                                self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) + tache.winfo_height()/2,# Y1
+                                                self.tailleColonne*(lien.debut.isoweekday()-1)+2, # X2
+                                                self.tailleBandeauJour+self.TAILLE_LIGNE*(self.getNbTacheJour(lien.debut.isoweekday(), self.__listeTache.index(self.getTacheEnGantt(lien)))) + tache.winfo_height()/2, # Y2
+                                                arrow = LAST)
+     
 if __name__=='__main__':
     import Application
     Application.main()
