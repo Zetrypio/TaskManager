@@ -19,6 +19,12 @@ class TaskEditor(Frame):
         self.frameInput = TaskAdder(self, menubar)
         self.frameInput.pack(side = TOP, fill = X)
 
+        self.frameRecherche = Frame(self)
+        self.frameRecherche.pack(side = TOP, fill = X)
+        Label(self.frameRecherche, text = "Rechercher :").pack(side = LEFT)
+        self.barreRecherche = Combobox(self.frameRecherche)
+        self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
+
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
