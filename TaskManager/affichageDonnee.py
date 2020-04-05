@@ -29,6 +29,8 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         return self.donneeCalendrierFrame.getPanneauActif()
     def getDonneeCalendrier(self):
         return self.donneeCalendrierFrame
+    def getZoneParametre(self):
+        return self.zoneParametre
         
     def envoyerChangementNbJour(self, event):
         """
@@ -66,6 +68,21 @@ class ParametreAffichage(Frame):
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèse car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
+    
+    def setModeListe(self, mode = None):
+        etatActuel = self.listeMode.cget("state")
+        self.listeMode.config(state = NORMAL)
+        try:
+            if mode is None and self.listeMode.get() not in self.listeMode.cget("values"):
+                self.listeMode.set(self.listeMode.cget("values")[-1])
+            elif mode is not None:
+                self.listeMode.set(mode)
+        finally:
+            self.listeMode.config(state = etatActuel)
+    def setStateListe(self, state):
+        if state == NORMAL:
+            state = "readonly"
+        self.listeMode.config(state = state)
         
     
    
@@ -90,10 +107,16 @@ class DonneeCalendrier(SuperCalendrier):
         self.panneau.add(self.listPanneau[0], text="Calendrier", padding=1) # padding optionnel
         self.panneau.add(self.listPanneau[1], text="Gantt", padding=1)
         self.panneau.add(self.listPanneau[2], text="Gérer les périodes", padding = 1)
+        
+        # Ajout d'un binding sur le panneau pour savoir quand on en change :
+        self.panneau.bind("<<NotebookTabChanged>>", self.panneauChange)
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
 
+    def panneauChange(self, e):
+        p = self.getPanneauActif()
+        p.doConfiguration(self.master.getZoneParametre())
     
     def setHeureDebut(self, heure):
         """Setter pour l'heure du début"""

@@ -191,6 +191,15 @@ class SuperCalendrier(Frame):
         setHeureDebut, setHeureFin, setJourDebut et setNbJour
         """
         raise NotImplementedError
+    def doConfiguration(self, paramAffichage):
+        """
+        Méthode pour éventuellement changer la barre d'outil
+        secondaire quand ce panneau est actif.
+        
+        Par défaut, fait un reset normal de cette barre.
+        """
+        paramAffichage.setStateListe(NORMAL)
+        paramAffichage.setModeListe()
 
 if __name__=='__main__':
     import Application
