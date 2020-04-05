@@ -199,7 +199,14 @@ class SuperCalendrier(Frame):
         Par défaut, fait un reset normal de cette barre.
         """
         paramAffichage.setStateListe(NORMAL)
-        paramAffichage.setModeListe()
+        if self.getNbJour() == self.getLongueurPeriode():
+            paramAffichage.setModeListe("Période")
+        elif self.getNbJour() == 7:
+            paramAffichage.setModeListe("1 semaine")
+        elif self.getNbJour() == 1:
+            paramAffichage.setModeListe("1 jour")
+        else:
+            paramAffichage.setModeListe("%s jours"%self.getNbJour())
 
 if __name__=='__main__':
     import Application
