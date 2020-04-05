@@ -34,7 +34,7 @@ class TacheEnGantt(SuperTache):
         super().__init__(master, task, **kwargs)
         # Note : self.master est une référence vers AffichageGantt
         
-        self.bind("<Button-1>", self.__clique) # On bind la frame
+        self.bind("<Button-1>", self.__clique)       # On bind la frame
         self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
         # RMenu
         self.RMenu = RMenu(self, tearoff=0)
@@ -53,7 +53,8 @@ class TacheEnGantt(SuperTache):
         
 
     def __clique(self, event):
-        chercheur = self.master.getQuiCherche() # Objet TacheEnGantt qui a la variable jeCherche = True
+        if (chercheur := self.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+            return
         
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode
@@ -68,8 +69,10 @@ class TacheEnGantt(SuperTache):
             else:                                        # Si on est 2 taches commençant au même moment
                 showerror("Tache incorrecte", "Vous ne pouvez pas choisir 2 taches commençant au même moment.")
             
-            self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
-            chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
+            if self.RMenu.index('end') == 0: # Si c'est son premier lien
+                self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
+            if chercheur.RMenu.index('end') ==0:
+                chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
     
         
         self.master.updateAffichage()
