@@ -100,6 +100,8 @@ class DonneeCalendrier(SuperCalendrier):
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
+        
+
 
     
     def setHeureDebut(self, heure):

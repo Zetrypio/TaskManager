@@ -29,6 +29,9 @@ class TaskEditor(Frame):
         self.MODE_TRI = "None"
 
         self.redessiner()
+        
+        
+        
     def ajouter(self, tache):
         self.taches.append(tache)
         self.redessiner()

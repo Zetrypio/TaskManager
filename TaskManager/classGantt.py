@@ -6,6 +6,7 @@ from dialog import *
 import datetime
 from superclassCalendrier import *
 from RMenu import *
+from task import *
 
 class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def __init__(self, tacheDebut, tacheFin, canvas):
@@ -94,7 +95,7 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
         
         self.mode = ""        
-        
+
     def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
         for tache in self.__listeTache:
             if tache.jeCherche == True:
