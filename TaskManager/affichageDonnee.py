@@ -48,7 +48,12 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
             self.donneeCalendrierFrame.setJourDebut(0)
     
     def envoyerChangementJourDebut(self, valeur):
-        self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+valeur)
+        if valeur == "d": # Si on appui sur remetre au début
+            self.donneeCalendrierFrame.setJourDebut(0)
+        elif valeur == "f": # Si on appuie sur mettre à la fin
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getLongueurPeriode()-self.donneeCalendrierFrame.getNbJour())
+        else:
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+valeur)
 
 
 class ParametreAffichage(Frame):
@@ -56,8 +61,13 @@ class ParametreAffichage(Frame):
         kwargs["bg"] = "yellow"
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers ZoneAffichage.
+        self.boutonBienAvant = Button(self, text="<<", command=lambda:master.envoyerChangementJourDebut("d"))
+        self.boutonBienAvant.pack(side=LEFT, fill=Y)
         self.boutonAvant = Button(self, text="<", command=lambda:master.envoyerChangementJourDebut(-1))
-        self.boutonAvant.pack(side=LEFT, fill=Y)
+        self.boutonAvant.pack(side=LEFT, fill=Y)    
+        
+        self.boutonBienApres = Button(self, text=">>", command=lambda:master.envoyerChangementJourDebut("f"))
+        self.boutonBienApres.pack(side=RIGHT, fill=Y)          
         self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
         
@@ -135,14 +145,19 @@ class DonneeCalendrier(SuperCalendrier):
             panneau.updateAffichage()
         
         if self.getJourDebut() == 0:
+            self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)
             self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période
         else:
+            self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
             self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
+            
         if self.getJourDebut()+self.getNbJour() > self.getLongueurPeriode():
             self.setJourDebut(self.getLongueurPeriode() - self.getNbJour())
         elif self.getJourDebut()+self.getNbJour()== self.getLongueurPeriode():
+            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)            
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
         else:
+            self.master.zoneParametre.boutonBienApres.configure(state=NORMAL)
             self.master.zoneParametre.boutonApres.configure(state=NORMAL)
 
     def addTask(self, tache, region = None):
