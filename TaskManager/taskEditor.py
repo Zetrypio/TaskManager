@@ -71,18 +71,25 @@ class TaskEditor(Frame):
         self.tree.heading(0,    text="Statut", command = self.tri_statut)
 
         self.NEW_ID = 0
+        insertPos = 0
         for t in self.taches:
-            t.id = self.NEW_ID
-            self.tree.insert("", END, text = t.nom, values = [t.statut], iid = "p%s"%self.NEW_ID, tags = "Couleur%s"%t.color) # p comme parent
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Début :", values = [t.debut], iid = "p%se1"%self.NEW_ID, tags = "Couleur%s"%t.color) # e comme enfant.
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Durée :", values = [t.duree], iid = "p%se2"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Fin :", values = [(t.debut + t.duree) if t.debut is not None else None], iid = "p%se3"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Description :", values = [t.desc], iid = "p%se4"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Nombre rep :", values = [t.nbrep], iid = "p%se5"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "temps entre rep :", values = [t.rep], iid = "p%se6"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.tree.insert("p%s"%self.NEW_ID, END, text = "Dépendences", values = [t.dependences], iid = "p%se7"%self.NEW_ID, tags = "Couleur%s"%t.color)
-            self.NEW_ID += 1
-            self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
+            if ("type" not in self.FILTRE or self.FILTRE["type"]=="Tâche") \
+            and("name" not in self.FILTRE or t.nom.lower().count(self.FILTRE["name"].lower())>0):
+                pos = END
+                if "name" not in self.FILTRE or t.nom.lower().startswith(self.FILTRE["name"].lower()):
+                    pos = insertPos
+                    insertPos += 1
+                t.id = self.NEW_ID
+                self.tree.insert("", pos, text = t.nom, values = [t.statut], iid = "p%s"%self.NEW_ID, tags = "Couleur%s"%t.color) # p comme parent
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Début :", values = [t.debut], iid = "p%se1"%self.NEW_ID, tags = "Couleur%s"%t.color) # e comme enfant.
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Durée :", values = [t.duree], iid = "p%se2"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Fin :", values = [(t.debut + t.duree) if t.debut is not None else None], iid = "p%se3"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Description :", values = [t.desc], iid = "p%se4"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Nombre rep :", values = [t.nbrep], iid = "p%se5"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "temps entre rep :", values = [t.rep], iid = "p%se6"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.tree.insert("p%s"%self.NEW_ID, END, text = "Dépendences", values = [t.dependences], iid = "p%se7"%self.NEW_ID, tags = "Couleur%s"%t.color)
+                self.NEW_ID += 1
+                self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
