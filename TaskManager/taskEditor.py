@@ -12,18 +12,22 @@ class TaskEditor(Frame):
         # Note : master est une référence vers Application
         self.menu = menubar
 
-        self.taches = []
+        self.taches = [] # Pourra aussi contenir des Périodes.
 
         self.mousepress = False
 
         self.frameInput = TaskAdder(self, menubar)
         self.frameInput.pack(side = TOP, fill = X)
 
+        self.FILTRE = {}
         self.frameRecherche = Frame(self)
-        self.frameRecherche.pack(side = TOP, fill = X)
+        self.frameRecherche.pack(side = BOTTOM, fill = X)
         Label(self.frameRecherche, text = "Rechercher :").pack(side = LEFT)
         self.barreRecherche = Combobox(self.frameRecherche)
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
+        # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
+        self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
+        self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
 
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
@@ -35,6 +39,16 @@ class TaskEditor(Frame):
         self.MODE_TRI = "None"
 
         self.redessiner()
+
+    def filter(self, **filtre):
+        for k in filtre:
+            if filtre[k]:
+                self.FILTRE[k] = filtre[k]
+            elif k in self.FILTRE:
+                del self.FILTRE[k]
+        print(self.FILTRE)
+        self.redessiner()
+
     def ajouter(self, tache):
         self.taches.append(tache)
         self.redessiner()
