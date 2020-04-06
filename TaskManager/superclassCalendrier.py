@@ -202,6 +202,7 @@ class SuperCalendrier(Frame):
         
         Par défaut, fait un reset normal de cette barre.
         """
+        self.getApplication().setModeEditionPeriode(False)
         paramAffichage.setStateListe(NORMAL)
         if self.getNbJour() == self.getLongueurPeriode():
             paramAffichage.setModeListe("Période")

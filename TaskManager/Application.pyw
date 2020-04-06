@@ -66,6 +66,14 @@ class Application(Frame):
         self.calendar = CalendarZone(self)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
     def nouveau(self):pass
+    def setModeEditionPeriode(self, enEdition):
+        self.calendar.setBarreOutilPeriode(enEdition)
+        if enEdition:
+            #self.taskEditor.filter(type = "Période")
+            pass
+        else:
+            #self.taskEditor.filter(type = "Tâche")
+            pass
     def getPeriodManager(self):
         return self.periodManager
     def getPanneauActif(self):

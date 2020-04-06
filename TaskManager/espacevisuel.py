@@ -21,46 +21,48 @@ class MenuOutil(Frame):
         self.lesCategories = [] # liste de cadre
         self.lesBoutonsEnListes = [] # liste qui va contenir toutes les autres liste de bouton (pour un affichage cool) lesBoutonsEnListes[catégorie][bouton]
         self.lesFramesDesBoutons = [] # tout est dans le nom ... lesFramesDesBoutons[categorie][frame]
+        self._ajouterCategoriesEtBoutons(master)
         
+    def _ajouterCategoriesEtBoutons(self, master):
         # CADRE AJOUTER
-        self.__creationCategorie("Ajouter") #cadre ajouter
+        self._creationCategorie("Ajouter") #cadre ajouter
         # création des boutons
-        self.__creationBouton("heure", master.ajouterHeure)
-        self.__creationBouton("jour", master.ajouterJour)
+        self._creationBouton("heure", master.ajouterHeure)
+        self._creationBouton("jour", master.ajouterJour)
         
         # CADRE RETIRER
-        self.__creationCategorie("Retirer") #cadre retirer
+        self._creationCategorie("Retirer") #cadre retirer
         # création des bouton
-        self.__creationBouton("heure", master.retirerHeure)
-        self.__creationBouton("jour", master.retirerJour)
+        self._creationBouton("heure", master.retirerHeure)
+        self._creationBouton("jour", master.retirerJour)
         
         # CADRE VUE
-        self.__creationCategorie("Vue") #cadre vue
+        self._creationCategorie("Vue") #cadre vue
         # création des boutons
-        self.__creationBouton("sélectionner un jour", master.selectionnerJour)
-        self.__creationBouton("Afficher/masquer", master.afficherMasquerJour)
+        self._creationBouton("sélectionner un jour", master.selectionnerJour)
+        self._creationBouton("Afficher/masquer", master.afficherMasquerJour)
         
         # CADRE DÉPLACER
-        self.__creationCategorie("Déplacer") #cadre Déplacer
+        self._creationCategorie("Déplacer") #cadre Déplacer
         # création des boutons
-        self.__creationBouton("Activité -> Jour", master.deplacerActiviteeVersJour)
-        self.__creationBouton("Intervertir", master.deplacerIntervertir)
+        self._creationBouton("Activité -> Jour", master.deplacerActiviteeVersJour)
+        self._creationBouton("Intervertir", master.deplacerIntervertir)
         
         # CADRE DÉCALER
-        self.__creationCategorie("Décaler") #cadre Décaler
+        self._creationCategorie("Décaler") #cadre Décaler
         # création des boutons
-        self.__creationBouton("toutes les activitées -> jour", master.decalerJour)
-        self.__creationBouton("toutes les activitées -> heure", master.decalerHeure)
+        self._creationBouton("toutes les activitées -> jour", master.decalerJour)
+        self._creationBouton("toutes les activitées -> heure", master.decalerHeure)
         
         # CADRE AVANCEMENT
-        self.__creationCategorie("Avancement") #cadre Avancement
+        self._creationCategorie("Avancement") #cadre Avancement
         # création des boutons
-        self.__creationBouton("Retard", master.avancementRetard)
-        self.__creationBouton("Jour fini", master.avancementJourFini)        
-        self.__creationBouton("Normal", master.avancementNormal)
+        self._creationBouton("Retard", master.avancementRetard)
+        self._creationBouton("Jour fini", master.avancementJourFini)        
+        self._creationBouton("Normal", master.avancementNormal)
 
     
-    def __creationCategorie(self, texte):
+    def _creationCategorie(self, texte):
         """
         Permet de créer une catégorie.
         @param texte : le nom de la catégorie.
@@ -74,7 +76,7 @@ class MenuOutil(Frame):
         # Liste qui va contenir les futurs frames
         self.lesFramesDesBoutons.append([]) 
 
-    def __creationBouton(self, texte, fonction = None):
+    def _creationBouton(self, texte, fonction = None):
         # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
         if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2: 
             self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))
@@ -86,14 +88,40 @@ class MenuOutil(Frame):
         self.lesBoutonsEnListes[-1].append(b)
 
 
+class MenuOutilPeriode(MenuOutil):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+    def _ajouterCategoriesEtBoutons(self, master):
+        # CADRE AJOUTER
+        self._creationCategorie("Créer") #cadre ajouter
+        # création des boutons
+        self._creationBouton("Période", None) # TODO : fonctions des commandes
+        self._creationBouton("Copier", None)
+        self._creationBouton("Tâche", None)
+        # CADRE SUPPRIMER
+        self._creationCategorie("Supprimer") #cadre SUPPRIMER
+        # création des boutons
+        self._creationBouton("Période", None) # TODO : fonctions des commandes
+        self._creationBouton("Couper", None)
+        # CADRE DEPLACER
+        self._creationCategorie("Déplacer") #cadre déplacer
+        # création des boutons
+        self._creationBouton("Période", None) # TODO : fonctions des commandes
+        self._creationBouton("Copier", None)
+        
+
 class CalendarZone(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers l'Application.
         
+        self.__isBarrePeriode = False
         # Barre du haut
         self.outilBar = MenuOutil(self) # frame avec tous les boutons outils
         self.outilBar.pack(side=TOP, fill=X, expand=NO)
+        
+        # Barre du haut pour les périodes
+        self.outilBarPeriode = MenuOutilPeriode(self) # frame avec tous les boutons outils
         
         # Zone calendrier
         self.zoneDynamicCalendarFrame = ZoneAffichage(self) # frame avec la zone d'affichage des paramètre et la zone avec les données
@@ -101,6 +129,19 @@ class CalendarZone(Frame):
 
     def getApplication(self):
         return self.master
+    def setBarreOutilPeriode(self, value):
+        self.__isBarrePeriode = value
+        if value:
+            self.outilBarPeriode.pack(side=TOP, fill=X, expand=NO)
+            self.outilBar.pack_forget()
+        else:
+            self.outilBarPeriode.pack_forget()
+            self.outilBar.pack(side=TOP, fill=X, expand=NO)
+    def getBarreOutilActive(self):
+        if self.__isBarrePeriode:
+            return self.outilBarPeriode
+        else:
+            return self.outilBar
 
     def ajouterHeure(self):
         pass

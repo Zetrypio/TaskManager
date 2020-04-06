@@ -105,6 +105,7 @@ class AffichageCalendrierPeriode(SuperCalendrier):
         """
         paramAffichage.setStateListe(DISABLED)
         paramAffichage.setModeListe("1 Mois")
+        self.getApplication().setModeEditionPeriode(True)
 
 
 if __name__=='__main__':
