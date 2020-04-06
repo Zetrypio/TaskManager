@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from dialog import *
 import datetime
+import gc
 from superclassCalendrier import *
 from RMenu import *
 from task import *
@@ -19,14 +20,22 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             if self.tacheF.task == tache:
                 raise NotImplementedError
         
-        print("apres")
+        print("Tache D = ", self.tacheD.task.nom)
         self.chemin = [] # Chemi que va suivre le lien pour la gestion de l'affichage
         
         
         self.canvas = canvas
         
         self.tacheD.task.dependences.append(self.tacheF.task) # On créer la dépendance dans la tache
-        
+    
+    def suppression(self):
+        self.tacheD.task.dependences.remove(self.tacheF.task) # On retire la dépendance dans la tache
+        self.tacheD.master.listeLien.remove(self)
+        print("je suis un lien mort")
+    
+    def __del__(self):
+        print("nan mais pour de vrai")
+
     def afficherLesLiens(self, couleur = "#000000"):
         print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
         
@@ -58,6 +67,7 @@ class TacheEnGantt(SuperTache):
     def __init__(self, master, task, **kwargs):
         super().__init__(master, task, **kwargs)
         # Note : self.master est une référence vers AffichageGantt
+        self.jeCherche = False
         
         self.bind("<Button-1>", self.__clique)       # On bind la frame
         self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
@@ -65,7 +75,6 @@ class TacheEnGantt(SuperTache):
         self.RMenu = RMenu(self, tearoff=0)
         self.RMenu.add_command(label="Ajouter un lien", command=self.__addDependance)
         
-        self.jeCherche = False
 
 
     def __addDependance(self): # Mise en mode recherche
@@ -78,22 +87,30 @@ class TacheEnGantt(SuperTache):
         
 
     def __clique(self, event):
+        print(self.master.mode)
+        def chercheLien(tacheD): # Fonction embarqué qui retourne le lien qui à tacheD = tache
+            for lien in self.master.listeLien:
+                print('lien.tacheD = ',lien.tacheD)
+                print('chercheur (tacheD)', tacheD)
+                if lien.tacheD == tacheD:
+                    return lien
+                    
+    
         if (chercheur := self.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
             return
+        print('id chercheur = ', id(chercheur))
         
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
-            self.master.mode = ""    # On réinitialise le mode
+            self.master.mode = ""    # On réinitialise le mode        
             
             if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
                 try : # on essaye de voir si c'est pas déjà existant
                     self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
-                except:
-                    return
+                except:pass
             elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
                 try :
                     self.master.listeLien.append(LienDependance(self, chercheur, self.master.mainCanvas))
-                except :
-                    return
+                except :pass
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
                 return
@@ -103,13 +120,32 @@ class TacheEnGantt(SuperTache):
             if self.RMenu.index('end') == 0: # Si c'est son premier lien
                 self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
             if chercheur.RMenu.index('end') ==0:
-                chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
+                chercheur.RMenu.add_command(label = "Retirer un lien", command=chercheur.__destDependance)
+            
+            chercheur.jeCherche = False
+            self.jeCherche      = False
     
-    
+
+        elif self.master.mode == "delDep":
+            print("obj = ",chercheur)
+            print('chercheur fct =',chercheLien(chercheur))
+            print('self     ',chercheLien(self))
+            print(self.master.listeLien)
+            self.master.mode = ""    # On réinitialise le mode
+            if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
+                chercheLien(chercheur).suppression()
+            elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
+                chercheLien(self).suppression()
+            elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
+                self.jeCherche = False
+                return
         
+            print(self.master.listeLien)
+            gc.collect() # Pour supprimer le lien de la mémoire
+
         self.master.updateAffichage()
         chercheur.jeCherche = False
-        self.master.mode = ""    # On réinitialise le mode
+
 
 
 class AffichageGantt(SuperCalendrier):
