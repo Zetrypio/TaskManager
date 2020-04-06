@@ -212,9 +212,9 @@ class AffichageGantt(SuperCalendrier):
             return
         
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
-        self.mainCanvas.create_window(self.tailleColonne*(t.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
+        self.mainCanvas.create_window(int(self.tailleColonne*(t.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                       self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.__listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                      , width=(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
+                                      , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
                                       tags="num%s"%len(self.__listeTache)
                                       )
         
@@ -236,15 +236,15 @@ class AffichageGantt(SuperCalendrier):
             
             self.mainCanvas.create_text(x+(self.mainCanvas.winfo_width()//self.getNbJour())//2, 2, text=JOUR[(jour+self.getJourDebut())%7], anchor=N)
             
-        self.tailleColonne = int(self.mainCanvas.winfo_width()/self.getNbJour())
+        self.tailleColonne = (self.mainCanvas.winfo_width()/self.getNbJour())
 
     def __afficherLesTaches(self):
         for tache in self.__listeTache:
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 
-                self.mainCanvas.create_window(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
+                self.mainCanvas.create_window(int(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                               self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                              , width=(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.__listeTache.index(tache))
+                                              , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.__listeTache.index(tache))
 
     def __afficherLesDependances(self):
         for lien in self.listeLien:
