@@ -120,7 +120,7 @@ class TacheEnGantt(SuperTache):
             if self.RMenu.index('end') == 0: # Si c'est son premier lien
                 self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
             if chercheur.RMenu.index('end') ==0:
-                chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
+                chercheur.RMenu.add_command(label = "Retirer un lien", command=chercheur.__destDependance)
             
             chercheur.jeCherche = False
             self.jeCherche      = False
