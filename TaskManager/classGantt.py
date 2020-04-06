@@ -4,7 +4,6 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from dialog import *
 import datetime
-import gc
 from superclassCalendrier import *
 from RMenu import *
 from task import *
@@ -14,13 +13,10 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         
         self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
         self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
-        print("avant")
         
         for tache in self.tacheD.task.dependences: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
             if self.tacheF.task == tache:
                 raise NotImplementedError
-        
-        print("Tache D = ", self.tacheD.task.nom)
         self.chemin = [] # Chemi que va suivre le lien pour la gestion de l'affichage
         
         
@@ -31,10 +27,6 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def suppression(self):
         self.tacheD.task.dependences.remove(self.tacheF.task) # On retire la dépendance dans la tache
         self.tacheD.master.listeLien.remove(self)
-        print("je suis un lien mort")
-    
-    def __del__(self):
-        print("nan mais pour de vrai")
 
     def afficherLesLiens(self, couleur = "#000000"):
         print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
@@ -87,18 +79,16 @@ class TacheEnGantt(SuperTache):
         
 
     def __clique(self, event):
-        print(self.master.mode)
-        def chercheLien(tacheD): # Fonction embarqué qui retourne le lien qui à tacheD = tache
+        def chercheLien(tacheA, tacheB): # Fonction embarqué qui retourne le lien qui à tacheD = tache
             for lien in self.master.listeLien:
-                print('lien.tacheD = ',lien.tacheD)
-                print('chercheur (tacheD)', tacheD)
-                if lien.tacheD == tacheD:
+                if lien.tacheD == tacheA and lien.tacheF == tacheB:
                     return lien
-                    
+                elif lien.tacheD == tacheB and lien.tacheF == tacheA:
+                    return lien
     
         if (chercheur := self.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
             return
-        print('id chercheur = ', id(chercheur))
+        chercheur.jeCherche = False
         
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode        
@@ -117,34 +107,50 @@ class TacheEnGantt(SuperTache):
             else:                                        # Si on est 2 taches commençant au même moment
                 showerror("Tache incorrecte", "Vous ne pouvez pas choisir 2 taches commençant au même moment.")
             
-            if self.RMenu.index('end') == 0: # Si c'est son premier lien
+            try :
+                self.RMenu.index("Retirer un lien")
+            except :
                 self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
-            if chercheur.RMenu.index('end') ==0:
+            
+            try :
+                chercheur.RMenu.index("Retirer un lien")
+            except :               
                 chercheur.RMenu.add_command(label = "Retirer un lien", command=chercheur.__destDependance)
             
-            chercheur.jeCherche = False
-            self.jeCherche      = False
+            chercheur.jeCherche = False 
     
 
         elif self.master.mode == "delDep":
-            print("obj = ",chercheur)
-            print('chercheur fct =',chercheLien(chercheur))
-            print('self     ',chercheLien(self))
-            print(self.master.listeLien)
+            print('del mode')
+            print(chercheur)
+            if (lienaime := chercheLien(chercheur, self)) == None: # Objet Lien qui lie les 2 taches
+                return            
             self.master.mode = ""    # On réinitialise le mode
-            if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
-                chercheLien(chercheur).suppression()
-            elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
-                chercheLien(self).suppression()
+            if   chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
+                lienaime.suppression()
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
                 return
+            chercheur.jeCherche = False 
+            
+            
+            # On supprime le choix seulement si il n'y en a pas d'autre lien avec eux
+            # TODO : A Refactor
+            trouve = False
+            for lien in self.master.listeLien:
+                if lien.tacheD == self or lien.tacheF == self:
+                    trouve = True
+            if trouve == False:
+                self.RMenu.delete("Retirer un lien")
+            trouve = False
+            for lien in self.master.listeLien:
+                if lien.tacheD == chercheur or lien.tacheF == chercheur:
+                    trouve = True
+            if trouve == False:
+                chercheur.RMenu.delete("Retirer un lien")
         
-            print(self.master.listeLien)
-            gc.collect() # Pour supprimer le lien de la mémoire
-
+        chercheur.jeCherche = False 
         self.master.updateAffichage()
-        chercheur.jeCherche = False
 
 
 
