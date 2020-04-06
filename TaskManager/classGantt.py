@@ -11,22 +11,47 @@ from task import *
 class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def __init__(self, tacheDebut, tacheFin, canvas):
         
-        self.chemin = [] # Chemi que va suivre le lien pour la gestion de l'affichage
-        
         self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
         self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
+        print("avant")
+        
+        for tache in self.tacheD.task.dependences: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
+            if self.tacheF.task == tache:
+                raise NotImplementedError
+        
+        print("apres")
+        self.chemin = [] # Chemi que va suivre le lien pour la gestion de l'affichage
+        
         
         self.canvas = canvas
         
         self.tacheD.task.dependences.append(self.tacheF.task) # On créer la dépendance dans la tache
         
-    #def afficherLesLiens(self, couleur = None):
-        #print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
-        #print("coords", self.canvas.coords("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
+    def afficherLesLiens(self, couleur = "#000000"):
+        print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
         
-        #print(self.canvas.bbox(self.canvas.find_all()[5]))
+        # Position de la tache et arrtibut généraux
+        # Posistion TacheD
+        x1D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[0]
+        y1D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[1]
+        x2D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[2]
+        y2D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[3]
+        widthD  = x2D-x1D
+        heightD = y2D-y1D
         
-        #self.canvas.create_line(1, 1, 100, 100, fill = couleur)        
+        x1F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[0]
+        y1F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[1]
+        x2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[2]
+        y2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[3]
+        widthF  = x2F-x1F
+        heightF = y2F-y1F        
+        # Paramètre généraux
+        tailleLigne   = self.tacheD.master.TAILLE_LIGNE
+        tailleColonne = self.tacheD.master.tailleColonne
+        facteur       = self.tacheD.master.facteur
+
+        
+        self.canvas.create_line(x2D, y1D+heightD/2, x1F, y1F+heightF/2, fill = couleur, arrow=LAST, width=2)        
     
 
 class TacheEnGantt(SuperTache):
@@ -60,9 +85,15 @@ class TacheEnGantt(SuperTache):
             self.master.mode = ""    # On réinitialise le mode
             
             if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
-                self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
+                try : # on essaye de voir si c'est pas déjà existant
+                    self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
+                except:
+                    return
             elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
-                self.master.listeLien.append(LienDependance(self, chercheur, self.master.mainCanvas))
+                try :
+                    self.master.listeLien.append(LienDependance(self, chercheur, self.master.mainCanvas))
+                except :
+                    return
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
                 return
@@ -73,6 +104,7 @@ class TacheEnGantt(SuperTache):
                 self.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance) # On bind la nouvelle possibilité
             if chercheur.RMenu.index('end') ==0:
                 chercheur.RMenu.add_command(label = "Retirer un lien", command=self.__destDependance)
+    
     
         
         self.master.updateAffichage()
@@ -92,6 +124,8 @@ class AffichageGantt(SuperCalendrier):
         self.tailleColonne = 0
         
         self.tailleBandeauJour = 20
+        
+        self.facteur = 0.8 # Facteur de taille que prend une tache
         
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
@@ -138,8 +172,11 @@ class AffichageGantt(SuperCalendrier):
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
         self.mainCanvas.create_window(self.tailleColonne*(t.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
                                       self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.__listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                      , width=(self.tailleColonne-1)*0.8, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
-                                      tags="num%s"%len(self.__listeTache))
+                                      , width=(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
+                                      tags="num%s"%len(self.__listeTache)
+                                      )
+        
+        
         
         self.__listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
         return tache
@@ -165,11 +202,11 @@ class AffichageGantt(SuperCalendrier):
                 
                 self.mainCanvas.create_window(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2, # X en fonction du jour de la tache
                                               self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                              , width=(self.tailleColonne-1)*0.8, height=self.TAILLE_LIGNE ,anchor=NW, window = tache)
+                                              , width=(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.__listeTache.index(tache))
 
-    def __afficherLesDependances(self):pass
-        #for lien in self.listeLien:
-            #lien.afficherLesLiens()
+    def __afficherLesDependances(self):
+        for lien in self.listeLien:
+            lien.afficherLesLiens()
             
  
 if __name__=='__main__':
