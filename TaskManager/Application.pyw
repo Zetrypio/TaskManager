@@ -23,6 +23,7 @@ style.map("Treeview",
           background=fixed_map("background"))
 
 class MenuBar(Menu):
+    """Classe de la barre de menu"""
     def __init__(self, root, master):
         Menu.__init__(self, master)
         root.configure(menu = self)
