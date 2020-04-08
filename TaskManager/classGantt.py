@@ -30,7 +30,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
     def afficherLesLiens(self, couleur = "#000000"):
         print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
-        
+        if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
+            couleur = "#0B98DE"
         # Position de la tache et arrtibut généraux
         # Posistion TacheD
         x1D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[0]
@@ -45,7 +46,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         x2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[2]
         y2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[3]
         widthF  = x2F-x1F
-        heightF = y2F-y1F        
+        heightF = y2F-y1F 
+
         # Paramètre généraux
         tailleLigne   = self.tacheD.master.TAILLE_LIGNE
         tailleColonne = self.tacheD.master.tailleColonne
@@ -71,11 +73,13 @@ class TacheEnGantt(SuperTache):
 
     def __addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
-        self.jeCherche = True 
+        self.jeCherche = True
+        self.master.updateAffichage()
     
     def __destDependance(self):
         self.master.mode = "delDep"
         self.jeCherche = True
+        self.master.updateAffichage()
         
 
     def __clique(self, event):
@@ -121,8 +125,6 @@ class TacheEnGantt(SuperTache):
     
 
         elif self.master.mode == "delDep":
-            print('del mode')
-            print(chercheur)
             if (lienaime := chercheLien(chercheur, self)) == None: # Objet Lien qui lie les 2 taches
                 return            
             self.master.mode = ""    # On réinitialise le mode
