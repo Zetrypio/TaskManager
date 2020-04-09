@@ -73,6 +73,7 @@ class Application(Frame):
 
 
 def main():
+    """Fonction main, principale du programme."""
     app = Application()
     app.pack(expand = YES, fill = BOTH)
     
