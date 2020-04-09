@@ -1,46 +1,68 @@
 # -*- coding:utf-8 -*-
 from task import *
 from dialog import *
+from RMenu import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 
 
 class TaskEditor(Frame):
+    """
+    Zone à gauche de la fenêtre, dans laquelle sont listée les tâches.
+    Contient aussi le widget qui permet d'en rajouter (TaskAdder).
+    """
     def __init__(self, master, menubar):
+        """
+        @param master : Référence vers le widget sur lequel on veut le placer.
+        @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
+        """
         Frame.__init__(self, master, bg="red")
         # Note : master est une référence vers Application
+        
+        # Attributs normaux :
         self.menu = menubar
+        self.mousepress = False
+        self.MODE_TRI = "None"
 
         self.taches = [] # Pourra aussi contenir des Périodes.
+        self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
 
-        self.mousepress = False
-
+        # Zone pour l'ajouteur des tâches.
         self.frameInput = TaskAdder(self, menubar)
         self.frameInput.pack(side = TOP, fill = X)
 
+        # Pour pouvoir filtrer l'affichage :
         self.FILTRE = {}
+        
+        # Zone des recherche :
         self.frameRecherche = Frame(self)
         self.frameRecherche.pack(side = BOTTOM, fill = X)
         Label(self.frameRecherche, text = "Rechercher :").pack(side = LEFT)
         self.barreRecherche = Combobox(self.frameRecherche)
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
+        
+        # Ajout du binding
         # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
         self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
         self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
 
+        # Zone avec la liste des tâches :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
+        # Scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
         self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
         self.tree.configure(yscrollcommand = self.scrollbar.set)
         
-        self.MODE_TRI = "None"
-
+        # Mise à jour graphique :
         self.redessiner()
 
     def filter(self, **filtre):
+        """
+        Méthode pour rajouter un filtre.
+        """
         for k in filtre:
             if filtre[k]:
                 self.FILTRE[k] = filtre[k]
@@ -55,11 +77,16 @@ class TaskEditor(Frame):
         if tache.statut != "Inconnu":
             self.master.getDonneeCalendrier().addTask(tache)
     def redessiner(self):
+        # On efface tout :
         self.tree.destroy()
         self.scrollbar.destroy()
+        self.__rmenu = []
+        
+        # On recrée tout :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
-
+        
+        # avec la scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
         self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
         self.tree.configure(yscrollcommand = self.scrollbar.set)
@@ -69,45 +96,100 @@ class TaskEditor(Frame):
         self.tree.column(0,    width = 0)
         self.tree.heading("#0", text="Tâche", command = self.tri_alphabetique)
         self.tree.heading(0,    text="Statut", command = self.tri_statut)
-
-        self.NEW_ID = 0
+        
+        # Position d'insertion (utilisé pour les filtres prioritaires)
         insertPos = 0
-        for t in self.taches:
-            if ("type" not in self.FILTRE or self.FILTRE["type"]=="Tâche") \
-            and("name" not in self.FILTRE or t.nom.lower().count(self.FILTRE["name"].lower())>0):
+
+        # On ajoute les tâches :
+        for indice, t in enumerate(self.taches):
+            # Définition de la position prioritaire ou non :
+            if self.__filterStateOf(t) == 1:
+                pos = insertPos
+                insertPos += 1
+            else:
                 pos = END
-                if "name" not in self.FILTRE or t.nom.lower().startswith(self.FILTRE["name"].lower()):
-                    pos = insertPos
-                    insertPos += 1
-                t.id = self.NEW_ID
-                self.tree.insert("", pos, text = t.nom, values = [t.statut], iid = "p%s"%self.NEW_ID, tags = "Couleur%s"%t.color) # p comme parent
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Début :", values = [t.debut], iid = "p%se1"%self.NEW_ID, tags = "Couleur%s"%t.color) # e comme enfant.
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Durée :", values = [t.duree], iid = "p%se2"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Fin :", values = [(t.debut + t.duree) if t.debut is not None else None], iid = "p%se3"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Description :", values = [t.desc], iid = "p%se4"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Nombre rep :", values = [t.nbrep], iid = "p%se5"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "temps entre rep :", values = [t.rep], iid = "p%se6"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.tree.insert("p%s"%self.NEW_ID, END, text = "Dépendences", values = [t.dependences], iid = "p%se7"%self.NEW_ID, tags = "Couleur%s"%t.color)
-                self.NEW_ID += 1
-                self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
+            # Ajout de la tâche :
+            self.__ajouterTache(t, indice, "", pos)
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
+
+    def __ajouterTache(self, t, idNum, parent, pos):
+        """
+        Ajouter une tâche dans l'arbre.
+        @param t: la tâche à rajouter
+        @param parent: ID de la branche parente
+        """
+        # Si la tâche n'est pas filtrée
+        if self.__filterStateOf(t) >= 0:
+            # On défini l'ID du nouveai parent :
+            parentNew = parent+"p%s"%idNum
+            t.id = parentNew
+            # On insère la ligne d'entête :
+            self.tree.insert(parent, pos, text = t.nom, values = [t.statut], iid = parentNew, tags = ["Couleur%s"%t.color, parentNew]) # p comme parent
+
+            # Si c'est pas une tâche qui en contient une autre :
+            if not t.isContainer():
+                self.tree.insert(parentNew, END, text = "Début :",           values = [t.debut],       iid = parentNew+"e1", tags = "Couleur%s"%t.color) # e comme enfant.
+                self.tree.insert(parentNew, END, text = "Durée :",           values = [t.duree],       iid = parentNew+"e2", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Fin :",             values = [(t.debut + t.duree) if t.debut is not None else None],
+                                                                                                       iid = parentNew+"e3", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Nombre rep :",      values = [t.nbrep],       iid = parentNew+"e4", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "temps entre rep :", values = [t.rep],         iid = parentNew+"e5", tags = "Couleur%s"%t.color)
+            
+            # Seulement si ce n'est pas déjà dans le parent :
+            if not parent:
+                self.tree.insert(parentNew, END, text = "Dépendences :",     values = [t.dependences], iid = parentNew+"e6", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Description :",     values = [t.desc],        iid = parentNew+"e7", tags = "Couleur%s"%t.color)
+                if not t.isContainer():
+                    rmenu = RMenu(self, False, self.tree, parentNew)
+                    rmenu.add_command(label = "Transformer dans une tâche déplaçable", command = lambda: self.__transformTaskToDndableTask(t, rmenu))
+                    self.__rmenu.append(rmenu)
+
+            # Et Si c'est une case conteneurs (c'est-à-dire une tâche qui en contient une autre) :
+            if t.isContainer():
+                # On rajoute la branche nécéssaire :
+                self.tree.insert(parentNew, END, text = "Instances :",       values = [len(t.getSubTasks())], iid = parentNew+"e8", tags = "Couleur%s"%t.color)
+                # Et les sous-tâches :
+                for indice, tache in enumerate(t.getSubTasks()):
+                    self.__ajouterTache(tache, indice, parentNew+"e8", END)
+            # On fait la couleur :
+            self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
+    
+    def __transformTaskToDndableTask(self, task, rmenu):
+        rmenu.destroy()
+        del rmenu
+        self.taches.remove(task)
+        newTask = task.copy()
+        newTask.debut = None
+        newTask.updateStatut()
+        newTask.addSubTask(task)
+        self.ajouter(newTask)
+    
+    def __filterStateOf(self, t):
+        """
+        @return  1 Si la tâche est acceptée par le filtre et qu'elle doit être prioritaire.
+        @return  0 Si la tâche est acceptée par le filtre sans être prioritaire.
+        @return -1 Si la tâche n'est pas accetpée par le filtre.
+        """
+        # Filtre prioritaire ?
+        if "name" not in self.FILTRE or t.nom.lower().startswith(self.FILTRE["name"].lower()):
+            return 1
+        # Filtre normal ?
+        elif ("type" not in self.FILTRE or self.FILTRE["type"]=="Tâche") \
+         and ("name" not in self.FILTRE or t.nom.lower().count(self.FILTRE["name"].lower())>0):
+            return 0
+        # Sinon : non filtré.
+        return -1
+
     def __mouseReleased(self, event):
         self.mousepress = False
     def __mousePressedBefore(self, event):
         self.mousepress = True
-        for i in range(self.NEW_ID):
-            self.tree.selection_remove("p%s"%i)
-            self.tree.selection_remove("p%se1"%i)
-            self.tree.selection_remove("p%se2"%i)
-            self.tree.selection_remove("p%se3"%i)
-            self.tree.selection_remove("p%se4"%i)
-            self.tree.selection_remove("p%se5"%i)
-            self.tree.selection_remove("p%se6"%i)
-            self.tree.selection_remove("p%se7"%i)
+        for elem in self.tree.selection():
+            self.tree.selection_remove(elem)
         self.after(10, self.__mousePressed, event)
     def __mousePressed(self, event):
         pass
@@ -120,7 +202,8 @@ class TaskEditor(Frame):
                 print(self.tree.item(i))
                 for t in self.taches:
                     if t.statut == "Inconnu":
-                        if i == "p%s"%t.id:
+                        print(i)
+                        if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
     def __trouverPositionTache(self, tache, x, y):
         """
@@ -139,12 +222,13 @@ class TaskEditor(Frame):
             print("region après :", region)
             region = self.__askHeureExacte(region)
             if region is not None:
-                tache = panneau.addTask(tache, region = region)
+                sousTache = panneau.addTask(tache, region = region)
                 for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
                     if p != panneau:
-                        p.addTask(tache, region)
-                tache.updateStatut()
-                self.ajouter(tache)
+                        p.addTask(sousTache, region)
+                sousTache.updateStatut()
+                tache.addSubTask(sousTache)
+                self.redessiner()
     
     def __askHeureExacte(self, region):
         heure1 = region.hour

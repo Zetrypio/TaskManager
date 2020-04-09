@@ -28,6 +28,28 @@ class Task:
         self.color = color
         self.dependences = []
         self.updateStatut()
+        if self.isContainer():
+            self.subtasks = []
+    def isContainer(self):
+        self.updateStatut()
+        if self.statut == "Inconnu" and not hasattr(self, "subtasks"):
+            self.subtasks = []
+        return self.statut == "Inconnu"
+    def addSubTask(self, task):
+        """Il est impératif de gérer la suppresion de la tâche dans TaskEditor depuis l'extérieur."""
+        if not self.isContainer():
+            raise ValueError("Impossible de rajouter une tâche dans une tâche non conteneur.")
+        if task.isContainer():
+            raise ValueError("Impossible de rajouter une tâche conteneur dans une autre tâche conteneur")
+        self.subtasks.append(task)
+    def getSubTasks(self):
+        if not self.isContainer():
+            raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
+        return self.subtasks
+    def addDependance(self, task):
+        self.dependences.append(task)
+    def removeDependance(self, task):
+        self.dependences.remove(task)
     def copy(self):
         t = Task(self.nom, self.debut, self.duree, self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
