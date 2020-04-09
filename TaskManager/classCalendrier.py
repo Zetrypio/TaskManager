@@ -124,7 +124,7 @@ class AffichageCalendrier(SuperCalendrier):
             tache.grid_forget()
 
         for tache in self.__listeTache:
-            if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
+            if tache.task.debut.weekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
