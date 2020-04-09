@@ -29,6 +29,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.master.listeLien.remove(self)
 
     def afficherLesLiens(self, couleur = "#000000"):
+        if (self.tacheF.task.debut+self.tacheF.task.duree).isoweekday() <= self.tacheD.master.getJourDebut()+1 or (self.tacheD.task.debut).isoweekday() > self.tacheD.master.getNbJour()+self.tacheD.master.getJourDebut()+1:
+            return
         def mymap(n, a, b, x, y): # Fonction map classique
             return (n-a)/(b-a)*(y-x)+x
 
@@ -40,17 +42,37 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
             couleur = "#0B98DE"
 
-        x1D, y1D, x2D, y2D = self.tacheD.getPosPixel()
-        heightD = y2D-y1D
-        
-        x1F, y1F, x2F, y2F = self.tacheF.getPosPixel()
-        heightF = y2F-y1F 
-
-
         # Paramètre généraux
         tailleLigne   = self.tacheD.master.TAILLE_LIGNE
         tailleColonne = self.tacheD.master.tailleColonne
         facteurW      = self.tacheD.master.facteurW
+
+        temp = self.tacheD.getPosPixel()
+        if temp != None:
+            x1D, y1D, x2D, y2D = temp
+        else:
+            print(self.tacheD.getPosGrille())
+            x1D = x2D = 0
+            y1D = self.tacheD.getPosGrille()[2]*tailleLigne
+            y2D = y1D+tailleLigne-4
+
+        heightD = y2D-y1D
+        
+
+        temp = self.tacheF.getPosPixel()
+        if temp != None:
+            x1F, y1F, x2F, y2F = temp
+        else:
+            x1F = self.canvas.winfo_width()
+            # y1F et 2 avec chemin
+            for val in self.chemin:
+                if val != -1:
+                    y1F = val*tailleLigne
+                    y2F = y1F+tailleLigne-4
+
+        heightF = y2F-y1F 
+
+
 
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
@@ -71,7 +93,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                     mesPoints.append([x, y])
 
             dessineLiaison(x2D, y1D+heightD/2, x2D+tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20))
-            dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
+            if self.tacheD.master.getNbJour()-1 > (self.tacheF.task.debut+self.tacheD.task.duree-self.tacheF.task.debut).days:
+                dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
             mesPoints.append([x1F, y1F+heightF/2])
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
