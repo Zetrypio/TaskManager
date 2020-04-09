@@ -10,14 +10,13 @@ from task import *
 
 class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def __init__(self, tacheDebut, tacheFin, canvas):
-        
         self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
         self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
         
         for tache in self.tacheD.task.dependences: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
             if self.tacheF.task == tache:
                 raise NotImplementedError
-        self.chemin = [] # Chemi que va suivre le lien pour la gestion de l'affichage
+        self.chemin = [] # Chemin que va suivre le lien pour la gestion de l'affichage
         
         
         self.canvas = canvas
@@ -48,13 +47,15 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         widthF  = x2F-x1F
         heightF = y2F-y1F 
 
+
         # Paramètre généraux
         tailleLigne   = self.tacheD.master.TAILLE_LIGNE
         tailleColonne = self.tacheD.master.tailleColonne
         facteur       = self.tacheD.master.facteur
 
-        
-        self.canvas.create_line(x2D, y1D+heightD/2, x1F, y1F+heightF/2, fill = couleur, arrow=LAST, width=2)        
+        self.canvas.create_line(x2D, y1D+heightD/2, x1F, y1F+heightF/2, fill = couleur, arrow=LAST, width=2)
+
+
     
 
 class TacheEnGantt(SuperTache):
@@ -68,14 +69,19 @@ class TacheEnGantt(SuperTache):
         # RMenu
         self.RMenu = RMenu(self, tearoff=0)
         self.RMenu.add_command(label="Ajouter un lien", command=self.__addDependance)
-        
+
+
+    def getPos(self):
+        return self.master.mainCanvas.bbox("num%s"%self.master.getIndiceTacheEnGantt(self))
 
 
     def __addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
         self.jeCherche = True
+        self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances)
         self.master.updateAffichage()
-    
+
+
     def __destDependance(self):
         self.master.mode = "delDep"
         self.jeCherche = True
@@ -96,7 +102,7 @@ class TacheEnGantt(SuperTache):
         
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode        
-            
+            self.master.mainCanvas.unbind("<Motion>")
             if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
                 try : # on essaye de voir si c'est pas déjà existant
                     self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
@@ -154,6 +160,14 @@ class TacheEnGantt(SuperTache):
         chercheur.jeCherche = False 
         self.master.updateAffichage()
 
+    def afficherLesSemiDependances(self, event):
+        x1, y1, x2, y2 = self.getPos()
+        self.master.mainCanvas.coords(self.maLigneDepEnCours, x2, (y1+y2)/2, event.x, event.y)
+
+    def creerLigne(self):
+        " Fonction qui créer une ligne seulement si on est en tran de créer une ligne que l'on peut ensuite bouger à notre curseur "
+        if self.jeCherche == True:
+            self.maLigneDepEnCours = self.master.mainCanvas.create_line(-10,-10,-10,-10, fill="lime", width=2)
 
 
 class AffichageGantt(SuperCalendrier):
@@ -174,6 +188,8 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
+
+
         
         self.mode = ""        
 
@@ -203,11 +219,12 @@ class AffichageGantt(SuperCalendrier):
 
     def updateAffichage(self):
         if self.mainCanvas.winfo_width() != 0:
-            self.__afficherLesJours()
-            
-        self.__afficherLesTaches()
-        self.__afficherLesDependances()
+            self.mainCanvas.delete(ALL)
 
+
+            self.__afficherLesJours()
+            self.__afficherLesTaches()
+            self.__afficherLesDependances()
 
     def addTask(self, tache, region = None):
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
@@ -225,9 +242,7 @@ class AffichageGantt(SuperCalendrier):
         self.__listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
         return tache
 
-    def __afficherLesJours(self):
-        self.mainCanvas.delete(ALL)
-        
+    def __afficherLesJours(self):    
         for jour in range(self.getNbJour()): # Traçage des lignes de division et des noms de jour
             x = int(jour*self.mainCanvas.winfo_width()/self.getNbJour())
             
@@ -243,7 +258,7 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesTaches(self):
         for tache in self.__listeTache:
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
-                
+                tache.creerLigne()
                 self.mainCanvas.create_window(int(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                               self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
                                               , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.__listeTache.index(tache))
@@ -251,6 +266,9 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesDependances(self):
         for lien in self.listeLien:
             lien.afficherLesLiens()
+
+
+
             
  
 if __name__=='__main__':
