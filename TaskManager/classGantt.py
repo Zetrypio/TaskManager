@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from dialog import *
 import datetime
+import math
 from superclassCalendrier import *
 from RMenu import *
 from task import *
@@ -28,7 +29,14 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.master.listeLien.remove(self)
 
     def afficherLesLiens(self, couleur = "#000000"):
-        print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
+        def mymap(n, a, b, x, y): # Fonction map classique
+            return (n-a)/(b-a)*(y-x)+x
+
+        def posY(t, x1, y1, x2, y2):
+            return mymap(math.cos(mymap(t, x1, x2, 0, math.pi)), 1, -1, y1, y2)
+
+
+
 
         self.pathCalculing() # On calcul le nouveau chemin
 
@@ -36,17 +44,11 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             couleur = "#0B98DE"
         # Position de la tache et arrtibut généraux
         # Posistion TacheD
-        x1D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[0]
-        y1D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[1]
-        x2D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[2]
-        y2D = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD))[3]
+        x1D, y1D, x2D, y2D = self.tacheD.getPosPixel()
         widthD  = x2D-x1D
         heightD = y2D-y1D
         
-        x1F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[0]
-        y1F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[1]
-        x2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[2]
-        y2F = self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheF))[3]
+        x1F, y1F, x2F, y2F = self.tacheF.getPosPixel()
         widthF  = x2F-x1F
         heightF = y2F-y1F 
 
@@ -54,9 +56,22 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         # Paramètre généraux
         tailleLigne   = self.tacheD.master.TAILLE_LIGNE
         tailleColonne = self.tacheD.master.tailleColonne
-        facteur       = self.tacheD.master.facteur
+        facteurW       = self.tacheD.master.facteurW
 
-        self.canvas.create_line(x2D, y1D+heightD/2, x1F, y1F+heightF/2, fill = couleur, arrow=LAST, width=2)
+        mesPoints = []
+        def dessineLiaison(x1, y1, x2, y2):
+              for x in range(int(x1), int(x2)+1):
+                y = posY(x, x1, y1, x2, y2)
+                mesPoints.append([x, y])
+
+        dessineLiaison(x2D, y1D+heightD/2, x2D+tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20))
+        dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
+        mesPoints.append([x1F, y1F+heightF/2])
+        self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
+
+
+
+
 
     def pathCalculing(self):
         " Fonction qui permet de calculer le chemin que va prendre le lien pour lier les 2 taches "
@@ -70,10 +85,10 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         for jour in range(self.canvas.master.getLongueurPeriode()): # et on recalcule
             if posXD == jour and posXF == jour: # Si la tacheD est le même jour que TacheF
                 self.chemin.append(1+posYD)
-            elif posXD == jour:
-                self.chemin.append(posYD+croissance)
+#            elif posXD == jour:
+#                self.chemin.append(posYD+croissance)
             elif posXD < jour and posXF > jour:
-                self.chemin.append(self.chemin[-1])
+                self.chemin.append(posYD+croissance)
             else:
                 self.chemin.append(-1)
         print(self.chemin)
@@ -208,12 +223,13 @@ class AffichageGantt(SuperCalendrier):
         self.listeTache = []
         self.listeLien    = []
         
-        self.TAILLE_LIGNE = 50
+        self.espacement = 4 # Entre 2 tache pour laisser passer les liens
+        self.TAILLE_LIGNE = 50+self.espacement
         self.tailleColonne = 0
         
         self.tailleBandeauJour = 20
         
-        self.facteur = 0.8 # Facteur de taille que prend une tache
+        self.facteurW = 0.8 # facteur de taille que prend une tache
         
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
@@ -263,7 +279,7 @@ class AffichageGantt(SuperCalendrier):
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
         self.mainCanvas.create_window(int(self.tailleColonne*(t.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                       self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                      , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
+                                      , width=int(self.tailleColonne-1)*self.facteurW, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
                                       tags="num%s"%len(self.listeTache)
                                       )
         
@@ -290,8 +306,9 @@ class AffichageGantt(SuperCalendrier):
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 tache.creerLigne()
                 self.mainCanvas.create_window(int(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
-                                              self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                              , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.listeTache.index(tache))
+                                              (self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.listeTache.index(tache))) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
+                                              , width=int(self.tailleColonne-1)*self.facteurW, height=self.TAILLE_LIGNE-self.espacement ,anchor=NW, window = tache, tags="num%s"%self.listeTache.index(tache)) # Le 0.975 et 1.025 c'est un espacement pour laisser les liens entre les lignes
+
 
     def __afficherLesDependances(self):
         for lien in self.listeLien:
