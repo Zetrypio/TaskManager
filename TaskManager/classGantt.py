@@ -29,6 +29,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
     def afficherLesLiens(self, couleur = "#000000"):
         print("bbox", self.canvas.bbox("num%s"%self.canvas.master.getIndiceTacheEnGantt(self.tacheD)))
+
+        self.pathCalculing() # On calcul le nouveau chemin
+
         if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
             couleur = "#0B98DE"
         # Position de la tache et arrtibut généraux
@@ -55,6 +58,25 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         self.canvas.create_line(x2D, y1D+heightD/2, x1F, y1F+heightF/2, fill = couleur, arrow=LAST, width=2)
 
+    def pathCalculing(self):
+        " Fonction qui permet de calculer le chemin que va prendre le lien pour lier les 2 taches "
+        self.chemin = [] # On réinitialise le parcours
+
+        _, posXD, posYD = self.tacheD.getPosGrille()
+        _, posXF, posYF = self.tacheF.getPosGrille()
+
+        croissance = posYF-posYD # savoir si on descend ou si on monte (c'est à l'envers les axes
+
+        for jour in range(self.canvas.master.getLongueurPeriode()): # et on recalcule
+            if posXD == jour and posXF == jour: # Si la tacheD est le même jour que TacheF
+                self.chemin.append(1+posYD)
+            elif posXD == jour:
+                self.chemin.append(posYD+croissance)
+            elif posXD < jour and posXF > jour:
+                self.chemin.append(self.chemin[-1])
+            else:
+                self.chemin.append(-1)
+        print(self.chemin)
 
     
 
@@ -71,8 +93,14 @@ class TacheEnGantt(SuperTache):
         self.RMenu.add_command(label="Ajouter un lien", command=self.__addDependance)
 
 
-    def getPos(self):
+    def getPosPixel(self):
         return self.master.mainCanvas.bbox("num%s"%self.master.getIndiceTacheEnGantt(self))
+    def getPosGrille(self):
+        x1 = self.task.debut.isoweekday()-1
+        x2 = (self.task.duree + self.task.debut).isoweekday()-1
+        y = self.master.getNbTacheJour(self.task.debut.isoweekday(), self.master.listeTache.index(self))
+        return x1, x2, y
+
 
 
     def __addDependance(self): # Mise en mode recherche
@@ -161,7 +189,7 @@ class TacheEnGantt(SuperTache):
         self.master.updateAffichage()
 
     def afficherLesSemiDependances(self, event):
-        x1, y1, x2, y2 = self.getPos()
+        x1, y1, x2, y2 = self.getPosPixel()
         self.master.mainCanvas.coords(self.maLigneDepEnCours, x2, (y1+y2)/2, event.x, event.y)
 
     def creerLigne(self):
@@ -170,12 +198,14 @@ class TacheEnGantt(SuperTache):
             self.maLigneDepEnCours = self.master.mainCanvas.create_line(-10,-10,-10,-10, fill="lime", width=2)
 
 
+
+
 class AffichageGantt(SuperCalendrier):
     def __init__(self, master = None, **kwargs):
         SuperCalendrier.__init__(self, master, **kwargs)
         # Note : self.master est référence vers Notebook.
         
-        self.__listeTache = []
+        self.listeTache = []
         self.listeLien    = []
         
         self.TAILLE_LIGNE = 50
@@ -194,14 +224,14 @@ class AffichageGantt(SuperCalendrier):
         self.mode = ""        
 
     def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
-        for tache in self.__listeTache:
+        for tache in self.listeTache:
             if tache.jeCherche == True:
                 return tache
 
     def getNbTacheJour(self, jourSemaine, arret):
         nombre = 0
-        for tache in self.__listeTache:
-            if self.__listeTache.index(tache) == arret:
+        for tache in self.listeTache:
+            if self.listeTache.index(tache) == arret:
                 return nombre
             
             if tache.task.debut.isoweekday() == jourSemaine:
@@ -209,12 +239,12 @@ class AffichageGantt(SuperCalendrier):
         return nombre
   
     def getTacheEnGantt(self, tacheT):
-        for tacheC in self.__listeTache:
+        for tacheC in self.listeTache:
             if tacheC.task == tacheT:
                 return tacheC
     
     def getIndiceTacheEnGantt(self, tache):
-        return self.__listeTache.index(tache)
+        return self.listeTache.index(tache)
     
 
     def updateAffichage(self):
@@ -232,14 +262,14 @@ class AffichageGantt(SuperCalendrier):
         
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
         self.mainCanvas.create_window(int(self.tailleColonne*(t.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
-                                      self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.__listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
+                                      self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
                                       , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window=t,
-                                      tags="num%s"%len(self.__listeTache)
+                                      tags="num%s"%len(self.listeTache)
                                       )
         
         
         
-        self.__listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
+        self.listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
         return tache
 
     def __afficherLesJours(self):    
@@ -256,12 +286,12 @@ class AffichageGantt(SuperCalendrier):
         self.tailleColonne = (self.mainCanvas.winfo_width()/self.getNbJour())
 
     def __afficherLesTaches(self):
-        for tache in self.__listeTache:
+        for tache in self.listeTache:
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 tache.creerLigne()
                 self.mainCanvas.create_window(int(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
-                                              self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.__listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
-                                              , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.__listeTache.index(tache))
+                                              self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.listeTache.index(tache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
+                                              , width=int(self.tailleColonne-1)*self.facteur, height=self.TAILLE_LIGNE ,anchor=NW, window = tache, tags="num%s"%self.listeTache.index(tache))
 
     def __afficherLesDependances(self):
         for lien in self.listeLien:
