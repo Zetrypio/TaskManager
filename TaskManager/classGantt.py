@@ -35,39 +35,46 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         def posY(t, x1, y1, x2, y2):
             return mymap(math.cos(mymap(t, x1, x2, 0, math.pi)), 1, -1, y1, y2)
 
-
-
-
         self.pathCalculing() # On calcul le nouveau chemin
 
         if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
             couleur = "#0B98DE"
-        # Position de la tache et arrtibut généraux
-        # Posistion TacheD
+
         x1D, y1D, x2D, y2D = self.tacheD.getPosPixel()
-        widthD  = x2D-x1D
         heightD = y2D-y1D
         
         x1F, y1F, x2F, y2F = self.tacheF.getPosPixel()
-        widthF  = x2F-x1F
         heightF = y2F-y1F 
 
 
         # Paramètre généraux
         tailleLigne   = self.tacheD.master.TAILLE_LIGNE
         tailleColonne = self.tacheD.master.tailleColonne
-        facteurW       = self.tacheD.master.facteurW
+        facteurW      = self.tacheD.master.facteurW
 
-        mesPoints = []
-        def dessineLiaison(x1, y1, x2, y2):
-              for x in range(int(x1), int(x2)+1):
-                y = posY(x, x1, y1, x2, y2)
-                mesPoints.append([x, y])
+        if x1F < x2D: # Si la tache et son lien sont le même jour
+            rayon = tailleLigne/4
+            arc = self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur)
+            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur)
+            self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur)
 
-        dessineLiaison(x2D, y1D+heightD/2, x2D+tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20))
-        dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
-        mesPoints.append([x1F, y1F+heightF/2])
-        self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
+            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur)
+
+            self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur)
+            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST)
+
+        else:
+            mesPoints = []
+            def dessineLiaison(x1, y1, x2, y2):
+                  for x in range(int(x1), int(x2)+1):
+                    y = posY(x, x1, y1, x2, y2)
+                    mesPoints.append([x, y])
+
+            dessineLiaison(x2D, y1D+heightD/2, x2D+tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20))
+            dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
+            mesPoints.append([x1F, y1F+heightF/2])
+
+            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
 
 
 
@@ -85,15 +92,13 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         for jour in range(self.canvas.master.getLongueurPeriode()): # et on recalcule
             if posXD == jour and posXF == jour: # Si la tacheD est le même jour que TacheF
                 self.chemin.append(1+posYD)
-#            elif posXD == jour:
-#                self.chemin.append(posYD+croissance)
             elif posXD < jour and posXF > jour:
                 self.chemin.append(posYD+croissance)
             else:
                 self.chemin.append(-1)
-        print(self.chemin)
-
     
+
+
 
 class TacheEnGantt(SuperTache):
     def __init__(self, master, task, **kwargs):
@@ -146,11 +151,11 @@ class TacheEnGantt(SuperTache):
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode        
             self.master.mainCanvas.unbind("<Motion>")
-            if   chercheur.task.debut < self.task.debut: # Si le chercheur est avant
+            if  chercheur.task.debut+chercheur.task.duree < self.task.debut: # Si le chercheur est avant
                 try : # on essaye de voir si c'est pas déjà existant
                     self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
                 except:pass
-            elif chercheur.task.debut > self.task.debut: # Si on est avant le chercheur
+            elif chercheur.task.debut > self.task.debut+self.task.duree: # Si on est avant le chercheur
                 try :
                     self.master.listeLien.append(LienDependance(self, chercheur, self.master.mainCanvas))
                 except :pass
