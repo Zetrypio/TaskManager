@@ -29,7 +29,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.master.listeLien.remove(self)
 
     def afficherLesLiens(self, couleur = "#000000"):
-        if (self.tacheF.task.debut+self.tacheF.task.duree).isoweekday() <= self.tacheD.master.getJourDebut()+1 or (self.tacheD.task.debut).isoweekday() > self.tacheD.master.getNbJour()+self.tacheD.master.getJourDebut()+1:
+
+        if (self.tacheF.task.debut+self.tacheF.task.duree).isoweekday() <= self.tacheD.master.getJourDebut()+1 or (self.tacheD.task.debut).isoweekday() > self.tacheD.master.getNbJour()+self.tacheD.master.getJourDebut():
             return
         def mymap(n, a, b, x, y): # Fonction map classique
             return (n-a)/(b-a)*(y-x)+x
@@ -63,14 +64,21 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         if temp != None:
             x1F, y1F, x2F, y2F = temp
         else:
-            x1F = self.canvas.winfo_width()
             # y1F et 2 avec chemin
-            for val in self.chemin:
-                if val != -1:
-                    y1F = val*tailleLigne
-                    y2F = y1F+tailleLigne-4
+            if self.tacheF.task.debut.isoweekday() == self.canvas.master.getNbJour()+self.canvas.master.getJourDebut()+1:
+                x1F = self.canvas.winfo_width()
+                for val in self.chemin:
+                    if val != -1:
+                        y1F = val*tailleLigne+13
+                        y2F = y1F+tailleLigne-4+13
+            else:
+                x1F = self.canvas.winfo_width()+50 # + 50 Pour faire sortire la flèche du cadre
+                for val in self.chemin:
+                    if val != -1:
+                        y1F = val*tailleLigne+20
+                        y2F = y1F-self.canvas.master.espacement
 
-        heightF = y2F-y1F 
+        heightF = y2F-y1F
 
 
 
@@ -93,9 +101,11 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                     mesPoints.append([x, y])
 
             dessineLiaison(x2D, y1D+heightD/2, x2D+tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20))
-            if self.tacheD.master.getNbJour()-1 > (self.tacheF.task.debut+self.tacheD.task.duree-self.tacheF.task.debut).days:
-                dessineLiaison(x1F-tailleColonne*(1-facteurW),max(y1F- self.canvas.master.espacement/2, 20), x1F-10, y1F+heightF/2)
-            mesPoints.append([x1F, y1F+heightF/2])
+
+            if self.tacheD.master.getNbJour()+self.tacheD.master.getJourDebut() >= self.tacheF.task.debut.isoweekday()-1:
+                dessineLiaison(x1F-tailleColonne*(1-facteurW),max(tailleLigne*self.chemin[(self.tacheD.task.debut+self.tacheD.task.duree).isoweekday()]+20 - self.canvas.master.espacement/2, 20), x1F-10, max(y1F+heightF/2, 20))
+
+            mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
 
