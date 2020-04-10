@@ -85,13 +85,13 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
             arc = self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur)
-            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur)
+            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1)
             self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur)
 
-            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur)
+            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur, smooth=1)
 
             self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur)
-            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST)
+            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST, smooth=1)
 
         else:
             mesPoints = []
@@ -107,7 +107,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
-            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur)
+            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1)
 
 
 
@@ -143,7 +143,7 @@ class TacheEnGantt(SuperTache):
         self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
         # RMenu
         self.RMenu = RMenu(self, tearoff=0)
-        self.RMenu.add_command(label="Ajouter un lien", command=self.__addDependance)
+        self.RMenu.add_command(label="Ajouter un lien", command=self.addDependance)
 
 
     def getPosPixel(self):
@@ -154,9 +154,29 @@ class TacheEnGantt(SuperTache):
         y = self.master.getNbTacheJour(self.task.debut.isoweekday(), self.master.listeTache.index(self))
         return x1, x2, y
 
+    def affichePlusLien(self, tag):
+        # Récupération des valeurs
+        tailleColonne = self.master.tailleColonne
+        tailleLigne   = self.master.TAILLE_LIGNE
+        facteur       = self.master.facteurW
+
+        espaceLibre = (1-facteur)*tailleColonne
+        facteurTaille = 0.5
+        x1, y1, x2, y2 = self.getPosPixel()
 
 
-    def __addDependance(self): # Mise en mode recherche
+        diametreCercle=min(facteurTaille*espaceLibre, facteurTaille*tailleLigne)
+
+        if (diametreCercle)%2 == 0: # Pour avoir un truc impair et joli
+             diametreCercle+=1
+
+        tailleTrait = diametreCercle-4
+        centre = [x2+5 + diametreCercle*0.5, (y1+y2)/2]
+        self.master.mainCanvas.create_oval(centre[0]-diametreCercle/2, centre[1]-diametreCercle/2, centre[0]+diametreCercle/2,centre[1]+diametreCercle/2, fill="lightgray", tags=tag)
+        self.master.mainCanvas.create_line(centre[0]-tailleTrait/2,centre[1],centre[0]+tailleTrait/2+1, centre[1], tags=tag) # ligne horizontale
+        self.master.mainCanvas.create_line(centre[0],centre[1]-tailleTrait/2, centre[0],centre[1]+tailleTrait/2+1,  tags=tag)
+
+    def addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
         self.jeCherche = True
         self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances)
@@ -274,6 +294,7 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
 
 
+
         
         self.mode = ""        
 
@@ -309,6 +330,7 @@ class AffichageGantt(SuperCalendrier):
             self.__afficherLesJours()
             self.__afficherLesTaches()
             self.__afficherLesDependances()
+            self.__afficherLesPlusDependance()
 
     def addTask(self, tache, region = None):
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
@@ -340,6 +362,7 @@ class AffichageGantt(SuperCalendrier):
         self.tailleColonne = (self.mainCanvas.winfo_width()/self.getNbJour())
 
     def __afficherLesTaches(self):
+
         for tache in self.listeTache:
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 tache.creerLigne()
@@ -351,6 +374,20 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesDependances(self):
         for lien in self.listeLien:
             lien.afficherLesLiens()
+
+    def __afficherLesPlusDependance(self):
+        ID_TACHE = 0
+        self.mainCanvas.unbind("<Button-1>")
+
+        for tache in self.listeTache:
+            if tache.task.dependences == []:
+                tache.affichePlusLien("a"+str(ID_TACHE))
+
+                self.mainCanvas.tag_bind("a"+str(ID_TACHE), "<Button-1>", lambda e, t=tache: t.addDependance())
+
+                ID_TACHE += 1
+
+
 
 
 
