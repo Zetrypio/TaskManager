@@ -190,6 +190,7 @@ class TacheEnGantt(SuperTache):
         
 
     def __clique(self, event):
+
         def chercheLien(tacheA, tacheB): # Fonction embarqué qui retourne le lien qui à tacheD = tache
             for lien in self.master.listeLien:
                 if lien.tacheD == tacheA and lien.tacheF == tacheB:
@@ -198,6 +199,7 @@ class TacheEnGantt(SuperTache):
                     return lien
     
         if (chercheur := self.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+            self.master.updateAffichage()
             return
         chercheur.jeCherche = False
         
@@ -214,6 +216,7 @@ class TacheEnGantt(SuperTache):
                 except :pass
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
+                self.master.updateAffichage()
                 return
             else:                                        # Si on est 2 taches commençant au même moment
                 showerror("Tache incorrecte", "Vous ne pouvez pas choisir 2 taches commençant au même moment.")
@@ -233,12 +236,14 @@ class TacheEnGantt(SuperTache):
 
         elif self.master.mode == "delDep":
             if (lienaime := chercheLien(chercheur, self)) == None: # Objet Lien qui lie les 2 taches
+                self.master.updateAffichage()
                 return            
             self.master.mode = ""    # On réinitialise le mode
             if   chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
                 lienaime.suppression()
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
+                self.master.updateAffichage()
                 return
             chercheur.jeCherche = False 
             
