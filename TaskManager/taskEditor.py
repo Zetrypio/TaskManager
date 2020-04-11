@@ -1,13 +1,14 @@
 # -*- coding:utf-8 -*-
 from task import *
 from dialog import *
+from periodAdder import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 
 
 class TaskEditor(Frame):
-    def __init__(self, master, menubar):
+    def __init__(self, master, menubar, periodManager):
         Frame.__init__(self, master, bg="red")
         # Note : master est une référence vers Application
         self.menu = menubar
@@ -18,6 +19,8 @@ class TaskEditor(Frame):
 
         self.frameInput = TaskAdder(self, menubar)
         self.frameInput.pack(side = TOP, fill = X)
+        
+        self.frameInputPeriode = PeriodAdder(periodManager, self)
 
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
@@ -189,7 +192,14 @@ class TaskEditor(Frame):
                                       else 1 if t.statut == "À faire" or t.statut == "Répétition"
                                       else 2)
         self.redessiner()
-
+    
+    def setEditionPeriode(self, enEdition):
+        if enEdition:
+            self.frameInput.pack_forget()
+            self.frameInputPeriode.pack(side = TOP, fill = X, before = self.tree)
+        else :
+            self.frameInput.pack(side = TOP, fill = X, before = self.tree)
+            self.frameInputPeriode.pack_forget()
 
 if __name__=='__main__':
     import Application

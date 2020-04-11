@@ -63,7 +63,7 @@ class Application(Frame):
         self.winfo_toplevel().title("Gestionnaire de calendrier")
         self.menu = MenuBar(self.winfo_toplevel(), self)
         self.periodManager = PeriodManager(self)
-        self.taskEditor = TaskEditor(self, self.menu)
+        self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
@@ -72,9 +72,11 @@ class Application(Frame):
         self.calendar.setBarreOutilPeriode(enEdition)
         if enEdition:
             #self.taskEditor.filter(type = "Période")
+            self.taskEditor.setEditionPeriode(True)
             pass
         else:
             #self.taskEditor.filter(type = "Tâche")
+            self.taskEditor.setEditionPeriode(False)
             pass
     def getPeriodManager(self):
         return self.periodManager

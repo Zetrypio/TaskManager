@@ -117,7 +117,7 @@ class TaskAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate(self.menu.variableHorlogeStyle.get())
+        date = askdatetime(self.menu.variableHorlogeStyle.get())
         self.debut = date
         self.champDebut.config(text = date if date is not None else "")
         self.autoSetDuree()
@@ -127,7 +127,7 @@ class TaskAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate(self.menu.variableHorlogeStyle.get())
+        date = askdatetime(self.menu.variableHorlogeStyle.get())
         if date is not None:
             self.fin = date
         self.champFin.config(text = date if date is not None else "")
