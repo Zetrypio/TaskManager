@@ -335,12 +335,11 @@ class AffichageGantt(SuperCalendrier):
             self.__afficherLesJours()
             self.__afficherLesTaches()
             self.__afficherLesDependances()
-            self.__afficherLesPlusDependance()
 
     def addTask(self, tache, region = None):
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
             return
-        
+        # NOTE : il faut aussi changer ici pour avoir unu affichage plusierus jours.
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
         self.mainCanvas.create_window(int(self.tailleColonne*(t.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                       self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(t.task.debut.isoweekday(), len(self.listeTache)) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
@@ -356,7 +355,6 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesJours(self):    
         for jour in range(self.getNbJour()): # Traçage des lignes de division et des noms de jour
             x = int(jour*self.mainCanvas.winfo_width()/self.getNbJour())
-            
             self.mainCanvas.create_rectangle(x, 0, x+(self.mainCanvas.winfo_width()//self.getNbJour()), self.tailleBandeauJour, fill="#BBBBBB", outline="") # création de bandeau pour les jours
             
             if jour !=0:
@@ -368,36 +366,32 @@ class AffichageGantt(SuperCalendrier):
 
     def __afficherLesTaches(self):
 
+        self.listeTache.sort(key=lambda t:t.task.debut) #trie par début des taches
+        ID_TACHE = 0
+        self.mainCanvas.unbind("<Button-1>")
+
         for tache in self.listeTache:
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 tache.creerLigne()
+                # NOTE : ici, il faudra adapter pour gérer une tache sur plusieurs jours.
+                # width = int(self.tailleColonne-1)*tache.task.duree.days-1 + int(self.tailleColonne-1)*self.facteurW
                 self.mainCanvas.create_window(int(self.tailleColonne*(tache.task.debut.isoweekday()-1)+2), # X en fonction du jour de la tache
                                               (self.tailleBandeauJour+self.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.isoweekday(), self.listeTache.index(tache))) # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le meme jour
                                               , width=int(self.tailleColonne-1)*self.facteurW, height=self.TAILLE_LIGNE-self.espacement ,anchor=NW, window = tache, tags="num%s"%self.listeTache.index(tache)) # Le 0.975 et 1.025 c'est un espacement pour laisser les liens entre les lignes
 
+                if tache.task.dependences == []:
+                    tache.affichePlusLien("a"+str(ID_TACHE))
+
+                    self.mainCanvas.tag_bind("a"+str(ID_TACHE), "<Button-1>", lambda e, t=tache: t.addDependance())
+
+                    ID_TACHE += 1
 
     def __afficherLesDependances(self):
         for lien in self.listeLien:
             lien.afficherLesLiens()
 
-    def __afficherLesPlusDependance(self):
-        ID_TACHE = 0
-        self.mainCanvas.unbind("<Button-1>")
-
-        for tache in self.listeTache:
-            if tache.task.dependences == []:
-                tache.affichePlusLien("a"+str(ID_TACHE))
-
-                self.mainCanvas.tag_bind("a"+str(ID_TACHE), "<Button-1>", lambda e, t=tache: t.addDependance())
-
-                ID_TACHE += 1
-
-
-
-
-
             
- 
+
 if __name__=='__main__':
     import Application
     Application.main()
