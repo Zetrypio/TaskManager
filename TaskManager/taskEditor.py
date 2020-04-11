@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from task import *
-from dialog import *
 from periodAdder import *
+from dialog import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame

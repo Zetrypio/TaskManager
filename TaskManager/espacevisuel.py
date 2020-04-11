@@ -14,7 +14,6 @@ class MenuOutil(Frame):
     catégories. Les commandes des boutons doivent présentes dans le master.
     """
     def __init__(self, master, **kwargs):
-        kwargs["bg"] = "green"
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
         
@@ -92,22 +91,24 @@ class MenuOutilPeriode(MenuOutil):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
     def _ajouterCategoriesEtBoutons(self, master):
-        # CADRE AJOUTER
-        self._creationCategorie("Créer") #cadre ajouter
+        # CADRE Gestion des périodes
+        self._creationCategorie("Gestion des périodes")
         # création des boutons
-        self._creationBouton("Période", None) # TODO : fonctions des commandes
-        self._creationBouton("Copier", None)
-        self._creationBouton("Tâche", None)
-        # CADRE SUPPRIMER
-        self._creationCategorie("Supprimer") #cadre SUPPRIMER
+        self._creationBouton("Déplacer", None) # TODO : fonctions des commandes
+        self._creationBouton("Dupliquer", None)
+        self._creationBouton("Supprimer", None)
+        self._creationBouton("Sélectionner", None)
+        # CADRE Division des périodes
+        self._creationCategorie("Division des périodes")
         # création des boutons
-        self._creationBouton("Période", None) # TODO : fonctions des commandes
-        self._creationBouton("Couper", None)
-        # CADRE DEPLACER
-        self._creationCategorie("Déplacer") #cadre déplacer
+        self._creationBouton("Scinder", None) # TODO : fonctions des commandes
+        self._creationBouton("Fusionner", None)
+        # CADRE Tâches indépendantes
+        self._creationCategorie("Tâches indépendantes")
         # création des boutons
-        self._creationBouton("Période", None) # TODO : fonctions des commandes
-        self._creationBouton("Copier", None)
+        self._creationBouton("Lier à une période", None) # TODO : fonctions des commandes
+        self._creationBouton("Dupliquer", None)
+        self._creationBouton("Supprimer", None)
         
 
 class CalendarZone(Frame):

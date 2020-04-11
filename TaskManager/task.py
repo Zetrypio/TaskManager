@@ -38,6 +38,12 @@ class Task:
     def updateStatut(self):
         """Permet de mettre à jour le statut de la tâche."""
         self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
+    def getDebut(self):
+        return self.debut
+    def getDuree(self):
+        return self.duree
+    def getFin(self):
+        return (self.debut + self.duree) if self.debut is not None else None
 
 class TaskAdder(Frame):
     """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""
