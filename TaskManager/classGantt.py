@@ -84,14 +84,14 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
-            arc = self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur)
-            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1)
-            self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur)
+            #arc = self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur, tags="lien")
+            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1, tags="lien")
+            self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur, tags="lien")
 
-            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur, smooth=1)
+            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur, smooth=1, tags="lien")
 
-            self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur)
-            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST, smooth=1)
+            self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur, tags="lien")
+            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST, smooth=1, tags="lien")
 
         else:
             mesPoints = []
@@ -107,7 +107,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
-            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1)
+            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags="lien")
+
+            self.canvas.tag_bind("lien", "<Button-1>",self.__clique)
 
 
 
@@ -129,7 +131,28 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                 self.chemin.append(posYD+croissance)
             else:
                 self.chemin.append(-1)
-    
+
+    def __clique(self, event):
+
+        if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+            self.tacheD.master.updateAffichage()
+            return
+        chercheur.jeCherche = False
+
+        if self.tacheD.master.mode =="delDep":
+            self.tacheD.master.mode = ""
+            if len(self.tacheD.task.dependences) == 1: # S'il n'y a qu'une seule dépendance on peut retirer le choix
+                self.tacheD.RMenu.delete("Retirer un lien")
+
+            # TODO : a refactor, comme la version dans tache en Gantt
+            nbDep = 0
+            for lien in self.tacheD.master.listeLien:
+                if lien.tacheF == self.tacheF or lien.tacheD == self.tacheF:
+                    nbDep +=1
+            if nbDep == 1: # S'il n'y a qu'une seule dépendanec lié à tache F
+                self.tacheF.RMenu.delete("Retirer un lien")
+
+            self.suppression()
 
 
 
@@ -246,24 +269,28 @@ class TacheEnGantt(SuperTache):
                 self.master.updateAffichage()
                 return
             chercheur.jeCherche = False 
+
+            self.gestionRMenu(self, chercheur) #savvoir si on supprime l'option retirer lien
+        chercheur.jeCherche = False
+        self.master.updateAffichage()
             
-            
-            # On supprime le choix seulement si il n'y en a pas d'autre lien avec eux
-            # TODO : A Refactor
-            trouve = False
-            for lien in self.master.listeLien:
-                if lien.tacheD == self or lien.tacheF == self:
-                    trouve = True
-            if trouve == False:
-                self.RMenu.delete("Retirer un lien")
-            trouve = False
-            for lien in self.master.listeLien:
-                if lien.tacheD == chercheur or lien.tacheF == chercheur:
-                    trouve = True
-            if trouve == False:
-                chercheur.RMenu.delete("Retirer un lien")
+
+    def gestionRMenu(self, tacheA, tacheB):
+        # On supprime le choix seulement si il n'y en a pas d'autre lien avec eux
+        # TODO : A Refactor
+        trouve = False
+        for lien in self.master.listeLien:
+            if lien.tacheD == tacheA or lien.tacheF == tacheA:
+                trouve = True
+        if trouve == False:
+            tacheA.RMenu.delete("Retirer un lien")
+        trouve = False
+        for lien in self.master.listeLien:
+            if lien.tacheD == tacheB or lien.tacheF == tacheB:
+                trouve = True
+        if trouve == False:
+            tacheB.RMenu.delete("Retirer un lien")
         
-        chercheur.jeCherche = False 
         self.master.updateAffichage()
 
     def afficherLesSemiDependances(self, event):
