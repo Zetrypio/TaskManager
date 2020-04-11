@@ -27,6 +27,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def suppression(self):
         self.tacheD.task.dependences.remove(self.tacheF.task) # On retire la dépendance dans la tache
         self.tacheD.master.listeLien.remove(self)
+        self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):
 
@@ -84,7 +85,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
-            #arc = self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur, tags="lien")
+            self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur, tags="lien")
             self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1, tags="lien")
             self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur, tags="lien")
 
@@ -109,7 +110,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags="lien")
 
-            self.canvas.tag_bind("lien", "<Button-1>",self.__clique)
+        self.canvas.tag_bind("lien", "<Button-1>",self.__clique)
 
 
 
