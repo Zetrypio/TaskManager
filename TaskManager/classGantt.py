@@ -81,18 +81,18 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         heightF = y2F-y1F
 
-
+        tag = "lienum"+str(self.tacheD.master.listeLien.index(self))
 
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
-            self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur, tags="lien")
-            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1, tags="lien")
-            self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur, tags="lien")
+            self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=2,  outline=couleur, tags=tag)
+            self.canvas.create_line(x2D+1, y2D+3, x1D-10, y2D+3, width=2, fill=couleur, smooth=1, tags=tag)
+            self.canvas.create_arc(x1D-rayon-10,y1D+tailleLigne-rayon+12, x1D+rayon-10,y1D+tailleLigne+rayon+12,  start=90, extent=90, style='arc', width=2, outline=couleur, tags=tag)
 
-            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur, smooth=1, tags="lien")
+            self.canvas.create_line(x1D-rayon-10,y1D+tailleLigne+rayon-1, x1D-rayon-10, y1F+rayon , width=2, fill=couleur, smooth=1, tags=tag)
 
-            self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur, tags="lien")
-            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST, smooth=1, tags="lien")
+            self.canvas.create_arc(x1F-rayon-10, y1F+heightF/2-2*rayon, x1F+rayon-10, y1F+heightF/2, start=180, extent=90, style='arc', width=2, outline=couleur, tags=tag)
+            self.canvas.create_line(x1F-10, y1F+heightF/2, x1F, y1F+heightF/2, width=2, fill=couleur, arrow=LAST, smooth=1, tags=tag)
 
         else:
             mesPoints = []
@@ -108,9 +108,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
-            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags="lien")
+            self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags=tag)
 
-        self.canvas.tag_bind("lien", "<Button-1>",self.__clique)
+        self.canvas.tag_bind(tag, "<Button-1>",self.__clique)
 
 
 
@@ -140,20 +140,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             return
         chercheur.jeCherche = False
 
-        if self.tacheD.master.mode =="delDep":
-            self.tacheD.master.mode = ""
-            if len(self.tacheD.task.dependences) == 1: # S'il n'y a qu'une seule dépendance on peut retirer le choix
-                self.tacheD.RMenu.delete("Retirer un lien")
+        self.tacheD.gestionRMenu(self.tacheD, self.tacheF)
 
-            # TODO : a refactor, comme la version dans tache en Gantt
-            nbDep = 0
-            for lien in self.tacheD.master.listeLien:
-                if lien.tacheF == self.tacheF or lien.tacheD == self.tacheF:
-                    nbDep +=1
-            if nbDep == 1: # S'il n'y a qu'une seule dépendanec lié à tache F
-                self.tacheF.RMenu.delete("Retirer un lien")
-
-            self.suppression()
+        self.suppression()
 
 
 
@@ -264,6 +253,7 @@ class TacheEnGantt(SuperTache):
                 return            
             self.master.mode = ""    # On réinitialise le mode
             if   chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
+                self.gestionRMenu(self, chercheur) #savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
                 lienaime.suppression()
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
@@ -271,7 +261,6 @@ class TacheEnGantt(SuperTache):
                 return
             chercheur.jeCherche = False 
 
-            self.gestionRMenu(self, chercheur) #savvoir si on supprime l'option retirer lien
         chercheur.jeCherche = False
         self.master.updateAffichage()
             
@@ -279,17 +268,17 @@ class TacheEnGantt(SuperTache):
     def gestionRMenu(self, tacheA, tacheB):
         # On supprime le choix seulement si il n'y en a pas d'autre lien avec eux
         # TODO : A Refactor
-        trouve = False
+        nbDep = 0
         for lien in self.master.listeLien:
             if lien.tacheD == tacheA or lien.tacheF == tacheA:
-                trouve = True
-        if trouve == False:
+                nbDep += 1
+        if nbDep == 1: # On met 1 pour prendre en compte le lien actuele, pour l'utiliser dans la class Lien (si on supprime un lien en cliquant dessus
             tacheA.RMenu.delete("Retirer un lien")
-        trouve = False
+        nbDep = 0
         for lien in self.master.listeLien:
             if lien.tacheD == tacheB or lien.tacheF == tacheB:
-                trouve = True
-        if trouve == False:
+                nbDep += 1
+        if nbDep == 1:
             tacheB.RMenu.delete("Retirer un lien")
         
         self.master.updateAffichage()
@@ -325,11 +314,17 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
+#        self.mainCanvas.bind("<Escape>", self.annuleOperation)
+#        self.mainCanvas.bind("<Button-1>", self.annuleOperation) # Ne fonctionne pas, pourquoi ?
+
+        self.mode = ""
 
 
-
-        
-        self.mode = ""        
+#    def annuleOperation(self, event):
+#        print("ici")
+#        self.mode = ""
+#        self.getQuiCherche().jeCherche = False
+#        self.updateAffichage()
 
     def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
         for tache in self.listeTache:
@@ -363,6 +358,7 @@ class AffichageGantt(SuperCalendrier):
             self.__afficherLesJours()
             self.__afficherLesTaches()
             self.__afficherLesDependances()
+
 
     def addTask(self, tache, region = None):
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
