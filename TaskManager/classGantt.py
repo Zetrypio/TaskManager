@@ -21,6 +21,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         
         
         self.canvas = canvas
+        self.select = False # variable qui sait si on est selectionne ou pas
         
         self.tacheD.task.dependences.append(self.tacheF.task) # On créer la dépendance dans la tache
     
@@ -42,6 +43,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.pathCalculing() # On calcul le nouveau chemin
 
         if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
+            couleur = "gray" # Anciennement #0B98DE
+        elif self.select == True:
             couleur = "#0B98DE"
 
         # Paramètre généraux
@@ -109,7 +112,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags=tag)
-
+        print("tag lien : ", tag)
         self.canvas.tag_bind(tag, "<Button-1>",self.__clique)
 
 
@@ -134,15 +137,27 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                 self.chemin.append(-1)
 
     def __clique(self, event):
+        if self.tacheD.master.mode == "delDep":
+            if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+                self.tacheD.master.updateAffichage()
+                return
+            chercheur.jeCherche = False
 
-        if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+            self.tacheD.gestionRMenu(self.tacheD, self.tacheF)
+
+            self.suppression()
+
+        elif self.tacheD.master.mode == "":
+            self.select = True
+            print ("tag sele : ",str(self.tacheD.master.listeLien.index(self)))
+            self.canvas.tag_bind("lienum"+str(self.tacheD.master.listeLien.index(self)),'<KP_00>',lambda event= None :self.sup())
+
             self.tacheD.master.updateAffichage()
-            return
-        chercheur.jeCherche = False
 
-        self.tacheD.gestionRMenu(self.tacheD, self.tacheF)
-
-        self.suppression()
+    def sup(self, event):
+        print("supprime")
+        print("poisson d'avril")
+        self.select = False
 
 
 
@@ -154,6 +169,7 @@ class TacheEnGantt(SuperTache):
         
         self.bind("<Button-1>", self.__clique)       # On bind la frame
         self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
+
         # RMenu
         self.RMenu = RMenu(self, tearoff=0)
         self.RMenu.add_command(label="Ajouter un lien", command=self.addDependance)
