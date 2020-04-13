@@ -26,6 +26,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.task.dependences.append(self.tacheF.task) # On créer la dépendance dans la tache
     
     def suppression(self):
+        self.tacheD.gestionRMenu(self.tacheD, self.tacheF) # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
         self.tacheD.task.dependences.remove(self.tacheF.task) # On retire la dépendance dans la tache
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.master.updateAffichage()
@@ -115,6 +116,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         print("tag lien : ", tag)
         self.canvas.tag_bind(tag, "<Button-1>",self.__clique)
 
+        self.canvas.tag_bind(tag,"<Control-Button-1>", self.changeSelect)
+
 
 
 
@@ -142,22 +145,21 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                 self.tacheD.master.updateAffichage()
                 return
             chercheur.jeCherche = False
-
-            self.tacheD.gestionRMenu(self.tacheD, self.tacheF)
-
             self.suppression()
 
         elif self.tacheD.master.mode == "":
-            self.select = True
-            print ("tag sele : ",str(self.tacheD.master.listeLien.index(self)))
-            self.canvas.tag_bind("lienum"+str(self.tacheD.master.listeLien.index(self)),'<KP_00>',lambda event= None :self.sup())
+            for lien in self.tacheD.master.listeLien: # On réinitialise l'état de tout les liens
+                lien.select = False
+            self.select = True # Et on met le notre au point
 
             self.tacheD.master.updateAffichage()
 
-    def sup(self, event):
+    def changeSelect(self, event):
         print("supprime")
         print("poisson d'avril")
-        self.select = False
+        self.select = not self.select
+        print ("selecte", self.select)
+        self.tacheD.master.updateAffichage()
 
 
 
@@ -269,7 +271,6 @@ class TacheEnGantt(SuperTache):
                 return            
             self.master.mode = ""    # On réinitialise le mode
             if   chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
-                self.gestionRMenu(self, chercheur) #savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
                 lienaime.suppression()
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
@@ -330,8 +331,6 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
-#        self.mainCanvas.bind("<Escape>", self.annuleOperation)
-#        self.mainCanvas.bind("<Button-1>", self.annuleOperation) # Ne fonctionne pas, pourquoi ?
 
         self.mode = ""
 
