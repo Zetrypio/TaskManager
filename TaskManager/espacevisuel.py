@@ -6,6 +6,7 @@ import datetime
 from affichageDonnee import *
 
 
+
 # En général, ça s'appelle une ToolBar - soit une barre d'outils en français.
 class MenuOutil(Frame):
     """

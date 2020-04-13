@@ -1,5 +1,6 @@
 # *-* coding:utf-8 *-*
 from tkinter import *
+from infobulle import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 from dialog import *
@@ -114,7 +115,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags=tag)
-        print("tag lien : ", tag)
+
+        #ajouterInfoBulleTag(self.canvas, tag, self.tacheD.task.nom+"-->"+self.tacheF.task.nom)
+        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"-->"+self.tacheF.task.nom)
 #        self.canvas.tag_bind(tag, "<Button-1>",self.__clique, add='+')
 
 #        self.canvas.tag_bind(tag,"<Control-Button-1>", self.changeSelect, add='+')
@@ -207,10 +210,14 @@ class TacheEnGantt(SuperTache):
         self.master.mainCanvas.create_line(centre[0]-tailleTrait/2,centre[1],centre[0]+tailleTrait/2+1, centre[1], tags=tag) # ligne horizontale
         self.master.mainCanvas.create_line(centre[0],centre[1]-tailleTrait/2, centre[0],centre[1]+tailleTrait/2+1,  tags=tag)
 
+        ajouterInfoBulleTagCanvas(self.master.mainCanvas, tag, "Ajouter un lien")
+
+
+
     def addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
         self.jeCherche = True
-        self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances)
+        self.__bindBouge = self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances)
         self.master.updateAffichage()
 
 
@@ -235,8 +242,7 @@ class TacheEnGantt(SuperTache):
         chercheur.jeCherche = False
         
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
-            self.master.mode = ""    # On réinitialise le mode        
-            self.master.mainCanvas.unbind("<Motion>")
+            self.master.mode = ""    # On réinitialise le mode
             if  chercheur.task.debut+chercheur.task.duree < self.task.debut: # Si le chercheur est avant
                 try : # on essaye de voir si c'est pas déjà existant
                     self.master.listeLien.append(LienDependance(chercheur, self, self.master.mainCanvas))
