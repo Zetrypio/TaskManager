@@ -19,13 +19,15 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                 raise NotImplementedError
         self.chemin = [] # Chemin que va suivre le lien pour la gestion de l'affichage
         
-        
+        self.ID_LIEN = None
+
         self.canvas = canvas
         self.select = False # variable qui sait si on est selectionne ou pas
         
         self.tacheD.task.dependences.append(self.tacheF.task) # On créer la dépendance dans la tache
     
     def suppression(self):
+        self.tacheD.gestionRMenu(self.tacheD, self.tacheF) # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
         self.tacheD.task.dependences.remove(self.tacheF.task) # On retire la dépendance dans la tache
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.master.updateAffichage()
@@ -84,7 +86,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         heightF = y2F-y1F
 
-        tag = "lienum"+str(self.tacheD.master.listeLien.index(self))
+        self.ID_LIEN = tag = "lienum"+str(self.tacheD.master.listeLien.index(self))
 
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
@@ -113,7 +115,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags=tag)
         print("tag lien : ", tag)
-        self.canvas.tag_bind(tag, "<Button-1>",self.__clique)
+#        self.canvas.tag_bind(tag, "<Button-1>",self.__clique, add='+')
+
+#        self.canvas.tag_bind(tag,"<Control-Button-1>", self.changeSelect, add='+')
 
 
 
@@ -142,22 +146,19 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                 self.tacheD.master.updateAffichage()
                 return
             chercheur.jeCherche = False
-
-            self.tacheD.gestionRMenu(self.tacheD, self.tacheF)
-
             self.suppression()
 
         elif self.tacheD.master.mode == "":
-            self.select = True
-            print ("tag sele : ",str(self.tacheD.master.listeLien.index(self)))
-            self.canvas.tag_bind("lienum"+str(self.tacheD.master.listeLien.index(self)),'<KP_00>',lambda event= None :self.sup())
+            for lien in self.tacheD.master.listeLien: # On réinitialise l'état de tout les liens
+                lien.select = False
+            self.select = True # Et on met le notre au point
 
             self.tacheD.master.updateAffichage()
 
-    def sup(self, event):
-        print("supprime")
-        print("poisson d'avril")
-        self.select = False
+    def changeSelect(self):
+        self.select = not self.select
+        print ("selecte", self.select)
+        self.tacheD.master.updateAffichage()
 
 
 
@@ -169,6 +170,7 @@ class TacheEnGantt(SuperTache):
         
         self.bind("<Button-1>", self.__clique)       # On bind la frame
         self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
+        self.ID_PLUS = None
 
         # RMenu
         self.RMenu = RMenu(self, tearoff=0)
@@ -269,7 +271,6 @@ class TacheEnGantt(SuperTache):
                 return            
             self.master.mode = ""    # On réinitialise le mode
             if   chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
-                self.gestionRMenu(self, chercheur) #savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
                 lienaime.suppression()
             elif chercheur.task == self.task:            # Si on est la même tache on annule l'opération
                 self.jeCherche = False
@@ -322,7 +323,7 @@ class AffichageGantt(SuperCalendrier):
         self.espacement = 4 # Entre 2 tache pour laisser passer les liens
         self.TAILLE_LIGNE = 50+self.espacement
         self.tailleColonne = 0
-        
+
         self.tailleBandeauJour = 20
         
         self.facteurW = 0.8 # facteur de taille que prend une tache
@@ -330,17 +331,70 @@ class AffichageGantt(SuperCalendrier):
         self.mainCanvas = Canvas(self, width=0, height=0)
         self.mainCanvas.pack(fill=BOTH, expand=YES)
         self.mainCanvas.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
-#        self.mainCanvas.bind("<Escape>", self.annuleOperation)
-#        self.mainCanvas.bind("<Button-1>", self.annuleOperation) # Ne fonctionne pas, pourquoi ?
+
+        self.mainCanvas.bind_all("<Button-1>", self.annuleOperationBTN)
+        self.mainCanvas.bind_all("<Escape>", self.annuleOperationESC)
+        self.mainCanvas.bind_all("<Control-Button-1>", self.multiSelection)
+
+        self.mainCanvas.bind_all("<Delete>", self.suppression)
+
 
         self.mode = ""
 
+#        self.__binding = self.mainCanvas.focus_get().bind("<Delete>", lambda e: self.suppression())
 
-#    def annuleOperation(self, event):
-#        print("ici")
-#        self.mode = ""
-#        self.getQuiCherche().jeCherche = False
-#        self.updateAffichage()
+    def multiSelection(self, event):
+        for item in self.mainCanvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1): # Boucle des items a cote du clique
+            tag = self.mainCanvas.gettags(item)
+            if tag is None:
+                continue
+            for lien in self.listeLien: # Détection des lien
+                if lien.ID_LIEN == tag[0]:
+                    lien.changeSelect()
+
+    def annuleOperationESC(self, event):
+        print("te")
+#        if event.widget != self.mainCanvas: # Si c'est pas le canvas, on s'en fiche (on joue le truc qu'on a clique
+#            return
+        self.mode = ""
+        chercheur = self.getQuiCherche() # Annulation de ce qui existe
+        if chercheur is not None:
+            chercheur.jeCherche = False
+        else: # Désélection des liens si on cliques ailleurs
+            for lien in self.getLiensSelectionnes():
+                lien.select = False
+        self.updateAffichage()
+
+    def annuleOperationBTN(self, event):
+        if event.widget != self.mainCanvas: # Si c'est pas le canvas, on s'en fiche (on joue le truc qu'on a clique
+            return
+        self.mode = ""
+        chercheur = self.getQuiCherche() # Annulation de ce qui existe
+        if chercheur is not None:
+            chercheur.jeCherche = False
+        else: # Désélection des liens si on cliques ailleurs
+            for lien in self.getLiensSelectionnes():
+                lien.select = False
+        for item in self.mainCanvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1): # Boucle des items a cote du clique
+            tag = self.mainCanvas.gettags(item)
+            if tag is None or len(tag) == 0:
+                continue
+            for t in self.listeTache: # Détection des plus
+                if t.ID_PLUS == tag[0]:
+                    t.addDependance()
+            for lien in self.listeLien: # Détection des lien
+                if lien.ID_LIEN == tag[0]:
+                    lien.select = True
+
+        self.updateAffichage()
+
+
+    def suppression(self, event): # TODO : ce serait bien de supprimer des taches aussi =)
+        for lien in self.getLiensSelectionnes():
+            lien.suppression()
+
+    def getLiensSelectionnes(self):
+        return [lien for lien in self.listeLien if lien.select]
 
     def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
         for tache in self.listeTache:
@@ -407,10 +461,10 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesTaches(self):
 
         self.listeTache.sort(key=lambda t:t.task.debut) #trie par début des taches
-        ID_TACHE = 0
-        self.mainCanvas.unbind("<Button-1>")
 
         for tache in self.listeTache:
+            ID_TACHE = self.listeTache.index(tache)
+
             if tache.task.debut.isoweekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
                 tache.creerLigne()
                 # NOTE : ici, il faudra adapter pour gérer une tache sur plusieurs jours.
@@ -420,9 +474,10 @@ class AffichageGantt(SuperCalendrier):
                                               , width=int(self.tailleColonne-1)*self.facteurW, height=self.TAILLE_LIGNE-self.espacement ,anchor=NW, window = tache, tags="num%s"%self.listeTache.index(tache)) # Le 0.975 et 1.025 c'est un espacement pour laisser les liens entre les lignes
 
                 if tache.task.dependences == []:
-                    tache.affichePlusLien("a"+str(ID_TACHE))
+                    tache.affichePlusLien("plus"+str(ID_TACHE))
+                    tache.ID_PLUS = "plus"+str(ID_TACHE)
 
-                    self.mainCanvas.tag_bind("a"+str(ID_TACHE), "<Button-1>", lambda e, t=tache: t.addDependance())
+                    #self.mainCanvas.tag_bind("a"+str(ID_TACHE), "<Button-1>", lambda e, t=tache: t.addDependance())
 
                     ID_TACHE += 1
 
