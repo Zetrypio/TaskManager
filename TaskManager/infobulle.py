@@ -1,11 +1,12 @@
+# -*- coding:utf-8 -*-
 from tkinter import *
+
 
 INFOBULLE = None
 
 
 def infobulle(event, text=""):
     global INFOBULLE
-    print(text)
     delete_infobulle()
     INFOBULLE = Toplevel()
     #INFOBULLE.transient(INFOBULLE.master)
@@ -63,7 +64,7 @@ def _isCanvasAdded(canvas):
 
 def _addCanvas(canvas):
     _info_infobulles[canvas] = {"texteItems" : {}, "texteTags":{}}
-    canvas.bind("<Motion>", _bouge)
+    canvas.bind("<Motion>", _bouge, add=True)
     canvas.bind("<Leave>", lambda e: delete_infobulle())
 
 
@@ -82,8 +83,6 @@ def _bouge(event):
         listeTags += tags
     listeTags = list(set(listeTags))
 
-    print('liste des items : ', listeItems)
-    print('liste des tags : ', listeTags)
     # On trouve la liste des textes :
     listeTextes = []
     for item in listeItems:
@@ -101,5 +100,9 @@ def _bouge(event):
     else:
         texte = "Multiple Info at this point :"
         for txt in listeTextes:
-            texte += "\n\t- %s."%txt
+            texte += "\n- %s.\t    \t"%txt
         infobulle(event, texte)
+
+if __name__=='__main__':
+    import Application
+    Application.main()

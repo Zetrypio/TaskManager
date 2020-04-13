@@ -1,4 +1,4 @@
-# *-* coding:utf-8 *-*
+# -*- coding:utf-8 -*-
 from tkinter import *
 from infobulle import *
 from tkinter.ttk import *
@@ -117,7 +117,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             self.canvas.create_line(*mesPoints, width=2, arrow=LAST, fill=couleur, smooth=1, tags=tag)
 
         #ajouterInfoBulleTag(self.canvas, tag, self.tacheD.task.nom+"-->"+self.tacheF.task.nom)
-        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"-->"+self.tacheF.task.nom)
+        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"→"+self.tacheF.task.nom)
 #        self.canvas.tag_bind(tag, "<Button-1>",self.__clique, add='+')
 
 #        self.canvas.tag_bind(tag,"<Control-Button-1>", self.changeSelect, add='+')
@@ -217,7 +217,7 @@ class TacheEnGantt(SuperTache):
     def addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
         self.jeCherche = True
-        self.__bindBouge = self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances)
+        self.__bindBouge = self.master.mainCanvas.bind("<Motion>", self.afficherLesSemiDependances, add=True)
         self.master.updateAffichage()
 
 
