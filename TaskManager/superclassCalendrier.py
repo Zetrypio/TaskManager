@@ -40,22 +40,18 @@ class SuperCalendrier(Frame):
         self.heureFin = 18
 
         # infos des jours :
-        self.jourDebut = 0 # ici mettre seulement l'indice qu'il faut aller cherche dans la liste de jour =)
+        self.jourDebut = self.getDebutPeriode()
         self.nbJour = self.getLongueurPeriode()
 
         # liste des tâches :
         self.listeTaches = []
-        
-        # Est-ce qu'on est certain que toutes les sous-classes auront cela ?
-        # Je ne suis pas sûr ; il vaudrait peut-être mieux les définir
-        # dans chaques sous-classes qui en ont besoins, c'est-à-dire PAS toutes.
-        # Je dis aussi ça car les différentes sous-classes ont un affichage différent
-        # et doivent par elles-mêmes gérer leur mode d'affichage avec leurs widgets.
 
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
     def getDebutPeriode(self):
-        return datetime.datetime(2020, 4, 6); # TODO : À mettre à la longueur de la période.    
+        return datetime.date(2020, 4, 6); # TODO : À mettre au début de la période.
+    def getFinPeriode(self):
+        return self.getDebutPeriode() + datetime.timedelta(days = self.getLongueurPeriode())
         
     def getHeureDebut(self):
         return self.heureDebut
@@ -72,7 +68,7 @@ class SuperCalendrier(Frame):
     def getJourDebut(self):
         return self.jourDebut
     def setJourDebut(self, valeur):
-        self.jourDebut = valeur
+        self.jourDebut = valeur + datetime.timedelta()
         self.updateAffichage()
 
     def getNbJour(self):
@@ -80,6 +76,16 @@ class SuperCalendrier(Frame):
     def setNbJour(self, valeur):
         self.nbJour = valeur
         self.updateAffichage()
+    
+    def getJourFin(self):
+        return self.jourDebut + datetime.timedelta(days = self.nbJour)
+    
+    def rangeDate(self, jourA, jourB, last = True):
+        jour = jourA + datetime.timedelta()
+        while jour <= jourB:
+            if jour == jourB and not last: break
+            yield jour
+            jour += datetime.timedelta(days = 1)
 
     def identify_region(self, x, y):
         """
