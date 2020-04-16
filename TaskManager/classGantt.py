@@ -156,20 +156,16 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             else:
                 self.chemin.append(-1)
 
-    def __clique(self, event):
+    def cliqueSuppr(self):
         if self.tacheD.master.mode == "delDep":
+            print('j"y suis')
             if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
                 self.tacheD.master.updateAffichage()
+                print("perdu")
                 return
             chercheur.jeCherche = False
             self.suppression()
 
-        elif self.tacheD.master.mode == "":
-            for lien in self.tacheD.master.listeLien: # On réinitialise l'état de tout les liens
-                lien.select = False
-            self.select = True # Et on met le notre au point
-
-            self.tacheD.master.updateAffichage()
 
     def changeSelect(self):
         self.select = not self.select
@@ -325,7 +321,7 @@ class TacheEnGantt(SuperTache):
     def creerLigne(self):
         """Fonction qui créer une ligne seulement si on est en tran de créer une ligne que l'on peut ensuite bouger à notre curseur"""
         if self.jeCherche and self.master.mode == "addDep":
-            self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2)
+            self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2, tag="top")
 
 
 
@@ -419,6 +415,16 @@ class AffichageGantt(SuperCalendrier):
         self.updateAffichage()
 
     def __mouseClicked(self, event):
+        # On cherche à détruire le lien si on est dans le mode adéquat
+        if self.mode == "delDep":
+            for tag in self.__trouverTags(event):
+                if tag == "top":
+                    continue
+                # Détection des lien :
+                for lien in self.listeLien[:]:
+                    if lien.ID_LIEN == tag:
+                        lien.suppression()
+
         # On retourne sur le mode par défaut :
         self.mode = ""
         self.__deselectionner()
@@ -430,14 +436,14 @@ class AffichageGantt(SuperCalendrier):
             return
 
         for tag in self.__trouverTags(event):
-            # Détection des plus :
-            for t in self.listeTache:
-                if t.ID_PLUS == tag:
-                    t.addDependance()
             # Détection des lien :
             for lien in self.listeLien:
                 if lien.ID_LIEN == tag:
                     lien.select = True
+            # Détection des plus :
+            for t in self.listeTache:
+                if t.ID_PLUS == tag:
+                    t.addDependance()
 
         # Mise à jour graphique :
         self.updateAffichage()
@@ -493,7 +499,7 @@ class AffichageGantt(SuperCalendrier):
         return tache
 
     def __afficherLesJours(self):
-        """"Traçage des lignes de division et des noms de jour."""
+        """Traçage des lignes de division et des noms de jour."""
         # Largeur :
         self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
         
