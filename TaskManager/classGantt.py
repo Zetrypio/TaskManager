@@ -225,14 +225,21 @@ class TacheEnGantt(SuperTache):
 
     def addDependance(self): # Mise en mode recherche
         self.master.mode = "addDep"
+        self.reinitialisationCherche()
         self.jeCherche = True
         self.__bindBouge = self.master.can.bind("<Motion>", self.afficherLesSemiDependances, add=True)
         self.master.updateAffichage()
 
     def __destDependance(self):
         self.master.mode = "delDep"
+        self.reinitialisationCherche()
         self.jeCherche = True
         self.master.updateAffichage()
+
+    def reinitialisationCherche(self):
+        if self.master.getQuiCherche() is not None:
+            self.master.getQuiCherche().jeCherche = False
+
 
     def chercheLien(self, tacheA, tacheB): # Fonction embarqué qui retourne le lien qui à tacheD = tache
         for lien in self.master.listeLien:
