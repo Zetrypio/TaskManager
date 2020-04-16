@@ -7,10 +7,12 @@ INFOBULLE = None
 
 def infobulle(event, text=""):
     global INFOBULLE
-    delete_infobulle()
-    INFOBULLE = Toplevel()
+    if INFOBULLE is None:
+        INFOBULLE = Toplevel()
     #INFOBULLE.transient(INFOBULLE.master)
     INFOBULLE.overrideredirect(1)
+    for w in INFOBULLE.slaves():
+        w.destroy()
     Label(INFOBULLE, text = text, bg = "white", bd = 1, relief = SOLID).pack(expand = YES, fill = BOTH)
     INFOBULLE.update()
     x = event.x_root+10
