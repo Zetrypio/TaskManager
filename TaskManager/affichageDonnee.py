@@ -9,7 +9,6 @@ from classGantt import *
 
 class ZoneAffichage(Frame): # Contient les paramètre et les données
     def __init__(self, master = None, **kwargs):
-        kwargs["bg"] = "gray"
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
         
@@ -28,7 +27,8 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         return self.donneeCalendrierFrame.getPanneauActif()
     def getDonneeCalendrier(self):
         return self.donneeCalendrierFrame
-        
+    def getParametreAffichage(self):
+        return self.zoneParametre
     def envoyerChangementNbJour(self, event):
         """
         Méthode callback du combobox qui gère
@@ -45,15 +45,18 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
             self.donneeCalendrierFrame.setNbJour(7)
         else: # Si c'est une période
             self.donneeCalendrierFrame.setNbJour(self.donneeCalendrierFrame.getLongueurPeriode())
-            self.donneeCalendrierFrame.setJourDebut(0)
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getDebutPeriode())
     
     def envoyerChangementJourDebut(self, valeur):
         if valeur == "d": # Si on appui sur remetre au début
-            self.donneeCalendrierFrame.setJourDebut(0)
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getDebutPeriode())
         elif valeur == "f": # Si on appuie sur mettre à la fin
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getLongueurPeriode()-self.donneeCalendrierFrame.getNbJour())
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+
+                                                    datetime.timedelta(days =
+                                                                       self.donneeCalendrierFrame.getLongueurPeriode()
+                                                                       -self.donneeCalendrierFrame.getNbJour()))
         else:
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+valeur)
+            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+datetime.timedelta(days = valeur))
 
 
 class ParametreAffichage(Frame):
@@ -76,8 +79,9 @@ class ParametreAffichage(Frame):
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèse car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
         
-    
-   
+    def getBoutonsChangementJours(self):
+        return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
+
     
     
 
@@ -100,6 +104,9 @@ class DonneeCalendrier(SuperCalendrier):
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
+        
+    def getParametreAffichage(self):
+        return self.master.getParametreAffichage()
 
     
     def setHeureDebut(self, heure):
@@ -144,16 +151,16 @@ class DonneeCalendrier(SuperCalendrier):
         for panneau in self.listPanneau:
             panneau.updateAffichage()
         
-        if self.getJourDebut() == 0:
+        if self.getJourDebut() == self.getDebutPeriode():
             self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)
             self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période
         else:
             self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
             self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
             
-        if self.getJourDebut()+self.getNbJour() > self.getLongueurPeriode():
-            self.setJourDebut(self.getLongueurPeriode() - self.getNbJour())
-        elif self.getJourDebut()+self.getNbJour()== self.getLongueurPeriode():
+        if self.getJourFin() > self.getFinPeriode():
+            self.setJourDebut(self.getJourFin() - datetime.timedelta(days = self.getLongueurPeriode() - self.getNbJour()))
+        elif self.getJourFin()== self.getFinPeriode():
             self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)            
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
         else:

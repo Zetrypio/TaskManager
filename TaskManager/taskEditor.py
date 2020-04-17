@@ -70,7 +70,7 @@ class TaskEditor(Frame):
                 del self.FILTRE[k]
         print(self.FILTRE)
         self.redessiner()
-
+        
     def ajouter(self, tache):
         self.taches.append(tache)
         self.redessiner()

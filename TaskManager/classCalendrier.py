@@ -70,12 +70,13 @@ class AffichageCalendrier(SuperCalendrier):
         colonne, ligne = self.grid_location(x, y)
         colonne = (colonne-1)//2
         #print("Case : ", ligne, colonne)
-        jour = self.getJourDebut() + colonne
+        jour = self.getJourDebut() + datetime.timedelta(days = colonne)
+        jour = datetime.datetime(jour.year, jour.month, jour.day)
         minute = self.getHeureDebut()*60 +(ligne - 1)
         heure, minute = minute//60, minute%60
         #print("Jour, heure, minute : ", jour, heure, minute)
         # TODO : A Changer :
-        return self.getDebutPeriode() + datetime.timedelta(days = jour, hours = heure, minutes = minute)
+        return jour + datetime.timedelta(hours = heure, minutes = minute)
         
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :
@@ -110,12 +111,12 @@ class AffichageCalendrier(SuperCalendrier):
         self.listeLabelJour = []
         self.listeSeparateurJour = []
         
-        for jour in range(self.getJourDebut(), self.getJourDebut()+self.getNbJour()):
-            self.listeLabelJour.append(Label(self, text=JOUR[jour%7]))
-            self.listeLabelJour[-1].grid(row=0, column=1+(jour-self.getJourDebut())*2, sticky="NSWE")
-            if jour != self.getJourDebut()+self.getNbJour()-1:
+        for jour in self.rangeDate(self.getJourDebut(), self.getJourFin(), last = False):
+            self.listeLabelJour.append(Label(self, text=JOUR[jour.weekday()]))
+            self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
+            if jour < self.getJourFin():
                 self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
-                self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()), rowspan = 60*(self.getHeureFin()+1-self.getHeureDebut())+1, sticky="NS")
+                self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin()+1-self.getHeureDebut())+1, sticky="NS")
             
         self.__adapteGrid()
 
@@ -124,8 +125,7 @@ class AffichageCalendrier(SuperCalendrier):
             tache.grid_forget()
 
         for tache in self.__listeTache:
-            if tache.task.debut.weekday() >= self.getJourDebut() and tache.task.debut.isoweekday()-1 <= self.getJourDebut()+self.getNbJour():
-                
+            if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 # Calcul du nombre de lignes :
@@ -139,7 +139,7 @@ class AffichageCalendrier(SuperCalendrier):
                     duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
                 
                 tache.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
-                       column = (tache.task.debut.isoweekday()-1-self.getJourDebut())*2+1, sticky = "nesw")                    
+                       column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")                    
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)
