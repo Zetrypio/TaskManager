@@ -39,10 +39,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):
-        # On retire 1 jour à la fin pour que le calcul soit correct
-        if self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() \
-        or (self.tacheD.task.debut.date() > self.tacheD.master.getJourFin()-datetime.timedelta(days=1) \
-        and self.tacheD.task.debut.date() != self.tacheF.task.debut.date()):
+        # On ne fait pas si on est pas dans la periode a afficher
+        if (self.tacheD.task.debut.date() == self.tacheF.task.debut.date() and (self.tacheF.task.getFin().date() < self.tacheD.master.getJourDebut() or self.tacheD.task.getFin().date() >= self.tacheD.master.getJourFin())) \
+        or (self.tacheD.task.debut.date() != self.tacheF.task.debut.date() and (self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() or self.tacheD.task.debut.date() > self.tacheD.master.getJourFin())):
             return
         
 
@@ -161,6 +160,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         if self.tacheD.master.mode == "delDep":
             if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
                 self.tacheD.master.updateAffichage()
+                return
+            if chercheur != self.tacheD and chercheur != self.tacheF:
                 return
             chercheur.jeCherche = False
             self.suppression()
@@ -439,7 +440,7 @@ class AffichageGantt(SuperCalendrier):
                 # Détection des lien :
                 for lien in self.listeLien[:]:
                     if lien.ID_LIEN == tag:
-                        lien.suppression()
+                        lien.lien.cliqueSuppr()
 
 #       Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
         if event.widget in self.__getBtnChangeJour():
