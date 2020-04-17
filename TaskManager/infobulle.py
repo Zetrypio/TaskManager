@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 from tkinter import *
+from util import *
 
-
+# Instance unique de l'infobulle
 INFOBULLE = None
 
 
@@ -69,13 +70,24 @@ def _addCanvas(canvas):
     canvas.bind("<Motion>", _bouge, add=True)
     canvas.bind("<Leave>", lambda e: delete_infobulle())
 
+# Pour le Scrolling :
+def _getYScrolling(canvas):
+    return int(round(canvas.yview()[0]*int(canvas.cget("scrollregion").split(" ")[3])))-2
+    
+def _getXScrolling(canvas):
+    return int(round(canvas.xview()[0]*int(canvas.cget("scrollregion").split(" ")[2])))
+    
+def _getScrolledPosition(canvas, pos):
+    return Point(pos.x + _getXScrolling(canvas), pos.y + _getYScrolling(canvas))
 
 # Méthode quand la souris bouge : mettre à jour l'infobulle.
 def _bouge(event):
     # On récupère le canvas
     canvas = event.widget
+    # On corrige la position suivant le scrolling:
+    pos = _getScrolledPosition(canvas, event)
     # Liste des items trouvés :
-    listeItems = canvas.find_overlapping(event.x-1, event.y-1, event.x+1, event.y+1)
+    listeItems = canvas.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
     # En déduire la liste des tags :
     listeTags = []
     for item in listeItems:

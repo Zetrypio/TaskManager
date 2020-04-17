@@ -327,7 +327,8 @@ class TacheEnGantt(SuperTache):
             else :
                 x1 = self.getPosPixel()[2] # Ici le getPosPixel est autorisé car la tache est affiché
 
-        self.master.can.coords(self.maLigneDepEnCours, x1, y1, event.x, event.y)
+        pos = self.master.getScrolledPosition(event)
+        self.master.can.coords(self.maLigneDepEnCours, x1, y1, pos.x, pos.y)
 
     def creerLigne(self):
         """Fonction qui créer une ligne seulement si on est en tran de créer une ligne que l'on peut ensuite bouger à notre curseur"""
@@ -368,6 +369,7 @@ class AffichageGantt(SuperCalendrier):
 
         # Bindings du Canvas :
         self.can.bind("<Configure>", lambda e : self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
+        self.can.bind_all("<ButtonRelease-1>", lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
         self.can.bind_all("<Button-1>",         self.__mouseClicked)
         self.can.bind_all("<Control-Button-1>", self.__multiSelection)
         self.can.bind_all("<Escape>",           self.__escapePressed)
@@ -417,8 +419,11 @@ class AffichageGantt(SuperCalendrier):
 
     def __multiSelection(self, event):
         """Ajoute ou enlève les liens à la sélection."""
+        # On corrige la position selon le scroll
+        pos = self.getScrolledPosition(event)
+        
         # On boucle sur les items qui sont on niveau du clic :
-        for tag in self.__trouverTags(event):
+        for tag in self.__trouverTags(pos):
             # Pour tout les liens, on cherche lequel est le bon :
             for lien in self.listeLien:
                 if lien.ID_LIEN == tag:
@@ -432,9 +437,12 @@ class AffichageGantt(SuperCalendrier):
         self.updateAffichage()
 
     def __mouseClicked(self, event):
+        # On corrige la position selon le scroll
+        pos = self.getScrolledPosition(event)
+        
         # On cherche à détruire le lien si on est dans le mode adéquat
         if self.mode == "delDep":
-            for tag in self.__trouverTags(event):
+            for tag in self.__trouverTags(pos):
                 if tag == "top":
                     continue
                 # Détection des lien :
@@ -457,7 +465,7 @@ class AffichageGantt(SuperCalendrier):
             self.updateAffichage()
             return
 
-        for tag in self.__trouverTags(event):
+        for tag in self.__trouverTags(pos):
             # Détection des lien :
             for lien in self.listeLien:
                 if lien.ID_LIEN == tag:
@@ -497,6 +505,12 @@ class AffichageGantt(SuperCalendrier):
         for jour in self.rangeDate(self.getJourDebut(), self.getJourFin()):
             nbLigne = max(nbLigne, self.getNbTacheJour(jour))
         return nbLigne
+    
+    def getYScrolling(self):
+        return int(round(self.can.yview()[0]*int(self.can.cget("scrollregion").split(" ")[3])))-2
+    
+    def getScrolledPosition(self, pos):
+        return Point(pos.x, pos.y + self.getYScrolling())
     
     def getScrollableHeight(self):
         """Renvoie le plus grand entre la partie scrollable et la hauteur du Canvas"""

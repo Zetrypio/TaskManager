@@ -6,3 +6,7 @@ def mymap(n, a, b, x, y): # Fonction map classique
 def posY(t, x1, y1, x2, y2):
             return mymap(math.cos(mymap(t, x1, x2, 0, math.pi)), 1, -1, y1, y2)
 
+class Point:
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
