@@ -493,7 +493,7 @@ class AffichageGantt(SuperCalendrier):
     
     def getNbLigneTotal(self):
         nbLigne = 1
-        for jour in range(1, 8):
+        for jour in self.rangeDate(self.getJourDebut(), self.getJourFin()):
             nbLigne = max(nbLigne, self.getNbTacheJour(jour))
         return nbLigne
     
@@ -508,11 +508,6 @@ class AffichageGantt(SuperCalendrier):
         """Mise à jour graphique."""
         # Sécurité :
         if self.can.winfo_width() != 0:
-            # On update la zone scrollable :
-            w = self.can.winfo_width()
-            h = self.getNbLigneTotal() * self.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
-            self.can.config(scrollregion = (0, 0, w, h))
-
             # On efface TOUT :
             for tache in self.listeTache:
                 tache.PlusCoord = None
@@ -522,6 +517,11 @@ class AffichageGantt(SuperCalendrier):
             self.__afficherLesJours()
             self.__afficherLesTaches()
             self.__afficherLesDependances()
+
+            # On update la zone scrollable :
+            w = self.can.winfo_width()
+            h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
+            self.can.config(scrollregion = (0, 0, w, h))
 
     def addTask(self, tache, region = None):
         """Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas."""
