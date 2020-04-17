@@ -9,7 +9,6 @@ from classGantt import *
 
 class ZoneAffichage(Frame): # Contient les paramètre et les données
     def __init__(self, master = None, **kwargs):
-        kwargs["bg"] = "gray"
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
         
@@ -28,7 +27,8 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         return self.donneeCalendrierFrame.getPanneauActif()
     def getDonneeCalendrier(self):
         return self.donneeCalendrierFrame
-        
+    def getParametreAffichage(self):
+        return self.zoneParametre
     def envoyerChangementNbJour(self, event):
         """
         Méthode callback du combobox qui gère
@@ -79,8 +79,9 @@ class ParametreAffichage(Frame):
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèse car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
         
-    
-   
+    def getBoutonsChangementJours(self):
+        return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
+
     
     
 
@@ -104,7 +105,8 @@ class DonneeCalendrier(SuperCalendrier):
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
         
-
+    def getParametreAffichage(self):
+        return self.master.getParametreAffichage()
 
     
     def setHeureDebut(self, heure):

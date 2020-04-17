@@ -39,14 +39,16 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):
-
+        # On retire 1 jour à la fin pour que le calcul soit correct
         if self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() \
-        or self.tacheD.task.debut.date() > self.tacheD.master.getJourFin():
+        or (self.tacheD.task.debut.date() > self.tacheD.master.getJourFin()-datetime.timedelta(days=1) \
+        and self.tacheD.task.debut.date() != self.tacheF.task.debut.date()):
             return
         
 
         self.pathCalculing() # On calcul le nouveau chemin
 
+        # Gestion des couleurs
         w = 2
         if self.tacheD.jeCherche == True or self.tacheF.jeCherche == True: # Change la couleur si on séléctionne une tache pour une action
             couleur = "#FFAF00"
@@ -86,7 +88,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                         y1F = val*tailleLigne+13
                         y2F = y1F+tailleLigne-4+13
             else:
-                x1F = self.canvas.winfo_width()+50 # + 50 Pour faire sortire la flèche du cadre
+                x1F = self.canvas.winfo_width()+50 # + 50 Pour faire sortir la flèche du cadre
                 for val in self.chemin:
                     if val != -1:
                         y1F = val*tailleLigne+20
@@ -187,6 +189,8 @@ class TacheEnGantt(SuperTache):
         self.RMenu = RMenu(self, tearoff=0)
         self.RMenu.add_command(label="Ajouter un lien", command=self.addDependance)
 
+        self.PlusCoord = None
+
     def getPosPixel(self):
         return self.master.can.bbox("num%s"%self.master.getIndiceTacheEnGantt(self))
     def getPosGrille(self):
@@ -212,10 +216,10 @@ class TacheEnGantt(SuperTache):
              diametreCercle+=1
 
         tailleTrait = diametreCercle-4
-        centre = [x2+5 + diametreCercle*0.5, (y1+y2)/2]
-        self.master.can.create_oval(centre[0]-diametreCercle/2, centre[1]-diametreCercle/2, centre[0]+diametreCercle/2,centre[1]+diametreCercle/2, fill="lightgray", tags=tag)
-        self.master.can.create_line(centre[0]-tailleTrait/2,centre[1],centre[0]+tailleTrait/2+1, centre[1], tags=tag) # ligne horizontale
-        self.master.can.create_line(centre[0],centre[1]-tailleTrait/2, centre[0],centre[1]+tailleTrait/2+1,  tags=tag)
+        self.PlusCoord = centre = [x2+5 + diametreCercle*0.5, (y1+y2)/2]
+        self.master.can.create_oval(centre[0]-diametreCercle/2, centre[1]-diametreCercle/2, centre[0]+diametreCercle/2,centre[1]+diametreCercle/2, fill="lightgray", tags=(tag, "topPlus"))
+        self.master.can.create_line(centre[0]-tailleTrait/2,centre[1],centre[0]+tailleTrait/2+1, centre[1], tags=(tag, "topPlus")) # ligne horizontale
+        self.master.can.create_line(centre[0],centre[1]-tailleTrait/2, centre[0],centre[1]+tailleTrait/2+1,  tags=(tag, "topPlus"))
 
         ajouterInfoBulleTagCanvas(self.master.can, tag, "Ajouter un lien")
 
@@ -309,19 +313,30 @@ class TacheEnGantt(SuperTache):
         self.master.updateAffichage()
 
     def afficherLesSemiDependances(self, event):
-        boite = self.getPosPixel()
-        if boite is not None:
-            x1, y1, x2, y2 = boite
+        """Fonction qui ajuste la position du trait vert lorsqu'on clique sur le plus pour ajouter un lien"""
+        if self.PlusCoord is not None:
+            x1, y1 = self.PlusCoord
         else:
-            # TODO
-            x1 = x2 = 25
-            y1 = y2 = 25
-        self.master.can.coords(self.maLigneDepEnCours, x2, (y1+y2)/2, event.x, event.y)
+            y1=(self.getPosGrille()[-1]+0.5)*self.master.TAILLE_LIGNE+self.master.TAILLE_BANDEAU_JOUR
+            # TODO : le x1 n'est pas détecté car soucis de datetime
+#             Si on est après la période affiché
+            if self.task.debut.date() > self.master.getJourFin() - datetime.timedelta(days=1):
+                x1 = self.master.can.winfo_width()+10 # On se place en dehors du cote droit
+#             Si on est avant le début
+            elif self.task.debut.date() < self.master.getJourDebut():
+                x1 = -10 # On se place en dehors du cote gauche
+            # Si c'est juste le plus qui n'est plus affiché car il y a déjà un lien existant
+            else :
+                x1 = self.getPosPixel()[2] # Ici le getPosPixel est autorisé car la tache est affiché
+
+        self.master.can.coords(self.maLigneDepEnCours, x1, y1, event.x, event.y)
+
+        print(self.task.debut.date(),self.master.getJourDebut())
 
     def creerLigne(self):
         """Fonction qui créer une ligne seulement si on est en tran de créer une ligne que l'on peut ensuite bouger à notre curseur"""
         if self.jeCherche and self.master.mode == "addDep":
-            self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2, tag="top")
+            self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2, tags="topLine")
 
 
 
@@ -373,6 +388,10 @@ class AffichageGantt(SuperCalendrier):
         @param pos : objet avec un attribut x et un attribut y, correspondant à la position souhaitée.
         """
         return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
+    def __getBtnChangeJour(self):
+        return self.getParametreAffichage().getBoutonsChangementJours()
+    def getParametreAffichage(self):
+        return self.master.master.getParametreAffichage()
 
     def __trouverTags(self, pos):
         # On parcour les items
@@ -424,6 +443,11 @@ class AffichageGantt(SuperCalendrier):
                 for lien in self.listeLien[:]:
                     if lien.ID_LIEN == tag:
                         lien.suppression()
+
+#       Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
+        if event.widget in self.__getBtnChangeJour():
+            self.updateAffichage()
+            return
 
         # On retourne sur le mode par défaut :
         self.mode = ""
@@ -479,6 +503,8 @@ class AffichageGantt(SuperCalendrier):
         # Sécurité :
         if self.can.winfo_width() != 0:
             # On efface TOUT :
+            for tache in self.listeTache:
+                tache.PlusCoord = None
             self.can.delete(ALL)
 
             # On réaffiche touououououout :
@@ -528,15 +554,15 @@ class AffichageGantt(SuperCalendrier):
         for tache in self.listeTache:
             ID_TACHE = self.listeTache.index(tache)
 
+            # Ligne verte :
+            tache.creerLigne()
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
-                # Ligne verte si présente :
-                tache.creerLigne()
                 
                 # TODO : ici, il faudra adapter pour gérer une tache sur plusieurs jours.
                 # width = int(self.tailleColonne-1)*tache.task.duree.days-1 + int(self.tailleColonne-1)*self.facteurW
                 w = self.tailleColonne
                 # X en fonction du jour de la tache :
-                x = int(w*tache.task.debut.weekday() + 2)
+                x = int(w*(tache.task.debut.weekday()-self.getJourDebut().weekday()) + 2)
                 # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le même jour :
                 y = (AffichageGantt.TAILLE_BANDEAU_JOUR + AffichageGantt.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.date(), self.getIndiceTacheEnGantt(tache)))
 
@@ -554,8 +580,11 @@ class AffichageGantt(SuperCalendrier):
     def __afficherLesDependances(self):
         for lien in self.listeLien:
             lien.afficherLesLiens()
-        self.can.tag_raise("top")
 
+        # Ordre d'affichage
+        self.can.tag_raise("top")
+        self.can.tag_raise("topLine")
+        self.can.tag_raise("topPlus")
 
 
 if __name__=='__main__':
