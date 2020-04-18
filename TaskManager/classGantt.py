@@ -26,16 +26,18 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         self.canvas = canvas
         self.select = False # variable qui sait si on est selectionne ou pas
+
+        self.RMenu = None
         
         self.tacheD.task.dependantes.append(self.tacheF.task)
         self.tacheF.task.dependences.append(self.tacheD.task) # On créer la dépendance dans la tache
     
     def suppression(self):
+        self.tacheD.master.listeLien.remove(self)
         self.tacheD.gestionRMenu()
         self.tacheF.gestionRMenu() # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
         self.tacheD.task.dependantes.remove(self.tacheF.task)
         self.tacheF.task.dependences.remove(self.tacheD.task) # On retire la dépendance dans la tache
-        self.tacheD.master.listeLien.remove(self)
         self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):
@@ -132,6 +134,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=w, arrow=LAST, fill=couleur, smooth=1, tags=tag)
+            self.RMenu = RMenu(self, binder = self.canvas, tearoff=0, bindWithId = tag)
+            self.RMenu.add_command(label="Supprimer le lien", command=self.suppression)
 
         # On ajoute une infobulle :
         ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"→"+self.tacheF.task.nom)
@@ -448,7 +452,7 @@ class AffichageGantt(SuperCalendrier):
                 # Détection des lien :
                 for lien in self.listeLien[:]:
                     if lien.ID_LIEN == tag:
-                        lien.lien.cliqueSuppr()
+                        lien.cliqueSuppr()
 
 #       Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
         if event.widget in self.__getBtnChangeJour():
