@@ -27,7 +27,7 @@ class RMenu(Menu):
             self.__bind_inside_of(w)
 
     def right_menu_event(self, event):
-        self.event_generate("<<RMenu-Opened>>")
+        self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
         self.tk_popup(event.x_root, event.y_root)
     
     def destroy(self):

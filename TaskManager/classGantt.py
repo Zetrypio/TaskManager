@@ -27,11 +27,9 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.canvas = canvas
         self.select = False # variable qui sait si on est selectionne ou pas
 
-        self.RMenu = None
-        
         self.tacheD.task.dependantes.append(self.tacheF.task)
         self.tacheF.task.dependences.append(self.tacheD.task) # On créer la dépendance dans la tache
-    
+
     def suppression(self):
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.gestionRMenu()
@@ -97,10 +95,11 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         heightF = y2F-y1F
 
         self.ID_LIEN = tag = "lienum"+str(self.tacheD.master.listeLien.index(self))
-        
-        if w == 3:
-            tag = (tag, "top")
 
+        if w == 3:
+            tag = (tag, "top", "lienDep")
+        else :
+            tag = (tag, "lienDep")
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
             self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=w,  outline=couleur, tags=tag)
@@ -134,14 +133,11 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=w, arrow=LAST, fill=couleur, smooth=1, tags=tag)
-            self.RMenu = RMenu(self, binder = self.canvas, tearoff=0, bindWithId = tag)
-            self.RMenu.add_command(label="Supprimer le lien", command=self.suppression)
 
         # On ajoute une infobulle :
-        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"→"+self.tacheF.task.nom)
-#        self.canvas.tag_bind(tag, "<Button-1>",self.__clique, add='+')
+        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"→"+self.tacheF.task.nom) # flèche trop cool en attende "→"
 
-#        self.canvas.tag_bind(tag,"<Control-Button-1>", self.changeSelect, add='+')
+
 
     def pathCalculing(self):
         " Fonction qui permet de calculer le chemin que va prendre le lien pour lier les 2 taches "
@@ -383,6 +379,34 @@ class AffichageGantt(SuperCalendrier):
         # Défini les différents modes pour savoir si on ajoute ou retire qqchose ou pas.
         self.mode = ""
 
+        #RMenu des liens
+        self.can.bind_all("<<RMenu-Opened>>", self.configureRMenu)
+        self.rmenu = RMenu(self, binder = self.can, bindWithId="lienDep")
+        self.event_generate("<<RMenu-Opened>>")
+
+    def configureRMenu(self, event):
+        # On déselectionne
+        self.__deselectionner()
+        pos = self.getScrolledPosition(event) # Si ca marche pas, 2 solutions, mais on verra plus tard
+        lesliens = set()
+        self.rmenu.delete(0, 'end')
+        for tag in self.__trouverTags(pos):
+            for lien in self.listeLien: # On pourrait pas faire une méthode ? (je sais ça n'a rien à voir)
+                if lien.ID_LIEN == tag:# and tag!="top":
+                    self.rmenu.add_command(label = "suppression %s→%s"%(lien.tacheD.task.nom, lien.tacheF.task.nom), command = lambda l=lien: l.suppression())
+                    lesliens.add(lien)
+                    lien.select = True
+#                    else:
+#                    lien.select = False
+        self.updateAffichage()
+        self.update()
+        self.rmenu.add_separator()
+        self.rmenu.add_command(label = "Supprimer tout les liens sélectionnés", command = lambda :  self.supprimerLiens(lesliens))
+
+    def supprimerLiens(self, lesliens):
+        for lien in lesliens:
+            lien.suppression()
+
     def getLiens(self):
         return self.listeLien
 
@@ -511,7 +535,7 @@ class AffichageGantt(SuperCalendrier):
         return nbLigne
     
     def getYScrolling(self):
-        return int(round(self.can.yview()[0]*int(self.can.cget("scrollregion").split(" ")[3])))-2
+        return int(round(self.can.yview()[0]*int(self.can.cget("scrollregion").split(" ")[3])))-1
     
     def getScrolledPosition(self, pos):
         return Point(pos.x, pos.y + self.getYScrolling())

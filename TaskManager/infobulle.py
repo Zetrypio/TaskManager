@@ -53,7 +53,10 @@ def ajouterInfoBulleTagCanvas(canvas, tag, text):
     if not _isCanvasAdded(canvas):
         _addCanvas(canvas)
 
-    _info_infobulles[canvas]["texteTags"][tag] = text
+    if isinstance(tag, (str, bytes)):
+        tag = (tag,)
+    for t in tag:
+        _info_infobulles[canvas]["texteTags"][t] = text
 
 def ajouterInfoBulleItemCanvas(canvas, tag, text):
     # Si le canvas n'a jamais été référencé auparavant :
@@ -95,6 +98,7 @@ def _bouge(event):
         if tags is None or len(tags) == 0:
             continue
         listeTags += tags
+
     listeTags = list(set(listeTags))
 
     # On trouve la liste des textes :
@@ -107,6 +111,7 @@ def _bouge(event):
             listeTextes.append(_info_infobulles[canvas]["texteTags"][tag])
 
     # On crée le texte et l'infobulle :
+    listeTextes = list(set(listeTextes))
     if len(listeTextes) == 0:
         delete_infobulle()
     elif len(listeTextes) == 1:
