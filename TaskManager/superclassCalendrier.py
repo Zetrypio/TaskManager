@@ -36,8 +36,8 @@ class SuperCalendrier(Frame):
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
-        self.heureDebut = 8
-        self.heureFin = 18
+        self.heureDebut = datetime.time(8, 0, 0)
+        self.heureFin = datetime.time(18, 0, 0)
 
         # infos des jours :
         self.jourDebut = self.getDebutPeriode()

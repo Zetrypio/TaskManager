@@ -566,6 +566,48 @@ class AffichageGantt(SuperCalendrier):
             h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
             self.can.config(scrollregion = (0, 0, w, h))
 
+    def identify_region(self, x, y):
+        # Position :
+        pos = Point(x, y)
+        pos = self.getScrolledPosition(pos)
+        
+        # Jour :
+        indiceJour = pos.x//self.tailleColonne;
+        decalageJour = datetime.timedelta(days = indiceJour)
+        jour = self.getJourDebut() + decalageJour
+        
+        # Heures :
+        y = pos.y - AffichageGantt.TAILLE_BANDEAU_JOUR
+        if y < 0:
+            heure = datetime.time(self.getHeureDebut())
+        elif y > self.getNbTacheJour(jour) * AffichageGantt.TAILLE_LIGNE:
+            try:
+                heure = self.getTache(jour, self.getNbTacheJour(jour)-1).task.getFin().time()
+            except:
+                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
+                (datetime.datetime.combine(jour, self.getHeureFin  ())
+                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
+        else:
+            try:
+                heure = self.getTache(jour, y//AffichageGantt.TAILLE_LIGNE).task.getFin().time()
+            except:
+                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
+                (datetime.datetime.combine(jour, self.getHeureFin  ())
+                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
+        
+        date = datetime.datetime.combine(jour, heure)
+        print(date)
+        return date
+
+    def getTache(self, jour, nb):
+        compteur = 0
+        for tache in self.listeTache:
+            if tache.task.getDebut().date() == jour:
+                if compteur == nb:
+                    return tache
+                compteur += 1
+        
+
     def addTask(self, tache, region = None):
         """Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas."""
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 

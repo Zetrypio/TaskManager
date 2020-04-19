@@ -52,7 +52,7 @@ class Task:
     def removeDependance(self, task):
         self.dependences.remove(task)
     def copy(self):
-        t = Task(self.nom, self.debut, self.duree, self.rep, self.nbrep, self.desc, self.color)
+        t = Task(self.nom, self.debut + datetime.timedelta() if self.debut is not None else None, self.duree + datetime.timedelta(), self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
         t.dependences = self.dependences[:]
         t.statut = self.statut
@@ -63,6 +63,8 @@ class Task:
         self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
     def getFin(self):
         return (self.debut + self.duree) if self.debut is not None else None
+    def getDebut(self):
+        return self.debut + datetime.timedelta() # Faire une copie
 
 class TaskAdder(Frame):
     """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""

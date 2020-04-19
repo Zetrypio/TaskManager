@@ -23,6 +23,7 @@ except:
         from PIL import Image, ImageTk
     except:
         ext = '"'+ '" "'.join(sys.argv[1:]) + '"' if len(sys.argv[1:]) else ""
+        input("**Appuyez sur entrer pour continuer**")
         print("start py -3.8 Application.pyw " + ext)
         os.system("start py -3.8 Application.pyw " + ext)
         exit()
