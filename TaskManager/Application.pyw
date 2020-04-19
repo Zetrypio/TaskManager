@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from importPIL import *
 from espacevisuel import *
 from taskEditor import *
 
