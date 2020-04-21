@@ -5,6 +5,7 @@ from RMenu import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from collections import deque
 
 
 class TaskEditor(Frame):
@@ -42,12 +43,17 @@ class TaskEditor(Frame):
         self.barreRecherche = Combobox(self.frameRecherche)
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
         
+        # Liste des 10 dernières recherches:
+        self.__dernieresRecherches = deque(maxlen=10)
+        
         # Ajout du binding
         # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
         self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
         self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
+        self.barreRecherche.bind("<FocusOut>", lambda e: self.__chercher(e.widget.get()))
+        self.barreRecherche.bind("<Return>", lambda e: self.__chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches :
+        # Zone avec la liste des tâches : self.__chercher(e.widget.get()))
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -70,6 +76,15 @@ class TaskEditor(Frame):
                 del self.FILTRE[k]
         print(self.FILTRE)
         self.redessiner()
+    
+    def __chercher(self, text):
+        text = text.lower().strip()
+        self.filter(name = text)
+        if text:
+            if text in self.__dernieresRecherches:
+                self.__dernieresRecherches.remove(text)
+            self.__dernieresRecherches.appendleft(text)
+        self.barreRecherche.config(values = list(self.__dernieresRecherches))
         
     def ajouter(self, tache):
         self.taches.append(tache)
