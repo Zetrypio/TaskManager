@@ -27,15 +27,13 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.canvas = canvas
         self.select = False # variable qui sait si on est selectionne ou pas
 
-        self.tacheD.task.dependantes.append(self.tacheF.task)
-        self.tacheF.task.dependances.append(self.tacheD.task) # On créer la dépendance dans la tache
+        self.tacheF.task.addDependance(self.tacheD.task) # On créer la dépendance dans la tache
 
     def suppression(self):
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.gestionRMenu()
         self.tacheF.gestionRMenu() # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
-        self.tacheD.task.dependantes.remove(self.tacheF.task)
-        self.tacheF.task.dependances.remove(self.tacheD.task) # On retire la dépendance dans la tache
+        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
         self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):

@@ -49,8 +49,10 @@ class Task:
         return self.subtasks
     def addDependance(self, task):
         self.dependances.append(task)
+        task.dependantes.append(self)
     def removeDependance(self, task):
         self.dependances.remove(task)
+        task.dependantes.remove(self)
     def copy(self):
         t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
