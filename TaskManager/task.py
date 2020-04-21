@@ -26,7 +26,7 @@ class Task:
         self.nbrep = nbrep  # nombre de répétitions
         self.desc = desc    # descirption
         self.color = color
-        self.dependences = []
+        self.dependances = []
         self.dependantes = []
         self.updateStatut()
         if self.isContainer():
@@ -48,23 +48,25 @@ class Task:
             raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
         return self.subtasks
     def addDependance(self, task):
-        self.dependences.append(task)
+        self.dependances.append(task)
     def removeDependance(self, task):
-        self.dependences.remove(task)
+        self.dependances.remove(task)
     def copy(self):
-        t = Task(self.nom, self.debut + datetime.timedelta() if self.debut is not None else None, self.duree + datetime.timedelta(), self.rep, self.nbrep, self.desc, self.color)
+        t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
-        t.dependences = self.dependences[:]
+        t.dependances = self.dependances[:]
         t.statut = self.statut
         # On retourne la copie :
         return t
     def updateStatut(self):
         """Permet de mettre à jour le statut de la tâche."""
         self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
+    def getDebut(self):
+        return self.debut + datetime.timedelta() if self.debut is not None else None # Faire une copie et vérifier les trucs
+    def getDuree(self):
+        return self.duree + datetime.timedelta() # Faire une copie
     def getFin(self):
         return (self.debut + self.duree) if self.debut is not None else None
-    def getDebut(self):
-        return self.debut + datetime.timedelta() # Faire une copie
 
 class TaskAdder(Frame):
     """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""

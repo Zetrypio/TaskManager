@@ -147,16 +147,15 @@ class TaskEditor(Frame):
 
             # Si c'est pas une tâche qui en contient une autre :
             if not t.isContainer():
-                self.tree.insert(parentNew, END, text = "Début :",           values = [t.debut],       iid = parentNew+"e1", tags = "Couleur%s"%t.color) # e comme enfant.
-                self.tree.insert(parentNew, END, text = "Durée :",           values = [t.duree],       iid = parentNew+"e2", tags = "Couleur%s"%t.color)
-                self.tree.insert(parentNew, END, text = "Fin :",             values = [(t.debut + t.duree) if t.debut is not None else None],
-                                                                                                       iid = parentNew+"e3", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Début :",           values = [t.getDebut()],  iid = parentNew+"e1", tags = "Couleur%s"%t.color) # e comme enfant.
+                self.tree.insert(parentNew, END, text = "Durée :",           values = [t.getDuree()],  iid = parentNew+"e2", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Fin :",             values = [t.getFin()],    iid = parentNew+"e3", tags = "Couleur%s"%t.color)
                 self.tree.insert(parentNew, END, text = "Nombre rep :",      values = [t.nbrep],       iid = parentNew+"e4", tags = "Couleur%s"%t.color)
                 self.tree.insert(parentNew, END, text = "temps entre rep :", values = [t.rep],         iid = parentNew+"e5", tags = "Couleur%s"%t.color)
             
             # Seulement si ce n'est pas déjà dans le parent :
             if not parent:
-                self.tree.insert(parentNew, END, text = "Dépendences :",     values = [t.dependences], iid = parentNew+"e6", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Dépendances :",     values = [t.dependances], iid = parentNew+"e6", tags = "Couleur%s"%t.color)
                 self.tree.insert(parentNew, END, text = "Description :",     values = [t.desc],        iid = parentNew+"e7", tags = "Couleur%s"%t.color)
                 if not t.isContainer():
                     rmenu = RMenu(self, False, self.tree, parentNew)
