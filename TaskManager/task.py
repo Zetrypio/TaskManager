@@ -31,6 +31,8 @@ class Task:
         self.updateStatut()
         if self.isContainer():
             self.subtasks = []
+    def __str__(self):
+        return "Task %s: from %s to %s, %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown", self.statut)
     def isContainer(self):
         self.updateStatut()
         if self.statut == "Inconnu" and not hasattr(self, "subtasks"):
@@ -53,6 +55,10 @@ class Task:
     def removeDependance(self, task):
         self.dependances.remove(task)
         task.dependantes.remove(self)
+    def getDependances(self):
+        return self.dependances[:]
+    def getDependantes(self):
+        return self.dependantes[:]
     def copy(self):
         t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
