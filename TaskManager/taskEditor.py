@@ -290,15 +290,30 @@ class TaskEditor(Frame):
                 m.config(increment = 1)
             else:
                 m.config(increment = 5)
+        def adapteHeure():
+            """Adapte les heures quand on augmente (ou diminue) trop les minutes."""
+            minutes = int(m.get())
+            heures = int(h.get())
+            while minutes < 0:
+                minutes += 60
+                heures -= 1
+            while minutes >= 60:
+                minutes -= 60
+                heures += 1
+            heures += 24
+            heures %= 24
+            m.set(minutes)
+            h.set(heures)
+
         fen = Dialog(self, "Confirmez l'heure exacte", ("Ok", "Annuler", "Reset"), command = onClose)
         Label(fen, text = "Veuillez entrer l'heure exacte").pack(side = TOP, expand = YES, fill = BOTH)
         var = BooleanVar(value = False)
         c = Checkbutton(fen, text = "Précision à la minute près ?", command = minutePres, variable = var)
         c.pack(side = TOP, fill = X)
         Label(fen, text = "Heure :").pack(side = LEFT)
-        h = Spinbox(fen, from_ = 0, to = 23, increment = 1)
+        h = Spinbox(fen, from_ = -1, to = 24, increment = 1, command = adapteHeure)
         h.pack(side = LEFT, fill = X, expand = YES)
-        m = Spinbox(fen, from_ = 0, to = 59, increment = 5)
+        m = Spinbox(fen, from_ = -5, to = 64, increment = 5, command = adapteHeure)
         m.pack(side = RIGHT, fill = X, expand = YES)
         Label(fen, text = "Minute :").pack(side = RIGHT)
         onClose("Reset")

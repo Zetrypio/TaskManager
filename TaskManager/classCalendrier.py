@@ -44,9 +44,9 @@ class AffichageCalendrier(SuperCalendrier):
             # Calcul du début :
             debut = tache.debut.hour*60 + tache.debut.minute + 1
             # Calcul du nombre de lignes :
-            # Si ça dépasse : on restreint
+            # Si ça dépasse : on restreint (TODO : à améliorer)
             if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
-                fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
+                fin = self.getHeureFin() # Conversion en time
                 duree = fin - tache.debut.time() # Conversion en duree
                 duree = duree.total_seconds()//60%1440
                 
