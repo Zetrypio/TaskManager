@@ -5,6 +5,7 @@ from RMenu import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from collections import deque
 
 
 class TaskEditor(Frame):
@@ -42,12 +43,17 @@ class TaskEditor(Frame):
         self.barreRecherche = Combobox(self.frameRecherche)
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
         
+        # Liste des 10 dernières recherches:
+        self.__dernieresRecherches = deque(maxlen=10)
+        
         # Ajout du binding
         # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
         self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
         self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
+        self.barreRecherche.bind("<FocusOut>", lambda e: self.__chercher(e.widget.get()))
+        self.barreRecherche.bind("<Return>", lambda e: self.__chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches :
+        # Zone avec la liste des tâches : self.__chercher(e.widget.get()))
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -70,6 +76,15 @@ class TaskEditor(Frame):
                 del self.FILTRE[k]
         print(self.FILTRE)
         self.redessiner()
+    
+    def __chercher(self, text):
+        text = text.lower().strip()
+        self.filter(name = text)
+        if text:
+            if text in self.__dernieresRecherches:
+                self.__dernieresRecherches.remove(text)
+            self.__dernieresRecherches.appendleft(text)
+        self.barreRecherche.config(values = list(self.__dernieresRecherches))
         
     def ajouter(self, tache):
         self.taches.append(tache)
@@ -116,47 +131,71 @@ class TaskEditor(Frame):
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
 
-    def __ajouterTache(self, t, idNum, parent, pos):
+    def __ajouterTache(self, t, idNum, parent, pos, displayDependances = True, displayDependantes = True, recursionLevel = 0):
         """
         Ajouter une tâche dans l'arbre.
         @param t: la tâche à rajouter
         @param parent: ID de la branche parente
         """
         # Si la tâche n'est pas filtrée
-        if self.__filterStateOf(t) >= 0:
-            # On défini l'ID du nouveai parent :
+        if self.__filterStateOf(t) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
+
+            # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
             t.id = parentNew
+            
+            # On fait la couleur :
+            self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
+
+            # Si le niveau de récursion est trop élevé : on stop:
+            if recursionLevel >= 3:
+                self.tree.insert(parent, END, text = str(t), values = ["Too Many Recursion"], iid = parentNew,  tags = "Couleur%s"%t.color)
+                return
+            
             # On insère la ligne d'entête :
             self.tree.insert(parent, pos, text = t.nom, values = [t.statut], iid = parentNew, tags = ["Couleur%s"%t.color, parentNew]) # p comme parent
 
             # Si c'est pas une tâche qui en contient une autre :
             if not t.isContainer():
-                self.tree.insert(parentNew, END, text = "Début :",           values = [t.debut],       iid = parentNew+"e1", tags = "Couleur%s"%t.color) # e comme enfant.
-                self.tree.insert(parentNew, END, text = "Durée :",           values = [t.duree],       iid = parentNew+"e2", tags = "Couleur%s"%t.color)
-                self.tree.insert(parentNew, END, text = "Fin :",             values = [(t.debut + t.duree) if t.debut is not None else None],
-                                                                                                       iid = parentNew+"e3", tags = "Couleur%s"%t.color)
-                self.tree.insert(parentNew, END, text = "Nombre rep :",      values = [t.nbrep],       iid = parentNew+"e4", tags = "Couleur%s"%t.color)
-                self.tree.insert(parentNew, END, text = "temps entre rep :", values = [t.rep],         iid = parentNew+"e5", tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Début :",              values = [t.getDebut()],       iid = parentNew+"e1",  tags = "Couleur%s"%t.color) # e comme enfant.
+                self.tree.insert(parentNew, END, text = "Durée :",              values = [t.getDuree()],       iid = parentNew+"e2",  tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Fin :",                values = [t.getFin()],         iid = parentNew+"e3",  tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "Nombre rep :",         values = [t.nbrep],            iid = parentNew+"e4",  tags = "Couleur%s"%t.color)
+                self.tree.insert(parentNew, END, text = "temps entre rep :",    values = [t.rep],              iid = parentNew+"e5",  tags = "Couleur%s"%t.color)
+
+                # Ajout de la liste des dépendances :
+                if displayDependances:
+                    self.tree.insert(parentNew, END, text = "Dépendances :",    values = [len(t.dependances)], iid = parentNew+"e6a", tags = "Couleur%s"%t.color)
+
+                    # Et les sous-tâches :
+                    for indice, tache in enumerate(t.getDependances()):
+                        self.__ajouterTache(tache, indice, parentNew+"e6a", END, True, False, recursionLevel+1)
+
+                # Ajout de la liste des dépendantes :
+                if displayDependantes:
+                    self.tree.insert(parentNew, END, text = "Tâches Dépendantes :", values = [len(t.dependances)], iid = parentNew+"e6b", tags = "Couleur%s"%t.color)
+
+                    # Et les sous-tâches :
+                    for indice, tache in enumerate(t.getDependantes()):
+                        self.__ajouterTache(tache, indice, parentNew+"e6b", END, False, True, recursionLevel+1)
+                
+                # Ajout du RMenu
+                rmenu = RMenu(self, False, self.tree, parentNew)
+                rmenu.add_command(label = "Transformer dans une tâche déplaçable", command = lambda: self.__transformTaskToDndableTask(t, rmenu))
+                self.__rmenu.append(rmenu)
             
-            # Seulement si ce n'est pas déjà dans le parent :
-            if not parent:
-                self.tree.insert(parentNew, END, text = "Dépendences :",     values = [t.dependences], iid = parentNew+"e6", tags = "Couleur%s"%t.color)
-                self.tree.insert(parentNew, END, text = "Description :",     values = [t.desc],        iid = parentNew+"e7", tags = "Couleur%s"%t.color)
-                if not t.isContainer():
-                    rmenu = RMenu(self, False, self.tree, parentNew)
-                    rmenu.add_command(label = "Transformer dans une tâche déplaçable", command = lambda: self.__transformTaskToDndableTask(t, rmenu))
-                    self.__rmenu.append(rmenu)
+            # Dans tout les cas :
+            self.tree.insert(parentNew, END, text = "Description :",        values = [t.desc],             iid = parentNew+"e7",  tags = "Couleur%s"%t.color)
 
             # Et Si c'est une case conteneurs (c'est-à-dire une tâche qui en contient une autre) :
             if t.isContainer():
                 # On rajoute la branche nécéssaire :
                 self.tree.insert(parentNew, END, text = "Instances :",       values = [len(t.getSubTasks())], iid = parentNew+"e8", tags = "Couleur%s"%t.color)
+
                 # Et les sous-tâches :
                 for indice, tache in enumerate(t.getSubTasks()):
-                    self.__ajouterTache(tache, indice, parentNew+"e8", END)
-            # On fait la couleur :
-            self.tree.tag_configure("Couleur%s"%t.color, background = t.color)
+                    self.__ajouterTache(tache, indice, parentNew+"e8", END, displayDependances, displayDependantes, recursionLevel+1)
+
     
     def __transformTaskToDndableTask(self, task, rmenu):
         rmenu.destroy()
@@ -251,15 +290,30 @@ class TaskEditor(Frame):
                 m.config(increment = 1)
             else:
                 m.config(increment = 5)
+        def adapteHeure():
+            """Adapte les heures quand on augmente (ou diminue) trop les minutes."""
+            minutes = int(m.get())
+            heures = int(h.get())
+            while minutes < 0:
+                minutes += 60
+                heures -= 1
+            while minutes >= 60:
+                minutes -= 60
+                heures += 1
+            heures += 24
+            heures %= 24
+            m.set(minutes)
+            h.set(heures)
+
         fen = Dialog(self, "Confirmez l'heure exacte", ("Ok", "Annuler", "Reset"), command = onClose)
         Label(fen, text = "Veuillez entrer l'heure exacte").pack(side = TOP, expand = YES, fill = BOTH)
         var = BooleanVar(value = False)
         c = Checkbutton(fen, text = "Précision à la minute près ?", command = minutePres, variable = var)
         c.pack(side = TOP, fill = X)
         Label(fen, text = "Heure :").pack(side = LEFT)
-        h = Spinbox(fen, from_ = 0, to = 23, increment = 1)
+        h = Spinbox(fen, from_ = -1, to = 24, increment = 1, command = adapteHeure)
         h.pack(side = LEFT, fill = X, expand = YES)
-        m = Spinbox(fen, from_ = 0, to = 59, increment = 5)
+        m = Spinbox(fen, from_ = -5, to = 64, increment = 5, command = adapteHeure)
         m.pack(side = RIGHT, fill = X, expand = YES)
         Label(fen, text = "Minute :").pack(side = RIGHT)
         onClose("Reset")

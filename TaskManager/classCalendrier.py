@@ -44,9 +44,9 @@ class AffichageCalendrier(SuperCalendrier):
             # Calcul du début :
             debut = tache.debut.hour*60 + tache.debut.minute + 1
             # Calcul du nombre de lignes :
-            # Si ça dépasse : on restreint
-            if (tache.debut + tache.duree).hour > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
-                fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
+            # Si ça dépasse : on restreint (TODO : à améliorer)
+            if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
+                fin = self.getHeureFin() # Conversion en time
                 duree = fin - tache.debut.time() # Conversion en duree
                 duree = duree.total_seconds()//60%1440
                 
@@ -57,7 +57,7 @@ class AffichageCalendrier(SuperCalendrier):
             
             
             t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
-            t.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
+            t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
                    column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
             t.grid_propagate(0)
             
@@ -72,7 +72,7 @@ class AffichageCalendrier(SuperCalendrier):
         #print("Case : ", ligne, colonne)
         jour = self.getJourDebut() + datetime.timedelta(days = colonne)
         jour = datetime.datetime(jour.year, jour.month, jour.day)
-        minute = self.getHeureDebut()*60 +(ligne - 1)
+        minute = self.getHeureDebut().hour*60 +(ligne - 1)
         heure, minute = minute//60, minute%60
         #print("Jour, heure, minute : ", jour, heure, minute)
         # TODO : A Changer :
@@ -85,13 +85,13 @@ class AffichageCalendrier(SuperCalendrier):
         self.listeLabelHeure = []
 
         # et on les recrées :
-        for heure in range(self.getHeureDebut(), self.getHeureFin()+1): # le +1 pour compter Début ET Fin.
+        for heure in range(self.getHeureDebut().hour, self.getHeureFin().hour+1): # le +1 pour compter Début ET Fin.
             self.listeLabelHeure.append(Label(self, text=heure, bd = 1, relief = SOLID))
             # Note : Un détail à la minute près va être fait,
             # donc on compte 60 lignes pour une heure.
             # La ligne 0 étant la ligne des labels des jours,
             # On compte à partir de 1, c'est-à-dire en ajotuant 1.
-            self.listeLabelHeure[-1].grid(row=(heure-self.getHeureDebut())*60+1, # le *60 pour faire un détail à la minute près
+            self.listeLabelHeure[-1].grid(row=(heure-self.getHeureDebut().hour)*60+1, # le *60 pour faire un détail à la minute près
                                           column=0,      # Les labels des heures sont réservés à la colonne de gauche.
                                           rowspan=60,    # Mais ils prennent 60 minutes et lignes.
                                           sticky="NSWE") # Permet de centrer le label et d'en reomplir les bords par la couleur du fond.
@@ -116,7 +116,7 @@ class AffichageCalendrier(SuperCalendrier):
             self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
             if jour < self.getJourFin():
                 self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
-                self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin()+1-self.getHeureDebut())+1, sticky="NS")
+                self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
             
         self.__adapteGrid()
 
@@ -130,7 +130,7 @@ class AffichageCalendrier(SuperCalendrier):
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 # Calcul du nombre de lignes :
                 # Si ça dépasse : on restreint
-                if (tache.task.debut + tache.task.duree).hour > self.getHeureFin() or tache.task.debut.date() != (tache.task.debut + tache.task.duree).date():
+                if (tache.task.debut + tache.task.duree).time() > self.getHeureFin() or tache.task.debut.date() != (tache.task.debut + tache.task.duree).date():
                     fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
                     duree = fin - tache.debut.time() # Conversion en duree
                     duree = duree.total_seconds()//60%1440
@@ -138,7 +138,7 @@ class AffichageCalendrier(SuperCalendrier):
                 else: # Si ça dépasse pas :
                     duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
                 
-                tache.grid(row = int(debut)-self.getHeureDebut()*60, rowspan = int(duree),
+                tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
                        column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")                    
 
     def __adapteGrid(self):

@@ -16,7 +16,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
         self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
         
-        for tache in self.tacheD.task.dependences: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
+        for tache in self.tacheD.task.dependances: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
             if self.tacheF.task == tache:
                 raise ValueError("Lien déjà existant.")
 
@@ -27,15 +27,13 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.canvas = canvas
         self.select = False # variable qui sait si on est selectionne ou pas
 
-        self.tacheD.task.dependantes.append(self.tacheF.task)
-        self.tacheF.task.dependences.append(self.tacheD.task) # On créer la dépendance dans la tache
+        self.tacheF.task.addDependance(self.tacheD.task) # On créer la dépendance dans la tache
 
     def suppression(self):
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.gestionRMenu()
         self.tacheF.gestionRMenu() # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
-        self.tacheD.task.dependantes.remove(self.tacheF.task)
-        self.tacheF.task.dependences.remove(self.tacheD.task) # On retire la dépendance dans la tache
+        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
         self.tacheD.master.updateAffichage()
 
     def afficherLesLiens(self, couleur = "#000000"):
@@ -565,6 +563,48 @@ class AffichageGantt(SuperCalendrier):
             w = self.can.winfo_width()
             h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
             self.can.config(scrollregion = (0, 0, w, h))
+
+    def identify_region(self, x, y):
+        # Position :
+        pos = Point(x, y)
+        pos = self.getScrolledPosition(pos)
+        
+        # Jour :
+        indiceJour = pos.x//self.tailleColonne;
+        decalageJour = datetime.timedelta(days = indiceJour)
+        jour = self.getJourDebut() + decalageJour
+        
+        # Heures :
+        y = pos.y - AffichageGantt.TAILLE_BANDEAU_JOUR
+        if y < 0:
+            heure = datetime.time(self.getHeureDebut())
+        elif y > self.getNbTacheJour(jour) * AffichageGantt.TAILLE_LIGNE:
+            try:
+                heure = self.getTache(jour, self.getNbTacheJour(jour)-1).task.getFin().time()
+            except:
+                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
+                (datetime.datetime.combine(jour, self.getHeureFin  ())
+                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
+        else:
+            try:
+                heure = self.getTache(jour, y//AffichageGantt.TAILLE_LIGNE).task.getFin().time()
+            except:
+                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
+                (datetime.datetime.combine(jour, self.getHeureFin  ())
+                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
+        
+        date = datetime.datetime.combine(jour, heure)
+        print(date)
+        return date
+
+    def getTache(self, jour, nb):
+        compteur = 0
+        for tache in self.listeTache:
+            if tache.task.getDebut().date() == jour:
+                if compteur == nb:
+                    return tache
+                compteur += 1
+        
 
     def addTask(self, tache, region = None):
         """Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas."""
