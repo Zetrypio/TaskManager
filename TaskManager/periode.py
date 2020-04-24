@@ -8,7 +8,8 @@ class Periode:
         self.fin = fin
         self.desc = desc
         self.color = color
-        # Doit-on faire une liste des tâches contenus ?
+        self.selected = False
+        # Doit-on faire une liste des tâches contenus ? je pense pas, mais on pourras l'obtenir avec une méthode...?
     def getDebut(self):
         return self.debut
     def getDuree(self):
@@ -20,6 +21,10 @@ class Periode:
     def intersectWith(self, periode):
         return (self.debut >= periode.debut and self.debut <= periode.fin) \
             or (periode.debut >= self.debut and periode.debut <= self.fin)
+    def isSelected(self):
+        return self.selected
+    def setSelected(self, value):
+        self.selected = value
 
 
 class PeriodManager:
@@ -27,12 +32,35 @@ class PeriodManager:
     def __init__(self, app):
         self.app = app
         self.periodes = []
+
     def getPeriodes(self):
         return self.periodes
     def ajouter(self, periode):
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().updateAffichage()
+    
+    def getPeriodesSelectionnees(self):
+        return [periode for periode in self.periodes if periode.isSelected()]
+
+    # Fonctions de la barre d'outil :
+    def deplacerPeriode(self):
+        pass
+    def dupliquerPeriode(self):
+        pass
+    def supprimerPeriode(self):
+        periodes = self.getPeriodesSelectionnees()
+        for periode in reversed(periodes):
+            self.periodes.remove(periode)
+        self.app.getDonneeCalendrier().updateAffichage()
+    
+    def scinderPeriode(self):
+        pass
+    def fusionnerPeriodes(self):
+        pass
+    
+    def lierTachePeriode(self):
+        pass
 
 if __name__=='__main__':
     import Application

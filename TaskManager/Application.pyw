@@ -65,7 +65,7 @@ class Application(Frame):
         self.periodManager = PeriodManager(self)
         self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
-        self.calendar = CalendarZone(self)
+        self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
     def nouveau(self):pass
     def setModeEditionPeriode(self, enEdition):

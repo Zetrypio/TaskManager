@@ -20,45 +20,45 @@ class MenuOutil(Frame):
         self.lesCategories = [] # liste de cadre
         self.lesBoutonsEnListes = [] # liste qui va contenir toutes les autres liste de bouton (pour un affichage cool) lesBoutonsEnListes[catégorie][bouton]
         self.lesFramesDesBoutons = [] # tout est dans le nom ... lesFramesDesBoutons[categorie][frame]
-        self._ajouterCategoriesEtBoutons(master)
+        self._ajouterCategoriesEtBoutons()
         
-    def _ajouterCategoriesEtBoutons(self, master):
+    def _ajouterCategoriesEtBoutons(self):
         # CADRE AJOUTER
         self._creationCategorie("Ajouter") #cadre ajouter
         # création des boutons
-        self._creationBouton("heure", master.ajouterHeure)
-        self._creationBouton("jour", master.ajouterJour)
+        self._creationBouton("heure", self.master.ajouterHeure)
+        self._creationBouton("jour", self.master.ajouterJour)
         
         # CADRE RETIRER
         self._creationCategorie("Retirer") #cadre retirer
         # création des bouton
-        self._creationBouton("heure", master.retirerHeure)
-        self._creationBouton("jour", master.retirerJour)
+        self._creationBouton("heure", self.master.retirerHeure)
+        self._creationBouton("jour", self.master.retirerJour)
         
         # CADRE VUE
         self._creationCategorie("Vue") #cadre vue
         # création des boutons
-        self._creationBouton("sélectionner un jour", master.selectionnerJour)
-        self._creationBouton("Afficher/masquer", master.afficherMasquerJour)
+        self._creationBouton("sélectionner un jour", self.master.selectionnerJour)
+        self._creationBouton("Afficher/masquer", self.master.afficherMasquerJour)
         
         # CADRE DÉPLACER
         self._creationCategorie("Déplacer") #cadre Déplacer
         # création des boutons
-        self._creationBouton("Activité -> Jour", master.deplacerActiviteeVersJour)
-        self._creationBouton("Intervertir", master.deplacerIntervertir)
+        self._creationBouton("Activité -> Jour", self.master.deplacerActiviteeVersJour)
+        self._creationBouton("Intervertir", self.master.deplacerIntervertir)
         
         # CADRE DÉCALER
         self._creationCategorie("Décaler") #cadre Décaler
         # création des boutons
-        self._creationBouton("toutes les activitées -> jour", master.decalerJour)
-        self._creationBouton("toutes les activitées -> heure", master.decalerHeure)
+        self._creationBouton("toutes les activitées -> jour", self.master.decalerJour)
+        self._creationBouton("toutes les activitées -> heure", self.master.decalerHeure)
         
         # CADRE AVANCEMENT
         self._creationCategorie("Avancement") #cadre Avancement
         # création des boutons
-        self._creationBouton("Retard", master.avancementRetard)
-        self._creationBouton("Jour fini", master.avancementJourFini)        
-        self._creationBouton("Normal", master.avancementNormal)
+        self._creationBouton("Retard", self.master.avancementRetard)
+        self._creationBouton("Jour fini", self.master.avancementJourFini)        
+        self._creationBouton("Normal", self.master.avancementNormal)
 
     
     def _creationCategorie(self, texte):
@@ -88,30 +88,31 @@ class MenuOutil(Frame):
 
 
 class MenuOutilPeriode(MenuOutil):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, periodeManager, **kwargs):
+        self.periodeManager = periodeManager
         super().__init__(master, **kwargs)
-    def _ajouterCategoriesEtBoutons(self, master):
+    def _ajouterCategoriesEtBoutons(self):
         # CADRE Gestion des périodes
         self._creationCategorie("Gestion des périodes")
         # création des boutons
-        self._creationBouton("Déplacer", None) # TODO : fonctions des commandes
-        self._creationBouton("Dupliquer", None)
-        self._creationBouton("Supprimer", None)
+        self._creationBouton("Déplacer",                self.periodeManager.deplacerPeriode)
+        self._creationBouton("Dupliquer",               self.periodeManager.dupliquerPeriode)
+        self._creationBouton("Supprimer",               self.periodeManager.supprimerPeriode)
         # CADRE Division des périodes
         self._creationCategorie("Division des périodes")
         # création des boutons
-        self._creationBouton("Scinder", None) # TODO : fonctions des commandes
-        self._creationBouton("Fusionner", None)
+        self._creationBouton("Scinder",                 self.periodeManager.scinderPeriode)
+        self._creationBouton("Fusionner",               self.periodeManager.fusionnerPeriodes)
         # CADRE Tâches indépendantes
         self._creationCategorie("Tâches indépendantes")
         # création des boutons
-        self._creationBouton("Lier à une période", None) # TODO : fonctions des commandes
-        self._creationBouton("Dupliquer", None)
-        self._creationBouton("Supprimer", None)
+        self._creationBouton("Lier à une période",      self.periodeManager.lierTachePeriode)
+        self._creationBouton("Voir dans une autre vue", self.master.voirTacheDansVue)
+        self._creationBouton("Supprimer",               self.master.supprimerTache)
         
 
 class CalendarZone(Frame):
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, periodeManager = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers l'Application.
         
@@ -121,7 +122,7 @@ class CalendarZone(Frame):
         self.outilBar.pack(side=TOP, fill=X, expand=NO)
         
         # Barre du haut pour les périodes
-        self.outilBarPeriode = MenuOutilPeriode(self) # frame avec tous les boutons outils
+        self.outilBarPeriode = MenuOutilPeriode(self, periodeManager) # frame avec tous les boutons outils
         
         # Zone calendrier
         self.zoneDynamicCalendarFrame = ZoneAffichage(self) # frame avec la zone d'affichage des paramètre et la zone avec les données
@@ -179,6 +180,12 @@ class CalendarZone(Frame):
         return self.zoneDynamicCalendarFrame.getPanneauActif()
     def getDonneeCalendrier(self):
         return self.zoneDynamicCalendarFrame.getDonneeCalendrier()
+    
+    # Pour la barre d'outil des périodes :
+    def voirTacheDansVue(self):
+        pass
+    def supprimerTache(self):
+        pass
     
 
 

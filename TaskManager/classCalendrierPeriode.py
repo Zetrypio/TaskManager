@@ -19,6 +19,7 @@ class AffichageCalendrierPeriode(SuperCalendrier):
         self.can = Canvas(self, width = 1, height = 1, bd = 0)
         self.can.pack(expand = YES, fill = BOTH)
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
+        self.can.bind("<ButtonPress-1>", self.clic)
     
     def setJourDebut(self, jour):
         """Override, car en fait ca fonctionne avec un mois."""
@@ -27,7 +28,16 @@ class AffichageCalendrierPeriode(SuperCalendrier):
     def getJourDebut(self):
         """Override, car en fait ça fonctionne avec un mois."""
         return datetime.datetime(self.annee, self.mois, 1)
-    
+
+    def clic(self, event):
+        x, y = event.x, event.y
+        for item in self.can.find_overlapping(x-1, y-1, x+1, y+1):
+            for p in self.getApplication().getPeriodManager().getPeriodes():
+                if p.drawId == item:
+                    p.setSelected(True)
+                else:
+                    p.setSelected(False)
+        self.updateAffichage()
 
     def updateAffichage(self):
         self.can.delete(ALL)
@@ -53,11 +63,13 @@ class AffichageCalendrierPeriode(SuperCalendrier):
         # Affichage des périodes : #
         ############################
         
+        NEW_TAG_ID = 0
         for p in self.getApplication().getPeriodManager().getPeriodes():
             jour = p.getDebut()
             semaine = self.getSemaineOf(jour)
             jourDebutSemaine = jour
             isFirst = 2
+            p.tag = NEW_TAG_ID
             while jour < p.getFin():
                 jour += datetime.timedelta(days = 1)
                 if jour.weekday()%7 == 0:
@@ -65,7 +77,7 @@ class AffichageCalendrierPeriode(SuperCalendrier):
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p),
                                               w,
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p)+self.getPeriodHeight(),
-                                              fill = p.getColor())
+                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
                     isFirst = 0
                     semaine += 1
                     jourDebutSemaine = jour
@@ -73,7 +85,8 @@ class AffichageCalendrierPeriode(SuperCalendrier):
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh,
                                       int(jour.weekday()+1)*w/7 -3,
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
-                                      fill = p.getColor())
+                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
+            NEW_TAG_ID += 1
     def getPeriodeYPosition(self, p):
         if p in self.__listeHauteur:
             return self.__listeHauteur[p]*self.getPeriodHeight()
