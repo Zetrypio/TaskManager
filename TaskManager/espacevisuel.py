@@ -86,7 +86,7 @@ class MenuOutil(Frame):
             self.lesFramesDesBoutons[-1][-1].pack(side=TOP, expand=YES, fill=BOTH)            
 
         # Création et placement du bouton :
-        b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img) # text=texte,
+        b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img, width = 0) # text=texte,
         b.pack(side=LEFT, expand=YES, fill=BOTH, padx=2, pady=2)
         self.lesBoutonsEnListes[-1].append(b)
         ajouterInfoBulle(b, self.lesCategories[-1].cget("text")+" "+texte)
