@@ -4,8 +4,12 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 import datetime
 from affichageDonnee import *
+from importPIL import *
+from infobulle import *
 
 
+
+#img = Image.open("Ressources/textures/ECDV/a_test.png")
 
 # En général, ça s'appelle une ToolBar - soit une barre d'outils en français.
 class MenuOutil(Frame):
@@ -57,7 +61,7 @@ class MenuOutil(Frame):
         self.__creationCategorie("Avancement") #cadre Avancement
         # création des boutons
         self.__creationBouton("Retard", master.avancementRetard)
-        self.__creationBouton("Jour fini", master.avancementJourFini)        
+        self.__creationBouton("Jour fini", master.avancementJourFini)
         self.__creationBouton("Normal", master.avancementNormal)
 
     
@@ -75,16 +79,17 @@ class MenuOutil(Frame):
         # Liste qui va contenir les futurs frames
         self.lesFramesDesBoutons.append([]) 
 
-    def __creationBouton(self, texte, fonction = None):
+    def __creationBouton(self, texte, fonction = None, img = None):
         # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
         if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2: 
             self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))
             self.lesFramesDesBoutons[-1][-1].pack(side=TOP, expand=YES, fill=BOTH)            
 
         # Création et placement du bouton :
-        b = Button(self.lesFramesDesBoutons[-1][-1], text=texte, command=fonction, width = len(texte))
+        b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img) # text=texte,
         b.pack(side=LEFT, expand=YES, fill=BOTH, padx=2, pady=2)
         self.lesBoutonsEnListes[-1].append(b)
+        ajouterInfoBulle(b, self.lesCategories[-1].cget("text")+" "+texte)
 
 
 class CalendarZone(Frame):

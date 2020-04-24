@@ -122,6 +122,8 @@ def _bouge(event):
             texte += "\n- %s.\t    \t"%txt
         infobulle(event, texte)
 
+__all__ = ("INFOBULLE", "infobulle", "delete_infobulle", "ajouterInfoBulle", "ajouterInfoBulleTag", "ajouterInfoBulleTagCanvas", "ajouterInfoBulleItemCanvas")
+
 if __name__=='__main__':
     import Application
     Application.main()
