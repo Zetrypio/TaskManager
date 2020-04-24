@@ -97,7 +97,6 @@ class MenuOutilPeriode(MenuOutil):
         self._creationBouton("Déplacer", None) # TODO : fonctions des commandes
         self._creationBouton("Dupliquer", None)
         self._creationBouton("Supprimer", None)
-        self._creationBouton("Sélectionner", None)
         # CADRE Division des périodes
         self._creationCategorie("Division des périodes")
         # création des boutons
