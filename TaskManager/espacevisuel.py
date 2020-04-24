@@ -30,14 +30,14 @@ class MenuOutil(Frame):
         # CADRE AJOUTER
         self.__creationCategorie("Ajouter") #cadre ajouter
         # création des boutons
-        self.__creationBouton("heure", master.ajouterHeure, getImage("Ressources/textures/ajouter.png"))
-        self.__creationBouton("jour", master.ajouterJour, getImage("Ressources/textures/ajouter.png"))
+        self.__creationBouton("heure", master.ajouterHeure, getImage("Ressources/textures/ajouter.png"), textVisible=True)
+        self.__creationBouton("jour", master.ajouterJour, getImage("Ressources/textures/ajouter.png"), textVisible=True)
         
         # CADRE RETIRER
         self.__creationCategorie("Retirer") #cadre retirer
         # création des bouton
-        self.__creationBouton("heure", master.retirerHeure, getImage("Ressources/textures/retirer.png"))
-        self.__creationBouton("jour", master.retirerJour, getImage("Ressources/textures/retirer.png"))
+        self.__creationBouton("heure", master.retirerHeure, getImage("Ressources/textures/retirer.png"), textVisible=True)
+        self.__creationBouton("jour", master.retirerJour, getImage("Ressources/textures/retirer.png"), textVisible=True)
         
         # CADRE VUE
         self.__creationCategorie("Vue") #cadre vue
@@ -49,7 +49,6 @@ class MenuOutil(Frame):
         self.__creationCategorie("Intervertir")
         # création des boutons
         self.__creationBouton("Intervertir", master.deplacerIntervertir, getImage("Ressources/textures/intervertir.png"))
-
 
         # CADRE DÉCALER
         self.__creationCategorie("Décaler") #cadre Décaler
@@ -79,14 +78,17 @@ class MenuOutil(Frame):
         # Liste qui va contenir les futurs frames
         self.lesFramesDesBoutons.append([]) 
 
-    def __creationBouton(self, texte, fonction = None, img = None):
+    def __creationBouton(self, texte, fonction = None, img = None, textVisible = False):
         # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
         if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2: 
             self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))
             self.lesFramesDesBoutons[-1][-1].pack(side=TOP, expand=YES, fill=BOTH)            
 
         # Création et placement du bouton :
-        b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img) # text=texte,
+        if textVisible:
+            b = Button(self.lesFramesDesBoutons[-1][-1], text=texte, compound=LEFT, command=fonction, image = img)
+        else:
+            b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img) # text=texte,
         b.pack(side=LEFT, expand=YES, fill=BOTH, padx=2, pady=2)
         self.lesBoutonsEnListes[-1].append(b)
         ajouterInfoBulle(b, self.lesCategories[-1].cget("text")+" "+texte)
