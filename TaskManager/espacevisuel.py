@@ -55,6 +55,12 @@ class MenuOutil(Frame):
         # création des boutons
         self.__creationBouton("toutes les activitées -> jour", master.decalerJour, getImage("Ressources/textures/decalage_J.png"))
         self.__creationBouton("toutes les activitées -> heure", master.decalerHeure, getImage("Ressources/textures/decalage_H.png"))
+
+        # CADRE GROUPE
+        self.__creationCategorie("Groupe") #cadre groupe
+        # création des boutons
+        self.__creationBouton("Grouper", master.grouper, getImage("Ressources/textures/grouper.png"))
+        self.__creationBouton("dégrouper", master.degrouper, getImage("Ressources/textures/degrouper.png"))
         
         # CADRE AVANCEMENT
         self.__creationCategorie("Avancement") #cadre Avancement
@@ -130,6 +136,11 @@ class CalendarZone(Frame):
     def decalerJour(self):
         pass
     def decalerHeure(self):
+        pass
+
+    def grouper(self):
+        pass
+    def degrouper(self):
         pass
 
     def avancementRetard(self):
