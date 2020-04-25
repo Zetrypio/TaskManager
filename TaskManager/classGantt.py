@@ -98,6 +98,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             tag = (tag, "top", "lienDep")
         else :
             tag = (tag, "lienDep")
+
         if x1F < x2D: # Si la tache et son lien sont le même jour
             rayon = tailleLigne/4
             self.canvas.create_arc(x2D-rayon, 13+y1D+heightD/2-rayon, x2D+rayon, 13+y1D+heightD/2+rayon, start=-90, extent=180, style='arc', width=w,  outline=couleur, tags=tag)
@@ -116,18 +117,28 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                     y = posY(x, x1, y1, x2, y2)
                     mesPoints.append([x, y])
 
+            # S'il n'y a qu'un jour de décalage entre la fin du début et le début de la fin
+            if self.tacheD.task.getFin().date() == (self.tacheF.task.getDebut() - datetime.timedelta(days=1)).date():
+#                 On dessine autrement
+                dessineLiaison(x2D,
+                               y1D+heightD/2,
+                               x1F-10,
+                               y1F+heightF/2)
+#                self.canvas.create_line(x2D, y1D+heightD/2, x1F+tailleColonne*(1-facteurW), y1F+(y1F+y2F)/2)
+            else : # Si c'est classique
+                dessineLiaison(x2D,
+                               y1D+heightD/2,
+                               x2D+tailleColonne*(1-facteurW),
+                               max(tailleLigne*self.chemin[(self.tacheD.task.getFin()).isoweekday()]+AffichageGantt.TAILLE_BANDEAU_JOUR - AffichageGantt.ESPACEMENT/2, AffichageGantt.TAILLE_BANDEAU_JOUR))
 
-            dessineLiaison(x2D,
-                           y1D+heightD/2,
-                           x2D+tailleColonne*(1-facteurW),
-                           max(tailleLigne*self.chemin[(self.tacheD.task.getFin()).isoweekday()]+AffichageGantt.TAILLE_BANDEAU_JOUR - AffichageGantt.ESPACEMENT/2, AffichageGantt.TAILLE_BANDEAU_JOUR))
-
-            if self.tacheD.master.getJourFin() >= self.tacheF.task.debut.date():
+            # Si la fin de la tache d'arrivé est avant la fin de l'affichage ET la tache de fin n'est pas un jour après
+            if self.tacheD.master.getJourFin() >= self.tacheF.task.debut.date() and self.tacheD.task.getFin().date() != (self.tacheF.task.getDebut() - datetime.timedelta(days=1)).date():
                 dessineLiaison(x1F-tailleColonne*(1-facteurW),
                                max(tailleLigne*self.chemin[(self.tacheD.task.getFin()).isoweekday()]+AffichageGantt.TAILLE_BANDEAU_JOUR - AffichageGantt.ESPACEMENT/2, AffichageGantt.TAILLE_BANDEAU_JOUR),
                                x1F-10,
                                max(y1F+heightF/2, 20))
 
+            # Fin droite pour une foli flèche
             mesPoints.append([x1F, max(y1F+heightF/2, 20)])
 
             self.canvas.create_line(*mesPoints, width=w, arrow=LAST, fill=couleur, smooth=1, tags=tag)
