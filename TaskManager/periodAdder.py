@@ -20,14 +20,14 @@ class PeriodAdder(Frame):
         @param **kwargs : options de configuration du Frame, voir Frame.config() et Frame.keys()
         """
         Frame.__init__(self, master, **kwargs)
-        # Note : self.master est une r�f�rence vers TaskEditor
+        # Note : self.master est une référence vers TaskEditor
         
         # Attributs normaux:
         self.periodManager = periodManager
         self.debut = datetime.date.today()
         self.fin   = datetime.date.today()
 
-        # Widgets non r�f�renc�s.
+        # Widgets non référencés.
         Label(self, text="Nom :").grid(row = 0, column = 0, sticky="e")
         Label(self, text="De :").grid(row = 1, column = 0, sticky="e")
         Label(self, text="Durée :").grid(row = 1, column = 3, sticky="e")
@@ -56,8 +56,8 @@ class PeriodAdder(Frame):
         self.boutonValider    .grid(row = 0, column = 6, columnspan = 2, sticky="ew")
         # Ligne 1 :
         self.champDebut       .grid(row = 1, column = 1, columnspan = 2)
-        self.champJour        .grid(row = 1, column = 4)                 # Column 3 est pris par label "Dur�e :"
-        self.champFin         .grid(row = 1, column = 6, columnspan = 2) # Column 5 est pris par label "� :"
+        self.champJour        .grid(row = 1, column = 4)                 # Column 3 est pris par label "Durée :"
+        self.champFin         .grid(row = 1, column = 6, columnspan = 2) # Column 5 est pris par label "À :"
         
         # Ligne 2 :
         self.champDescription .grid(row = 2, column = 0, columnspan = 8, sticky ="ew")
@@ -67,7 +67,7 @@ class PeriodAdder(Frame):
         self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
-        # Pour un obscure raison, il faut appeler cette m�thode :
+        # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
         # demande de la date
@@ -78,7 +78,7 @@ class PeriodAdder(Frame):
         self.autoSetDuree()
 
     def askDateFin(self):
-        # Pour un obscure raison, il faut appeler cette m�thode :
+        # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
         # demande de la date
@@ -105,7 +105,7 @@ class PeriodAdder(Frame):
         nom   = self.champNom.get().strip()
         debut = self.debut + datetime.timedelta() # Faire une copie de la date
         fin   = self.fin  +  datetime.timedelta() # Ici aussi
-        desc  = self.champDescription.get("0.0", END) # Du d�but jusqu'� la fin !
+        desc  = self.champDescription.get("0.0", END) # Du début jusqu'à la fin !
         color = self.boutonColor.cget("bg")
         
         # Création de la période :

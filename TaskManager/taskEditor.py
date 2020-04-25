@@ -32,6 +32,8 @@ class TaskEditor(Frame):
         self.MODE_TRI = "None"
 
         self.redessiner()
+        
+        periodManager.setTaskEditor(self)
     def ajouter(self, tache):
         self.taches.append(tache)
         self.redessiner()

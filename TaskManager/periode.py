@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 import datetime
+from tkinter.messagebox import *
+from periodDialog import *
 
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
@@ -11,11 +13,11 @@ class Periode:
         self.selected = False
         # Doit-on faire une liste des tâches contenus ? je pense pas, mais on pourras l'obtenir avec une méthode...?
     def getDebut(self):
-        return self.debut
+        return self.debut + datetime.timedelta() # Faire une copie de la date
     def getDuree(self):
         return self.fin - self.debut
     def getFin(self):
-        return self.fin
+        return self.fin + datetime.timedelta() # Faire une copie de la date
     def getColor(self):
         return self.color
     def intersectWith(self, periode):
@@ -32,6 +34,10 @@ class PeriodManager:
     def __init__(self, app):
         self.app = app
         self.periodes = []
+        self.taskEditor = None
+    
+    def setTaskEditor(self, taskEditor):
+        self.taskEditor = taskEditor
 
     def getPeriodes(self):
         return self.periodes
@@ -45,10 +51,26 @@ class PeriodManager:
 
     # Fonctions de la barre d'outil :
     def deplacerPeriode(self):
-        pass
+        """Permet de déplacer la ou les périodes sélectionnées."""
+        periodes = self.getPeriodesSelectionnees()
+        if len(periodes) == 1:
+             askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = False)
+            # TODO
+        else:
+            askDureeJours()
+            # TODO
+
     def dupliquerPeriode(self):
-        pass
+        """Permet de duppliquer la période sélectionnée."""
+        periodes = self.getPeriodesSelectionnees()
+        if len(periodes) != 1:
+            showerror("Erreur de sélection", "Vous ne pouvez effectuer cette tâche qu'avec exactement une seule période sélectionnée.")
+            return
+        askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = True)
+        # TODO
+        
     def supprimerPeriode(self):
+        """Permet de supprimer les périodes sélectionnées."""
         periodes = self.getPeriodesSelectionnees()
         for periode in reversed(periodes):
             self.periodes.remove(periode)
