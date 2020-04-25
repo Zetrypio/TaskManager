@@ -19,7 +19,8 @@ class AffichageCalendrierPeriode(SuperCalendrier):
         self.can = Canvas(self, width = 1, height = 1, bd = 0)
         self.can.pack(expand = YES, fill = BOTH)
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
-        self.can.bind("<ButtonPress-1>", self.clic)
+        self.can.bind("<Button-1>", self.clic)
+        self.can.bind("<Control-Button-1>", lambda e: self.clic(e, True))
     
     def setJourDebut(self, jour):
         """Override, car en fait ca fonctionne avec un mois."""
@@ -29,14 +30,18 @@ class AffichageCalendrierPeriode(SuperCalendrier):
         """Override, car en fait ça fonctionne avec un mois."""
         return datetime.datetime(self.annee, self.mois, 1)
 
-    def clic(self, event):
+    def clic(self, event, control = False):
         x, y = event.x, event.y
-        for item in self.can.find_overlapping(x-1, y-1, x+1, y+1):
+        if not control:
             for p in self.getApplication().getPeriodManager().getPeriodes():
-                if p.drawId == item:
-                    p.setSelected(True)
-                else:
-                    p.setSelected(False)
+                p.setSelected(False)
+        for item in self.can.find_overlapping(x, y, x, y):
+            for tag in self.can.gettags(item):
+                if tag == "current":
+                    continue
+                for p in self.getApplication().getPeriodManager().getPeriodes():
+                    if p.tag == tag:
+                        p.setSelected(True if not control else not p.isSelected())
         self.updateAffichage()
 
     def updateAffichage(self):
@@ -69,7 +74,8 @@ class AffichageCalendrierPeriode(SuperCalendrier):
             semaine = self.getSemaineOf(jour)
             jourDebutSemaine = jour
             isFirst = 2
-            p.tag = NEW_TAG_ID
+            p.tag = str(NEW_TAG_ID)
+            print(p.isSelected())
             while jour < p.getFin():
                 jour += datetime.timedelta(days = 1)
                 if jour.weekday()%7 == 0:
