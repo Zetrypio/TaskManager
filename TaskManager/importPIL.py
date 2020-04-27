@@ -3,7 +3,7 @@ import sys, os
 try:
     from PIL import Image, ImageTk
 except:
-    ## faudra faire des essais avec ça : (ca marche pas en l etat)
+    ## faudra faire des essais avec Ã§a : (ca marche pas en l'etat)
     ##if len(sys.argv) < 2:
     ##   sys.argv.append("install")
     #sys.argv[1:1] = "install"
@@ -12,7 +12,7 @@ except:
     if sys.platform.startswith("win"):
         pip = "py -3.8 -m pip"
 #        pip = sorted(i for i in sys.path if i) # trier et enlever le ''
-#        if any(p[0].islower() for p in pip):   # dans la console et dans le shell, il y a des diférences entre 'c:\\python27...' et 'C:\\python27...'
+#        if any(p[0].islower() for p in pip):   # dans la console et dans le shell, il y a des diffÃ©rences entre 'c:\\python27...' et 'C:\\python27...'
 #            pip = [p for p in pip if p[0].islower()]
 #        pip = pip[0]
 #        pip = pip+"\\Scripts\\pip"
@@ -31,11 +31,11 @@ except:
         os.system("py -3.8 Application.pyw " + ext)
         exit()
 
-IMAGES = {} # dictionnaire des images chargées (mieux vaut utiliser la fonction getImage())
+IMAGES = {} # dictionnaire des images chargï¿½es (mieux vaut utiliser la fonction getImage())
 def getImage(imageName):
 #    """
-#    Manière sécurisé d'obtenir les images sans problèmes
-#    (on ne doit pas charger 2 fois la même image)
+#    ManiÃ¨re sÃ©curisÃ© d'obtenir les images sans problÃ¨mes
+#    (on ne doit pas charger 2 fois la mÃªme image)
 #    """
     if not imageName in IMAGES:
         IMAGES[imageName] = ImageTk.PhotoImage(Image.open(imageName))

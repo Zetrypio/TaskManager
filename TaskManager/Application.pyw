@@ -79,13 +79,13 @@ def main():
     app.pack(expand = YES, fill = BOTH)
     
     # Création de taches préaite
-    app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 4, 6, 8, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA"))
-    app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 4, 8, 8, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7"))
-    app.taskEditor.ajouter(Task("C", datetime.datetime(2020, 4, 8, 10, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#C2F77C"))
-    app.taskEditor.ajouter(Task("D", datetime.datetime(2020, 4, 12, 8, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#B97CF7"))
-    app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 4, 12, 10, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC"))
-    app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 4, 8, 12, 0, 8), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF"))
-    app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 4, 26, 12, 0, 8), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7"))
+    app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 4, 6, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA"))
+    app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 4, 8, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7"))
+    app.taskEditor.ajouter(Task("C", datetime.datetime(2020, 4, 8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#C2F77C"))
+    app.taskEditor.ajouter(Task("D", datetime.datetime(2020, 4, 12, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#B97CF7"))
+    app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 4, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC"))
+    app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 4, 8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF"))
+    app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 4, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7"))
     
     app.mainloop()
     try:
