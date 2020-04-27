@@ -74,8 +74,11 @@ class PeriodManager:
              askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = False)
         else:
             duree = askDureeJours()
-            for p in periodes:
-                p.setDebut(p.getDebut() + duree, change = "fin")
+            if duree is not None:
+                for p in periodes:
+                    p.setDebut(p.getDebut() + duree, change = "fin")
+        self.periodes.sort(key = lambda p: p.getDebut())
+        self.app.getDonneeCalendrier().updateAffichage()
 
     def dupliquerPeriode(self):
         """Permet de duppliquer la période sélectionnée."""

@@ -16,6 +16,7 @@ def askDureeJours():
     fen = Dialog(title = "Décaler des périodes", buttons = ("Ok", "Annuler"), command = onClose)
     delta = Spinbox(fen, from_ = 0, to = 1000)
     delta.pack(side = LEFT, expand = YES, fill = X)
+    delta.set(0)
     unit = Combobox(fen, values = ["Jours", "Semaines"])
     unit.set(unit.cget("values")[0])
     unit.pack(side = RIGHT, expand = YES, fill = X)
