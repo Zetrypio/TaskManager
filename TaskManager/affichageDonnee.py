@@ -115,11 +115,11 @@ class DonneeCalendrier(SuperCalendrier):
             panneau.setHeureDebut(heure)
         super().setHeureDebut(heure)
 
-    def setHeurefin(self, heure):
+    def setHeureFin(self, heure):
         """Setter pour l'heure de la fin."""
         for panneau in self.listPanneau:
-            panneau.setHeurefin(heure)
-        super().setHeurefin(heure)
+            panneau.setHeureFin(heure)
+        super().setHeureFin(heure)
 
     def setJourDebut(self, jour):
         """Setter pour le jour du début."""

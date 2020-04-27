@@ -29,6 +29,10 @@ class Task:
         self.dependances = []
         self.dependantes = []
         self.updateStatut()
+
+        # Doit-on l'afficher ?
+        self.visible = True
+
         if self.isContainer():
             self.subtasks = []
     def __str__(self):

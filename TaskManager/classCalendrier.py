@@ -30,6 +30,8 @@ class AffichageCalendrier(SuperCalendrier):
         self.__afficherLesJours()
         self.__listeTache = []
 
+        self.bind("<Configure>", lambda e : self.updateAffichage())
+
     def updateAffichage(self): # override
         self.__afficherLesHeures()
         self.__afficherLesJours()
@@ -47,8 +49,9 @@ class AffichageCalendrier(SuperCalendrier):
             # Si ça dépasse : on restreint (TODO : à améliorer)
             if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
                 fin = self.getHeureFin() # Conversion en time
-                duree = fin - tache.debut.time() # Conversion en duree
+                duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
                 duree = duree.total_seconds()//60%1440
+                tache.visible = False
                 
             else: # Si ça dépasse pas :
                 duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
@@ -57,11 +60,12 @@ class AffichageCalendrier(SuperCalendrier):
             
             
             t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
-            t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-                   column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-            t.grid_propagate(0)
+#            t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
+#                   column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
+#            t.grid_propagate(0)
             
             self.__listeTache.append(t)
+#            self.updateAffichage()
 
             return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
 
@@ -130,16 +134,20 @@ class AffichageCalendrier(SuperCalendrier):
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 # Calcul du nombre de lignes :
                 # Si ça dépasse : on restreint
+                print(self.getHeureFin(), tache.task.nom, (tache.task.debut + tache.task.duree).time())
                 if (tache.task.debut + tache.task.duree).time() > self.getHeureFin() or tache.task.debut.date() != (tache.task.debut + tache.task.duree).date():
                     fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
                     duree = fin - tache.debut.time() # Conversion en duree
                     duree = duree.total_seconds()//60%1440
+                    tache.task.visible = False
                     
                 else: # Si ça dépasse pas :
                     duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-                
-                tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-                       column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")                    
+                    tache.task.visible = True
+
+                if tache.task.visible:
+                    tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
+                           column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)

@@ -6,6 +6,7 @@ import datetime
 from affichageDonnee import *
 from importPIL import *
 from infobulle import *
+import ajouterCalendrier
 
 
 
@@ -19,7 +20,6 @@ class MenuOutil(Frame):
     catégories. Les commandes des boutons doivent présentes dans le master.
     """
     def __init__(self, master, **kwargs):
-        kwargs["bg"] = "green"
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
         
@@ -114,7 +114,19 @@ class CalendarZone(Frame):
         self.zoneDynamicCalendarFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
     def ajouterHeure(self):
-        pass
+        min = self.getDonneeCalendrier().getHeureDebut()
+        max = datetime.timedelta(hours=23) - datetime.timedelta(hours=self.getDonneeCalendrier().getHeureFin().hour)
+        max2 = self.getDonneeCalendrier().getHeureFin()
+        nb, pos = ajouterCalendrier.ajouterHeure(min, max)
+        if nb is not None and pos is not None:
+            if pos == "Avant":
+                min = datetime.time(min.hour - nb)
+                self.getDonneeCalendrier().setHeureDebut(min)
+            elif pos == "Apres":
+                max = datetime.time(max2.hour + nb)
+                self.getDonneeCalendrier().setHeureFin(max)
+
+
     def ajouterJour(self):
         pass
 
