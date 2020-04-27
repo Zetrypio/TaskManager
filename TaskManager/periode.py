@@ -2,6 +2,7 @@
 import datetime
 from tkinter.messagebox import *
 from periodDialog import *
+from decalerPeriodDialog import *
 
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
@@ -20,6 +21,22 @@ class Periode:
         return self.fin + datetime.timedelta() # Faire une copie de la date
     def getColor(self):
         return self.color
+    def setDebut(self, debut, change = "duree"):
+        """
+        Permet de mettre le début de la période.
+        @param debut: Le datetime.date du début de la période.
+        @param change: Si "duree": change la durée mais pas la fin,
+                       Si "fin": change la fin mais pas la durée.
+                       Sinon : raise ValueError
+        """
+        if change == "duree":
+            self.debut = debut + datetime.timedelta() # Faire une copie de la date
+        elif change == "fin":
+            self.fin += self.getDuree()
+            self.debut = debut + datetime.timedelta() # Faire une copie de la date
+        else:
+            raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
+        
     def intersectWith(self, periode):
         return (self.debut >= periode.debut and self.debut <= periode.fin) \
             or (periode.debut >= self.debut and periode.debut <= self.fin)
@@ -55,10 +72,10 @@ class PeriodManager:
         periodes = self.getPeriodesSelectionnees()
         if len(periodes) == 1:
              askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = False)
-            # TODO
         else:
-            askDureeJours()
-            # TODO
+            duree = askDureeJours()
+            for p in periodes:
+                p.setDebut(p.getDebut() + duree, change = "fin")
 
     def dupliquerPeriode(self):
         """Permet de duppliquer la période sélectionnée."""
@@ -67,7 +84,6 @@ class PeriodManager:
             showerror("Erreur de sélection", "Vous ne pouvez effectuer cette tâche qu'avec exactement une seule période sélectionnée.")
             return
         askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = True)
-        # TODO
         
     def supprimerPeriode(self):
         """Permet de supprimer les périodes sélectionnées."""
