@@ -59,6 +59,9 @@ class SuperCalendrier(Frame):
         self.heureDebut = valeur
         self.updateAffichage()
         
+    def getNbheure(self): # Retourne un int
+        return self.getHeureFin().hour - self.getHeureFin().hour
+
     def getHeureFin(self):
         return self.heureFin
     def setHeureFin(self, valeur):

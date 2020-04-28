@@ -6,7 +6,7 @@ import datetime
 from affichageDonnee import *
 from importPIL import *
 from infobulle import *
-import ajouterCalendrier
+import gestionCalendrier
 
 
 
@@ -27,17 +27,11 @@ class MenuOutil(Frame):
         self.lesBoutonsEnListes = [] # liste qui va contenir toutes les autres liste de bouton (pour un affichage cool) lesBoutonsEnListes[catégorie][bouton]
         self.lesFramesDesBoutons = [] # tout est dans le nom ... lesFramesDesBoutons[categorie][frame]
         
-        # CADRE AJOUTER
-        self.__creationCategorie("Ajouter") #cadre ajouter
+        # CADRE GESTION
+        self.__creationCategorie("Gestion") #cadre ajouter
         # création des boutons
-        self.__creationBouton("heure", master.ajouterHeure, getImage("Ressources/textures/ajouter.png"), textVisible=True)
-        self.__creationBouton("jour", master.ajouterJour, getImage("Ressources/textures/ajouter.png"), textVisible=True)
-        
-        # CADRE RETIRER
-        self.__creationCategorie("Retirer") #cadre retirer
-        # création des bouton
-        self.__creationBouton("heure", master.retirerHeure, getImage("Ressources/textures/retirer.png"), textVisible=True)
-        self.__creationBouton("jour", master.retirerJour, getImage("Ressources/textures/retirer.png"), textVisible=True)
+        self.__creationBouton("heure", master.ajouterHeure, getImage("Ressources/textures/gestion.png"), textVisible=True)
+        self.__creationBouton("jour", master.ajouterJour, getImage("Ressources/textures/gestion.png"), textVisible=True)
         
         # CADRE VUE
         self.__creationCategorie("Vue") #cadre vue
@@ -117,10 +111,12 @@ class CalendarZone(Frame):
         min = self.getDonneeCalendrier().getHeureDebut()
         max = datetime.timedelta(hours=23) - datetime.timedelta(hours=self.getDonneeCalendrier().getHeureFin().hour)
         max2 = self.getDonneeCalendrier().getHeureFin()
-        nb, pos = ajouterCalendrier.ajouterHeure(min, max)
+        nbHeure = max2.hour - min.hour
+        nb, pos = gestionCalendrier.ajouterHeure(min, max, nbHeure)
         if nb is not None and pos is not None:
             if pos == "Avant":
                 min = datetime.time(min.hour - nb)
+                print(min)
                 self.getDonneeCalendrier().setHeureDebut(min)
             elif pos == "Apres":
                 max = datetime.time(max2.hour + nb)

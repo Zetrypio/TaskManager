@@ -129,18 +129,31 @@ class AffichageCalendrier(SuperCalendrier):
             tache.grid_forget()
 
         for tache in self.__listeTache:
+            print(tache.task.nom, tache.task.getFin().time() < self.getHeureDebut() , tache.task.getFin().time() > self.getHeureFin())
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
-                # Calcul du nombre de lignes :
+                ## Calcul du nombre de lignes :
+                # Si c'est hors cadre ou pas sur le même jour
+                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getFin().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
+                    tache.task.visible = False
                 # Si ça dépasse : on restreint
-                print(self.getHeureFin(), tache.task.nom, (tache.task.debut + tache.task.duree).time())
-                if (tache.task.debut + tache.task.duree).time() > self.getHeureFin() or tache.task.debut.date() != (tache.task.debut + tache.task.duree).date():
+                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut.time() < self.getHeureFin():
+                    print(tache.task.nom)
                     fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
+
                     duree = fin - tache.debut.time() # Conversion en duree
                     duree = duree.total_seconds()//60%1440
-                    tache.task.visible = False
-                    
+                    tache.task.visible = True
+                # Si c'est seulement le début qui manque on adapte
+                elif tache.task.debut.time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
+                    print(tache.task.nom)
+                    debut = self.getHeureDebut().hour*60 + 1
+
+                    enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
+                    duree = tache.task.getDuree() - enleve
+                    duree = duree.total_seconds()//60%1440
+                    tache.task.visible = True
                 else: # Si ça dépasse pas :
                     duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
                     tache.task.visible = True
