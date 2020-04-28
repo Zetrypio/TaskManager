@@ -39,8 +39,8 @@ def ajouterHeure(heureMin, heureMax, totalHeure):
     fen = Dialog(title = "Nombre d'heure à ajouter",
            buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Ok', 'Annuler', "WM_DELETE_WINDOW"))
     # Binding des touches
-    fen.bind_all("<Return>", lambda e: dialogue.execute("Ok"))
-    fen.bind_all("<Escape>", lambda e: dialogue.execute("Annuler"))
+    fen.bind_all("<Return>", lambda e: fen.execute("Ok"))
+    fen.bind_all("<Escape>", lambda e: fen.execute("Annuler"))
 
     # Mettre les widgets
     frameGestion = Frame(fen)
@@ -68,6 +68,7 @@ def ajouterHeure(heureMin, heureMax, totalHeure):
     frameHeure.pack(  side = TOP, expand = YES, fill = BOTH)
     framePos.pack(    side = TOP, expand = YES, fill = BOTH)
 
+    varRadioGestion.set("Ajouter")
     varRadioBouton.set("Apres")
 
 
