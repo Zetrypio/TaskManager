@@ -25,53 +25,60 @@ class AffichageCalendrier(SuperCalendrier):
         self.listeLabelHeure = []       # \
         self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
         self.listeSeparateurJour = []   # /
+#        self.__listeTache = []
+        self.frame = Frame(self)
+        self.frame.pack(expand = YES, fill = BOTH)
         
-        self.__afficherLesHeures() # à la fin pour avoir les variables créées.
-        self.__afficherLesJours()
-        self.__listeTache = []
+        self.updateAffichage()
 
-        self.bind("<Configure>", lambda e : self.updateAffichage())
+        # self.bind("<Configure>", lambda e : self.updateAffichage())
 
     def updateAffichage(self): # override
+        # On détruit et recrée le Frame
+        self.frame.destroy()
+        self.frame = Frame(self)
+        self.frame.pack(expand = YES, fill = BOTH)
+        
+        # On affiche les trucs
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
     
     def addTask(self, tache, region = None):
-            '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            # ":=  on attribut la variable en plus de tester la condition
-            if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
-                return
+        '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
+        # ":=  on attribut la variable en plus de tester la condition
+        if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
+            return
 
-            # Calcul du début :
-            debut = tache.debut.hour*60 + tache.debut.minute + 1
-            # Calcul du nombre de lignes :
-            # Si ça dépasse : on restreint (TODO : à améliorer)
-            if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
-                fin = self.getHeureFin() # Conversion en time
-                duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
-                duree = duree.total_seconds()//60%1440
-                tache.visible = False
-                
-            else: # Si ça dépasse pas :
-                duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-                                                
-            # Ajout graphique :
-            
-            
-            t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
-#            t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-#                   column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-#            t.grid_propagate(0)
-            
-            self.__listeTache.append(t)
-#            self.updateAffichage()
+#        # Calcul du début :
+#        debut = tache.debut.hour*60 + tache.debut.minute + 1
+#        # Calcul du nombre de lignes :
+#        # Si ça dépasse : on restreint (TODO : à améliorer)
+#        if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
+#            fin = self.getHeureFin() # Conversion en time
+#            duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
+#            duree = duree.total_seconds()//60%1440
+#            tache.visible = False
+#            
+#        else: # Si ça dépasse pas :
+#            duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
+                                            
+        # Ajout graphique :
+        
+        
+#        t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
+#       t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
+#              column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
+#       t.grid_propagate(0)
+        
+#        self.__listeTache.append(t)
+        self.updateAffichage()
 
-            return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+        return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
 
     def identify_region(self, x, y):
         # On regarde si c'est trop à gauche (sur les heures):
-        colonne, ligne = self.grid_location(x, y)
+        colonne, ligne = self.frame.grid_location(x, y)
         colonne = (colonne-1)//2
         #print("Case : ", ligne, colonne)
         jour = self.getJourDebut() + datetime.timedelta(days = colonne)
@@ -84,13 +91,11 @@ class AffichageCalendrier(SuperCalendrier):
         
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :
-        for label in self.listeLabelHeure: 
-            label.destroy()
         self.listeLabelHeure = []
 
         # et on les recrées :
         for heure in range(self.getHeureDebut().hour, self.getHeureFin().hour+1): # le +1 pour compter Début ET Fin.
-            self.listeLabelHeure.append(Label(self, text=heure, bd = 1, relief = SOLID))
+            self.listeLabelHeure.append(Label(self.frame, text=heure, bd = 1, relief = SOLID))
             # Note : Un détail à la minute près va être fait,
             # donc on compte 60 lignes pour une heure.
             # La ligne 0 étant la ligne des labels des jours,
@@ -103,32 +108,22 @@ class AffichageCalendrier(SuperCalendrier):
         self.__adapteGrid()
     
     def __afficherLesJours(self):
-        
-        for indice, jour in enumerate(self.listeLabelJour): # on efface ceux déjà présent
-            jour.destroy()
-            self.columnconfigure(indice*2+1,weight=0)
-            
-        for indice, separator in enumerate(self.listeSeparateurJour): # on efface aussi les separator
-            separator.destroy()
-            self.columnconfigure(indice*2+2,weight=0)
-        
         self.listeLabelJour = []
         self.listeSeparateurJour = []
         
         for jour in self.rangeDate(self.getJourDebut(), self.getJourFin(), last = False):
-            self.listeLabelJour.append(Label(self, text=JOUR[jour.weekday()]))
+            self.listeLabelJour.append(Label(self.frame, text=JOUR[jour.weekday()], bg = "light grey"))
             self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
             if jour < self.getJourFin():
-                self.listeSeparateurJour.append(Separator(self, orient=VERTICAL))
+                self.listeSeparateurJour.append(Separator(self.frame, orient=VERTICAL))
                 self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
             
         self.__adapteGrid()
 
     def __afficherLesTaches(self):
-        for tache in self.__listeTache:
-            tache.grid_forget()
 
-        for tache in self.__listeTache:
+        for task in self.listeTaches:
+            tache = TacheEnCalendrier(self.frame, task)
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
@@ -163,11 +158,11 @@ class AffichageCalendrier(SuperCalendrier):
         # à mettre À LA FIN ! ! ! (pour les expands)
         for column in range(self.nbJour*2+1):
             if column%2 ==0:
-                self.columnconfigure(column,weight=0)
+                self.frame.columnconfigure(column,weight=0)
             else:
-                self.columnconfigure(column, weight=1)
-        self.rowconfigure(ALL,weight=1)
-        self.rowconfigure(0, weight=0)
+                self.frame.columnconfigure(column, weight=1)
+        self.frame.rowconfigure(ALL,weight=1)
+        self.frame.rowconfigure(0, weight=0)
 
 
 if __name__=='__main__':

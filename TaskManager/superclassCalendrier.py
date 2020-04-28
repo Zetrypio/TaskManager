@@ -9,7 +9,7 @@ import datetime
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 class SuperTache(Frame):
     def __init__(self, master, task, **kwargs):
-        bg = kwargs.get("bg", "#FFFFFF")
+        bg = task.color
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt
         self.task = task
