@@ -129,20 +129,18 @@ class AffichageCalendrier(SuperCalendrier):
             tache.grid_forget()
 
         for tache in self.__listeTache:
-            print(tache.task.nom, tache.task.getFin().time() < self.getHeureDebut() , tache.task.getFin().time() > self.getHeureFin())
+            print(tache.task.nom, tache.task.getFin().time() > self.getHeureFin() , tache.task.getDebut().time() < self.getHeureFin())
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 ## Calcul du nombre de lignes :
                 # Si c'est hors cadre ou pas sur le même jour
-                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getFin().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
+                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
                     tache.task.visible = False
                 # Si ça dépasse : on restreint
-                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut.time() < self.getHeureFin():
-                    print(tache.task.nom)
-                    fin = datetime.time(self.getHeureFin() + 1) # Conversion en time
-
-                    duree = fin - tache.debut.time() # Conversion en duree
+                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
+                    enleve = datetime.datetime.combine(tache.task.getFin().date(), self.getHeureFin()) - tache.task.getFin()
+                    duree = tache.task.getDuree() - enleve
                     duree = duree.total_seconds()//60%1440
                     tache.task.visible = True
                 # Si c'est seulement le début qui manque on adapte
