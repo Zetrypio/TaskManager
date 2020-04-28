@@ -18,6 +18,7 @@ def ajouterHeure(heureMin, heureMax, totalHeure):
             nbHeure = int(sb.get())
             if varRadioGestion.get() == "Retirer":
                 nbHeure = nbHeure*-1
+        fen.destroy()
 
     # Pour adapter le nombre d'heure max du spinBoc
     def adapteSpinbox():
