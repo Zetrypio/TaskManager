@@ -116,10 +116,9 @@ class CalendarZone(Frame):
         if nb is not None and pos is not None:
             if pos == "Avant":
                 min = datetime.time(min.hour - nb)
-                print(min)
                 self.getDonneeCalendrier().setHeureDebut(min)
             elif pos == "Apres":
-                max = datetime.time(max2.hour + nb)
+                max = datetime.time(max2.hour + nb, max2.minute)
                 self.getDonneeCalendrier().setHeureFin(max)
 
 

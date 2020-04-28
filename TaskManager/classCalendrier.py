@@ -129,6 +129,7 @@ class AffichageCalendrier(SuperCalendrier):
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 ## Calcul du nombre de lignes :
                 # Si c'est hors cadre ou pas sur le même jour
+                print(self.getHeureFin())
                 if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
                     tache.task.setVisible(False)
                 # Si ça dépasse : on restreint
@@ -139,7 +140,6 @@ class AffichageCalendrier(SuperCalendrier):
                     tache.task.setVisible(True)
                 # Si c'est seulement le début qui manque on adapte
                 elif tache.task.debut.time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
-                    print(tache.task.nom)
                     debut = self.getHeureDebut().hour*60 + 1
 
                     enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()

@@ -37,7 +37,7 @@ class SuperCalendrier(Frame):
 
         # infos des heures :
         self.heureDebut = datetime.time(8, 0, 0)
-        self.heureFin = datetime.time(18, 0, 0)
+        self.heureFin = datetime.time(17, 59, 0)
 
         # infos des jours :
         self.jourDebut = self.getDebutPeriode()
