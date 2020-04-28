@@ -129,20 +129,19 @@ class AffichageCalendrier(SuperCalendrier):
             tache.grid_forget()
 
         for tache in self.__listeTache:
-            print(tache.task.nom, tache.task.getFin().time() > self.getHeureFin() , tache.task.getDebut().time() < self.getHeureFin())
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 ## Calcul du nombre de lignes :
                 # Si c'est hors cadre ou pas sur le même jour
                 if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
-                    tache.task.visible = False
+                    tache.task.setVisible(False)
                 # Si ça dépasse : on restreint
                 elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
                     enleve = datetime.datetime.combine(tache.task.getFin().date(), self.getHeureFin()) - tache.task.getFin()
                     duree = tache.task.getDuree() - enleve
                     duree = duree.total_seconds()//60%1440
-                    tache.task.visible = True
+                    tache.task.setVisible(True)
                 # Si c'est seulement le début qui manque on adapte
                 elif tache.task.debut.time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
                     print(tache.task.nom)
@@ -151,12 +150,12 @@ class AffichageCalendrier(SuperCalendrier):
                     enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
                     duree = tache.task.getDuree() - enleve
                     duree = duree.total_seconds()//60%1440
-                    tache.task.visible = True
+                    tache.task.setVisible(True)
                 else: # Si ça dépasse pas :
                     duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-                    tache.task.visible = True
+                    tache.task.setVisible(True)
 
-                if tache.task.visible:
+                if tache.task.getVisible():
                     tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
                            column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")
 

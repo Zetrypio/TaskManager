@@ -80,6 +80,11 @@ class Task:
     def getFin(self):
         return (self.debut + self.duree) if self.debut is not None else None
 
+    def getVisible(self):
+        return self.visible
+    def setVisible(self, valeur):
+        self.visible = valeur
+
 class TaskAdder(Frame):
     """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""
     def __init__(self, master = None, menubar = None, **kwargs):
