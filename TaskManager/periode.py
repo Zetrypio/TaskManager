@@ -3,6 +3,7 @@ import datetime
 from tkinter.messagebox import *
 from periodDialog import *
 from decalerPeriodDialog import *
+from scinderFusionnerPeriodDialog import *
 
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
@@ -96,7 +97,16 @@ class PeriodManager:
         self.app.getDonneeCalendrier().updateAffichage()
     
     def scinderPeriode(self):
-        pass
+        periodes = self.getPeriodesSelectionnees()
+        if len(periodes) != 1:
+            showerror("Erreur de sélection", "Vous ne pouvez effectuer cette tâche qu'avec exactement une seule période sélectionnée.")
+            return
+        try:
+            print(askScinderPeriode(self, self.taskEditor, periode = periodes[0]))
+        except ValueError:
+            return
+        else:
+            pass
     def fusionnerPeriodes(self):
         pass
     
