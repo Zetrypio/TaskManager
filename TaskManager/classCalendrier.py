@@ -41,20 +41,15 @@ class AffichageCalendrier(SuperCalendrier):
         self.frame.destroy()
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
-#        # On oublie pas les nouveaux Bind
-#        self.addBind()
+        self.frame.bind("<Button-1>", self.mouseClicked, add = True)
+#        self.frame.bind("<Escape>",  self.escapePressed)
         
         # On affiche les trucs
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
 
-#    def addBind(self):
-#        self.frame.bind("<Button-1>", self.mouseClicked)
-#        self.frame.bind("<Escape>",  self.escapePressed)
-
     def escapePressed(self, event):
-        print("calendrier")
         super().escapePressed(event)
     
     def addTask(self, tache, region = None):
@@ -135,8 +130,10 @@ class AffichageCalendrier(SuperCalendrier):
 
     def __afficherLesTaches(self):
 
+        self.listeTaskAffichees = [] # Attribut de l'héritage je rappelle
         for task in self.listeTask:
             tache = TacheEnCalendrier(self.frame, task)
+            self.listeTaskAffichees.append(tache)
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1

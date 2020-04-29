@@ -104,10 +104,6 @@ class DonneeCalendrier(SuperCalendrier):
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
-
-        # Bindings généraux liés à la fenetre activant des trucs sur les panneaux
-        self.bind_all("<Button-1>", self.mouseClicked)
-        self.bind_all("<Escape>",   self.escapePressed)
         
     def getParametreAffichage(self):
         return self.master.getParametreAffichage()

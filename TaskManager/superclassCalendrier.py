@@ -9,13 +9,12 @@ import datetime
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 class SuperTache(Frame):
     def __init__(self, master, task, **kwargs):
-        bg = task.currentColor
-#        print("Constructeur", task.nom , bg)
         Frame.__init__(self, master, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt
+        # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt, héritant de SuperCalendrier
+        
         self.task = task
 
-        self.texte = Text(self, wrap = "word", state = "normal", bg = bg, width=0, height=0)
+        self.texte = Text(self, wrap = "word", state = "normal", bg = self.task.getDisplayColor(), width=0, height=0)
         
         self.texte.insert(INSERT, task.nom) # On met le nom dedans
         self.texte.tag_add("titre", "1.0", "1.%s"%int(len(task.nom)))
@@ -26,11 +25,10 @@ class SuperTache(Frame):
         self.texte.tag_config("corps", font="Arial 10") 
         
         self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans
-        self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau, tout chaud  
+        self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau.
         self.pack_propagate(False)
 
-        # La selection des taches
-        self.selected = False
+        #La selection des taches
         self.texte.bind("<Button-1>", self._clique)
         self.texte.bind("<Control-Button-1>", self.multiSelection)
 
@@ -40,15 +38,17 @@ class SuperTache(Frame):
     def multiSelection(self, e):
         """Permet d'envoyer l'objet à la methode dans SuperCalendrier"""
         self.getCalendrier().multiSelection(self.task)
-        self.getCalendrier().getDonneeCalendrier().updateAffichage()
 
     def _clique(self, e):
-        print("SuperTache._clique", self.getCalendrier().getTaskSelect())
-        if self.getCalendrier().getTaskSelect() != []:
-            print("raté")
-            self.getCalendrier()._deselectionnerLesTasks()
-        self.getCalendrier().selectionner(self.task)
-        self.getCalendrier().getDonneeCalendrier().updateAffichage()
+        self.getCalendrier().deselect()
+        self.getCalendrier().select(self.task)
+
+    def updateColor(self): # fonction pour mettre à jour la couleur
+        try:
+            self.texte.config(bg=self.task.getDisplayColor())
+        except:
+            self._report_exception()
+
 
 class SuperCalendrier(Frame):
     def __init__(self, master = None, **kwargs):
@@ -67,34 +67,34 @@ class SuperCalendrier(Frame):
 
         # liste des tâches :
         self.listeTask = []
+        self.listeTaskAffichees = []
 
     def mouseClicked(self, event):
-        self._deselectionnerLesTasks()
-        self.updateAffichageAll()
+        self.deselect()
 
     def escapePressed(self, event):
-        print("escape", event.__class__)
-        self._deselectionnerLesTasks()
-        self.updateAffichageAll()
+        self.deselect()
+    
+    def updateTaskColor(self):
+        for tache in self.listeTaskAffichees:
+            tache.updateColor()
 
     def multiSelection(self, task):
-        task.setSelectionReverse()
+        task.inverseSelection()
+        self.updateTaskColor()
 
-    def selectionner(self, tache): # gere la selection
-        # On selectionne la bonne
-        tache.setSelectionTrue()
+    def select(self, tache):
+        """gere la selection"""
+        tache.setSelected(True)
+        self.updateTaskColor()
 
-    def _deselectionnerLesTasks(self):
-        print("SuperDeselection")
-        for tache in self.listeTask:
-            tache.setSelectionFalse()
+    def deselect(self):
+        for tache in self.getSelectedTask():
+            tache.setSelected(False)        
+        self.updateTaskColor()
 
-    def updateAffichageAll(self):
-        """ Permet de mettre à jour l'affichage dans tous les panneaux """
-        self.getDonneeCalendrier().updateAffichage()
-
-    def getTaskSelect(self):
-        return [task for task in self.listeTask if task.selection]
+    def getSelectedTask(self):
+        return [task for task in self.listeTask if task.isSelected()]
 
     def getDonneeCalendrier(self):
         return self.master.master

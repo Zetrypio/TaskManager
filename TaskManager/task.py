@@ -34,27 +34,26 @@ class Task:
         self.visible = True
 
         # Attribut de selection
-        self.selection = False
-        self.currentColor = self.color
+        self.selected = False
 
         if self.isContainer():
             self.subtasks = []
 
-    def setSelectionReverse(self):
-        if self.selection:
-            self.setSelectionFalse()
-        else:
-            self.setSelectionTrue()
-    def setSelectionTrue(self):
-        self.selection = True
-        self.currentColor = "#0078FF"
-    def setSelectionFalse(self):
-        self.selection = False
-        self.currentColor = self.color
-
-
     def __str__(self):
         return "Task %s: from %s to %s, %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown", self.statut)
+
+    def inverseSelection(self):
+        self.selected = not self.selected
+    def setSelected(self, value):
+        self.selected = value
+    def isSelected(self):
+        return self.selected
+
+    def getDisplayColor(self):
+        return self.getNativeColor() if not self.isSelected() else "#0078FF"
+    def getNativeColor(self):
+        return self.color
+
     def isContainer(self):
         self.updateStatut()
         if self.statut == "Inconnu" and not hasattr(self, "subtasks"):
@@ -71,6 +70,7 @@ class Task:
         if not self.isContainer():
             raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
         return self.subtasks
+
     def addDependance(self, task):
         self.dependances.append(task)
         task.dependantes.append(self)
@@ -81,6 +81,7 @@ class Task:
         return self.dependances[:]
     def getDependantes(self):
         return self.dependantes[:]
+
     def copy(self):
         t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
         # Doit-on copier les dépendances et le statut ?
@@ -88,9 +89,11 @@ class Task:
         t.statut = self.statut
         # On retourne la copie :
         return t
+
     def updateStatut(self):
         """Permet de mettre à jour le statut de la tâche."""
         self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
+
     def getDebut(self):
         return self.debut + datetime.timedelta() if self.debut is not None else None # Faire une copie et vérifier les trucs
     def getDuree(self):

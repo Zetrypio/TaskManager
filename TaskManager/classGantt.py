@@ -203,7 +203,7 @@ class TacheEnGantt(SuperTache):
     def getPosGrille(self):
         x1 = self.task.debut.weekday()
         x2 = self.task.getFin().weekday()
-        y = self.master.getNbTacheJour(self.task.debut.date(), self.master.listeTache.index(self))
+        y = self.master.getNbTacheJour(self.task.debut.date(), self.master.listeTaskAffichees.index(self))
         return x1, x2, y
 
     def affichePlusLien(self, tag):
@@ -347,8 +347,6 @@ class TacheEnGantt(SuperTache):
         if self.jeCherche and self.master.mode == "addDep":
             self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2, tags="topLine")
 
-    def updateColor(self): # fonction pour mettre à jour la couleur
-        self.texte.config(bg=self.task.currentColor)
 
 class AffichageGantt(SuperCalendrier):
     """
@@ -364,7 +362,6 @@ class AffichageGantt(SuperCalendrier):
         # Note : self.master est référence vers Notebook.
         
         # Listes des tâches et des liens :
-        self.listeTache = []
         self.listeLien  = []
 
         # La taille de la colonne dépend de la taille du Canvas :
@@ -384,9 +381,9 @@ class AffichageGantt(SuperCalendrier):
         # Bindings du Canvas :
         self.can.bind("<Configure>", lambda e : self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
         self.can.bind_all("<ButtonRelease-1>", lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
-#        self.can.bind_all("<Button-1>",         self.mouseClicked)
+        self.can.bind_all("<Button-1>",         self.mouseClicked)
         self.can.bind_all("<Control-Button-1>", self.__multiSelection)
-#        self.can.bind_all("<Escape>",           self.escapePressed)
+        self.can.bind_all("<Escape>",           self.escapePressed)
         self.can.bind_all("<Delete>",           self.__suppr)
 
         ## Valeurs possibles : "", "delDep" et "addDep"
@@ -511,7 +508,7 @@ class AffichageGantt(SuperCalendrier):
         self._deselectionnerLesLiens()
 
         # Si c'est pas le canvas, on s'en fiche (on joue le truc qu'on a cliqué) :
-        if event.widget != self.can or event.widget in self.listeTache:
+        if event.widget != self.can or event.widget in self.listeTaskAffichees:
             # Mise à jour graphique :
             self.updateAffichage()
             return
@@ -524,7 +521,7 @@ class AffichageGantt(SuperCalendrier):
                 if lien.ID_LIEN == tag:
                     lien.select = True
             # Détection des plus :
-            for t in self.listeTache:
+            for t in self.listeTaskAffichees:
                 if t.ID_PLUS == tag:
                     t.addDependance()
 
@@ -539,13 +536,13 @@ class AffichageGantt(SuperCalendrier):
         return [lien for lien in self.listeLien if lien.select]
 
     def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
-        for tache in self.listeTache:
+        for tache in self.listeTaskAffichees:
             if tache.jeCherche == True:
                 return tache
 
     def getNbTacheJour(self, dateJour, arret = None):
         nombre = 0
-        for tache in self.listeTache:
+        for tache in self.listeTaskAffichees:
             if self.getIndiceTacheEnGantt(tache) == arret:
                 return nombre
 
@@ -570,14 +567,14 @@ class AffichageGantt(SuperCalendrier):
         return max(self.can.winfo_height(), int(self.can.cget("scrollregion").split(" ")[3]))
   
     def getIndiceTacheEnGantt(self, tache):
-        return self.listeTache.index(tache)
+        return self.listeTaskAffichees.index(tache)
     
     def updateAffichage(self):
         """Mise à jour graphique."""
         # Sécurité :
         if self.can.winfo_width() != 0:
             # On efface TOUT :
-            for tache in self.listeTache:
+            for tache in self.listeTaskAffichees:
                 tache.PlusCoord = None
             self.can.delete(ALL)
 
@@ -625,12 +622,11 @@ class AffichageGantt(SuperCalendrier):
 
     def getTache(self, jour, nb):
         compteur = 0
-        for tache in self.listeTache:
+        for tache in self.listeTaskAffichees:
             if tache.task.getDebut().date() == jour:
                 if compteur == nb:
                     return tache
                 compteur += 1
-        
 
     def addTask(self, tache, region = None):
         """Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas."""
@@ -639,7 +635,7 @@ class AffichageGantt(SuperCalendrier):
         
         # NOTE : il faut aussi changer ici pour avoir un affichage plusieurs jours.
         t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
-        self.listeTache.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
+        self.listeTaskAffichees.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
         self.updateAffichage()
         return tache
 
@@ -668,10 +664,10 @@ class AffichageGantt(SuperCalendrier):
 
     def __afficherLesTaches(self):
 
-        self.listeTache.sort(key=lambda t:t.task.debut) # Trie par début des taches
+        self.listeTaskAffichees.sort(key=lambda t:t.task.debut) # Trie par début des taches
 
-        for tache in self.listeTache:
-            ID_TACHE = self.listeTache.index(tache)
+        for tache in self.listeTaskAffichees:
+            ID_TACHE = self.listeTaskAffichees.index(tache)
 
             tache.updateColor() # fonction pour mettre à jour la couleur
 #            print("Gantt updategraphique", tache.task.nom, tache.task.currentColor)
