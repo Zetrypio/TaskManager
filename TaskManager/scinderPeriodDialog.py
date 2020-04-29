@@ -26,12 +26,26 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     if periode.getDebut() == periode.getFin():
         showerror("Longueur de période invalide", "Il est impossible de scinder une période qui dure un seul jour.")
         raise ValueError("Impossiblr de scinder une période qui dure un seul jour")
+    
+    def getDebut():
+        return periode.getDebut() + datetime.timedelta(days = 1)
+
+    # Une période de 2 jours ne peut être coupé qu'entre les 2 jours,
+    # donc le début de la 2ème période dure à partir du 2ème jour,
+    # soit la fin de cette période. (on notera que la fonction permet justement d'ignorer le début,
+    # étant donné qu'il est impossible de scinder le même jour que ca commence).
+    if getDebut() == periode.getFin():
+        return periode.getFin()
 
     # Variables à retourner :
     dateScindage = None
-
+    
     # Fonction quand on appuie sur un bouton :
     def onClose(button):
+        """
+        Fonction quand on appuie sur un bouton.
+        @param button: le texte du bouton appuyé.
+        """
         nonlocal dateScindage
         if button == "Aujourd'hui":
             date = datetime.datetime.now().date()
@@ -49,7 +63,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
         date = cal.selection
         if date is not None:
             date = date.date()
-            if date < periode.getDebut() or date > periode.getFin():
+            if date < getDebut() or date > periode.getFin():
                 showerror("Date invalide", "La date choisie est en dehors des limites de la période à scinder.")
                 return
             jour.set(date.day)
@@ -62,8 +76,8 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
         min = 1
         max = tailleMois(getMois(), getAnnee())
         
-        if getMois() == periode.getDebut().month and getAnnee() == periode.getDebut().year:
-            min = periode.getDebut().day
+        if getMois() == getDebut().month and getAnnee() == getDebut().year:
+            min = getDebut().day
         if getMois() == periode.getFin().month and getAnnee() == periode.getFin().year:
             max = periode.getFin().day
         
@@ -76,7 +90,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     def adapteMois():
         if mois is not None:
             lesMois = set()
-            for m in rangeMois(periode.getDebut(), periode.getFin()):
+            for m in rangeMois(getDebut(), periode.getFin()):
                 lesMois.add(m)
             lesVraisMois = []
             for indice, m in enumerate(MOIS):
@@ -102,11 +116,11 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
         if annee is None:
             return datetime.datetime.now().year
         if not annee.get():
-            jour.set(periode.getDebut().year)
+            jour.set(getDebut().year)
         return int(annee.get())
 
     # Dialogue :
-    hasAujourdhui = datetime.datetime.now().date() >= periode.getDebut() and datetime.datetime.now().date() < periode.getFin()
+    hasAujourdhui = datetime.datetime.now().date() >= getDebut() and datetime.datetime.now().date() < periode.getFin()
     fen = Dialog(title = "Scinder une période", buttons = ("Ok", "Annuler", "Aujourd'hui") if hasAujourdhui else ("Ok", "Annuler"), command=onClose)
     
     # Widgets :
@@ -118,7 +132,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     jour = Spinbox(fen, from_ = 1, to = 31, command = adapte, width = 4)
     jour.pack(side = LEFT, fill = X)
     
-    if periode.getDebut().year != periode.getFin().year or periode.getDebut().month != periode.getFin().month:
+    if getDebut().year != periode.getFin().year or getDebut().month != periode.getFin().month:
         mois = Combobox(fen, values = MOIS, state = "readonly", width = 11)
         mois.bind("<<ComboboxSelected>>", lambda e: adapte())
         mois.pack(side = LEFT, fill = X)
@@ -126,8 +140,8 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
         mois = None
         Label(fen, text = MOIS[getMois()-1]).pack(side = LEFT, fill = X)
     
-    if periode.getDebut().year != periode.getFin().year:
-        annee = Spinbox(fen, from_ = periode.getDebut().year, to = periode.getFin().year, command = adapte, width = 6)
+    if getDebut().year != periode.getFin().year:
+        annee = Spinbox(fen, from_ = getDebut().year, to = periode.getFin().year, command = adapte, width = 6)
         annee.pack(side = LEFT, fill = X)
     else:
         annee = None
@@ -138,7 +152,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     # Activation du dialogue :
     fen.activateandwait()
     
-    # revoie des valeures
+    # revoie des valeurs
     return dateScindage
 
 if __name__ == '__main__':
