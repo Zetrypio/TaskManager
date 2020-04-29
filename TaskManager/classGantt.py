@@ -188,8 +188,8 @@ class TacheEnGantt(SuperTache):
         # Note : self.master est une référence vers AffichageGantt
         self.jeCherche = False
         
-        self.bind("<Button-1>", self.__clique)       # On bind la frame
-        self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
+#        self.bind("<Button-1>", self.__clique)       # On bind la frame
+#        self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
         self.ID_PLUS = None
 
         # RMenu
@@ -255,13 +255,11 @@ class TacheEnGantt(SuperTache):
             elif lien.tacheD == tacheB and lien.tacheF == tacheA:
                 return lien
 
-    def __clique(self, event):
+    def _clique(self, event):
+        print("__clique TacheEnGantt")
+        if (chercheur := self.master.getQuiCherche()) != None: # Objet TacheEnGantt qui a la variable jeCherche = True
+            chercheur.jeCherche = False
 
-        if (chercheur := self.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
-            self.master.updateAffichage()
-            return
-        chercheur.jeCherche = False
-        
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode
             if  chercheur.task.debut+chercheur.task.duree < self.task.debut: # Si le chercheur est avant
@@ -305,7 +303,12 @@ class TacheEnGantt(SuperTache):
                 return
             chercheur.jeCherche = False
 
-        chercheur.jeCherche = False
+        else:
+            print("TacheEnGantt.__clique")
+            super()._clique(event)
+
+        if chercheur is not None:
+            chercheur.jeCherche = False
         self.master.updateAffichage()
 
     def gestionRMenu(self):
@@ -344,6 +347,8 @@ class TacheEnGantt(SuperTache):
         if self.jeCherche and self.master.mode == "addDep":
             self.maLigneDepEnCours = self.master.can.create_line(-10,-10,-10,-10, fill="#00BB00", width=2, tags="topLine")
 
+    def updateColor(self): # fonction pour mettre à jour la couleur
+        self.texte.config(bg=self.task.currentColor)
 
 class AffichageGantt(SuperCalendrier):
     """
@@ -379,9 +384,9 @@ class AffichageGantt(SuperCalendrier):
         # Bindings du Canvas :
         self.can.bind("<Configure>", lambda e : self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
         self.can.bind_all("<ButtonRelease-1>", lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
-        self.can.bind_all("<Button-1>",         self.__mouseClicked)
+#        self.can.bind_all("<Button-1>",         self.mouseClicked)
         self.can.bind_all("<Control-Button-1>", self.__multiSelection)
-        self.can.bind_all("<Escape>",           self.__escapePressed)
+#        self.can.bind_all("<Escape>",           self.escapePressed)
         self.can.bind_all("<Delete>",           self.__suppr)
 
         ## Valeurs possibles : "", "delDep" et "addDep"
@@ -395,7 +400,7 @@ class AffichageGantt(SuperCalendrier):
 
     def configureRMenu(self, event):
         # On déselectionne
-        self.__deselectionner()
+        self._deselectionnerLesLiens()
         pos = self.getScrolledPosition(event) # Si ca marche pas, 2 solutions, mais on verra plus tard
         lesliens = set()
         self.rmenu.delete(0, 'end')
@@ -441,7 +446,7 @@ class AffichageGantt(SuperCalendrier):
                 continue
             yield from tags
 
-    def __deselectionner(self):
+    def _deselectionnerLesLiens(self):
         # On cherche ce qui fait le trait vert
         chercheur = self.getQuiCherche()
         
@@ -467,13 +472,22 @@ class AffichageGantt(SuperCalendrier):
                     # Si il est bon : on inverse la sélection du lien.
                     lien.changeSelect()
 
-    def __escapePressed(self, event):
+    def escapePressed(self, event):
+        # Petite vérification élementaire
+        if self.getDonneeCalendrier().getPanneauActif() != self:
+            return
+        print("canvas")
+        super().escapePressed(event)
         # On retourne sur le mode par défaut :
         self.mode = ""
-        self.__deselectionner()
+        self._deselectionnerLesLiens()
         self.updateAffichage()
 
-    def __mouseClicked(self, event):
+    def mouseClicked(self, event):
+        # Petite vérification élementaire
+        if self.getDonneeCalendrier().getPanneauActif() != self:
+            return
+        print("mouseClicked Affichage Gantt")
         # On corrige la position selon le scroll
         pos = self.getScrolledPosition(event)
         
@@ -487,20 +501,22 @@ class AffichageGantt(SuperCalendrier):
                     if lien.ID_LIEN == tag:
                         lien.cliqueSuppr()
 
-#       Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
+        # Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
         if event.widget in self.__getBtnChangeJour():
             self.updateAffichage()
             return
 
         # On retourne sur le mode par défaut :
         self.mode = ""
-        self.__deselectionner()
+        self._deselectionnerLesLiens()
 
         # Si c'est pas le canvas, on s'en fiche (on joue le truc qu'on a cliqué) :
-        if event.widget != self.can:
+        if event.widget != self.can or event.widget in self.listeTache:
             # Mise à jour graphique :
             self.updateAffichage()
             return
+        # On deselectionne les Taches si c'est effectivement pas une tache sur quoi on a cliqué (condition ci dessus)
+        super().mouseClicked(event)
 
         for tag in self.__trouverTags(pos):
             # Détection des lien :
@@ -605,7 +621,6 @@ class AffichageGantt(SuperCalendrier):
                 -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
         
         date = datetime.datetime.combine(jour, heure)
-        print(date)
         return date
 
     def getTache(self, jour, nb):
@@ -657,6 +672,9 @@ class AffichageGantt(SuperCalendrier):
 
         for tache in self.listeTache:
             ID_TACHE = self.listeTache.index(tache)
+
+            tache.updateColor() # fonction pour mettre à jour la couleur
+#            print("Gantt updategraphique", tache.task.nom, tache.task.currentColor)
 
             # Ligne verte :
             tache.creerLigne()

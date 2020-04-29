@@ -8,7 +8,10 @@ from superclassCalendrier import *
 class TacheEnCalendrier(SuperTache):
     def __init__(self, master, task, **kwargs):
         super().__init__(master, task, **kwargs)
-        # Note : self.master est une référence vers AffichageCalendier
+        # Note : self.master est une référence vers le frame intérieur à AffichageCalendier
+
+    def getCalendrier(self):
+        return self.master.master
     
 
 class AffichageCalendrier(SuperCalendrier):
@@ -28,7 +31,7 @@ class AffichageCalendrier(SuperCalendrier):
 #        self.__listeTache = []
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
-        
+
         self.updateAffichage()
 
         # self.bind("<Configure>", lambda e : self.updateAffichage())
@@ -38,11 +41,21 @@ class AffichageCalendrier(SuperCalendrier):
         self.frame.destroy()
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
+#        # On oublie pas les nouveaux Bind
+#        self.addBind()
         
         # On affiche les trucs
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
+
+#    def addBind(self):
+#        self.frame.bind("<Button-1>", self.mouseClicked)
+#        self.frame.bind("<Escape>",  self.escapePressed)
+
+    def escapePressed(self, event):
+        print("calendrier")
+        super().escapePressed(event)
     
     def addTask(self, tache, region = None):
         '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
@@ -122,14 +135,13 @@ class AffichageCalendrier(SuperCalendrier):
 
     def __afficherLesTaches(self):
 
-        for task in self.listeTaches:
+        for task in self.listeTask:
             tache = TacheEnCalendrier(self.frame, task)
             if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
                 # Calcul du début :
                 debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
                 ## Calcul du nombre de lignes :
                 # Si c'est hors cadre ou pas sur le même jour
-                print(self.getHeureFin())
                 if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
                     tache.task.setVisible(False)
                 # Si ça dépasse : on restreint

@@ -33,8 +33,26 @@ class Task:
         # Doit-on l'afficher ?
         self.visible = True
 
+        # Attribut de selection
+        self.selection = False
+        self.currentColor = self.color
+
         if self.isContainer():
             self.subtasks = []
+
+    def setSelectionReverse(self):
+        if self.selection:
+            self.setSelectionFalse()
+        else:
+            self.setSelectionTrue()
+    def setSelectionTrue(self):
+        self.selection = True
+        self.currentColor = "#0078FF"
+    def setSelectionFalse(self):
+        self.selection = False
+        self.currentColor = self.color
+
+
     def __str__(self):
         return "Task %s: from %s to %s, %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown", self.statut)
     def isContainer(self):

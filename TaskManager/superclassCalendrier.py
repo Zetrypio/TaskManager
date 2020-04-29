@@ -9,7 +9,8 @@ import datetime
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 class SuperTache(Frame):
     def __init__(self, master, task, **kwargs):
-        bg = task.color
+        bg = task.currentColor
+#        print("Constructeur", task.nom , bg)
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt
         self.task = task
@@ -28,6 +29,27 @@ class SuperTache(Frame):
         self.texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau, tout chaud  
         self.pack_propagate(False)
 
+        # La selection des taches
+        self.selected = False
+        self.texte.bind("<Button-1>", self._clique)
+        self.texte.bind("<Control-Button-1>", self.multiSelection)
+
+    def getCalendrier(self):
+        return self.master
+
+    def multiSelection(self, e):
+        """Permet d'envoyer l'objet à la methode dans SuperCalendrier"""
+        self.getCalendrier().multiSelection(self.task)
+        self.getCalendrier().getDonneeCalendrier().updateAffichage()
+
+    def _clique(self, e):
+        print("SuperTache._clique", self.getCalendrier().getTaskSelect())
+        if self.getCalendrier().getTaskSelect() != []:
+            print("raté")
+            self.getCalendrier()._deselectionnerLesTasks()
+        self.getCalendrier().selectionner(self.task)
+        self.getCalendrier().getDonneeCalendrier().updateAffichage()
+
 class SuperCalendrier(Frame):
     def __init__(self, master = None, **kwargs):
         assert self.__class__ != SuperCalendrier # interdire instanciation direct (classe abstraite version simple)
@@ -44,7 +66,38 @@ class SuperCalendrier(Frame):
         self.nbJour = self.getLongueurPeriode()
 
         # liste des tâches :
-        self.listeTaches = []
+        self.listeTask = []
+
+    def mouseClicked(self, event):
+        self._deselectionnerLesTasks()
+        self.updateAffichageAll()
+
+    def escapePressed(self, event):
+        print("escape", event.__class__)
+        self._deselectionnerLesTasks()
+        self.updateAffichageAll()
+
+    def multiSelection(self, task):
+        task.setSelectionReverse()
+
+    def selectionner(self, tache): # gere la selection
+        # On selectionne la bonne
+        tache.setSelectionTrue()
+
+    def _deselectionnerLesTasks(self):
+        print("SuperDeselection")
+        for tache in self.listeTask:
+            tache.setSelectionFalse()
+
+    def updateAffichageAll(self):
+        """ Permet de mettre à jour l'affichage dans tous les panneaux """
+        self.getDonneeCalendrier().updateAffichage()
+
+    def getTaskSelect(self):
+        return [task for task in self.listeTask if task.selection]
+
+    def getDonneeCalendrier(self):
+        return self.master.master
 
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
@@ -132,7 +185,7 @@ class SuperCalendrier(Frame):
             ####################
             ... # Note : on utilisera très probablement une liste, non ?
             ... # et peut-être une classe particulière, défini dans le même fichier ?
-            ... # Quand je dis une liste, c'est une liste différente de self.listeTaches,
+            ... # Quand je dis une liste, c'est une liste différente de self.listeTask,
                 # car celle-ci existe déjà, mais qui contiendrait les cadres/panneaux des classes
                 # que l'on va créer pour cette représentation. Cependant, on pourrais dire, si
                 # c'est possible, que cette classe pourrait être utilisée pour plusieurs dispositions
@@ -144,7 +197,7 @@ class SuperCalendrier(Frame):
         if self.__class__ == SuperCalendrier:
             raise NotImplementedError
         if tache is None : return
-        self.listeTaches.append(tache)
+        self.listeTask.append(tache)
         if region and tache.debut is None:
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
