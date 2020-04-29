@@ -3,7 +3,7 @@ import datetime
 from tkinter.messagebox import *
 from periodDialog import *
 from decalerPeriodDialog import *
-from scinderFusionnerPeriodDialog import *
+from scinderPeriodDialog import *
 
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
