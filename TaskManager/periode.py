@@ -8,12 +8,12 @@ from scinderPeriodDialog import *
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
         self.nom = nom
-        self.debut = debut
-        self.fin = fin
+        self.debut = debut + datetime.timedelta()
+        self.fin = fin + datetime.timedelta()
         self.desc = desc
         self.color = color
         self.selected = False
-        # Doit-on faire une liste des tâches contenus ? je pense pas, mais on pourras l'obtenir avec une méthode...?
+        # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
     def getDebut(self):
         return self.debut + datetime.timedelta() # Faire une copie de la date
     def getDuree(self):
@@ -37,6 +37,8 @@ class Periode:
             self.debut = debut + datetime.timedelta() # Faire une copie de la date
         else:
             raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
+    def setFin(self, fin):
+        self.fin = fin + datetime.timedelta() # Faire une copie de la date.
         
     def intersectWith(self, periode):
         return (self.debut >= periode.debut and self.debut <= periode.fin) \
@@ -62,7 +64,7 @@ class PeriodManager:
     def ajouter(self, periode):
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
-        self.app.getDonneeCalendrier().updateAffichage()
+        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
     
     def getPeriodesSelectionnees(self):
         return [periode for periode in self.periodes if periode.isSelected()]
@@ -101,12 +103,17 @@ class PeriodManager:
         if len(periodes) != 1:
             showerror("Erreur de sélection", "Vous ne pouvez effectuer cette tâche qu'avec exactement une seule période sélectionnée.")
             return
+        periode = periodes[0]
         try:
-            print(askScinderPeriode(self, self.taskEditor, periode = periodes[0]))
+            dateScindage = askScinderPeriode(self, self.taskEditor, periode = periode)
         except ValueError:
             return
         else:
-            pass
+            prevFin = periode.getFin()
+            periode.setFin(dateScindage - datetime.timedelta(days = 1))
+            newPeriode = Periode(periode.nom, dateScindage, prevFin, periode.desc, periode.getColor())
+            # TODO : changer les périodes des tâches concernées.
+            self.ajouter(newPeriode)
     def fusionnerPeriodes(self):
         pass
     
