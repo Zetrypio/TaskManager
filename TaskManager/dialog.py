@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
+from tkinter.messagebox import *
+from tkinter.messagebox import _show
 
 def noCommand(*_,**__):pass
 
@@ -114,3 +116,7 @@ def askString(master, nom, question):
     return result
 
 
+def askyesnowarning(title=None, message=None, **options):
+    "Ask a question with a warning; return true if the answer is yes"
+    s = _show(title, message, WARNING, YESNO, **options)
+    return s == YES
