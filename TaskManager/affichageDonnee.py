@@ -1,4 +1,4 @@
-# *-* coding:utf-8 *-*
+# -*- coding:utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
@@ -150,8 +150,11 @@ class DonneeCalendrier(SuperCalendrier):
     def getToutLesPanneaux(self):
         """Renvoie une copie de la liste de tout les panneaux."""
         return self.listPanneau[:]
-        
-    
+
+    def updateTaskColor(self):
+        for p in self.getToutLesPanneaux():
+            p.updateTaskColor()
+
     def updateAffichage(self):
         # Faire un parcour des panneaux pour pouvoir effectuer les changements
         # sur TOUTES les disposition de calendriers (gantt, calendrier classique etc)

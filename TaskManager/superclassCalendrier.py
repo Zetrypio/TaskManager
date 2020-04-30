@@ -81,17 +81,17 @@ class SuperCalendrier(Frame):
 
     def multiSelection(self, task):
         task.inverseSelection()
-        self.updateTaskColor()
+        self.getDonneeCalendrier().updateTaskColor()
 
     def select(self, tache):
         """gere la selection"""
         tache.setSelected(True)
-        self.updateTaskColor()
+        self.getDonneeCalendrier().updateTaskColor()
 
     def deselect(self):
         for tache in self.getSelectedTask():
-            tache.setSelected(False)        
-        self.updateTaskColor()
+            tache.setSelected(False)
+        self.getDonneeCalendrier().updateTaskColor()
 
     def getSelectedTask(self):
         return [task for task in self.listeTask if task.isSelected()]
