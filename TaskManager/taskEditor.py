@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from task import *
+from periodAdder import *
 from dialog import *
 from RMenu import *
 from tkinter import *
@@ -13,7 +14,7 @@ class TaskEditor(Frame):
     Zone à gauche de la fenêtre, dans laquelle sont listée les tâches.
     Contient aussi le widget qui permet d'en rajouter (TaskAdder).
     """
-    def __init__(self, master, menubar):
+    def __init__(self, master, menubar, periodManager):
         """
         @param master : Référence vers le widget sur lequel on veut le placer.
         @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
@@ -32,6 +33,8 @@ class TaskEditor(Frame):
         # Zone pour l'ajouteur des tâches.
         self.frameInput = TaskAdder(self, menubar)
         self.frameInput.pack(side = TOP, fill = X)
+        
+        self.frameInputPeriode = PeriodAdder(periodManager, self)
 
         # Pour pouvoir filtrer l'affichage :
         self.FILTRE = {}
@@ -64,6 +67,8 @@ class TaskEditor(Frame):
         
         # Mise à jour graphique :
         self.redessiner()
+
+        periodManager.setTaskEditor(self)
 
     def filter(self, **filtre):
         """
@@ -354,7 +359,14 @@ class TaskEditor(Frame):
                                       else 1 if t.statut == "À faire" or t.statut == "Répétition"
                                       else 2)
         self.redessiner()
-
+    
+    def setEditionPeriode(self, enEdition):
+        if enEdition:
+            self.frameInput.pack_forget()
+            self.frameInputPeriode.pack(side = TOP, fill = X, before = self.tree)
+        else :
+            self.frameInput.pack(side = TOP, fill = X, before = self.tree)
+            self.frameInputPeriode.pack_forget()
 
 if __name__=='__main__':
     import Application

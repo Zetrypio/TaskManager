@@ -5,6 +5,7 @@ from tkinter import Label, Frame
 from importPIL import *
 from espacevisuel import *
 from taskEditor import *
+from periode import *
 
 style = Style()
 
@@ -24,7 +25,9 @@ style.map("Treeview",
           background=fixed_map("background"))
 
 class MenuBar(Menu):
+    """Classe de la barre de menu"""
     def __init__(self, root, master):
+        """root est la fenêtre, master est l'Application."""
         Menu.__init__(self, master)
         root.configure(menu = self)
         # Menus Principaux :
@@ -60,12 +63,25 @@ class Application(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
         self.winfo_toplevel().title("Gestionnaire de calendrier")
-        self.menu = MenuBar(self.master, self)
-        self.taskEditor = TaskEditor(self, self.menu)
+        self.menu = MenuBar(self.winfo_toplevel(), self)
+        self.periodManager = PeriodManager(self)
+        self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
-        self.calendar = CalendarZone(self)
+        self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
     def nouveau(self):pass
+    def setModeEditionPeriode(self, enEdition):
+        self.calendar.setBarreOutilPeriode(enEdition)
+        if enEdition:
+            #self.taskEditor.filter(type = "Période")
+            self.taskEditor.setEditionPeriode(True)
+            pass
+        else:
+            #self.taskEditor.filter(type = "Tâche")
+            self.taskEditor.setEditionPeriode(False)
+            pass
+    def getPeriodManager(self):
+        return self.periodManager
     def getPanneauActif(self):
         return self.calendar.getPanneauActif()
     def getDonneeCalendrier(self):

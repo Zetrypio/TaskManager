@@ -6,6 +6,7 @@ import datetime
 from superclassCalendrier import *
 from classCalendrier import *
 from classGantt import *
+from classCalendrierPeriode import *
 
 class ZoneAffichage(Frame): # Contient les paramètre et les données
     def __init__(self, master = None, **kwargs):
@@ -22,6 +23,9 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         
         self.donneeCalendrierFrame.updateAffichage()
 
+    def getApplication(self):
+        return self.master.getApplication()
+
     def getPanneauActif(self):
         """Renvoie le mode d'affichage de calendrier actif."""
         return self.donneeCalendrierFrame.getPanneauActif()
@@ -29,6 +33,7 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         return self.donneeCalendrierFrame
     def getParametreAffichage(self):
         return self.zoneParametre
+        
     def envoyerChangementNbJour(self, event):
         """
         Méthode callback du combobox qui gère
@@ -78,6 +83,21 @@ class ParametreAffichage(Frame):
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèse car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
+    
+    def setModeListe(self, mode = None):
+        etatActuel = self.listeMode.cget("state")
+        self.listeMode.config(state = NORMAL)
+        try:
+            if mode is None and self.listeMode.get() not in self.listeMode.cget("values"):
+                self.listeMode.set(self.listeMode.cget("values")[-1])
+            elif mode is not None:
+                self.listeMode.set(mode)
+        finally:
+            self.listeMode.config(state = etatActuel)
+    def setStateListe(self, state):
+        if state == NORMAL:
+            state = "readonly"
+        self.listeMode.config(state = state)
         
     def getBoutonsChangementJours(self):
         return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
@@ -97,16 +117,28 @@ class DonneeCalendrier(SuperCalendrier):
         self.listPanneau = []
         self.listPanneau.append(AffichageCalendrier(self.panneau)) #liste de tout les panneaux pour appliquer un changement à tous
         self.listPanneau.append(AffichageGantt(self.panneau))
+        self.listPanneau.append(AffichageCalendrierPeriode(self.panneau))
 
         # Ajout des onglets au panneau
         self.panneau.add(self.listPanneau[0], text="Calendrier", padding=1) # padding optionnel
         self.panneau.add(self.listPanneau[1], text="Gantt", padding=1)
+        self.panneau.add(self.listPanneau[2], text="Gérer les périodes", padding = 1)
+        
+        # Ajout d'un binding sur le panneau pour savoir quand on en change :
+        self.panneau.bind("<<NotebookTabChanged>>", self.panneauChange)
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
         
     def getParametreAffichage(self):
         return self.master.getParametreAffichage()
+
+    def getApplication(self):
+        return self.master.getApplication()
+
+    def panneauChange(self, e):
+        p = self.getPanneauActif()
+        p.doConfiguration(self.master.getParametreAffichage())
 
     def mouseClicked(self, event):
         self.getPanneauActif().mouseClicked(event)

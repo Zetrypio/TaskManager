@@ -1,4 +1,4 @@
-# -*- coding:UTF-8 -*-
+# -*- coding:utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame

@@ -99,6 +99,9 @@ class SuperCalendrier(Frame):
     def getDonneeCalendrier(self):
         return self.master.master
 
+    def getApplication(self):
+        return self.master.master.getApplication() # Skip le NoteBook
+
     def getLongueurPeriode(self):
         return 8 # TODO : À mettre à la longueur de la période.
     def getDebutPeriode(self):
@@ -277,6 +280,24 @@ class SuperCalendrier(Frame):
         setHeureDebut, setHeureFin, setJourDebut et setNbJour
         """
         raise NotImplementedError
+
+    def doConfiguration(self, paramAffichage):
+        """
+        Méthode pour éventuellement changer la barre d'outil
+        secondaire quand ce panneau est actif.
+        
+        Par défaut, fait un reset normal de cette barre.
+        """
+        self.getApplication().setModeEditionPeriode(False)
+        paramAffichage.setStateListe(NORMAL)
+        if self.getNbJour() == self.getLongueurPeriode():
+            paramAffichage.setModeListe("Période")
+        elif self.getNbJour() == 7:
+            paramAffichage.setModeListe("1 semaine")
+        elif self.getNbJour() == 1:
+            paramAffichage.setModeListe("1 jour")
+        else:
+            paramAffichage.setModeListe("%s jours"%self.getNbJour())
 
 if __name__=='__main__':
     import Application
