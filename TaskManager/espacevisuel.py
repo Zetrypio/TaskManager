@@ -7,7 +7,7 @@ from affichageDonnee import *
 from importPIL import *
 from infobulle import *
 import gestionCalendrier
-import intervertir
+#import intervertir
 
 
 

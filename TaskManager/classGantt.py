@@ -458,6 +458,10 @@ class AffichageGantt(SuperCalendrier):
 
     def __multiSelection(self, event):
         """Ajoute ou enlève les liens à la sélection."""
+        # Petite vérification élementaire
+        if self.getDonneeCalendrier().getPanneauActif() != self:
+            return
+
         # On corrige la position selon le scroll
         pos = self.getScrolledPosition(event)
 

@@ -161,15 +161,13 @@ class DonneeCalendrier(SuperCalendrier):
                 tacheJour1.add(tache)
             elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2:
                 tacheJour2.add(tache)
-        # Renvoie la liste des taches qui sont dans les 2 sets
-        tacheCommune = tacheJour1 & tacheJour2
 
         diff = datetime.datetime.combine(jour2, datetime.time()) - datetime.datetime.combine(jour1, datetime.time())
         # On applique les changements
-        for tache in tacheJour1-tacheCommune:
+        for tache in tacheJour1-tacheJour2:
             tache.setDebut(tache.getDebut()+diff)
-        for tache in tacheJour2-tacheCommune:
-            tache.setDebut(tache.getDebut()+diff)
+        for tache in tacheJour2-tacheJour1:
+            tache.setDebut(tache.getDebut()-diff)
 
         self.updateAffichage()
 
