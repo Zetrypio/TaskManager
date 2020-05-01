@@ -135,14 +135,11 @@ class DonneeCalendrier(SuperCalendrier):
 
     def clearJourSelectionnes(self):
         self.jourSelectionnes.clear()
-        print(self.jourSelectionnes, "normalement vide")
 
     def addJourSelectionnes(self, jour):
         self.jourSelectionnes.add(jour)
-        print(self.jourSelectionnes, "normalement pas vide")
 
     def intervertir(self):
-        print(self.jourSelectionnes)
         if len(self.jourSelectionnes) != 2 :
             showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
             return
@@ -169,6 +166,8 @@ class DonneeCalendrier(SuperCalendrier):
         for tache in tacheJour2-tacheJour1:
             tache.setDebut(tache.getDebut()-diff)
 
+        for p in self.getToutLesPanneaux():
+            p.onIntervertir()
         self.updateAffichage()
 
         

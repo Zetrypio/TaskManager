@@ -36,6 +36,15 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
         self.tacheD.master.updateAffichage()
 
+    def inverserLaDependances(self):
+        """
+        Permet de changer le sens de la flèche
+        """
+        self.tacheF.task.removeDependance(self.tacheD.task)
+        self.tacheD, self.tacheF = self.tacheF, self.tacheD
+        self.tacheF.task.addDependance(self.tacheD.task)
+
+        
     def afficherLesLiens(self, couleur = "#000000"):
         # On ne fait pas si on est pas dans la periode a afficher
         if (self.tacheD.task.debut.date() == self.tacheF.task.debut.date() and (self.tacheF.task.getFin().date() < self.tacheD.master.getJourDebut() or self.tacheD.task.getFin().date() >= self.tacheD.master.getJourFin())) \
@@ -256,7 +265,6 @@ class TacheEnGantt(SuperTache):
                 return lien
 
     def _clique(self, event):
-        print("__clique TacheEnGantt")
         if (chercheur := self.master.getQuiCherche()) != None: # Objet TacheEnGantt qui a la variable jeCherche = True
             chercheur.jeCherche = False
 
@@ -304,7 +312,6 @@ class TacheEnGantt(SuperTache):
             chercheur.jeCherche = False
 
         else:
-            print("TacheEnGantt.__clique")
             super()._clique(event)
 
         if chercheur is not None:
@@ -484,7 +491,6 @@ class AffichageGantt(SuperCalendrier):
         # Petite vérification élementaire
         if self.getDonneeCalendrier().getPanneauActif() != self:
             return
-        print("canvas")
         super().escapePressed(event)
         # On retourne sur le mode par défaut :
         self.mode = ""
@@ -495,7 +501,6 @@ class AffichageGantt(SuperCalendrier):
         # Petite vérification élementaire
         if self.getDonneeCalendrier().getPanneauActif() != self:
             return
-        print("mouseClicked Affichage Gantt")
         # On corrige la position selon le scroll
         pos = self.getScrolledPosition(event)
         
@@ -606,6 +611,11 @@ class AffichageGantt(SuperCalendrier):
             h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
             self.can.config(scrollregion = (0, 0, w, h))
 
+    def onIntervertir(self):
+        for lien in self.listeLien:
+            if lien.tacheD.task.getDebut() > lien.tacheF.task.getDebut():
+                lien.inverserLaDependances()
+
     def identify_region(self, x, y):
         # Position :
         pos = Point(x, y)
@@ -688,7 +698,7 @@ class AffichageGantt(SuperCalendrier):
             ID_TACHE = self.listeTaskAffichees.index(tache)
 
             tache.updateColor() # fonction pour mettre à jour la couleur
-#            print("Gantt updategraphique", tache.task.nom, tache.task.currentColor)
+
 
             # Ligne verte :
             tache.creerLigne()

@@ -80,6 +80,8 @@ class SuperCalendrier(Frame):
         for tache in self.listeTaskAffichees:
             tache.updateColor()
 
+    def onIntervertir(self):pass # Juste pour qu'elle existe
+
     def multiSelection(self, task):
         task.inverseSelection()
         self.getDonneeCalendrier().updateTaskColor()
