@@ -69,6 +69,7 @@ class SuperCalendrier(Frame):
         self.listeTask = []
         self.listeTaskAffichees = []
 
+
     def mouseClicked(self, event):
         self.deselect()
 
@@ -89,12 +90,25 @@ class SuperCalendrier(Frame):
         self.getDonneeCalendrier().updateTaskColor()
 
     def deselect(self):
+        self.getDonneeCalendrier().clearJourSelectionnes()
         for tache in self.getSelectedTask():
             tache.setSelected(False)
         self.getDonneeCalendrier().updateTaskColor()
 
     def getSelectedTask(self):
         return [task for task in self.listeTask if task.isSelected()]
+
+    def selectTaskJour(self, jour, control=False):
+        if not control:
+            self.deselect()
+
+        self.getDonneeCalendrier().addJourSelectionnes(jour)
+
+        for task in self.listeTask:
+            # Si on commence avant ou on est sur le jour et qu'on fini après ou sur le jour
+            if task.getDebut().date() <= jour and task.getFin().date() >= jour:
+                task.setSelected(True)
+        self.updateTaskColor()
 
     def getDonneeCalendrier(self):
         return self.master.master

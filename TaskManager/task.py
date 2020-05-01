@@ -102,6 +102,22 @@ class Task:
 
     def getDebut(self):
         return self.debut + datetime.timedelta() if self.debut is not None else None # Faire une copie et vérifier les trucs
+    def setDebut(self, debut, change = "fin"):
+        """
+        Permet de mettre le début de la période.
+        @param debut: Le datetime.date du début de la période.
+        @param change: Si "duree": change la durée mais pas la fin,
+                       Si "fin": change la fin mais pas la durée.
+                       Sinon : raise ValueError
+        """
+        if change == "duree":
+            fin = self.getFin()
+            self.debut = debut + datetime.timedelta() # Faire une copie de la date
+            self.duree = fin - self.getFin()
+        elif change == "fin":
+            self.debut = debut + datetime.timedelta() # Faire une copie de la date
+        else:
+            raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
     def getDuree(self):
         return self.duree + datetime.timedelta() # Faire une copie
     def getFin(self):

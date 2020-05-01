@@ -460,7 +460,14 @@ class AffichageGantt(SuperCalendrier):
         """Ajoute ou enlève les liens à la sélection."""
         # On corrige la position selon le scroll
         pos = self.getScrolledPosition(event)
-        
+
+        # Test si on est sur le bandeau des jours
+        if pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+            indice = pos.x//self.tailleColonne
+            jour = self.getJourDebut() + datetime.timedelta(days=indice)
+            self.selectTaskJour(jour, control=True)
+            return
+
         # On boucle sur les items qui sont on niveau du clic :
         for tag in self.__trouverTags(pos):
             # Pour tout les liens, on cherche lequel est le bon :
@@ -514,6 +521,13 @@ class AffichageGantt(SuperCalendrier):
             return
         # On deselectionne les Taches si c'est effectivement pas une tache sur quoi on a cliqué (condition ci dessus)
         super().mouseClicked(event)
+
+        # Test si on est sur le bandeau des jours
+        if pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+            indice = pos.x//self.tailleColonne
+            jour = self.getJourDebut() + datetime.timedelta(days=indice)
+            self.selectTaskJour(jour)
+            return
 
         for tag in self.__trouverTags(pos):
             # Détection des lien :

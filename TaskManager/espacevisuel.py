@@ -7,6 +7,7 @@ from affichageDonnee import *
 from importPIL import *
 from infobulle import *
 import gestionCalendrier
+import intervertir
 
 
 
@@ -171,20 +172,13 @@ class CalendarZone(Frame):
     def ajouterJour(self):
         pass
 
-    def retirerHeure(self):
-        pass
-    def retirerJour(self):
-        pass
 
     def selectionnerJour(self):
         pass
     def afficherMasquerJour(self):
         pass
-
-    def deplacerActiviteeVersJour(self):
-        pass
     def deplacerIntervertir(self):
-        pass
+        self.getDonneeCalendrier().intervertir()
 
     def decalerJour(self):
         pass

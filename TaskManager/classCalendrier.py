@@ -121,6 +121,8 @@ class AffichageCalendrier(SuperCalendrier):
         
         for jour in self.rangeDate(self.getJourDebut(), self.getJourFin(), last = False):
             self.listeLabelJour.append(Label(self.frame, text=JOUR[jour.weekday()], bg = "light grey"))
+            self.listeLabelJour[-1].bind("<Button-1>",lambda e, jour=jour: self.selectTaskJour(jour))
+            self.listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectTaskJour(jour, control=True))
             self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
             if jour < self.getJourFin():
                 self.listeSeparateurJour.append(Separator(self.frame, orient=VERTICAL))

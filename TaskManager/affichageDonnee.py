@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from tkinter.messagebox import *
 import datetime
 from superclassCalendrier import *
 from classCalendrier import *
@@ -129,6 +130,49 @@ class DonneeCalendrier(SuperCalendrier):
 
         # Placement du panneau :
         self.panneau.pack(expand = YES, fill = BOTH)
+
+        self.jourSelectionnes = set()
+
+    def clearJourSelectionnes(self):
+        self.jourSelectionnes.clear()
+        print(self.jourSelectionnes, "normalement vide")
+
+    def addJourSelectionnes(self, jour):
+        self.jourSelectionnes.add(jour)
+        print(self.jourSelectionnes, "normalement pas vide")
+
+    def intervertir(self):
+        print(self.jourSelectionnes)
+        if len(self.jourSelectionnes) != 2 :
+            showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
+            return
+
+        lesJours = list(self.jourSelectionnes)
+        jour1 = lesJours[0]
+        jour2 = lesJours[1]
+        if jour1 > jour2:
+            jour2, jour1 = jour1, jour2
+
+        tacheJour1 = set()
+        tacheJour2 = set()
+
+        for tache in self.listeTask:
+            if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1:
+                tacheJour1.add(tache)
+            elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2:
+                tacheJour2.add(tache)
+        # Renvoie la liste des taches qui sont dans les 2 sets
+        tacheCommune = tacheJour1 & tacheJour2
+
+        diff = datetime.datetime.combine(jour2, datetime.time()) - datetime.datetime.combine(jour1, datetime.time())
+        # On applique les changements
+        for tache in tacheJour1-tacheCommune:
+            tache.setDebut(tache.getDebut()+diff)
+        for tache in tacheJour2-tacheCommune:
+            tache.setDebut(tache.getDebut()+diff)
+
+        self.updateAffichage()
+
         
     def getParametreAffichage(self):
         return self.master.getParametreAffichage()
