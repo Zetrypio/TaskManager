@@ -1,0 +1,3 @@
+import Application
+
+Application.main()
