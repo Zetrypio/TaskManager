@@ -110,6 +110,8 @@ class PeriodManager:
         periode = periodes[0]
         try:
             dateScindage = askScinderPeriode(self, self.taskEditor, periode = periode)
+            if dateScindage is None:
+                return
         except ValueError:
             return
         else:
