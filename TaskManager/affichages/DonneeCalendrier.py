@@ -53,7 +53,8 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         tacheJour1 = set()
         tacheJour2 = set()
 
-        for tache in self.listeTask:
+        # Seulement les taches sélectionnés au cas où il y en a qu'on veux pas switch
+        for tache in self.getSelectedTask():
             if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1:
                 tacheJour1.add(tache)
             elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2:
