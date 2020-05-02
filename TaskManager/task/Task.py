@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*-
-from .TaskInDnd import *
-from .dialog.datetimeDialog import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
 import datetime
+
+from .TaskInDnd import *
+from .dialog.datetimeDialog import *
 
 class Task:
     """Classe définissant une tâche."""
