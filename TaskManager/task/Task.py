@@ -10,7 +10,7 @@ from .dialog.datetimeDialog import *
 
 class Task:
     """Classe définissant une tâche."""
-    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white"):
+    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white", periode = None):
         """
         @param nom : nom de la tâche.
         @param debut : datetime. du début.
@@ -27,6 +27,7 @@ class Task:
         self.nbrep = nbrep  # nombre de répétitions
         self.desc = desc    # descirption
         self.color = color
+        self.periode = periode
         self.dependances = []
         self.dependantes = []
         self.updateStatut()
@@ -82,6 +83,10 @@ class Task:
         return self.dependances[:]
     def getDependantes(self):
         return self.dependantes[:]
+    def getPeriode(self):
+        return self.periode
+    def setPeriode(self, periode):
+        self.periode = periode
 
     def copy(self):
         t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
@@ -94,12 +99,6 @@ class Task:
     def updateStatut(self):
         """Permet de mettre à jour le statut de la tâche."""
         self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
-    def getDebut(self):
-        return self.debut
-    def getDuree(self):
-        return self.duree
-    def getFin(self):
-        return (self.debut + self.duree) if self.debut is not None else None
 
     def getDebut(self):
         return self.debut + datetime.timedelta() if self.debut is not None else None # Faire une copie et vérifier les trucs

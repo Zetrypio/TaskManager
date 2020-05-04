@@ -160,7 +160,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)
-        for column in range(self.nbJour*2+1):
+        for column in range(self.getNbJour()*2+1):
             if column%2 ==0:
                 self.frame.columnconfigure(column,weight=0)
             else:

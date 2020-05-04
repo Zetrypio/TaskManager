@@ -328,6 +328,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
     def __afficherLesJours(self):
         """Traçage des lignes de division et des noms de jour."""
         # Largeur :
+        if self.getNbJour() == 0:
+            return
         self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
         
         # création de bandeau pour les jours
@@ -366,7 +368,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 # width = int(self.tailleColonne-1)*tache.task.duree.days-1 + int(self.tailleColonne-1)*self.facteurW
                 w = self.tailleColonne
                 # X en fonction du jour de la tache :
-                x = int(w*(tache.task.debut.weekday()-self.getJourDebut().weekday()) + 2)
+                x = int(w*(tache.task.getDebut().date()-self.getJourDebut()).days + 2)
                 # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le même jour :
                 y = (AffichageGantt.TAILLE_BANDEAU_JOUR + AffichageGantt.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.date(), self.getIndiceTacheEnGantt(tache)))
 

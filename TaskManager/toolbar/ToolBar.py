@@ -18,7 +18,7 @@ class ToolBar(Frame):
     def __init__(self, master, **kwargs):
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
-        
+
         self.lesCategories = [] # liste de cadre
         self.lesBoutonsEnListes = [] # liste qui va contenir toutes les autres liste de bouton (pour un affichage cool) lesBoutonsEnListes[catégorie][bouton]
         self.lesFramesDesBoutons = [] # tout est dans le nom ... lesFramesDesBoutons[categorie][frame]

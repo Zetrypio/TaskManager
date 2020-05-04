@@ -327,6 +327,8 @@ class TaskEditor(Frame):
         fen.activateandwait()
         return region
 
+    def getApplication(self):
+        return self.master
     def tri_alphabetique(self):
         if self.MODE_TRI == "Alpha":
             self.MODE_TRI = "Alpha_reverse"

@@ -22,12 +22,11 @@ class AbstractDisplayedCalendar(Frame):
 
         # infos des jours :
         self.jourDebut = self.getDebutPeriode()
-        self.nbJour = self.getLongueurPeriode()
+        self.jourFin   = self.getFinPeriode()
 
         # liste des tâches :
         self.listeTask = []
         self.listeTaskAffichees = []
-
 
     def mouseClicked(self, event):
         self.deselect()
@@ -77,12 +76,14 @@ class AbstractDisplayedCalendar(Frame):
     def getApplication(self):
         return self.master.master.getApplication() # Skip le NoteBook
 
+    def getPeriodeActive(self):
+        return self.getApplication().getPeriodManager().getActivePeriode()
     def getLongueurPeriode(self):
-        return 8 # TODO : À mettre à la longueur de la période.
+        return self.getFinPeriode() - self.getDebutPeriode() if self.getPeriodeActive() is not None else 0
     def getDebutPeriode(self):
-        return datetime.date(2020, 4, 6); # TODO : À mettre au début de la période.
+        return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
     def getFinPeriode(self):
-        return self.getDebutPeriode() + datetime.timedelta(days = self.getLongueurPeriode())
+        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
         
     def getHeureDebut(self):
         return self.heureDebut
@@ -106,20 +107,31 @@ class AbstractDisplayedCalendar(Frame):
         self.updateAffichage()
 
     def getNbJour(self):
-        return self.nbJour
+        """ Retourne un int """
+        return self.getDureeJour().days
+    def getDureeJour(self):
+        """ Retourne un timedelta """
+        return (self.jourFin - self.jourDebut) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
     def setNbJour(self, valeur):
-        self.nbJour = valeur
+        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur)) if self.jourDebut is not None else None
         self.updateAffichage()
+    def setDureeJour(self, valeur):
+        self.jourFin = (self.jourDebut + valeur) if self.jourDebut is not None else None
+        self.updateAffichage()
+
     
     def getJourFin(self):
-        return self.jourDebut + datetime.timedelta(days = self.nbJour)
+        return self.jourFin
+    def setJourFin(self, valeur):
+        self.jourFin = valeur
     
     def rangeDate(self, jourA, jourB, last = True):
-        jour = jourA + datetime.timedelta()
-        while jour <= jourB:
-            if jour == jourB and not last: break
-            yield jour
-            jour += datetime.timedelta(days = 1)
+        if jourA is not None and jourB is not None:
+            jour = jourA + datetime.timedelta()
+            while jour <= jourB:
+                if jour == jourB and not last: break
+                yield jour
+                jour += datetime.timedelta(days = 1)
 
     def identify_region(self, x, y):
         """

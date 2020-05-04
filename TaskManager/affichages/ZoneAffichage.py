@@ -27,7 +27,7 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
 
     def getPanneauActif(self):
         """Renvoie le mode d'affichage de calendrier actif."""
-        return self.donneeCalendrierFrame.getPanneauActif()
+        return self.getDonneeCalendrier().getPanneauActif()
     
     def getDonneeCalendrier(self):
         return self.donneeCalendrierFrame
@@ -42,27 +42,27 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         """
         valeur = event.widget.get()
         if valeur == '1 jour':
-            self.donneeCalendrierFrame.setNbJour(1)
+            self.getDonneeCalendrier().setNbJour(1)
         elif valeur == '2 jours':
-            self.donneeCalendrierFrame.setNbJour(2)
+            self.getDonneeCalendrier().setNbJour(2)
         elif valeur == '5 jours':
-            self.donneeCalendrierFrame.setNbJour(5)
+            self.getDonneeCalendrier().setNbJour(5)
         elif valeur == '1 semaine':
-            self.donneeCalendrierFrame.setNbJour(7)
+            self.getDonneeCalendrier().setNbJour(7)
         else: # Si c'est une période
-            self.donneeCalendrierFrame.setNbJour(self.donneeCalendrierFrame.getLongueurPeriode())
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getDebutPeriode())
+            self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
     
     def envoyerChangementJourDebut(self, valeur):
+        duree = self.getDonneeCalendrier().getDureeJour()
         if valeur == "d": # Si on appui sur remetre au début
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getDebutPeriode())
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
         elif valeur == "f": # Si on appuie sur mettre à la fin
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+
-                                                    datetime.timedelta(days =
-                                                                       self.donneeCalendrierFrame.getLongueurPeriode()
-                                                                       -self.donneeCalendrierFrame.getNbJour()))
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour())
         else:
-            self.donneeCalendrierFrame.setJourDebut(self.donneeCalendrierFrame.getJourDebut()+datetime.timedelta(days = valeur))
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getJourDebut()+datetime.timedelta(days = valeur))
+            #self.getDonneeCalendrier().setJourFin(self.getDonneeCalendrier().getJourFin()+datetime.timedelta(days = valeur))
 
+        self.getDonneeCalendrier().setDureeJour(duree)
     
 

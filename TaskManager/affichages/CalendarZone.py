@@ -5,6 +5,7 @@ from tkinter import Frame, Label
 
 from toolbar.ToolBar import *
 from toolbar.PeriodToolBar import *
+from toolbar.dialog.decalageHeureDialog import *
 from toolbar.dialog.gestionHeureCalendrierDialog import *
 
 from .ZoneAffichage import *
@@ -68,8 +69,49 @@ class CalendarZone(Frame):
 
     def decalerJour(self):
         pass
-    def decalerHeure(self):
-        pass
+    def decalerHeure(self): # TODO : gerer une tache de plusierus jours (peut-être)
+        # Si la liste est vide on évite la question
+        if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
+            return
+        # S'il y a une tache de plus j'un jour on est mal
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            if tache.getDuree() > datetime.timedelta(days=1):
+                showerror("Selection invalide", "Vous ne pouvez pas décaler en heure une tache de plus d'un jour.")
+
+        # On détermine le nombre d'heure min et max
+        first = None # Contient la tache qui finit    le plus tot  pour heure max
+        last  = None # Contient la tache qui commence le plus tard pour heure min
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            if first is None or first.getFin() > tache.getFin():
+                first = tache
+            if last is None or last.getDebut() < tache.getDebut():
+                last = tache
+
+        heureRetirerMax = last.getDebut().hour - self.getDonneeCalendrier().getHeureDebut().hour
+        heureAjoutMax = self.getDonneeCalendrier().getHeureFin().hour - first.getFin().hour + 1
+        print(heureRetirerMax, heureAjoutMax)
+        nb, pos = askDecalHeure(heureRetirerMax, heureAjoutMax)
+        # Ajustement des heures
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            # Si tout va bien
+            if  self.getDonneeCalendrier().getHeureDebut() <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
+            and self.getDonneeCalendrier().getHeureFin()   >= (tache.getFin()+datetime.timedelta(hours=nb)).time():
+                print("ok")
+                tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
+
+            # Si on dépasse, on cadre selon les limites
+            else:
+                # Si on retire des heures au début
+                if nb < 0:
+                    # On peut pas mettre un
+                    tache.setDebut(datetime.datetime.combine(tache.getDebut().date(), self.getDonneeCalendrier().getHeureDebut()))
+                # Si on ajoute pour mettre à la fin
+                else:
+                    heureFin = self.getDonneeCalendrier().getHeureFin() # Time
+                    time = datetime.datetime.combine(tache.getFin().date(), heureFin) - tache.getDuree() # datetime - timedelta
+                    tache.setDebut(time)
+
+        self.getDonneeCalendrier().updateAffichage()
 
     def grouper(self):
         pass
