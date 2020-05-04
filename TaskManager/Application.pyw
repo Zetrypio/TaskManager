@@ -49,11 +49,11 @@ class Application(Frame):
     def setModeEditionPeriode(self, enEdition):
         self.calendar.setBarreOutilPeriode(enEdition)
         if enEdition:
-            #self.taskEditor.filter(type = "Période")
+            self.taskEditor.filter(type = ("Période", "Tâche indépendante"))
             self.taskEditor.setEditionPeriode(True)
             pass
         else:
-            #self.taskEditor.filter(type = "Tâche")
+            self.taskEditor.filter(type = ("Tâche", "Tâche indépendante"))
             self.taskEditor.setEditionPeriode(False)
             pass
     def getPeriodManager(self):
