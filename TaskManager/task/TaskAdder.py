@@ -104,9 +104,7 @@ class TaskAdder(Frame):
         self.autoSetDuree()
 
     def getDuree(self):
-        print(self.debut, self.fin)
         ecart = self.fin - (self.debut if self.debut is not None else self.fin)
-        print(ecart)
         return ecart
 
     def autoSetDuree(self):
@@ -131,4 +129,8 @@ class TaskAdder(Frame):
         nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.cget("bg")
-        self.master.ajouter(Task(nom, debut, duree, rep, nbrep, desc, color))
+        periode  = self.getApplication().getPeriodManager().getActivePeriode()
+        self.master.ajouter(Task(nom, debut, duree, rep, nbrep, desc, color, periode))
+
+    def getApplication(self):
+        return self.master.getApplication()

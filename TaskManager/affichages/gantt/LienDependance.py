@@ -160,7 +160,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
 
         croissance = posYF-posYD # savoir si on descend ou si on monte (c'est à l'envers les axes
 
-        for jour in range(self.canvas.master.getLongueurPeriode()): # et on recalcule
+        for jour in range(self.canvas.master.getLongueurPeriode().days): # et on recalcule
             if posXD == jour and posXF == jour: # Si la tacheD est le même jour que TacheF
                 self.chemin.append(1+posYD)
             elif posXD < jour and posXF > jour:

@@ -76,7 +76,6 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             jourDebutSemaine = jour
             isFirst = 2
             p.tag = str(NEW_TAG_ID)
-            print(p.isSelected())
             while jour < p.getFin():
                 jour += datetime.timedelta(days = 1)
                 if jour.weekday()%7 == 0:

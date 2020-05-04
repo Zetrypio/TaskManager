@@ -25,12 +25,14 @@ class PeriodManager:
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
         if self.activePeriode is None:
-            self.activePeriode = periode
+            self.setActivePeriode(periode)
 
     def setActivePeriode(self, periode):
         if not isinstance(periode, Periode):
             raise ValueError("La période ne peut pas être %s")
         self.activePeriode = periode
+        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut())
+        self.app.getDonneeCalendrier().setJourFin(periode.getFin())
     
     def getActivePeriode(self):
         return self.activePeriode

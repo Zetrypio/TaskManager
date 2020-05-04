@@ -107,6 +107,17 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             panneau.setJourDebut(jour)
         super().setJourDebut(jour)
 
+    def setJourFin(self, jour):
+        """Setter pour le jour de fin."""
+        for panneau in self.listPanneau:
+            panneau.setJourFin(jour)
+        super().setJourFin(jour)
+
+    def setDureeJour(self, jour):
+        """Setter pour le nombre de jour."""
+        for panneau in self.listPanneau:
+            panneau.setDureeJour(jour)
+        super().setDureeJour(jour)
     def setNbJour(self, jour):
         """Setter pour le nombre de jour."""
         for panneau in self.listPanneau:
@@ -140,9 +151,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         else:
             self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
             self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
-            
-        if self.getJourFin() > self.getFinPeriode():
-            self.setJourDebut(self.getJourFin() - datetime.timedelta(days = self.getLongueurPeriode() - self.getNbJour()))
+
+        if self.getFinPeriode() is None or self.getJourFin() is None:
+            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
+            self.master.zoneParametre.boutonApres.configure(state=DISABLED)
+        elif self.getJourFin() > self.getFinPeriode():
+            duree = self.getDureeJour()
+            self.setJourFin(self.getFinPeriode())
+            self.setJourDebut(self.getFinPeriode() - duree)
         elif self.getJourFin()== self.getFinPeriode():
             self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)            
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
