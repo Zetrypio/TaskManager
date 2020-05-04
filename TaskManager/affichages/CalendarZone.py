@@ -7,6 +7,7 @@ from toolbar.ToolBar import *
 from toolbar.PeriodToolBar import *
 from toolbar.dialog.decalageHeureDialog import *
 from toolbar.dialog.gestionHeureCalendrierDialog import *
+from toolbar.dialog.gestionJourDialog import *
 
 from .ZoneAffichage import *
 
@@ -50,7 +51,7 @@ class CalendarZone(Frame):
         nbHeure = max2.hour - min.hour
         nb, pos = askAjouterHeure(min, max, nbHeure)
         if nb is not None and pos is not None:
-            if pos == "Avant":
+            if   pos == "Avant":
                 min = datetime.time(min.hour - nb)
                 self.getDonneeCalendrier().setHeureDebut(min)
             elif pos == "Apres":
@@ -58,7 +59,24 @@ class CalendarZone(Frame):
                 self.getDonneeCalendrier().setHeureFin(max)
 
     def ajouterJour(self):
-        pass
+        totalJour = self.getDonneeCalendrier().getLongueurPeriode().days-1
+        nb, pos = askAjouterJour(totalJour)
+        self.gestionJour(nb, pos)
+
+    def gestionJour(self, nombreDeJour, position):
+        """
+        Fonction qui s'occupe d'ajouter ou de supprimer des jours
+        En dehors de la fonction ajouterJour lié au bouton car on pourrait avoir à ajouter des jours autrement que par le bouton
+        @param nombreDeJour : int relatif, permet d'ajouter ou retirer des jours
+        @param position : string "Avant" / "Apres" pour savoir ou appliquer les changements
+        """
+        if nombreDeJour is not None and position is not None:
+            periode = self.getDonneeCalendrier().getPeriodeActive()
+            if   position == "Avant":
+                self.getDonneeCalendrier().setPeriodeActiveDebut(periode.getDebut() - datetime.timedelta(days=nombreDeJour))
+            elif position == "Apres":
+                self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
+
 
     def selectionnerJour(self):
         pass

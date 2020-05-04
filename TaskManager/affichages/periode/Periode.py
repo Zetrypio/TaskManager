@@ -33,12 +33,27 @@ class Periode:
         if change == "duree":
             self.debut = debut + datetime.timedelta() # Faire une copie de la date
         elif change == "fin":
-            self.fin += self.getDuree()
+            duree = self.getDuree()
             self.debut = debut + datetime.timedelta() # Faire une copie de la date
+            self.fin = self.debut + duree
         else:
             raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
-    def setFin(self, fin):
-        self.fin = fin + datetime.timedelta() # Faire une copie de la date.
+    def setFin(self, fin, change = "duree"):
+        """
+        Permet de mettre la fin de la période.
+        @param debut: Le datetime.date de la fin de la période.
+        @param change: Si "duree": change la durée mais pas la début,
+                       Si "debut": change le début mais pas la durée.
+                       Sinon : raise ValueError
+        """
+        if change == "duree":
+            self.fin = fin + datetime.timedelta() # Faire une copie de la date.
+        elif change == "debut":
+            duree = self.getDuree()
+            self.fin = fin + datetime.timedelta() # Faire une copie de la date
+            self.debut = fin - duree
+        else:
+            raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
         
     def intersectWith(self, periode):
         return (self.debut >= periode.debut and self.debut <= periode.fin) \
