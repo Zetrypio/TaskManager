@@ -70,14 +70,17 @@ def main():
     app = Application()
     app.pack(expand = YES, fill = BOTH)
     
-    # Création de taches préaite
-    app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 4, 6, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA"))
-    app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 4, 8, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7"))
-    app.taskEditor.ajouter(Task("C", datetime.datetime(2020, 4, 8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#C2F77C"))
-    app.taskEditor.ajouter(Task("D", datetime.datetime(2020, 4, 12, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#B97CF7"))
-    app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 4, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC"))
-    app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 4, 8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF"))
-    app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 4, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7"))
+
+    # Création de periode préfaite
+    periodeSemaine = app.getPeriodManager().ajouter("semaine", datetime.date(2020, 5, 4), datetime.date(2020, 5, 27), "semaine pour faciliter les calculs", color="#7FFF7F")
+    # Création de taches  préfaite
+    app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 5, 6, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 5, 8, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("C", datetime.datetime(2020, 5, 8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#C2F77C", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("D", datetime.datetime(2020, 5, 12, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#B97CF7", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 5, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 5, 8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF", periode = periodeSemaine))
+    app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 5, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7", periode = periodeSemaine))
     
     app.mainloop()
     try:

@@ -10,7 +10,7 @@ from .dialog.datetimeDialog import *
 
 class Task:
     """Classe définissant une tâche."""
-    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white"):
+    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white", periode = None):
         """
         @param nom : nom de la tâche.
         @param debut : datetime. du début.
@@ -27,6 +27,7 @@ class Task:
         self.nbrep = nbrep  # nombre de répétitions
         self.desc = desc    # descirption
         self.color = color
+        self.periode = periode
         self.dependances = []
         self.dependantes = []
         self.updateStatut()
@@ -82,6 +83,10 @@ class Task:
         return self.dependances[:]
     def getDependantes(self):
         return self.dependantes[:]
+    def getPeriode(self):
+        return self.periode
+    def setPeriode(self, periode):
+        self.periode = periode
 
     def copy(self):
         t = Task(self.nom, self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.desc, self.color)
