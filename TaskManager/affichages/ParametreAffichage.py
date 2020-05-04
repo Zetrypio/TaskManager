@@ -18,7 +18,7 @@ class ParametreAffichage(Frame):
         self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
         
-        self.listeMode = Combobox(self, values=['1 jour', '2 jours', '5 jours', '1 semaine', 'P�riode'], state= "readonly")
+        self.listeMode = Combobox(self, values=['1 jour', '2 jours', '5 jours', '1 semaine', 'Période'], state= "readonly")
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
