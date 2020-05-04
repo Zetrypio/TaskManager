@@ -13,6 +13,7 @@ class PeriodManager:
         self.app = app
         self.periodes = []
         self.taskEditor = None
+        self.activePeriode = None
     
     def setTaskEditor(self, taskEditor):
         self.taskEditor = taskEditor
@@ -23,6 +24,16 @@ class PeriodManager:
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
+        if self.activePeriode is None:
+            self.activePeriode = periode
+
+    def setActivePeriode(self, periode):
+        if not isinstance(periode, Periode):
+            raise ValueError("La période ne peut pas être %s")
+        self.activePeriode = periode
+    
+    def getActivePeriode(self):
+        return self.activePeriode
     
     def getPeriodesSelectionnees(self):
         return [periode for periode in self.periodes if periode.isSelected()]
