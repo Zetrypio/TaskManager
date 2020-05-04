@@ -22,7 +22,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
         self.can.bind("<Button-1>", self.clic)
         self.can.bind("<Control-Button-1>", lambda e: self.clic(e, True))
-    
+
     def setJourDebut(self, jour):
         """Override, car en fait ca fonctionne avec un mois."""
         self.mois = jour.month
@@ -94,6 +94,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
                                       fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
             NEW_TAG_ID += 1
+
     def getPeriodeYPosition(self, p):
         if p in self.__listeHauteur:
             return self.__listeHauteur[p]*self.getPeriodHeight()
@@ -105,16 +106,13 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             if i not in bannedHeight:
                 self.__listeHauteur[p] = i
                 return self.__listeHauteur[p]*self.getPeriodHeight()
-            
-            
-    
+
     def getPeriodHeight(self):
         return 10
-    
+
     def getSemaineOf(self, jour):
         """Renvoie le numéro de la ligne de la semaine correspondant au jour demmandé."""
         return (jour.day + self.getJourDebut().weekday()-1) // 7
-            
 
     def doConfiguration(self, paramAffichage):
         """

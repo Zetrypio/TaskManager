@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+
 from ..Point import *
 
 # Instance unique de l'infobulle
