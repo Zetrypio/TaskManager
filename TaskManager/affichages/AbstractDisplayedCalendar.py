@@ -103,7 +103,9 @@ class AbstractDisplayedCalendar(Frame):
     def getJourDebut(self):
         return self.jourDebut
     def setJourDebut(self, valeur):
+        print("setJourDebut", valeur)
         self.jourDebut = valeur + datetime.timedelta()
+        print("setJourDebut 108", self.jourDebut)
         self.updateAffichage()
 
     def getNbJour(self):
@@ -117,6 +119,11 @@ class AbstractDisplayedCalendar(Frame):
         self.updateAffichage()
     def setDureeJour(self, valeur):
         self.jourFin = (self.jourDebut + valeur) if self.jourDebut is not None else None
+        print("abst getFinPeriode 120",self.getFinPeriode())
+        print("abst getJourFin 121",self.getJourFin())
+        if self.getJourFin() > self.getFinPeriode():
+            self.setJourFin(self.getFinPeriode())
+
         self.updateAffichage()
 
     
