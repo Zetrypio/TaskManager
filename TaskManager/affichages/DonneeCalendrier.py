@@ -116,14 +116,34 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     def setDureeJour(self, jour):
         """Setter pour le nombre de jour."""
         for panneau in self.listPanneau:
+            if "AffichageCalendrierPeriode" == panneau.__class__.__name__:
+                break
             panneau.setDureeJour(jour)
         super().setDureeJour(jour)
+
     def setNbJour(self, jour):
         """Setter pour le nombre de jour."""
         for panneau in self.listPanneau:
             panneau.setNbJour(jour)
         super().setNbJour(jour)
 
+    def setPeriodeActiveDebut(self, jour):
+        """Setter pour le jour du début de la période active."""
+        self.getPeriodeActive().setDebut(jour)
+        print("132", jour)
+        # Si le nouveau jour de début de la période est avant, il faut changer le nouveau jour de début
+        if jour > self.getJourDebut():
+            print("ok")
+            duree = self.getDureeJour()
+            self.setJourDebut(jour)
+            print("getJourDebut", self.getJourDebut())
+            self.setDureeJour(duree)
+    def setPeriodeActiveFin(self, jour):
+        """Setter pour le jour de fin de la période active."""
+        self.getPeriodeActive().setFin(jour)
+        # Si le nouveau jour de fin de la période est avant, il faut changer le nouveau jour de fin
+        if jour < self.getJourFin():
+            self.setJourFin(jour)
     def getPanneauActif(self):
         """Getter pour le panneau actif."""
         # self.panneau.select() renvoie l'id du panneau actif

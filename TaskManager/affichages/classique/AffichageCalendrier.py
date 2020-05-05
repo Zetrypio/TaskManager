@@ -21,7 +21,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.listeLabelHeure = []       # \
         self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
         self.listeSeparateurJour = []   # /
-#        self.__listeTache = []
+        #self.__listeTache = []
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
 
@@ -35,8 +35,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
         self.frame.bind("<Button-1>", self.mouseClicked, add = True)
-#        self.frame.bind("<Escape>",  self.escapePressed)
-        
+        #self.frame.bind("<Escape>",  self.escapePressed)
+
         # On affiche les trucs
         self.__afficherLesHeures()
         self.__afficherLesJours()
@@ -51,28 +51,27 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
             return
 
-#        # Calcul du début :
-#        debut = tache.debut.hour*60 + tache.debut.minute + 1
-#        # Calcul du nombre de lignes :
-#        # Si ça dépasse : on restreint (TODO : à améliorer)
-#        if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
-#            fin = self.getHeureFin() # Conversion en time
-#            duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
-#            duree = duree.total_seconds()//60%1440
-#            tache.visible = False
-#            
-#        else: # Si ça dépasse pas :
-#            duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-                                            
+        # Calcul du début :
+        #debut = tache.debut.hour*60 + tache.debut.minute + 1
+        # Calcul du nombre de lignes :
+        # Si ça dépasse : on restreint (TODO : à améliorer)
+        #if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
+            #fin = self.getHeureFin() # Conversion en time
+            #duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
+            #duree = duree.total_seconds()//60%1440
+            #tache.visible = False
+            
+        #else: # Si ça dépasse pas :
+            #duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
+
         # Ajout graphique :
         
         
-#        t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
-#       t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-#              column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-#       t.grid_propagate(0)
-        
-#        self.__listeTache.append(t)
+        #t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
+        #t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree), column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
+        #t.grid_propagate(0)
+
+        #self.__listeTache.append(t)
         self.updateAffichage()
 
         return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
@@ -124,7 +123,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__adapteGrid()
 
     def __afficherLesTaches(self):
-
         self.listeTaskAffichees = [] # Attribut de l'héritage je rappelle
         for task in self.listeTask:
             tache = TacheEnCalendrier(self.frame, task)
