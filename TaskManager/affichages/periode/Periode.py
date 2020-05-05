@@ -62,3 +62,14 @@ class Periode:
         yield "Durée :", self.getDuree()
         yield "Fin :", self.fin
         yield "Description :", self.desc
+    
+    def getFilterStateWith(self, filter):
+        # Si non autorisé par le filtre :
+        if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
+        or ("type" in filter and not "Période" in filter["type"]):
+            return -1
+        # Filtre prioritaire ?
+        if "name" in filter and self.nom.lower().startswith(filter["name"].lower()):
+            return 1
+        # Sinon : autorisé par le filtre, mais pas prioritaire.
+        return 0

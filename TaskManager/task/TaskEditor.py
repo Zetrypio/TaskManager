@@ -77,6 +77,7 @@ class TaskEditor(Frame):
         Méthode pour rajouter un filtre.
         """
         for k in filtre:
+            k = k.lower()
             if filtre[k]:
                 self.FILTRE[k] = filtre[k]
             elif k in self.FILTRE:
@@ -96,8 +97,14 @@ class TaskEditor(Frame):
     def ajouter(self, tache):
         self.taches.append(tache)
         self.redessiner()
-        if tache.statut != "Inconnu":
+        if isinstance(tache, Task) and tache.statut != "Inconnu":
             self.master.getDonneeCalendrier().addTask(tache)
+    def supprimer(self, tache):
+        self.taches.remove(tache)
+        self.redessiner()
+        if isinstance(tache, Task) and tache.statut != "Inconnu":
+            self.master.getDonneeCalendrier()#.removeTask(tache) # TODO
+
     def redessiner(self):
         # On efface tout :
         self.tree.destroy()
@@ -145,7 +152,7 @@ class TaskEditor(Frame):
         @param parent: ID de la branche parente
         """
         # Si la tâche n'est pas filtrée
-        if self.__filterStateOf(displayable) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
+        if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
 
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
@@ -219,7 +226,7 @@ class TaskEditor(Frame):
                 print(i)
                 print(self.tree.item(i))
                 for t in self.taches:
-                    if t.statut == "Inconnu":
+                    if isinstance(t, Task) and t.statut == "Inconnu":
                         print(i)
                         if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)

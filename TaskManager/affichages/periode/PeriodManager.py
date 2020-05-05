@@ -24,6 +24,7 @@ class PeriodManager:
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
+        self.app.getTaskEditor().ajouter(periode)
         if self.activePeriode is None:
             self.setActivePeriode(periode)
 
@@ -55,6 +56,7 @@ class PeriodManager:
                     p.setDebut(p.getDebut() + duree, change = "fin")
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().updateAffichage()
+        self.app.getTaskEditor().redessiner()
 
     def dupliquerPeriode(self):
         """Permet de duppliquer la période sélectionnée."""
@@ -71,6 +73,7 @@ class PeriodManager:
             return showerror("Erreur de sélection", "Vous devez avoir au moins une période sélectionnée pour effectuer cette action.")
         for periode in reversed(periodes):
             self.periodes.remove(periode)
+            self.app.getTaskEditor().supprimer(periode)
         self.app.getDonneeCalendrier().updateAffichage()
     
     def scinderPeriode(self):

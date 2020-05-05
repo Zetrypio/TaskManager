@@ -62,6 +62,8 @@ class Application(Frame):
         return self.calendar.getPanneauActif()
     def getDonneeCalendrier(self):
         return self.calendar.getDonneeCalendrier()
+    def getTaskEditor(self):
+        return self.taskEditor
 
 
 
