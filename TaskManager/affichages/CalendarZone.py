@@ -87,7 +87,7 @@ class CalendarZone(Frame):
 
     def decalerJour(self):
         pass
-    def decalerHeure(self): # TODO : gerer une tache de plusierus jours (peut-être)
+    def decalerHeure(self): # TODO : gérer une tache de plusieurs jours (peut-être)
         # Si la liste est vide on évite la question
         if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
             return

@@ -117,7 +117,6 @@ class PeriodManager:
         if trou:
             if not askyesnowarning("Êtes-vous sûr ?", "Il y a un ou plusieurs jours au milieu de la nouvelle période à créer qui ne sont dans aucunes de vos périodes sélectionnées.\n"
             "Voulez-vous tout de même fusionner les périodes, sachant qu'un espace de jours n'étant pas présent auparavant va être ajouter dans votre nouvelle période ?"):
-                print("retourne")
                 return
         # Fuuusioonnnnnn !!!!! :
        

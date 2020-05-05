@@ -34,6 +34,7 @@ class TaskAdder(Frame):
         Label(self, text="À :").grid(row = 1, column = 6, sticky="e")
         Label(self, text="Répétitions :").grid(row = 2, column = 0, columnspan = 2, sticky = "e")
         Label(self, text="répétitions tout les").grid(row = 2, column = 3, columnspan = 2)
+        Label(self, text="Période :").grid(row = 3, column = 0, columnspan = 2, sticky = "e")
 
         # Widgets :
         # Nom :
@@ -49,11 +50,13 @@ class TaskAdder(Frame):
         # Répétitions :
         self.champNbRepetition  = Spinbox(self, from_ = -1, to=100, increment = 1, width = 4) # Nombre de répétition
         self.champRepetition    = Spinbox(self, from_ = 1, to=100, increment = 1, width = 4) # quantit�e d'unitée de temps entre 2 rép.
-        self.champUniteeRepet   = Combobox(self, values = ["minutes", "heures", "jours", "semaines", "mois", "ann�es"], state = "readonly", width = 4)
+        self.champUniteeRepet   = Combobox(self, values = ["minutes", "heures", "jours", "semaines", "mois", "années"], state = "readonly", width = 4)
         # valeurs par défaut :
         self.champNbRepetition.set(0)
         self.champRepetition.set(1)
         self.champUniteeRepet.set(self.champUniteeRepet.cget("values")[2])
+        # Période :
+        self.champPeriode       = Combobox(self, values = ["(Aucune)"] + [p.nom for p in self.getApplication().getPeriodManager().getPeriodes()], state = "readonly")
         # Autres :
         self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
         self.boutonColor        = TkButton(self, command = self.askcolor, width = 4, relief = GROOVE, bg = "white", activebackground = "white")
@@ -70,13 +73,15 @@ class TaskAdder(Frame):
         self.champJour        .grid(row = 1, column = 3)
         self.champHeure       .grid(row = 1, column = 4)
         self.champMinute      .grid(row = 1, column = 5)
-        self.champFin         .grid(row = 1, column = 7) # Column 6 est pris par label "� :"
+        self.champFin         .grid(row = 1, column = 7) # Column 6 est pris par label "À :"
         # Ligne 2 :
         self.champNbRepetition.grid(row = 2, column = 2, sticky = "ew")
         self.champRepetition  .grid(row = 2, column = 5, sticky = "ew")
         self.champUniteeRepet .grid(row = 2, column = 6, sticky = "ew", columnspan = 2)
         # Ligne 3 :
-        self.champDescription .grid(row = 3, column = 0, columnspan = 8, sticky ="ew")
+        self.champPeriode     .grid(row = 3, column = 2, columnspan = 6, sticky = "ew")
+        # Ligne 4 :
+        self.champDescription .grid(row = 4, column = 0, columnspan = 8, sticky ="ew")
 
     def askcolor(self):
         self.color = askcolor()[1]
