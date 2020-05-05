@@ -5,10 +5,11 @@ from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
 import datetime
 
-from .TaskInDnd import *
 from .dialog.datetimeDialog import *
+from .TaskInDnd import *
+from .ITaskEditorDisplayableObject import *
 
-class Task:
+class Task (ITaskEditorDisplayableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white", periode = None):
         """
@@ -55,6 +56,8 @@ class Task:
         return self.getNativeColor() if not self.isSelected() else "#0078FF"
     def getNativeColor(self):
         return self.color
+    def getColor(self):
+        return self.getNativeColor()
 
     def isContainer(self):
         self.updateStatut()
@@ -73,6 +76,42 @@ class Task:
             raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
         return self.subtasks
 
+    def getHeader(self):
+        return self.nom, self.statut
+    def iterateDisplayContent(self, displayDependances = True, displayDependantes = True):
+        # Note : on yield par paires.
+        if not self.isContainer():
+            yield "Début :",           self.getDebut()
+            yield "Durée :",           self.getDuree()
+            yield "Fin :",             self.getFin()
+            yield "Nombre rep :",      self.nbrep
+            yield "Temps entre rep :", self.rep
+            if displayDependances:
+                a = {
+                    "displayDependances": True,
+                    "displayDependantes": False
+                }
+                yield "Dépendances :", len(self.dependances)
+                yield a
+                yield from self.dependances
+            if displayDependantes:
+                a = {
+                    "displayDependances": False,
+                    "displayDependantes": True
+                }
+                yield "Dépendantes :", len(self.dependantes)
+                yield a
+                yield from self.dependantes
+        yield "Description :", self.desc
+        if self.isContainer():
+            a = {
+                "displayDependances": displayDependances,
+                "displayDependantes": displayDependantes
+            }
+            yield "Instances :", len(self.getSubTasks())
+            yield a
+            yield from self.getSubTasks()
+
     def addDependance(self, task):
         self.dependances.append(task)
         task.dependantes.append(self)
@@ -83,6 +122,7 @@ class Task:
         return self.dependances[:]
     def getDependantes(self):
         return self.dependantes[:]
+
     def getPeriode(self):
         return self.periode
     def setPeriode(self, periode):

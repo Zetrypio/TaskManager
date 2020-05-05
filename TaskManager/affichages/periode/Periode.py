@@ -14,14 +14,17 @@ class Periode:
         self.color = color
         self.selected = False
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
+
+    def getColor(self):
+        return self.color
+
     def getDebut(self):
         return self.debut + datetime.timedelta() # Faire une copie de la date
     def getDuree(self):
         return self.fin - self.debut
     def getFin(self):
         return self.fin + datetime.timedelta() # Faire une copie de la date
-    def getColor(self):
-        return self.color
+
     def setDebut(self, debut, change = "duree"):
         """
         Permet de mettre le début de la période.
@@ -43,7 +46,11 @@ class Periode:
     def intersectWith(self, periode):
         return (self.debut >= periode.debut and self.debut <= periode.fin) \
             or (periode.debut >= self.debut and periode.debut <= self.fin)
+
     def isSelected(self):
         return self.selected
     def setSelected(self, value):
         self.selected = value
+
+    def iterateDisplayContent(self):
+        pass # TODO
