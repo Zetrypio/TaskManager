@@ -51,6 +51,14 @@ class Periode:
         return self.selected
     def setSelected(self, value):
         self.selected = value
+    
+    def isActuelle(self):
+        return self.debut >= datetime.datetime.now().date() and self.debut <= datetime.datetime.now().date()
 
+    def getHeader(self):
+        return self.nom, self.isActuelle()
     def iterateDisplayContent(self):
-        pass # TODO
+        yield "Debut :", self.debut
+        yield "Durée :", self.getDuree()
+        yield "Fin :", self.fin
+        yield "Description :", self.desc

@@ -175,48 +175,6 @@ class TaskEditor(Frame):
                 else:
                     self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew])
                     lastParentIndex = indice
-                
-#
-#            # Si c'est pas une tâche qui en contient une autre :
-#            if not t.isContainer():
-#                self.tree.insert(parentNew, END, text = "Début :",           values = [t.getDebut()], iid = parentNew+"e1", tags = "Couleur%s"%t.color) # e comme enfant
-#                self.tree.insert(parentNew, END, text = "Durée :",           values = [t.getDuree()], iid = parentNew+"e2", tags = "Couleur%s"%t.color)
-#                self.tree.insert(parentNew, END, text = "Fin :",             values = [t.getFin()],   iid = parentNew+"e3", tags = "Couleur%s"%t.color)
-#                self.tree.insert(parentNew, END, text = "Nombre rep :",      values = [t.nbrep],      iid = parentNew+"e4", tags = "Couleur%s"%t.color)
-#                self.tree.insert(parentNew, END, text = "temps entre rep :", values = [t.rep],        iid = parentNew+"e5", tags = "Couleur%s"%t.color)
-#
-#                # Ajout de la liste des dépendances :
-#                if displayDependances:
-#                    self.tree.insert(parentNew, END, text = "Dépendances :", values = [len(t.dependances)], iid = parentNew+"e6a", tags = "Couleur%s"%t.color)
-#
-#                    # Et les sous-tâches :
-#                    for indice, tache in enumerate(t.getDependances()):
-#                        self.__ajouterTache(tache, indice, parentNew+"e6a", END, recursionLevel+1, True, False)
-#
-#                # Ajout de la liste des dépendantes :
-#                if displayDependantes:
-#                    self.tree.insert(parentNew, END, text = "Tâches Dépendantes :", values = [len(t.dependances)], iid = parentNew+"e6b", tags = "Couleur%s"%t.color)
-#
-#                    # Et les sous-tâches :
-#                    for indice, tache in enumerate(t.getDependantes()):
-#                        self.__ajouterTache(tache, indice, parentNew+"e6b", END, recursionLevel+1, False, True)
-#                
-#                # Ajout du RMenu
-#                rmenu = RMenu(self, False, self.tree, parentNew)
-#                rmenu.add_command(label = "Transformer dans une tâche déplaçable", command = lambda: self.__transformTaskToDndableTask(t, rmenu))
-#                self.__rmenu.append(rmenu)
-#            
-#            # Dans tout les cas :
-#            self.tree.insert(parentNew, END, text = "Description :",        values = [t.desc],             iid = parentNew+"e7",  tags = "Couleur%s"%t.color)
-#
-#            # Et Si c'est une case conteneurs (c'est-à-dire une tâche qui en contient une autre) :
-#            if t.isContainer():
-#                # On rajoute la branche nécéssaire :
-#                self.tree.insert(parentNew, END, text = "Instances :",       values = [len(t.getSubTasks())], iid = parentNew+"e8", tags = "Couleur%s"%t.color)
-#
-#                # Et les sous-tâches :
-#                for indice, tache in enumerate(t.getSubTasks()):
-#                    self.__ajouterTache(tache, indice, parentNew+"e8", END, recursionLevel+1, displayDependances, displayDependantes)
     
     def __transformTaskToDndableTask(self, task, rmenu):
         rmenu.destroy()
@@ -379,6 +337,13 @@ class TaskEditor(Frame):
         self.redessiner()
     
     def setEditionPeriode(self, enEdition):
+        """
+        Permet de changer entre l'ajouteur
+        de tâches et l'ajouteur de périodes.
+        @param enEdition: True pour l'ajouteur de périodes, False pour l'ajouteur de tâches.
+        Note : peut-être changer sur une enumeration généralisée pour pleins de modes d'ajouteurs ?
+        (Même si on en fera pas 50, c'est certain.)...
+        """
         if enEdition:
             self.frameInput.pack_forget()
             self.frameInputPeriode.pack(side = TOP, fill = X, before = self.tree)
