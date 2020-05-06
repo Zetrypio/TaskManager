@@ -112,26 +112,7 @@ class PeriodManager:
         periodes = self.getPeriodesSelectionnees()
         if len(periodes) < 2:
             return showerror("Erreur de sélection", "Vous devez avoir au moins 2 périodes sélectionnées pour pouvoir effectuer cette action.")
-        # Vérification des trous entre les périodes pour affichage de confirmation eventuelle :
-        lesPeriodesListees = [periodes[0]]
-        onEnAAjoute = True
-        while onEnAAjoute:
-            onEnAAjoute = False
-            for p1 in periodes:
-                if p1 not in lesPeriodesListees:
-                    for p2 in reversed(lesPeriodesListees):
-                        if p1.intersectWith(p2):
-                            lesPeriodesListees.append(p1)
-                            onEnAAjoute = True
-        trou = False
-        for p1 in periodes:
-            if p1 not in lesPeriodesListees:
-                trou = True
-                break
-        if trou:
-            if not askyesnowarning("Êtes-vous sûr ?", "Il y a un ou plusieurs jours au milieu de la nouvelle période à créer qui ne sont dans aucunes de vos périodes sélectionnées.\n"
-            "Voulez-vous tout de même fusionner les périodes, sachant qu'un espace de jours n'étant pas présent auparavant va être ajouter dans votre nouvelle période ?"):
-                return
+
         # Fuuusioonnnnnn !!!!! :
        
         # TODO : changer les périodes des tâches concernées.
@@ -144,6 +125,7 @@ class PeriodManager:
         # Supprimer toutes les périodes sélectionnées :
         self.supprimerPeriode()
         
+        # et créer la nouvelle née :
         self.ajouter(Periode(nom, debut, fin, desc, color))
         
     def lierTachePeriode(self):
