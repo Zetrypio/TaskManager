@@ -89,9 +89,9 @@ class __TaskInDnd(Toplevel):
             # Formule : nouveau += 10% de (destination - actuel)
             x += int(math.ceil(0.2*(self.__x - x)))
             y += int(math.ceil(0.2*(self.__y - y)))
-            self.after(10, self.__move)
-
             self.geometry("+%s+%s"%(x, y))
+
+            self.after(10, self.__move)
         except:
             self._report_exception()
 
