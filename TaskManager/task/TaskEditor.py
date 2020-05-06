@@ -99,11 +99,13 @@ class TaskEditor(Frame):
         self.redessiner()
         if isinstance(tache, Task) and tache.statut != "Inconnu":
             self.master.getDonneeCalendrier().addTask(tache)
+        self.frameInput.updatePossiblePeriods()
     def supprimer(self, tache):
         self.taches.remove(tache)
         self.redessiner()
         if isinstance(tache, Task) and tache.statut != "Inconnu":
             self.master.getDonneeCalendrier()#.removeTask(tache) # TODO
+        self.frameInput.updatePossiblePeriods()
 
     def redessiner(self):
         # On efface tout :

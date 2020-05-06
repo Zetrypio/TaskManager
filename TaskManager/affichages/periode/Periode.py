@@ -59,8 +59,8 @@ class Periode:
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
         
     def intersectWith(self, periode):
-        return (self.debut >= periode.debut and self.debut <= periode.fin) \
-            or (periode.debut >= self.debut and periode.debut <= self.fin)
+        return (self.getDebut() >= periode.getDebut() and self.getDebut() <= periode.getFin()) \
+            or (periode.getDebut() >= self.getDebut() and periode.getDebut() <= self.getFin())
 
     def isSelected(self):
         return self.selected

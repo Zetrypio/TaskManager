@@ -6,6 +6,7 @@ from tkinter.colorchooser import askcolor
 import datetime
 import time
 
+from affichages.periode.Periode import *
 from .dialog.datetimeDialog import *
 from .Task import *
 
@@ -56,14 +57,15 @@ class TaskAdder(Frame):
         self.champRepetition.set(1)
         self.champUniteeRepet.set(self.champUniteeRepet.cget("values")[2])
         # Période :
-        self.champPeriode       = Combobox(self, values = ["(Aucune)"] + [p.nom for p in self.getApplication().getPeriodManager().getPeriodes()], state = "readonly")
+        self.champPeriode       = Combobox(self, state = "readonly")
+        self.updatePossiblePeriods()
         # Autres :
         self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
         self.boutonColor        = TkButton(self, command = self.askcolor, width = 4, relief = GROOVE, bg = "white", activebackground = "white")
         # Valider
         self.boutonValider      =   Button(self, command = self.valider, text = "Ajouter")
 
-        # Placement :
+        # Placements :
         # Ligne 0 :
         self.champNom         .grid(row = 0, column = 1, columnspan = 4, sticky ="ew")
         self.boutonColor      .grid(row = 0, column = 5, sticky="ew", padx = 2)
@@ -96,6 +98,7 @@ class TaskAdder(Frame):
         self.debut = date
         self.champDebut.config(text = date if date is not None else "")
         self.autoSetDuree()
+        self.updatePossiblePeriods()
 
     def askDateFin(self):
         # Pour un obscure raison, il faut appeler cette méthode :
@@ -107,10 +110,17 @@ class TaskAdder(Frame):
             self.fin = date
         self.champFin.config(text = date if date is not None else "")
         self.autoSetDuree()
+        self.updatePossiblePeriods()
+
+    def getDebut(self):
+        return (self.debut + datetime.timedelta()) if self.debut is not None else None
 
     def getDuree(self):
         ecart = self.fin - (self.debut if self.debut is not None else self.fin)
         return ecart
+
+    def getFin(self):
+        return (self.fin + datetime.timedelta()) if self.fin is not None else None
 
     def autoSetDuree(self):
         ecart = self.getDuree()
@@ -123,18 +133,36 @@ class TaskAdder(Frame):
         val = int(self.champRepetition.get())
         return val, unit
 
+    def updatePossiblePeriods(self):
+        """Méthode à appeler dès que les périodes possibles changent."""
+        periodes = self.getApplication().getPeriodManager().getPeriodes()
+        # Trouver les périodes présentes dans la plage sélectionnée :
+        if self.debut is not None and self.fin is not None:
+            pp = Periode("", self.getDebut().date(), self.getFin().date(), "")
+            periodes = [p.nom for p in periodes if p.intersectWith(pp)]
+        else:
+            periodes = []
+        # Changer le combobox :
+        self.champPeriode.config(values = ["(Aucune)"]+periodes)
+        if self.getApplication().getPeriodManager().getActivePeriode() in periodes:
+            self.champPeriode.set(self.getApplication().getPeriodManager().getActivePeriode().nom)
+        elif periodes:
+            self.champPeriode.set(self.champPeriode.cget("values")[1])
+        else:
+            self.champPeriode.set("(Aucune)")
+
     def valider(self):
         nom = self.champNom.get()
-        if self.debut is not None:
-            debut = self.debut+datetime.timedelta() # Faire une copie de la date
-        else:
-            debut = None
+        debut = self.getDebut()
         duree = self.getDuree()
         rep   = self.getRepetitionTime()
         nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.cget("bg")
-        periode  = self.getApplication().getPeriodManager().getActivePeriode()
+        periode = None
+        for p in self.getApplication().getPeriodManager().getPeriodes():
+            if p.nom == self.champPeriode.get():
+                periode = p
         self.master.ajouter(Task(nom, debut, duree, rep, nbrep, desc, color, periode))
 
     def getApplication(self):

@@ -21,6 +21,20 @@ class PeriodManager:
     def getPeriodes(self):
         return self.periodes
     def ajouter(self, periode):
+        for p in self.periodes:
+            if p.nom == periode.nom:
+                nom = periode.nom
+                print("nom av.", nom)
+                a = -1
+                while nom[a] in "0123456789":
+                    a-=1
+                if nom[-1] in "0123456789":
+                    a+=1
+                    nom = nom[:a] + str(int(nom[a])+1)
+                else:
+                    nom = nom + " 2"
+                print("nom ap.", nom)
+                periode.nom = nom
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
         self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
