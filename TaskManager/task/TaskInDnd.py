@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 import sys
+import math
 
 __INSTANCE = None
 
@@ -37,7 +38,7 @@ class __TaskInDnd(Toplevel):
         # l'animation est-elle finie ?
         self.__commence = False
         self.__fin = False
-        # position de la souris pour le déplacement :
+        # position de la souris pour le déplacement : position objectif :
         self.__x = self.winfo_pointerx()
         self.__y = self.winfo_pointery()
         # événements pour le déplacement :
@@ -45,6 +46,7 @@ class __TaskInDnd(Toplevel):
         self.__b2 = self.bind_all("<ButtonRelease-1>", self.__end)
         # le fondu du début :
         self.__fondudebut()
+        self.after(10, self.__move)
     def __fondudebut(self):
         """Méthode pour faire un petit fondu au début."""
         self.__alpha += 0.05
@@ -57,20 +59,42 @@ class __TaskInDnd(Toplevel):
         """Méthode pour bouger l'ensemble."""
         if not self.__fin:
             try: # il peut y avoir des exceptions avec la fermeture etc.
-                dx = self.winfo_pointerx() - self.__x
-                dy = self.winfo_pointery() - self.__y
-                dim, x, y = self.geometry().split("+") # on extrait la géométrie actuelle
+                # On extrait la géométrie actuelle
+                dim, x, y = self.geometry().split("+") 
                 x = int(x)
                 y = int(y)
-                # et on fait tout pleins de calculs trop cools qui marchent,
-                # et qui correspondent à ceux qu'on doivent faire pour un DnD
-                x += dx
-                y += dy
-                self.__x += dx
-                self.__y += dy
-                self.geometry("+%s+%s"%(x, y))
+
+                # Ainsi que la taille de la fenêtre (nécéssaire pour centrer).
+                sx, sy = dim.split("x")
+                sx = int(sx)
+                sy = int(sy)
+
+                # On règle l'objectif :
+                self.__x = self.winfo_pointerx() - sx//2
+                self.__y = self.winfo_pointery() - sy//2
+                
+                # On bloque sur les bords de l'écran :
+                self.__x = max(0, min(self.__x, self.winfo_screenwidth()-sx))
+                self.__y = max(0, min(self.__y, self.winfo_screenheight()-sy))
             except:
-                pass#self.after(50, self.__dnd)
+                pass
+    def __move(self):
+        try:
+            # On extrait la géométrie actuelle
+            dim, x, y = self.geometry().split("+") 
+            x = int(x)
+            y = int(y)
+            
+            # On bouge selon un fondu :
+            # Formule : nouveau += 10% de (destination - actuel)
+            x += int(math.ceil(0.2*(self.__x - x)))
+            y += int(math.ceil(0.2*(self.__y - y)))
+            self.after(10, self.__move)
+
+            self.geometry("+%s+%s"%(x, y))
+        except:
+            self._report_exception()
+
     def __end(self, event = None):
         """Méthode pour terminer le drag&drop."""
         if self.__commence and self.__fin == False: # on ne peut disparaître seulement si on est complètement commencé (=apparu)

@@ -251,7 +251,7 @@ class AbstractDisplayedCalendar(Frame):
                    buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Annuler',))
         # Widgets du dialogue :
         Label(fen, text = "Choisissez la durée de la Tâche").pack(side = TOP, fill = X)
-        d = Spinbox(fen, from_ = 0, to = self.getLongueurPeriode(), increment = 1, width = 4)
+        d = Spinbox(fen, from_ = 0, to = self.getLongueurPeriode().days, increment = 1, width = 4)
         d.pack(side = LEFT)
         Label(fen, text = "Jours").pack(side = LEFT)
         h = Spinbox(fen, from_ = -1, to = 24, increment = 1, width = 4, command = adapteHeureJour)
