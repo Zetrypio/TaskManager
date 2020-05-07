@@ -6,6 +6,7 @@ from tkinter import Frame, Label
 from toolbar.ToolBar import *
 from toolbar.PeriodToolBar import *
 from toolbar.dialog.decalageHeureDialog import *
+from toolbar.dialog.decalageJourDialog import *
 from toolbar.dialog.gestionHeureCalendrierDialog import *
 from toolbar.dialog.gestionJourDialog import *
 
@@ -95,7 +96,78 @@ class CalendarZone(Frame):
         self.getDonneeCalendrier().intervertir()
 
     def decalerJour(self):
-        pass
+        # Si la liste est vide on évite la question
+        if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
+            return
+        
+        # On détermine le nombre de jour min et max
+        first, last = self.getFirstAndLast()
+        
+        debut = self.getPeriodeActive().getDebut() # Date de début
+        fin   = self.getPeriodeActive().getFin()   # Date de fin
+        
+
+        jourRetireBloque = (first.getFin().date() - debut).days
+        jourAjoutBloque = (fin - last.getDebut().date()).days
+        nb, pos, param = askDecalJour(debut, fin, jourRetireBloque, jourAjoutBloque)
+
+        if nb is None or pos is None or param is None or nb == 0:
+            return
+
+        # Ajustement des jours
+        horsChamp = False
+
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            # Si tout va bien
+            if  (tache.getDebut()+datetime.timedelta(days=nb)).date() == (tache.getFin()+datetime.timedelta(days=nb)).date()\
+            and debut <= (tache.getDebut()+datetime.timedelta(days=nb)).date()\
+            and fin   >= (tache.getFin()+datetime.timedelta(days=nb)).date():
+                print("125 CalZone ok")
+                tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
+
+            # Si on dépasse, on cadre selon les limites et mode bloquer
+            elif param == "bloquer":
+                # Si on retire des heures au début
+                if nb < 0:
+                    # On peut pas mettre un
+                    tache.setDebut(datetime.datetime.combine(debut, tache.getDebut().time()))
+                # Si on ajoute pour mettre à la fin
+                else:
+                    time = datetime.datetime.combine(fin, tache.getFin().time()) - tache.getDuree() # datetime - timedelta
+                    tache.setDebut(time)
+
+            # Si on dépasse et que l'on ne bloque pas
+            elif param == "duree":
+                tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
+                horsChamp = True
+
+            # Si au final il y a des taches hors champs on demande si on affiche les heures pour voir le.s tache.s
+            if horsChamp:
+                horsChamp = False
+                choix, periode = askComplicationjour(tache, self.getApplication().getPeriodManager())
+                # On annule les changements
+                if choix is None:
+                    tache.setDebut(tache.getDebut()-datetime.timedelta(days=nb))
+                    continue
+                # On agrandit la période
+                elif choix == "agrandir":
+                    if tache.getDebut().date() < debut:
+                        addAvant = (debut - tache.getDebut().date()).days
+                        self.gestionJour(addAvant, "Avant")
+
+                    else:
+                        addApres = (last.getFin().date()-fin).days
+                        self.gestionJour(addApres, "Apres")
+                elif choix == "supprimer": # TODO supprimer la tache
+                    pass
+                elif choix == "independante": # TODO rendre la tache indépendante
+                    pass
+                elif choix =="changer":
+                    tache.setPeriode(periode)
+
+        self.getDonneeCalendrier().updateAffichage()
+
+
     def decalerHeure(self): # TODO : gérer une tache de plusieurs jours (peut-être)
         # Si la liste est vide on évite la question
         if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
@@ -106,14 +178,7 @@ class CalendarZone(Frame):
                 showerror("Selection invalide", "Vous ne pouvez pas décaler en heure une tache de plus d'un jour.")
 
         # On détermine le nombre d'heure min et max
-        first = None # Contient la tache qui finit    le plus tot  pour heure max
-        last  = None # Contient la tache qui commence le plus tard pour heure min
-        for tache in self.getDonneeCalendrier().getSelectedTask():
-            if first is None or first.getFin() > tache.getFin():
-                first = tache
-            if last is None or last.getDebut() < tache.getDebut():
-                last = tache
-
+        first, last = self.getFirstAndLast()
 
         periode = self.getPeriodeActive()
 
@@ -126,6 +191,7 @@ class CalendarZone(Frame):
         heureAjoutMax = heureFin.hour - first.getFin().hour + 1 + firstDiffJour * 24
         nb, pos, param = askDecalHeure(heureRetirerMax, heureAjoutMax, heureDebut, heureFin, last.getDebut().hour - heureDebut.hour, heureFin.hour - first.getFin().hour+1)
 
+
         if nb is None or pos is None or param is None or nb == 0:
             return
 
@@ -137,7 +203,7 @@ class CalendarZone(Frame):
             if  (tache.getDebut()+datetime.timedelta(hours=nb)).date() == (tache.getFin()+datetime.timedelta(hours=nb)).date()\
             and heureDebut <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
             and heureFin   >= (tache.getFin()+datetime.timedelta(hours=nb)).time():
-                print("140 CalZone ok")
+                print("219 CalZone ok")
                 tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
 
             # Si on dépasse, on cadre selon les limites et mode bloquer
@@ -220,4 +286,18 @@ class CalendarZone(Frame):
         pass
     def supprimerTache(self):
         pass
-    
+    def getFirstAndLast(self):
+        """
+        Getter parmi les taches sélectionnés
+        Permet de déterminer la tache qui fini le plus tot et la tache qui commence le plus tard
+        @return first : (Task) tache qui fini le plus tot
+        @return last  : (Task) tache qui commence le plus tard
+        """
+        first = None # Contient la tache qui finit    le plus tot
+        last  = None # Contient la tache qui commence le plus tard
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            if first is None or first.getFin() > tache.getFin():
+                first = tache
+            if last is None or last.getDebut() < tache.getDebut():
+                last = tache
+        return first, last

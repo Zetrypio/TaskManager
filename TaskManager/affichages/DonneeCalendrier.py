@@ -116,8 +116,8 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     def setDureeJour(self, jour):
         """Setter pour le nombre de jour."""
         for panneau in self.listPanneau:
-            if "AffichageCalendrierPeriode" == panneau.__class__.__name__:
-                break
+#            if "AffichageCalendrierPeriode" == panneau.__class__.__name__:
+#                break
             panneau.setDureeJour(jour)
         super().setDureeJour(jour)
 
