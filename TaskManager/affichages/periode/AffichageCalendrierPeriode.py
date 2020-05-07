@@ -7,6 +7,7 @@ import time
 
 from ..AbstractDisplayedCalendar import *
 from .PeriodAdder import *
+from .dialog.scinderPeriodDialog import *
 
 
 class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
@@ -29,7 +30,11 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.annee = jour.year
     def getJourDebut(self):
         """Override, car en fait ça fonctionne avec un mois."""
-        return datetime.datetime(self.annee, self.mois, 1)
+        return datetime.date(self.annee, self.mois, 1)
+    def setJourFin(self, jour):
+        self.setJourDebut(jour)
+    def getJourFin(self):
+        return self.getJourDebut() + datetime.timedelta(days = tailleMois(self.mois, self.annee))
 
     def clic(self, event, control = False):
         x, y = event.x, event.y
