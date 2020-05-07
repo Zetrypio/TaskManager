@@ -28,7 +28,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def suppression(self):
         self.tacheD.master.listeLien.remove(self)
         self.tacheD.gestionRMenu()
-        self.tacheF.gestionRMenu() # Savvoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
+        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
         self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
         self.tacheD.master.updateAffichage()
 

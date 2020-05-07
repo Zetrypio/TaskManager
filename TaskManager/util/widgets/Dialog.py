@@ -76,10 +76,17 @@ class Dialog(Frame):
 
     def execute(self, button):
         self.__bouton_appuyer = button
-        self.command(button)
-        if button in self.exitButton :
-            self.deactivate()
-            self.quit()
+        try:
+            self.command(button)
+        except SystemExit:
+            raise
+        except:
+            sys.stderr.write("Exception in Dialog callback\nfrom ")
+            self._report_exception()
+        else:
+            if button in self.exitButton :
+                self.deactivate()
+                self.quit()
 
     def geometry(self, *a):
         return self.dialog.geometry(*a)
