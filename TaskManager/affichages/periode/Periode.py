@@ -65,6 +65,7 @@ class Periode:
     def isSelected(self):
         return self.selected
     def setSelected(self, value):
+        if not isinstance(value, bool): raise TypeError("Exptected a boolean")
         self.selected = value
     
     def isActuelle(self):
