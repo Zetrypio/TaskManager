@@ -49,6 +49,7 @@ class Task(ITaskEditorDisplayableObject):
     def inverseSelection(self):
         self.selected = not self.selected
     def setSelected(self, value):
+        if not isinstance(value, bool): raise TypeError("Exptected a boolean")
         self.selected = value
     def isSelected(self):
         return self.selected
