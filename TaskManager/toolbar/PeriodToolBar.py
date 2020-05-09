@@ -11,7 +11,7 @@ class PeriodToolBar(ToolBar):
         # création des boutons
         self._creationBouton("Déplacer",                self.periodeManager.deplacerPeriode,   getImage("Ressources/textures/periode/deplacer.png"),   textVisible=False)
         self._creationBouton("Dupliquer",               self.periodeManager.dupliquerPeriode,  getImage("Ressources/textures/periode/dupliquer.png"),  textVisible=False)
-        self._creationBouton("Supprimer",               self.periodeManager.supprimerPeriode,  getImage("Ressources/textures/periode/supprimer.png"),  textVisible=True)
+        self._creationBouton("Supprimer",               self.periodeManager.supprimerPeriodes, getImage("Ressources/textures/periode/supprimer.png"),  textVisible=True)
         # CADRE Division des périodes
         self._creationCategorie("Division des périodes")
         # création des boutons

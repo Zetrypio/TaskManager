@@ -169,7 +169,7 @@ class TaskEditor(Frame):
                 return
 
             # On insère la ligne d'entête :
-            self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew])
+            self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
             
             # On insère les éléments supplémentaires :
             args = {} # args sont pour la prochaine récursion. kwargs sont pour l'actuelle.
@@ -184,16 +184,31 @@ class TaskEditor(Frame):
                 else:
                     self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew])
                     lastParentIndex = indice
-    
-    def __transformTaskToDndableTask(self, task, rmenu):
-        rmenu.destroy()
-        del rmenu
-        self.taches.remove(task)
-        newTask = task.copy()
-        newTask.debut = None
-        newTask.updateStatut()
-        newTask.addSubTask(task)
-        self.ajouter(newTask)
+            
+            # RMenu :
+            r = RMenu(self, binder = self.tree, bindWithId = "rmenu%s"%parentNew)
+            self.__rmenu.append(r)
+            rmenu = displayable.getRMenuContent(self, r)
+            if rmenu is not None:
+                for type, kwargs in rmenu:
+                    if type == "command":
+                        func = r.add_command
+                    elif type=="cascade":
+                        func = r.add_cascade
+                    elif type=="checkbutton":
+                        func = r.add_checkbutton
+                    elif type=="radiobutton":
+                        func = r.add_radiobutton
+                    elif type=="separator":
+                        func = r.add_separator
+                    else:
+                        r.destroy()
+                        self.__rmenu.remove(r)
+                        raise ValueError("Got an invalide keyword for rmenu for the TaskEditor's Treeview: %s"%type)
+                    func(**kwargs)
+            else:
+                self.__rmenu.remove(r)
+                r.destroy()
     
     def __filterStateOf(self, t):
         """
