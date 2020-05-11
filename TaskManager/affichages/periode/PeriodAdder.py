@@ -109,6 +109,6 @@ class PeriodAdder(Frame):
         color = self.boutonColor.cget("bg")
         
         # Création de la période :
-        periode = Periode(nom, debut, fin, desc, color)
+        periode = Periode(self.periodManager, nom, debut, fin, desc, color)
         self.periodManager.ajouter(periode)
         #self.master.ajouter(periode) # TODO

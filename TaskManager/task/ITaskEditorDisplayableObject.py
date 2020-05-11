@@ -4,15 +4,17 @@ class ITaskEditorDisplayableObject:
     def __init__(self):
         if self.__class__ == TaskEditorDisplayableObject:
             raise RuntimeError("Impossible d'instancier l'interface ITaskEditorDisplayableObject directement")
+
     def getHeader(self):
         """
-        Retourne un couple <nom, valeur> qui seront utilisés
+        @return un couple <nom, valeur> qui seront utilisés
         pour la ligne d'entête de l'affichage de cette objet dans l'arbre.
         """
         raise NotImplementedError
+
     def iterateDisplayContent(self):
         """
-        Retourne l'un parmi itérateur, itérable (listes etc.) ou générateur
+        @return l'un parmi itérateur, itérable (listes etc.) ou générateur
         dont chaque éléments est soit:
          - une paire de str, pour l'affichage d'un ligne. Les 2 textes
            correspondent respectivement à la première et la deuxième colonne.
@@ -39,6 +41,20 @@ class ITaskEditorDisplayableObject:
         énoncés ci-dessus.
         """
         raise NotImplementedError
+
+    def getRMenuContent(self, taskEditor, rmenu):
+        """
+        @param taskEditor : permet de faire des interractions avec le TaskEditor
+        @param rmenu : permet de faire les cascades dans les menus.
+        Il sera détruit si cette méthode retourne None.
+        @return un itérateur ou itérable (listes etc.) dont chaque éléments
+        sont une paire d'objet avec en premier le type d'élément à rajouter dans le RMenu
+        (sous forme des textes : "command", "cascade", "separator", "radiobutton",
+        et "checkbutton"), et en deuxième l'ensemble de ses options.
+        @return None si il n'y a pas de RMenu à mettre.
+        """
+        raise NotImplementedError
+
     def getFilterStateWith(self, filter):
         """
         @return  1 Si l'objet est acceptée par le filtre et qu'elle doit être prioritaire.
@@ -46,8 +62,10 @@ class ITaskEditorDisplayableObject:
         @return -1 Si l'objet n'est pas accetpée par le filtre.
         """
         raise NotImplementedError
+
     def getColor(self):
         """
         Getter pour la couleur de l'objet à mettre dans le treeview.
+        @return la couleur de l'objet à mettre dans le treeview.
         """
         raise NotImplementedError

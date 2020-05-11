@@ -9,9 +9,9 @@ from .dialog.datetimeDialog import *
 from .TaskInDnd import *
 from .ITaskEditorDisplayableObject import *
 
-class Task (ITaskEditorDisplayableObject):
+class Task(ITaskEditorDisplayableObject):
     """Classe définissant une tâche."""
-    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white", periode = None):
+    def __init__(self, nom, debut, duree, rep=-1, nbrep = 0, desc="", color="white", periode = None, parent = None):
         """
         @param nom : nom de la tâche.
         @param debut : datetime. du début.
@@ -29,6 +29,7 @@ class Task (ITaskEditorDisplayableObject):
         self.desc = desc    # descirption
         self.color = color
         self.periode = periode
+        self.parent = parent
         self.dependances = []
         self.dependantes = []
         self.updateStatut()
@@ -44,7 +45,7 @@ class Task (ITaskEditorDisplayableObject):
             self.subtasks = []
 
     def __str__(self):
-        return "Task %s: from %s to %s, %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown", self.statut)
+        return "Task: %s, from %s to %s, %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown", self.statut)
 
     def inverseSelection(self):
         self.selected = not self.selected
@@ -72,11 +73,26 @@ class Task (ITaskEditorDisplayableObject):
             raise ValueError("Impossible de rajouter une tâche dans une tâche non conteneur.")
         if task.isContainer():
             raise ValueError("Impossible de rajouter une tâche conteneur dans une autre tâche conteneur")
+        if task.parent is not None:
+            raise ValueError("Impossible de rajouter une tâche dans un conteneur, sachant qu'elle est déjà présente dans un autre conteneur")
         self.subtasks.append(task)
+        task.parent = self
+    
+    def removeSubTask(self, task):
+        if not self.isContainer():
+            raise ValueError("Impossible d'enlever une tâche d'une tâche non conteneur.")
+        if task.parent != self:
+            raise ValueError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
+        self.subtasks.remove(task)
+    
     def getSubTasks(self):
         if not self.isContainer():
             raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
         return self.subtasks
+    
+    def getParent(self):
+        """Retourne la tâche conteneur qui contient cette tâche (si ce conteneur existe)."""
+        return self.parent
 
     def getHeader(self):
         return self.nom, self.statut
@@ -104,7 +120,8 @@ class Task (ITaskEditorDisplayableObject):
                 yield "Dépendantes :", len(self.dependantes)
                 yield a
                 yield from self.dependantes
-        yield "Description :", self.desc
+        if self.parent is None: # Ne pas répéter les descriptions identiques dans les sous-tâches.
+            yield "Description :", self.desc
         if self.isContainer():
             a = {
                 "displayDependances": displayDependances,
@@ -114,6 +131,37 @@ class Task (ITaskEditorDisplayableObject):
             yield a
             yield from self.getSubTasks()
     
+    def getRMenuContent(self, taskEditor, rmenu):
+        # Mise en place de simplicitées :
+        retour = []
+        add = lambda a, b=None: retour.append((a, b if b else {}))
+        
+        # Ajout des menus :
+        # Si c'est un conteneur :
+        if not self.isContainer() and self.parent is None:
+            add("command", {"label":"Transformer en une tâche déplaçable", "command":lambda: self.transformToDnd(taskEditor, rmenu)})
+            add("separator")
+        # Dans tout les cas :
+        add("command", {"label":"Supprimer %s"%self, "command": lambda: self.supprimer(taskEditor)})
+        return retour
+    
+    def supprimer(self, taskEditor):
+        if self.parent is None:
+            taskEditor.supprimer(self)
+        else:
+            self.parent.removeSubTask(self)
+            taskEditor.redessiner()
+
+    def transformToDnd(self, taskEditor, rmenu):
+        rmenu.destroy()
+        del rmenu
+        taskEditor.supprimer(self)
+        newTask = self.copy()
+        newTask.debut = None
+        newTask.updateStatut()
+        newTask.addSubTask(self)
+        taskEditor.ajouter(newTask)
+
     def getFilterStateWith(self, filter):
         # Si non autorisé par le filtre :
         if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\

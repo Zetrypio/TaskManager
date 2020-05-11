@@ -1,13 +1,16 @@
 # -*- coding:utf-8 -*-
 import datetime
 
+from task.ITaskEditorDisplayableObject import *
+
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 from ..groupe.GroupeManager import *
 
-class Periode:
-    def __init__(self, nom, debut, fin, desc, color = "white"):
+class Periode(ITaskEditorDisplayableObject):
+    def __init__(self, periodManager, nom, debut, fin, desc, color = "white"):
+        self.periodManager = periodManager
         self.nom = nom
         self.debut = debut + datetime.timedelta()
         self.fin = fin + datetime.timedelta()
@@ -18,6 +21,9 @@ class Periode:
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self)
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
+
+    def __str__(self):
+        return "Periode: %s, from %s to %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
 
     def getColor(self):
         return self.color
@@ -86,6 +92,15 @@ class Periode:
         yield "Durée :", self.getDuree()
         yield "Fin :", self.fin
         yield "Description :", self.desc
+
+    def getRMenuContent(self, taskEditor, rmenu):
+         # Mise en place de simplicitées :
+        retour = []
+        add = lambda a, b=None: retour.append((a, b if b else {}))
+        
+        # Ajout des menus :
+        add("command", {"label":"Supprimer %s"%self, "command": lambda: self.periodManager.supprimer(self)})
+        return retour
     
     def getFilterStateWith(self, filter):
         # Si non autorisé par le filtre :

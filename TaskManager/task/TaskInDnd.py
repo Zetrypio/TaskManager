@@ -47,6 +47,7 @@ class __TaskInDnd(Toplevel):
         # le fondu du début :
         self.__fondudebut()
         self.after(10, self.__move)
+        self.__dnd() # Résoudre les coordonées d'affichages
     def __fondudebut(self):
         """Méthode pour faire un petit fondu au début."""
         self.__alpha += 0.05

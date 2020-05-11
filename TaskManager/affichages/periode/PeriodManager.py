@@ -41,13 +41,23 @@ class PeriodManager:
         self.app.getTaskEditor().ajouter(periode)
         if self.activePeriode is None:
             self.setActivePeriode(periode)
+    
+    def supprimer(self, periode):
+        self.periodes.remove(periode)
+        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
+        self.app.getTaskEditor().supprimer(periode)
+        if self.activePeriode == periode:
+            if len(self.periodes) > 0:
+                self.setActivePeriode(periode)
+            else:
+                self.setActivePeriode(None)
 
     def setActivePeriode(self, periode):
-        if not isinstance(periode, Periode):
+        if not isinstance(periode, (Periode, None.__class__)):
             raise ValueError("La période ne peut pas être %s")
         self.activePeriode = periode
-        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut())
-        self.app.getDonneeCalendrier().setJourFin(periode.getFin())
+        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
+        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
     
     def getActivePeriode(self):
         return self.activePeriode
@@ -80,7 +90,7 @@ class PeriodManager:
             return
         askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = True)
         
-    def supprimerPeriode(self):
+    def supprimerPeriodes(self):
         """Permet de supprimer les périodes sélectionnées."""
         periodes = self.getPeriodesSelectionnees()
         if len(periodes) == 0:
@@ -123,7 +133,7 @@ class PeriodManager:
         color = periodes[0].getColor()
         
         # Supprimer toutes les périodes sélectionnées :
-        self.supprimerPeriode()
+        self.supprimerPeriodes()
         
         # et créer la nouvelle née :
         self.ajouter(Periode(nom, debut, fin, desc, color))
