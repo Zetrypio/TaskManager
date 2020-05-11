@@ -7,6 +7,8 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 
 from affichages.CalendarZone import *
+from affichages.groupe.Groupe import *
+from affichages.groupe.GroupeManager import *
 from affichages.periode.Periode import *
 from affichages.periode.PeriodManager import *
 from task.TaskEditor import *
@@ -75,6 +77,7 @@ def main():
 
     # Création de periode préfaite
     periodeSemaine = app.getPeriodManager().ajouter(Periode("semaine", datetime.date(2020, 5, 4), datetime.date(2020, 5, 27), "semaine pour faciliter les calculs",color = "#7FFF7F"))
+    periodeSemaine = app.getPeriodManager().getPeriodes()[-1]
     # Création de taches  préfaite
     app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 5, 6, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA", periode = periodeSemaine))
     app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 5, 8, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7", periode = periodeSemaine))
@@ -83,6 +86,9 @@ def main():
     app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 5, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC", periode = periodeSemaine))
     app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 5, 8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF", periode = periodeSemaine))
     app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 5, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7", periode = periodeSemaine))
+
+    # Création d'un groupe préfait
+    periodeSemaine.getGroupeManager().ajouter(Groupe("Mon Groupe", [app.taskEditor.taches[1]], "#FF88FF", periodeSemaine, periodeSemaine.getGroupeManager()))
     
     app.mainloop()
     try:

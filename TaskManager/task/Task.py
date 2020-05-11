@@ -33,6 +33,7 @@ class Task (ITaskEditorDisplayableObject):
         self.dependantes = []
         self.updateStatut()
 
+
         # Doit-on l'afficher ?
         self.visible = True
 
@@ -174,6 +175,15 @@ class Task (ITaskEditorDisplayableObject):
         return self.duree + datetime.timedelta() # Faire une copie
     def getFin(self):
         return (self.debut + self.duree) if self.debut is not None else None
+
+    def getGroupes(self):
+        """ Retourne une liste de groupe auxquelles appartient la tache et None s'il n'y a pas de groupe """
+        listeGroupe = []
+        for groupe in self.getPeriode().getGroupeManager().getGroupes():
+            for tache in groupe.getListTasks():
+                if tache == self:
+                    listeGroupe.append(groupe)
+        return listeGroupe if listeGroupe else None
 
     def getVisible(self):
         return self.visible

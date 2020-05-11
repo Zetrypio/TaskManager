@@ -4,6 +4,7 @@ import datetime
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
+from ..groupe.GroupeManager import *
 
 class Periode:
     def __init__(self, nom, debut, fin, desc, color = "white"):
@@ -13,6 +14,9 @@ class Periode:
         self.desc = desc
         self.color = color
         self.selected = False
+
+        # Création d'un groupe manager de la période
+        self.groupeManager = GroupeManager(self)
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
 
     def getColor(self):
@@ -24,6 +28,10 @@ class Periode:
         return self.fin - self.debut
     def getFin(self):
         return self.fin + datetime.timedelta() # Faire une copie de la date
+
+    def getGroupeManager(self):
+        """ Getter du groupe Manager """
+        return self.groupeManager
 
     def setDebut(self, debut, change = "duree"):
         """

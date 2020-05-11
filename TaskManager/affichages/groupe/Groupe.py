@@ -27,7 +27,7 @@ class Groupe():
 
     def getListTasks(self):
         """ Getter des taches de la période """
-        return self.listTasks[:]
+        return self.listTasks
 
     def getGroupeManager(self):
         return self.groupeManager
