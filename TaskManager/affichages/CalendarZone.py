@@ -269,7 +269,12 @@ class CalendarZone(Frame):
     def avancementRetard(self):
         pass
     def avancementJourFini(self):
-        pass
+        maintenantJour = datetime.datetime.combine(datetime.date.today(), datetime.time(23,59,59))
+        self.getPeriodeActive().setDateStatut(maintenantJour)
+        for tache in self.getDonneeCalendrier().listeTask:
+            tache.updateStatut()
+
+
     def avancementNormal(self):
         maintenant = datetime.datetime.now()
         self.getPeriodeActive().setDateStatut(maintenant)
