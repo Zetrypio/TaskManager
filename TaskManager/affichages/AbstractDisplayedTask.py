@@ -9,25 +9,16 @@ class AbstractDisplayedTask(Frame):
         # Note : self.master est une référence vers AffichageCalendrier ou AffichageGantt, héritant de AbstractDisplayedCalendar
         
         self.task = task
-        ligne = 0 # pour savoir les style a appliquer
 
         self.texte = Text(self, wrap = "word", state = "normal", bg = self.task.getDisplayColor(), width=0, height=0)
-        # Bandeau groupe
-        if self.task.getGroupes() is not None:
-            for groupe in self.task.getGroupes():
-                self.texte.insert(INSERT, groupe.getNom()+"/")
-            self.texte.insert(END, "\n")
-            ligne+=1
-            self.texte.window_create(END, window = Separator(self.texte, orient=HORIZONTAL))
 
 
         self.texte.insert(INSERT, task.nom) # On met le nom dedans
-        self.texte.tag_add("titre", str(ligne)+".0", str(ligne)+".%s"%int(len(task.nom)))
+        self.texte.tag_add("titre", "0.0", "0.%s"%int(len(task.nom)))
         self.texte.tag_config("titre", font="Arial 12 bold") 
-        ligne+=1
         
         self.texte.insert(END, "\n"+task.desc)
-        self.texte.tag_add("corps", str(ligne)+".0", str(ligne)+".%s"%int(len(task.desc)))
+        self.texte.tag_add("corps", "1.0", "1.%s"%int(len(task.desc)))
         self.texte.tag_config("corps", font="Arial 10") 
         
         self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans

@@ -199,7 +199,17 @@ class Task(ITaskEditorDisplayableObject):
 
     def updateStatut(self):
         """Permet de mettre à jour le statut de la tâche."""
-        self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
+        if self.debut == None:
+            self.statut = "Inconnu"
+        elif self.getPeriode().getDateStatut() is not None and self.getDebut() < self.getPeriode().getDateStatut():
+                self.statut = "Fait"
+        else:
+            self.statut = "À faire"
+
+        if self.nbrep != 0:
+            self.statut = "Répétition"
+
+        #self.statut = "Inconnu" if self.debut == None else "À faire" if self.nbrep == 0 else "Répétition"
 
     def getDebut(self):
         return self.debut + datetime.timedelta() if self.debut is not None else None # Faire une copie et vérifier les trucs

@@ -271,7 +271,11 @@ class CalendarZone(Frame):
     def avancementJourFini(self):
         pass
     def avancementNormal(self):
-        pass
+        maintenant = datetime.datetime.now()
+        self.getPeriodeActive().setDateStatut(maintenant)
+        for tache in self.getDonneeCalendrier().listeTask:
+            tache.updateStatut()
+        print(datetime.datetime.now())
 
     def getPanneauActif(self):
         return self.zoneDynamicCalendarFrame.getPanneauActif()

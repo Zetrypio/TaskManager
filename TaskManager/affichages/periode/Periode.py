@@ -18,6 +18,9 @@ class Periode(ITaskEditorDisplayableObject):
         self.color = color
         self.selected = False
 
+        # datetime avant lequel tout est fait
+        self.dateStatut = None
+
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self)
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
@@ -27,6 +30,10 @@ class Periode(ITaskEditorDisplayableObject):
 
     def getColor(self):
         return self.color
+
+    def getDateStatut(self):
+        """ Getter de la datetime clé """
+        return self.dateStatut
 
     def getDebut(self):
         return self.debut + datetime.timedelta() # Faire une copie de la date
@@ -82,6 +89,10 @@ class Periode(ITaskEditorDisplayableObject):
         if not isinstance(value, bool): raise TypeError("Exptected a boolean")
         self.selected = value
     
+    def setDateStatut(self, datetime):
+        """ Setter du datetime """
+        self.dateStatut = datetime
+
     def isActuelle(self):
         return self.debut >= datetime.datetime.now().date() and self.debut <= datetime.datetime.now().date()
 
