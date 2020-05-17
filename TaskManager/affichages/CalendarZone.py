@@ -266,8 +266,10 @@ class CalendarZone(Frame):
     def degrouper(self):
         pass
 
-    def avancementRetard(self):
-        pass
+    def avancementMannuel(self):
+        for tache in self.getDonneeCalendrier().getSelectedTask():
+            tache.reverseStateValide()
+
     def avancementJourFini(self):
         maintenantJour = datetime.datetime.combine(datetime.date.today(), datetime.time(23,59,59))
         self.getPeriodeActive().setDateStatut(maintenantJour)

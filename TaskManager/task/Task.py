@@ -32,6 +32,8 @@ class Task(ITaskEditorDisplayableObject):
         self.parent = parent
         self.dependances = []
         self.dependantes = []
+
+        self.__statutValideManuel = False # Variable pour savoir si on a validé la tache manuellement pour continuer d'utiliser updateStatut()
         self.updateStatut()
 
 
@@ -201,7 +203,7 @@ class Task(ITaskEditorDisplayableObject):
         """Permet de mettre à jour le statut de la tâche."""
         if self.debut == None:
             self.statut = "Inconnu"
-        elif self.getPeriode().getDateStatut() is not None and self.getDebut() < self.getPeriode().getDateStatut():
+        elif (self.getPeriode().getDateStatut() is not None and self.getDebut() < self.getPeriode().getDateStatut()) or self.__statutValideManuel:
                 self.statut = "Fait"
         else:
             self.statut = "À faire"
@@ -247,3 +249,8 @@ class Task(ITaskEditorDisplayableObject):
         return self.visible
     def setVisible(self, valeur):
         self.visible = valeur
+
+    def reverseStateValide(self):
+        self.__statutValideManuel = not self.__statutValideManuel
+        print(self.__statutValideManuel)
+        self.updateStatut()
