@@ -15,11 +15,11 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         # Affichage des paramètres
         self.zoneParametre = ParametreAffichage(self)
         self.zoneParametre.pack(side=TOP, fill=X)
-        
+
         # Affichage des données
         self.donneeCalendrierFrame = DonneeCalendrier(self)
         self.donneeCalendrierFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
-        
+
         self.donneeCalendrierFrame.updateAffichage()
 
     def getApplication(self):

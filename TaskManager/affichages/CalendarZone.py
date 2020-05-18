@@ -88,6 +88,7 @@ class CalendarZone(Frame):
                 self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
 
 
+
     def selectionnerJour(self):
         pass
     def afficherMasquerJour(self):

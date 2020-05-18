@@ -18,7 +18,10 @@ class ParametreAffichage(Frame):
         self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
         
-        self.listeMode = Combobox(self, values=['1 jour', '2 jours', '5 jours', '1 semaine', 'Période'], state= "readonly")
+
+
+
+        self.listeMode = Combobox(self, values=['Periode'], state= "readonly")
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
@@ -34,6 +37,26 @@ class ParametreAffichage(Frame):
         finally:
             self.listeMode.config(state = etatActuel)
     
+    def configPossibiliteListe(self):
+        """
+        Permet de mettre des choix en fonction du nombre de jour dans le combobox
+        """
+        periode = self.master.getDonneeCalendrier().getPeriodeActive()
+        nbJour = periode.getDuree().days
+        listeValue = []
+        if nbJour >= 1:
+            listeValue.append('1 jour')
+        if nbJour >= 2:
+            listeValue.append('2 jour')
+        if nbJour >= 5:
+            listeValue.append('5 jours')
+        if nbJour >= 7:
+            listeValue.append('1 semaine')
+
+        listeValue.append("Période")
+
+        self.listeMode.config(value= listeValue)
+
     def setStateListe(self, state):
         if state == NORMAL:
             state = "readonly"

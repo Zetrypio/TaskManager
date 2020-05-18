@@ -77,7 +77,7 @@ def main():
 
     # Création de periode préfaite
 
-    periodeSemaine = app.getPeriodManager().ajouter( Periode(app.getPeriodManager(),"semaine", datetime.date(2020, 5, 4), datetime.date(2020, 5, 27), "semaine pour faciliter les calculs",color = "#7FFF7F"))
+    periodeSemaine = app.getPeriodManager().ajouter( Periode(app.getPeriodManager(),"semaine", datetime.date(2020, 5, 4), datetime.date(2020, 5, 7), "semaine pour faciliter les calculs",color = "#7FFF7F"))
     periodeSemaine = app.getPeriodManager().getPeriodes()[-1]
 
     # Création de taches  préfaite

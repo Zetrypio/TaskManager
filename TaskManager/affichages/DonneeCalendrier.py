@@ -77,6 +77,9 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     def getApplication(self):
         return self.master.getApplication()
 
+    def getZoneAffichage(self):
+        return self.master
+
     def panneauChange(self, e):
         p = self.getPanneauActif()
         p.doConfiguration(self.master.getParametreAffichage())
