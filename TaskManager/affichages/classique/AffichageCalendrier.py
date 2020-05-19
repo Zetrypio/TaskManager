@@ -111,7 +111,10 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.listeLabelJour = []
         self.listeSeparateurJour = []
         
-        for jour in self.rangeDate(self.getJourDebut(), self.getJourFin(), last = False):
+        # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
+        jour = self.getJourDebut()
+        for compteur in range(self.getNbJour()):
+
             self.listeLabelJour.append(Label(self.frame, text=JOUR[jour.weekday()], bg = "light grey"))
             self.listeLabelJour[-1].bind("<Button-1>",lambda e, jour=jour: self.selectTaskJour(jour))
             self.listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectTaskJour(jour, control=True))
@@ -119,6 +122,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             if jour < self.getJourFin():
                 self.listeSeparateurJour.append(Separator(self.frame, orient=VERTICAL))
                 self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
+
+            jour += datetime.timedelta(days = 1)
             
         self.__adapteGrid()
 

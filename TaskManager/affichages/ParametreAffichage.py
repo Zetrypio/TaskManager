@@ -41,13 +41,13 @@ class ParametreAffichage(Frame):
         """
         Permet de mettre des choix en fonction du nombre de jour dans le combobox
         """
-        periode = self.master.getDonneeCalendrier().getPeriodeActive()
+        periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
         nbJour = periode.getDuree().days
         listeValue = []
         if nbJour >= 1:
             listeValue.append('1 jour')
         if nbJour >= 2:
-            listeValue.append('2 jour')
+            listeValue.append('2 jours')
         if nbJour >= 5:
             listeValue.append('5 jours')
         if nbJour >= 7:
@@ -57,6 +57,11 @@ class ParametreAffichage(Frame):
 
         self.listeMode.config(value= listeValue)
 
+    def updateCombobox(self):
+        """ Fonction qui met à jour les possibilités du combobox et en plus remet l'affichage période s'il y était avant """
+        self.configPossibiliteListe()
+        self.listeMode.event_generate("<<ComboboxSelected>>")
+
     def setStateListe(self, state):
         if state == NORMAL:
             state = "readonly"
@@ -64,5 +69,8 @@ class ParametreAffichage(Frame):
         
     def getBoutonsChangementJours(self):
         return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
+
+    def getZoneAffichage(self):
+        return self.master
 
     

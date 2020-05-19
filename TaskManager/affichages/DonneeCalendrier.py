@@ -130,15 +130,18 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
     def setPeriodeActiveDebut(self, jour):
         """Setter pour le jour du début de la période active."""
-        self.getPeriodeActive().setDebut(jour)
-        print("132", jour)
+
+        ### Option utile ou pas ?, à voir dans le préférences ?, faire ça seulement si on est au début ? ##
+
         # Si le nouveau jour de début de la période est avant, il faut changer le nouveau jour de début
-        if jour > self.getJourDebut():
-            print("ok")
+        if jour < self.getJourDebut(): # gné ?
             duree = self.getDureeJour()
             self.setJourDebut(jour)
-            print("getJourDebut", self.getJourDebut())
             self.setDureeJour(duree)
+
+
+        self.getPeriodeActive().setDebut(jour)
+
     def setPeriodeActiveFin(self, jour):
         """Setter pour le jour de fin de la période active."""
         self.getPeriodeActive().setFin(jour)

@@ -72,8 +72,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     self.rmenu.add_command(label = "suppression %s→%s"%(lien.tacheD.task.nom, lien.tacheF.task.nom), command = lambda l=lien: l.suppression())
                     lesliens.add(lien)
                     lien.select = True
-#                    else:
-#                    lien.select = False
+                    #else:
+                    #lien.select = False
         self.updateAffichage()
         self.update()
         self.rmenu.add_separator()
@@ -351,7 +351,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
                                  text=JOUR[(jour+self.getJourDebut().weekday())%7])
 
     def __afficherLesTaches(self):
-
         self.listeTaskAffichees.sort(key=lambda t:t.task.debut) # Trie par début des taches
 
         for tache in self.listeTaskAffichees:

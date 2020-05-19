@@ -79,7 +79,7 @@ class AbstractDisplayedCalendar(Frame):
     def getPeriodeActive(self):
         return self.getApplication().getPeriodManager().getActivePeriode()
     def getLongueurPeriode(self):
-        return self.getFinPeriode() - self.getDebutPeriode() if self.getPeriodeActive() is not None else 0
+        return (self.getFinPeriode() - self.getDebutPeriode() + datetime.timedelta(days=1)) if self.getPeriodeActive() is not None else 0
     def getDebutPeriode(self):
         return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
     def getFinPeriode(self):
@@ -103,9 +103,7 @@ class AbstractDisplayedCalendar(Frame):
     def getJourDebut(self):
         return self.jourDebut
     def setJourDebut(self, valeur):
-        print("setJourDebut", valeur)
         self.jourDebut = valeur + datetime.timedelta()
-        print("setJourDebut 108", self.jourDebut)
         self.updateAffichage()
 
     def getNbJour(self):
@@ -113,14 +111,16 @@ class AbstractDisplayedCalendar(Frame):
         return self.getDureeJour().days
     def getDureeJour(self):
         """ Retourne un timedelta """
-        return (self.jourFin - self.jourDebut) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
+        return (self.jourFin - self.jourDebut + datetime.timedelta(days=1)) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
     def setNbJour(self, valeur):
-        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur)) if self.jourDebut is not None else None
+        """
+        @param valeur : <int>
+        """
+        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
         self.updateAffichage()
+
     def setDureeJour(self, valeur):
-        self.jourFin = (self.jourDebut + valeur) if self.jourDebut is not None else None
-        print("abst getFinPeriode 120",self.getFinPeriode())
-        print("abst getJourFin 121",self.getJourFin())
+        self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
         if self.getJourFin() > self.getFinPeriode():
             self.setJourFin(self.getFinPeriode())
 

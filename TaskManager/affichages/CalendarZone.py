@@ -87,6 +87,9 @@ class CalendarZone(Frame):
             elif position == "Apres":
                 self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
 
+            # Mise à jour du Combobox
+            self.getParametreAffichage().updateCombobox()
+
 
 
     def selectionnerJour(self):
@@ -286,9 +289,9 @@ class CalendarZone(Frame):
         print(datetime.datetime.now())
 
     def getPanneauActif(self):
-        return self.zoneDynamicCalendarFrame.getPanneauActif()
+        return self.getZoneAffichage().getPanneauActif()
     def getDonneeCalendrier(self):
-        return self.zoneDynamicCalendarFrame.getDonneeCalendrier()
+        return self.getZoneAffichage().getDonneeCalendrier()
     
     def getPeriodeActive(self):
         """ Getter de la periode active """
@@ -313,3 +316,8 @@ class CalendarZone(Frame):
             if last is None or last.getDebut() < tache.getDebut():
                 last = tache
         return first, last
+
+    def getParametreAffichage(self):
+        return self.getZoneAffichage().getParametreAffichage()
+    def getZoneAffichage(self):
+        return self.zoneDynamicCalendarFrame
