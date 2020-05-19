@@ -9,7 +9,7 @@ from util.widgets.ttkcalendar import *
 from util.widgets.Horloge import *
 
 def askdatetime(style="nombre"):
-    # Callback quand on ferme la fen�tre par l'un des boutons :
+    # Callback quand on ferme la fenêtre par l'un des boutons :
     date = ""
     heure = ""
     dateheure = None
@@ -22,7 +22,7 @@ def askdatetime(style="nombre"):
         # Si on annule :
         if a == 'Annuler' or a=='WM_DELETE_WINDOW':
             fen.destroy()
-        else: # Si on accepte :
+        elif a == 'Ok': # Si on accepte :
             # on met en forme la date
             date = cal.selection.date()
             if date == None:
@@ -52,7 +52,7 @@ def askdatetime(style="nombre"):
             m.set(mm)
             h.set(hh)
             hor.set(hh, mm)
-        except TclError: # Il peut y avoir une exception si on ferme la fen�tre : on s'en fiche.
+        except TclError: # Il peut y avoir une exception si on ferme la fenêtre : on s'en fiche.
             pass
         except Exception as e:
             showerror("Symbol Interdit", err(e))
@@ -87,7 +87,7 @@ def askdatetime(style="nombre"):
             m.set(mm)
             h.set(hh)
             hor.set(hh, mm)
-        #except TclError: # Il peut y avoir une exception si on ferme la fen�tre : on s'en fiche.
+        #except TclError: # Il peut y avoir une exception si on ferme la fenêtre : on s'en fiche.
         #    pass
         except Exception as e:
             showerror("Symbol Interdit", err(e))
@@ -105,7 +105,7 @@ def askdatetime(style="nombre"):
     fen = Dialog(title = "Choix de la date et l'heure", buttons = ("Ok", "Annuler"), command=onClose)
     cadre = Frame(fen)
     cadre.pack(side = RIGHT)
-    # cr�ation des widgets :
+    # création des widgets :
     cal = Calendar(fen, firstweekday=calendar.MONDAY)
     hor = Horloge(cadre, style=="nombre")
     # placement des widgets :
@@ -117,7 +117,7 @@ def askdatetime(style="nombre"):
     h.bind("<Key>", lambda e: prechange(), add = 1)
     h.bind("<Key>", lambda e: h.after(10, heureChange2), add = 1)
     h.pack(side = LEFT, expand = YES, fill = X)
-    # choix de la minute : TODO : in-/d�-cr�menter les minutes ou les heures au del� de leurs p�riodes de d�finition doit augmenter les heures/ les
+    # choix de la minute : TODO : in-/dé-crémenter les minutes ou les heures au delà de leurs périodes de définition doit augmenter les heures/ les
     m = Spinbox(cadre, from_ = -1, to=60, increment = 1, width = 4, command = heureChange)
     m.bind("<Key>", lambda e: prechange(), add = 1)
     m.bind("<Key>", lambda e: m.after(10, heureChange2), add = 1)
