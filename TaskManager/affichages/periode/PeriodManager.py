@@ -118,7 +118,7 @@ class PeriodManager:
         else:
             prevFin = periode.getFin()
             periode.setFin(dateScindage - datetime.timedelta(days = 1))
-            newPeriode = Periode(periode.nom, dateScindage, prevFin, periode.desc, periode.getColor())
+            newPeriode = Periode(self, periode.nom, dateScindage, prevFin, periode.desc, periode.getColor())
             # TODO : changer les périodes des tâches concernées.
             self.ajouter(newPeriode)
     def fusionnerPeriodes(self):
