@@ -252,5 +252,4 @@ class Task(ITaskEditorDisplayableObject):
 
     def reverseStateValide(self):
         self.__statutValideManuel = not self.__statutValideManuel
-        print(self.__statutValideManuel)
         self.updateStatut()

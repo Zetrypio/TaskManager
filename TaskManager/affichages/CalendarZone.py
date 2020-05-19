@@ -126,7 +126,6 @@ class CalendarZone(Frame):
             if  (tache.getDebut()+datetime.timedelta(days=nb)).date() == (tache.getFin()+datetime.timedelta(days=nb)).date()\
             and debut <= (tache.getDebut()+datetime.timedelta(days=nb)).date()\
             and fin   >= (tache.getFin()+datetime.timedelta(days=nb)).date():
-                print("125 CalZone ok")
                 tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
 
             # Si on dépasse, on cadre selon les limites et mode bloquer
@@ -207,7 +206,6 @@ class CalendarZone(Frame):
             if  (tache.getDebut()+datetime.timedelta(hours=nb)).date() == (tache.getFin()+datetime.timedelta(hours=nb)).date()\
             and heureDebut <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
             and heureFin   >= (tache.getFin()+datetime.timedelta(hours=nb)).time():
-                print("219 CalZone ok")
                 tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
 
             # Si on dépasse, on cadre selon les limites et mode bloquer
@@ -286,7 +284,6 @@ class CalendarZone(Frame):
         self.getPeriodeActive().setDateStatut(maintenant)
         for tache in self.getDonneeCalendrier().listeTask:
             tache.updateStatut()
-        print(datetime.datetime.now())
 
     def getPanneauActif(self):
         return self.getZoneAffichage().getPanneauActif()

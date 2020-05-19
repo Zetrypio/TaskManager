@@ -134,10 +134,10 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         ### Option utile ou pas ?, à voir dans le préférences ?, faire ça seulement si on est au début ? ##
 
         # Si le nouveau jour de début de la période est avant, il faut changer le nouveau jour de début
-        if jour < self.getJourDebut(): # gné ?
-            duree = self.getDureeJour()
-            self.setJourDebut(jour)
-            self.setDureeJour(duree)
+        #if jour < self.getJourDebut():
+        duree = self.getJourFin() - jour + datetime.timedelta(days=1)
+        self.setJourDebut(jour)
+        self.setDureeJour(duree)
 
 
         self.getPeriodeActive().setDebut(jour)

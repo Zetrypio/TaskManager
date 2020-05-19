@@ -50,7 +50,6 @@ class ZoneAffichage(Frame): # Contient les paramètre et les données
         elif valeur == '1 semaine':
             self.getDonneeCalendrier().setNbJour(7)
         else: # Si c'est une période
-            print(self.getDonneeCalendrier().getLongueurPeriode())
             self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
     
