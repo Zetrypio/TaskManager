@@ -7,10 +7,10 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 
 from affichages.CalendarZone import *
-from affichages.groupe.Groupe import *
-from affichages.groupe.GroupeManager import *
 from affichages.periode.Periode import *
 from affichages.periode.PeriodManager import *
+from groupe.Groupe import *
+from groupe.GroupeManager import *
 from task.TaskEditor import *
 
 from MenuBar import *

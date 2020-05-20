@@ -1,12 +1,12 @@
 # -*- coding:utf-8 -*-
 import datetime
 
+from groupe.GroupeManager import *
 from task.ITaskEditorDisplayableObject import *
 
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
-from ..groupe.GroupeManager import *
 
 class Periode(ITaskEditorDisplayableObject):
     def __init__(self, periodManager, nom, debut, fin, desc, color = "white"):
