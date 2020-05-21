@@ -201,9 +201,9 @@ class AbstractDisplayedCalendar(Frame):
             # plusieurs fois.
             tache = tache.copy()
             tache.debut = region
-        if tache.duree <= datetime.timedelta():
-            tache.duree = self.askDureeTache()
-            if not tache.duree:
+        if tache.getDuree() <= datetime.timedelta():
+            tache.setDuree(self.askDureeTache())
+            if not tache.getDuree():
                 return None
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
         return tache

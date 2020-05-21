@@ -132,12 +132,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for task in self.listeTask:
             tache = TacheEnCalendrier(self.frame, task)
             self.listeTaskAffichees.append(tache)
-            if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
+            if tache.task.getDebut().date() >= self.getJourDebut() and tache.task.getDebut().date() <= self.getJourFin():
                 # Calcul du début :
-                debut = tache.task.debut.hour*60 + tache.task.debut.minute + 1
+                debut = tache.task.getDebut().hour*60 + tache.task.getDebut().minute + 1
                 ## Calcul du nombre de lignes :
                 # Si c'est hors cadre ou pas sur le même jour
-                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.debut.date() != tache.task.getFin().date():
+                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.getDebut().date() != tache.task.getFin().date():
                     tache.task.setVisible(False)
                 # Si ça dépasse : on restreint
                 elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
@@ -146,7 +146,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                     duree = duree.total_seconds()//60%1440
                     tache.task.setVisible(True)
                 # Si c'est seulement le début qui manque on adapte
-                elif tache.task.debut.time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
+                elif tache.task.getDebut().time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
                     debut = self.getHeureDebut().hour*60 + 1
 
                     enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
@@ -154,12 +154,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                     duree = duree.total_seconds()//60%1440
                     tache.task.setVisible(True)
                 else: # Si ça dépasse pas :
-                    duree = tache.task.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
+                    duree = tache.task.getDuree().total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
                     tache.task.setVisible(True)
 
-                if tache.task.getVisible():
+                if tache.task.isVisible():
                     tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-                           column = (tache.task.debut.date()-self.getJourDebut()).days*2+1, sticky = "nesw")
+                           column = (tache.task.getDebut().date()-self.getJourDebut()).days*2+1, sticky = "nesw")
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)

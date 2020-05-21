@@ -9,9 +9,9 @@ from tkinter import Label, Frame
 from affichages.CalendarZone import *
 from affichages.periode.Periode import *
 from affichages.periode.PeriodManager import *
-from groupe.Groupe import *
-from groupe.GroupeManager import *
-from task.TaskEditor import *
+from schedulable.groupe.Groupe import *
+from schedulable.groupe.GroupeManager import *
+from schedulable.task.TaskEditor import *
 
 from MenuBar import *
 
@@ -81,16 +81,20 @@ def main():
     periodeSemaine = app.getPeriodManager().getPeriodes()[-1]
 
     # Création de taches  préfaite
-    app.taskEditor.ajouter(Task("A", datetime.datetime(2020, 5, 6, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#F77CAA", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("B", datetime.datetime(2020, 5, 8, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#7CF0F7", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("C", datetime.datetime(2020, 5, 8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#C2F77C", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("D", datetime.datetime(2020, 5, 12, 8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#B97CF7", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("E", datetime.datetime(2020, 5, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#5D7CDC", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("F", datetime.datetime(2020, 5, 8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1),-1,0,"","#FA6FFF", periode = periodeSemaine))
-    app.taskEditor.ajouter(Task("Joyeux anniversaire", datetime.datetime(2020, 5, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5),-1,0,"Gateau au chocolat et ne pas oublier la crême anglaise","#85FAB7", periode = periodeSemaine))
+    app.getTaskEditor().ajouter(Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 5,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2)))
+    app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 5,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 5,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 5, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 5, 12, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 5,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
+                                "Gateau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
+                                datetime.datetime(2020, 5, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
 
     # Création d'un groupe préfait
-    periodeSemaine.getGroupeManager().ajouter(Groupe("Mon Groupe", [app.taskEditor.taches[1]], "#FF88FF", periodeSemaine, periodeSemaine.getGroupeManager()))
+    # Les 2 première tâches sont dans le groupe.
+    periodeSemaine.getGroupeManager().ajouter(Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF", *app.getTaskEditor().taches[1:3]))
     
     app.mainloop()
     try:

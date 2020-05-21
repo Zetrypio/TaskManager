@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 import datetime
 
-from groupe.GroupeManager import *
-from task.ITaskEditorDisplayableObject import *
+from schedulable.groupe.GroupeManager import *
+from schedulable.task.ITaskEditorDisplayableObject import *
 
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *

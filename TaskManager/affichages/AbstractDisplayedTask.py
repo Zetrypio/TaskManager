@@ -10,15 +10,15 @@ class AbstractDisplayedTask(Frame):
         
         self.task = task
 
-        self.texte = Text(self, wrap = "word", state = "normal", bg = self.task.getDisplayColor(), width=0, height=0)
+        self.texte = Text(self, wrap = "word", state = "normal", bg = "#0078FF" if self.task.isSelected() else self.task.getColor(), width=0, height=0)
 
 
-        self.texte.insert(INSERT, task.nom) # On met le nom dedans
-        self.texte.tag_add("titre", "0.0", "0.%s"%int(len(task.nom)))
+        self.texte.insert(INSERT, task.getNom()) # On met le nom dedans
+        self.texte.tag_add("titre", "0.0", "0.%s"%int(len(task.getNom())))
         self.texte.tag_config("titre", font="Arial 12 bold") 
         
-        self.texte.insert(END, "\n"+task.desc)
-        self.texte.tag_add("corps", "1.0", "1.%s"%int(len(task.desc)))
+        self.texte.insert(END, "\n"+task.getDescription())
+        self.texte.tag_add("corps", "1.0", "1.%s"%int(len(task.getDescription())))
         self.texte.tag_config("corps", font="Arial 10") 
         
         self.texte.config(state = "disabled") # Pour ne pas changer le texte dedans
@@ -43,7 +43,7 @@ class AbstractDisplayedTask(Frame):
     def updateColor(self):
         # fonction pour mettre à jour la couleur
         try:
-            self.texte.config(bg=self.task.getDisplayColor())
+            self.texte.config(bg = "#0078FF" if self.task.isSelected() else self.task.getColor())
         except:
             self._report_exception()
 

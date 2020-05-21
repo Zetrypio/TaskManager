@@ -227,7 +227,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if self.getIndiceTacheEnGantt(tache) == arret:
                 return nombre
 
-            if tache.task.debut.date() == dateJour:
+            if tache.task.getDebut().date() == dateJour:
                 nombre+=1
         return nombre
     
@@ -320,7 +320,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             return
         
         # NOTE : il faut aussi changer ici pour avoir un affichage plusieurs jours.
-        t = TacheEnGantt(self, tache, bg= tache.color) # on crée notre objet
+        t = TacheEnGantt(self, tache, bg= tache.getColor()) # on crée notre objet
         self.listeTaskAffichees.append(t) # On rajoute la tache après dans la liste pour ne pas la tester au moment de l'affichage
         self.updateAffichage()
         return tache
@@ -351,7 +351,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                                  text=JOUR[(jour+self.getJourDebut().weekday())%7])
 
     def __afficherLesTaches(self):
-        self.listeTaskAffichees.sort(key=lambda t:t.task.debut) # Trie par début des taches
+        self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # Trie par début des taches
 
         for tache in self.listeTaskAffichees:
             ID_TACHE = self.listeTaskAffichees.index(tache)
@@ -361,7 +361,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
             # Ligne verte :
             tache.creerLigne()
-            if tache.task.debut.date() >= self.getJourDebut() and tache.task.debut.date() <= self.getJourFin():
+            if tache.task.getDebut().date() >= self.getJourDebut() and tache.task.getDebut().date() <= self.getJourFin():
                 
                 # TODO : ici, il faudra adapter pour gérer une tache sur plusieurs jours.
                 # width = int(self.tailleColonne-1)*tache.task.duree.days-1 + int(self.tailleColonne-1)*self.facteurW
@@ -369,7 +369,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 # X en fonction du jour de la tache :
                 x = int(w*(tache.task.getDebut().date()-self.getJourDebut()).days + 2)
                 # Y en fonction de la taille d'une ligne * le nombre de tache déjà présente le même jour :
-                y = (AffichageGantt.TAILLE_BANDEAU_JOUR + AffichageGantt.TAILLE_LIGNE*self.getNbTacheJour(tache.task.debut.date(), self.getIndiceTacheEnGantt(tache)))
+                y = (AffichageGantt.TAILLE_BANDEAU_JOUR + AffichageGantt.TAILLE_LIGNE*self.getNbTacheJour(tache.task.getDebut().date(), self.getIndiceTacheEnGantt(tache)))
 
                 self.can.create_window(x, y, # Position
                                        width=int(w*self.facteurW),
@@ -378,7 +378,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                                        window = tache,
                                        tags="num%s"%self.getIndiceTacheEnGantt(tache))
 
-                if len(tache.task.dependantes) == 0:
+                if len(tache.task.getDependantes()) == 0:
                     tache.ID_PLUS = "plus"+str(ID_TACHE)
                     tache.affichePlusLien(tache.ID_PLUS)
 
