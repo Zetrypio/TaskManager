@@ -124,7 +124,14 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
-
+    def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la variante affichable de cet objet.
+        @param frame: Le Frame dans lequel mettre l'instance.
+        @param part: La partie à afficher si nécéssaire (pour les groupes par exemple).
+        @return une instance de la classe représentant la variante affichable de cet objet.
+        """
+        raise NotImplementedError
 
 
 

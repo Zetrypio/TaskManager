@@ -154,6 +154,10 @@ class Task(AbstractSchedulableObject):
 
         #self._statut = "Inconnu" if self.getDebut() == None else "À faire" if self.__nbrep == 0 else "Répétition"
 
+    def createDisplayableInstance(self, frame, part):
+        # Ici, on s'en fiche de la part.
+        return DisplayableTask(frame, self)
+
     ""
     ##############
     # Container: #

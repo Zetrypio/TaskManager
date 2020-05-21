@@ -26,9 +26,9 @@ class TacheEnGantt(AbstractDisplayedTask):
     def getPosPixel(self):
         return self.master.can.bbox("num%s"%self.master.getIndiceTacheEnGantt(self))
     def getPosGrille(self):
-        x1 = self.task.debut.weekday()
+        x1 = self.task.getDebut().weekday()
         x2 = self.task.getFin().weekday()
-        y = self.master.getNbTacheJour(self.task.debut.date(), self.master.listeTaskAffichees.index(self))
+        y = self.master.getNbTacheJour(self.task.getDebut().date(), self.master.listeTaskAffichees.index(self))
         return x1, x2, y
 
     def affichePlusLien(self, tag):
@@ -86,11 +86,11 @@ class TacheEnGantt(AbstractDisplayedTask):
 
         if self.master.mode == "addDep": # On commence par savoir dans quelle mode on est
             self.master.mode = ""    # On réinitialise le mode
-            if  chercheur.task.debut+chercheur.task.duree < self.task.debut: # Si le chercheur est avant
+            if  chercheur.task.getDebut()+chercheur.task.getDuree() < self.task.getDebut(): # Si le chercheur est avant
                 try : # on essaye de voir si c'est pas déjà existant
                     self.master.listeLien.append(LienDependance(chercheur, self, self.master.can))
                 except ValueError:pass
-            elif chercheur.task.debut > self.task.debut+self.task.duree: # Si on est avant le chercheur
+            elif chercheur.task.getDebut() > self.task.getDebut()+self.task.getDuree(): # Si on est avant le chercheur
                 try :
                     self.master.listeLien.append(LienDependance(self, chercheur, self.master.can))
                 except ValueError:pass
@@ -119,7 +119,7 @@ class TacheEnGantt(AbstractDisplayedTask):
                 self.master.updateAffichage()
                 return
             self.master.mode = ""    # On réinitialise le mode
-            if chercheur.task.debut < self.task.debut or chercheur.task.debut > self.task.debut: # Si le chercheur est avant ou après
+            if chercheur.task.getDebut() < self.task.getDebut() or chercheur.task.getDebut() > self.task.getDebut(): # Si le chercheur est avant ou après
                 lienaime.suppression()
             elif chercheur.task == self.task:   # Si on est la même tache on annule l'opération
                 self.jeCherche = False
@@ -153,10 +153,10 @@ class TacheEnGantt(AbstractDisplayedTask):
             y1=(self.getPosGrille()[-1]+0.5)*self.master.TAILLE_LIGNE+self.master.TAILLE_BANDEAU_JOUR
             # TODO : le x1 n'est pas détecté car soucis de datetime
 #             Si on est après la période affiché
-            if self.task.debut.date() > self.master.getJourFin() - datetime.timedelta(days=1):
+            if self.task.getDebut().date() > self.master.getJourFin() - datetime.timedelta(days=1):
                 x1 = self.master.can.winfo_width()+10 # On se place en dehors du cote droit
 #             Si on est avant le début
-            elif self.task.debut.date() < self.master.getJourDebut():
+            elif self.task.getDebut().date() < self.master.getJourDebut():
                 x1 = -10 # On se place en dehors du cote gauche
             # Si c'est juste le plus qui n'est plus affiché car il y a déjà un lien existant
             else :

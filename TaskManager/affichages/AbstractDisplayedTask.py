@@ -12,7 +12,6 @@ class AbstractDisplayedTask(Frame):
 
         self.texte = Text(self, wrap = "word", state = "normal", bg = "#0078FF" if self.task.isSelected() else self.task.getColor(), width=0, height=0)
 
-
         self.texte.insert(INSERT, task.getNom()) # On met le nom dedans
         self.texte.tag_add("titre", "0.0", "0.%s"%int(len(task.getNom())))
         self.texte.tag_config("titre", font="Arial 12 bold") 
@@ -47,8 +46,8 @@ class AbstractDisplayedTask(Frame):
         except:
             self._report_exception()
 
-        def getGroupes():
-            """ Retourne une liste de groupe auxquelles appartient la tache et None s'il n'y a pas de groupe """
-            return self.task.getGroupes()
+    def getGroupes():
+        """ Retourne une liste de groupe auxquelles appartient la tache et None s'il n'y a pas de groupe """
+        return self.task.getGroupes()
 
 

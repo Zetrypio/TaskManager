@@ -12,7 +12,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
         self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
         self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
         
-        for tache in self.tacheD.task.dependances: # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
+        for tache in self.tacheD.task.getDependances(): # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
             if self.tacheF.task == tache:
                 raise ValueError("Lien déjà existant.")
 
@@ -43,8 +43,8 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
     def afficherLesLiens(self, couleur = "#000000"):
         from .AffichageGantt import AffichageGantt # Pour éviter les imports circulaires
         # On ne fait pas si on est pas dans la periode a afficher
-        if (self.tacheD.task.debut.date() == self.tacheF.task.debut.date() and (self.tacheF.task.getFin().date() < self.tacheD.master.getJourDebut() or self.tacheD.task.getFin().date() >= self.tacheD.master.getJourFin())) \
-        or (self.tacheD.task.debut.date() != self.tacheF.task.debut.date() and (self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() or self.tacheD.task.debut.date() > self.tacheD.master.getJourFin())):
+        if (self.tacheD.task.getDebut().date() == self.tacheF.task.getDebut().date() and (self.tacheF.task.getFin().date() <  self.tacheD.master.getJourDebut() or self.tacheD.task.getFin().date()  >= self.tacheD.master.getJourFin())) \
+        or (self.tacheD.task.getDebut().date() != self.tacheF.task.getDebut().date() and (self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() or self.tacheD.task.getDebut().date() > self.tacheD.master.getJourFin())):
             return
         
 
@@ -82,7 +82,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             x1F, y1F, x2F, y2F = temp
         else:
             # y1F et 2 avec chemin
-            if self.tacheF.task.debut.date() == self.canvas.master.getJourFin():
+            if self.tacheF.task.getDebut().date() == self.canvas.master.getJourFin():
                 x1F = self.canvas.winfo_width()
                 for val in self.chemin:
                     if val != -1:
@@ -137,7 +137,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
                                max(tailleLigne*self.chemin[(self.tacheD.task.getFin()).isoweekday()]+AffichageGantt.TAILLE_BANDEAU_JOUR - AffichageGantt.ESPACEMENT/2, AffichageGantt.TAILLE_BANDEAU_JOUR))
 
             # Si la fin de la tache d'arrivé est avant la fin de l'affichage ET la tache de fin n'est pas un jour après
-            if self.tacheD.master.getJourFin() >= self.tacheF.task.debut.date() and self.tacheD.task.getFin().date() != (self.tacheF.task.getDebut() - datetime.timedelta(days=1)).date():
+            if self.tacheD.master.getJourFin() >= self.tacheF.task.getDebut().date() and self.tacheD.task.getFin().date() != (self.tacheF.task.getDebut() - datetime.timedelta(days=1)).date():
                 dessineLiaison(x1F-tailleColonne*(1-facteurW),
                                max(tailleLigne*self.chemin[(self.tacheD.task.getFin()).isoweekday()]+AffichageGantt.TAILLE_BANDEAU_JOUR - AffichageGantt.ESPACEMENT/2, AffichageGantt.TAILLE_BANDEAU_JOUR),
                                x1F-10,
@@ -149,7 +149,7 @@ class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
             self.canvas.create_line(*mesPoints, width=w, arrow=LAST, fill=couleur, smooth=1, tags=tag)
 
         # On ajoute une infobulle :
-        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.nom+"→"+self.tacheF.task.nom) # flèche trop cool en attende "→"
+        ajouterInfoBulleTagCanvas(self.canvas, tag, self.tacheD.task.getNom()+"→"+self.tacheF.task.getNom()) # flèche trop cool en attende "→"
 
     def pathCalculing(self):
         " Fonction qui permet de calculer le chemin que va prendre le lien pour lier les 2 taches "

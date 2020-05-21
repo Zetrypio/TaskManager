@@ -8,4 +8,4 @@ class TacheEnCalendrier(AbstractDisplayedTask):
 
     def getCalendrier(self):
         return self.master.master
-    
+

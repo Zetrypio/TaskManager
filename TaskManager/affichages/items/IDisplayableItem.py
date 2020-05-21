@@ -9,6 +9,15 @@ class IDisplayableItem:
     def __init__(self):
         if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
     
-    def redraw(self):
-        """Permet de mettre à jour l'affichage."""
+    def redraw(self, frameOrCanvas):
+        """
+        Permet de mettre à jour l'affichage.
+        @param frameOrCanvas: le Frame ou le Canvas sur lequel afficher cet objet.
+        """
+        raise NotImplementedError
+    
+    def delete(self):
+        """
+        Permet de supprimer cet objet de l'affichage.
+        """
         raise NotImplementedError

@@ -51,11 +51,14 @@ class Groupe(AbstractSchedulableObject):
 
     def updateStatut(self):
         pass # TODO
-    
+
+    def createDisplayableInstance(self, frame, part):
+        return DisplayableGroup(frame, self, part)
+
     ""
     ####################
     # Autre méthodes : #
-    #####################
+    ####################
 
     def getGroupeManager(self):
         """
