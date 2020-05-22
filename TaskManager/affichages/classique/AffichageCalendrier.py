@@ -35,10 +35,19 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.frame.bind("<Button-1>", self.mouseClicked, add = True)
         #self.frame.bind("<Escape>",  self.escapePressed)
 
+        # On précalcule :
+#        self.__precalculer() # lol
+
         # On affiche les trucs
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
+
+    def getPartPosition(self, part):
+        return 1+ 2*(part.getJour() - self.getJourDebut()).days
+
+    def getPartSpan(self, part):
+        return 1 # TODO
 
     def escapePressed(self, event):
         super().escapePressed(event)

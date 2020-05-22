@@ -73,3 +73,5 @@ class AbstractMultiFrameItem(IDisplayableItem):
         Permet de savoir sur combien se répartie le DatetimeItemPart.
         """
         return self.master.getPartSpan(part)
+
+

@@ -149,7 +149,12 @@ class AbstractDisplayedCalendar(Frame):
         fin   = min(part.getHeureFin(),   self.getHeureFin())
         
         return DatetimeItemPart(part.getJour(), debut, fin)
-    
+
+    def getPartPosition(self, part):
+        raise NotImplementedError
+    def getPartSpan(self, part):
+        raise NotImplementedError
+
     def getJourFin(self):
         return self.jourFin
     def setJourFin(self, valeur):
