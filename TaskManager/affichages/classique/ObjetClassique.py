@@ -1,5 +1,9 @@
 # -*- coding:utf-8 -*-
-from ..item.AbstractMultiFrameItem import *
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import Frame, Label
+
+from ..items.AbstractMultiFrameItem import *
 
 class ObjetClassique(AbstractMultiFrameItem):
     """
@@ -19,18 +23,19 @@ class ObjetClassique(AbstractMultiFrameItem):
         # Et on se redessine :
         for part in self.getRepartition():
             # Si la partie est visible :
-            if self.isPartVisible(part):
+            if part := self.getVisiblePart(part):
                 # On crée le cadre
                 f = Frame(frame, bg=self._schedulable.getColor())
                 
                 self._schedulable.createDisplayableInstance(frame, part)
                 
                 # On le place :
-                temps1 = (part.getHeureDebut() - self.master.getHeureDebut())
-                temps2 = (part.getHeureFin()   - self.master.getHeureDebut())
+                temps0 = self.master.getHeureDebut().hour * 60 + self.master.getHeureDebut().minute
+                temps1 = part.getHeureDebut()       .hour * 60 + part.getHeureDebut()       .minute
+                temps2 = part.getHeureFin()         .hour * 60 + part.getHeureFin()         .minute
 
-                ligne1 = temps1.hour * 60 + temps1.minute
-                ligne2 = temps2.hour * 60 + temps2.minute
+                ligne1 = temps1 - temps0
+                ligne2 = temps2 - temps0
 
                 lignespan = ligne2 - ligne1
 

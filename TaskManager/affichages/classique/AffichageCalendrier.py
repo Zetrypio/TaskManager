@@ -6,6 +6,7 @@ import datetime
 
 from ..AbstractDisplayedCalendar import *
 from .TacheEnCalendrier import *
+from .ObjetClassique import *
 
 class AffichageCalendrier(AbstractDisplayedCalendar):
     def __init__(self, master = None, **kwargs):
@@ -13,15 +14,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         super().__init__(master, bg="violet")
         # Note : self.master est référence vers Notebook.
  
-        # Exemple pour le grid
-        # self.bouton = Button(self, text="je suis ici")
-        #
-        # Le sticky dans tous les sens pour un expand dans tous les sens
-        # self.bouton.grid(row=0, column=0, sticky ="NSWE")
         self.listeLabelHeure = []       # \
         self.listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
         self.listeSeparateurJour = []   # /
-        #self.__listeTache = []
+        
+        self.listeDisplayableItem = []
+
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
 
@@ -50,28 +48,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # ":=  on attribut la variable en plus de tester la condition
         if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
             return
-
-        # Calcul du début :
-        #debut = tache.debut.hour*60 + tache.debut.minute + 1
-        # Calcul du nombre de lignes :
-        # Si ça dépasse : on restreint (TODO : à améliorer)
-        #if (tache.debut + tache.duree).time() > self.getHeureFin() or tache.debut.date() != (tache.debut + tache.duree).date():
-            #fin = self.getHeureFin() # Conversion en time
-            #duree = datetime.timedelta(fin.hour) - datetime.timedelta(tache.debut.time().hour) # Conversion en duree
-            #duree = duree.total_seconds()//60%1440
-            #tache.visible = False
-            
-        #else: # Si ça dépasse pas :
-            #duree = tache.duree.total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-
-        # Ajout graphique :
         
-        
-        #t = TacheEnCalendrier(self, tache, bg = tache.color, bd = 1, relief = SOLID)
-        #t.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree), column = ((tache.debut.isoweekday()-1)%7)*2+1, sticky = "nesw")
-        #t.grid_propagate(0)
+        self.listeDisplayableItem.append(ObjetClassique(self, tache))
 
-        #self.__listeTache.append(t)
         self.updateAffichage()
 
         return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
@@ -80,12 +59,13 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # On regarde si c'est trop à gauche (sur les heures):
         colonne, ligne = self.frame.grid_location(x, y)
         colonne = (colonne-1)//2
-        #print("Case : ", ligne, colonne)
+
         jour = self.getJourDebut() + datetime.timedelta(days = colonne)
         jour = datetime.datetime(jour.year, jour.month, jour.day)
+        
         minute = self.getHeureDebut().hour*60 +(ligne - 1)
         heure, minute = minute//60, minute%60
-        #print("Jour, heure, minute : ", jour, heure, minute)
+
         # TODO : A Changer :
         return jour + datetime.timedelta(hours = heure, minutes = minute)
         
@@ -99,11 +79,11 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             # Note : Un détail à la minute près va être fait,
             # donc on compte 60 lignes pour une heure.
             # La ligne 0 étant la ligne des labels des jours,
-            # On compte à partir de 1, c'est-à-dire en ajotuant 1.
+            # On compte à partir de 1, c'est-à-dire en ajoutant 1.
             self.listeLabelHeure[-1].grid(row=(heure-self.getHeureDebut().hour)*60+1, # le *60 pour faire un détail à la minute près
                                           column=0,      # Les labels des heures sont réservés à la colonne de gauche.
                                           rowspan=60,    # Mais ils prennent 60 minutes et lignes.
-                                          sticky="NSWE") # Permet de centrer le label et d'en reomplir les bords par la couleur du fond.
+                                          sticky="NSWE") # Permet de centrer le label et d'en remplir les bords par la couleur du fond.
         # Cela permet de réadapter les lignes et colones qui sont en expand pour le grid.
         self.__adapteGrid()
     
@@ -116,7 +96,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for compteur in range(self.getNbJour()):
 
             self.listeLabelJour.append(Label(self.frame, text=JOUR[jour.weekday()], bg = "light grey"))
-            self.listeLabelJour[-1].bind("<Button-1>",lambda e, jour=jour: self.selectTaskJour(jour))
+            self.listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectTaskJour(jour))
             self.listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectTaskJour(jour, control=True))
             self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
             if jour < self.getJourFin():
@@ -128,38 +108,41 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__adapteGrid()
 
     def __afficherLesTaches(self):
-        self.listeTaskAffichees = [] # Attribut de l'héritage je rappelle
-        for task in self.listeTask:
-            tache = TacheEnCalendrier(self.frame, task)
-            self.listeTaskAffichees.append(tache)
-            if tache.task.getDebut().date() >= self.getJourDebut() and tache.task.getDebut().date() <= self.getJourFin():
-                # Calcul du début :
-                debut = tache.task.getDebut().hour*60 + tache.task.getDebut().minute + 1
-                ## Calcul du nombre de lignes :
-                # Si c'est hors cadre ou pas sur le même jour
-                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.getDebut().date() != tache.task.getFin().date():
-                    tache.task.setVisible(False)
-                # Si ça dépasse : on restreint
-                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
-                    enleve = datetime.datetime.combine(tache.task.getFin().date(), self.getHeureFin()) - tache.task.getFin()
-                    duree = tache.task.getDuree() - enleve
-                    duree = duree.total_seconds()//60%1440
-                    tache.task.setVisible(True)
-                # Si c'est seulement le début qui manque on adapte
-                elif tache.task.getDebut().time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
-                    debut = self.getHeureDebut().hour*60 + 1
+        for displayable in self.listeDisplayableItem:
+            displayable.redraw(self.frame)
 
-                    enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
-                    duree = tache.task.getDuree() - enleve
-                    duree = duree.total_seconds()//60%1440
-                    tache.task.setVisible(True)
-                else: # Si ça dépasse pas :
-                    duree = tache.task.getDuree().total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-                    tache.task.setVisible(True)
-
-                if tache.task.isVisible():
-                    tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-                           column = (tache.task.getDebut().date()-self.getJourDebut()).days*2+1, sticky = "nesw")
+#        self.listeTaskAffichees = [] # Attribut de l'héritage je rappelle
+#        for task in self.listeTask:
+#            tache = TacheEnCalendrier(self.frame, task)
+#            self.listeTaskAffichees.append(tache)
+#            if tache.task.getDebut().date() >= self.getJourDebut() and tache.task.getDebut().date() <= self.getJourFin():
+#                # Calcul du début :
+#                debut = tache.task.getDebut().hour*60 + tache.task.getDebut().minute + 1
+#                ## Calcul du nombre de lignes :
+#                # Si c'est hors cadre ou pas sur le même jour
+#                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.getDebut().date() != tache.task.getFin().date():
+#                    tache.task.setVisible(False)
+#                # Si ça dépasse : on restreint
+#                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
+#                    enleve = datetime.datetime.combine(tache.task.getFin().date(), self.getHeureFin()) - tache.task.getFin()
+#                    duree = tache.task.getDuree() - enleve
+#                    duree = duree.total_seconds()//60%1440
+#                    tache.task.setVisible(True)
+#                # Si c'est seulement le début qui manque on adapte
+#                elif tache.task.getDebut().time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
+#                    debut = self.getHeureDebut().hour*60 + 1
+#
+#                    enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
+#                    duree = tache.task.getDuree() - enleve
+#                    duree = duree.total_seconds()//60%1440
+#                    tache.task.setVisible(True)
+#                else: # Si ça dépasse pas :
+#                    duree = tache.task.getDuree().total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
+#                    tache.task.setVisible(True)
+#
+#                if tache.task.isVisible():
+#                    tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
+#                           column = (tache.task.getDebut().date()-self.getJourDebut()).days*2+1, sticky = "nesw")
 
     def __adapteGrid(self):
         # à mettre À LA FIN ! ! ! (pour les expands)

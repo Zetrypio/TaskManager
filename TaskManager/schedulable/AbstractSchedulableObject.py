@@ -51,6 +51,9 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """Permet de savoir si cet objet est visible."""
         return self.__visible
 
+    def getRepartition(self, displayedCalendar):
+        raise NotImplementedError
+
     ""
     ############
     # Setters: #

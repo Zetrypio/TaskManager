@@ -29,45 +29,47 @@ class AbstractMultiFrameItem(IDisplayableItem):
         Dans ce cas, la tâche est affichée 2 fois (ou plus si nécéssaire),
         1 fois par jours. Dès qu'il y a une découpe (nouveau jour, séparation
         pour un groupe etc.), cela va créer un nouveau cadre. Chaque éléments
-        de la répartition est un ensemble datetime début et datetime fin pour
-        indiquer de quand à quand ce cadre en question doit être fait.
+        de la répartition est un DatetimeItemPart pour indiquer de quand
+        à quand ce cadre en question doit être fait.
 
         @return un générateur ou itérateur ou itérable (liste) pouvant être
         parcourru par une boucle for. Chaque élément doit être une paire de
         datetime indiquant le début et la fin de ce cadre.
         """
-        return self._schedulable.getRepartition()
+        return self._schedulable.getRepartition(self.master)
     
-    def isPartVisible(self, part):
+    def getVisiblePart(self, part):
         """
-        Permet de savoir si la partie est visible.
-        @return True si la partie est visible.
-        @return False si la partie n'est pas visible.
+        Permet d'obtenir la partie visible d'un DatetimeItemPart.
+        @return l'objet inchangé si celui-ci est complètement visible.
+        @return un nouveau DatetimeItemPart si celui-ci est partiellement visible,
+        ce nouvel objet sera normalement entièrement visible.
+        @return None si l'objet n'est pas visible du tout.
         """
-        return self.master.isPartVisible(part)
+        return self.master.getVisiblePart(part)
 
 #    def getPartsNumberAt(self, part):
 #        """
-#        Permet de savoir le nombre de parties qui sont en même temps,
+#        Permet de savoir le nombre de DatetimeItemPart qui sont en même temps,
 #        à savoir le nombre de colonnes nécéssaire dans un affichage type
 #        calendrier classique pour afficher toutes les tâches qui seraient
 #        en même temps. Si il n'y a pas de tâches qui se superposent, cela
 #        peut renvoyer plus que 1, mais dans ce cas le getColumnSpanAt renverra
 #        le même nombre également.
-#        @return le nombre de partitions en même temps en tant qu'int.
+#        @return le nombre de DatetimeItemPart en même temps en tant qu'int.
 #        """
 #        return self.master.getColumnsNumberAt(part)
     
     def getPartPosition(self, part):
         """
-        Permet de savoir la position de la partition parmi les autres.
-        @return la position de cette partition en tant qu'int répartie sur
-        l'ensemble de celles qui sont en même temps.
+        Permet de savoir la position d'un DatetimeItemPart parmi les autres.
+        @return la position de ce DatetimeItemPart en tant qu'int répartie sur
+        l'ensemble de ceux qui sont en même temps.
         """
-        return self.master.getColumnsPositionAt(part)
+        return self.master.getPartPosition(part)
     
     def getPartSpan(self, part):
         """
-        Permet de savoir sur combien se répartie la partition.
+        Permet de savoir sur combien se répartie le DatetimeItemPart.
         """
         return self.master.getPartSpan(part)

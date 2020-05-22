@@ -10,6 +10,9 @@ from ..AbstractSchedulableObject import *
 from .dialog.datetimeDialog import *
 from .TaskInDnd import *
 
+from affichages.items.DatetimeItemPart import *
+from affichages.items.content.DisplayableTask import *
+
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
@@ -157,6 +160,14 @@ class Task(AbstractSchedulableObject):
     def createDisplayableInstance(self, frame, part):
         # Ici, on s'en fiche de la part.
         return DisplayableTask(frame, self)
+
+    def getRepartition(self, displayedCalendar):
+        if self.getDebut().date() == self.getFin().date():
+            yield DatetimeItemPart(self.getDebut().date(),
+                                   self.getDebut().time(),
+                                   self.getFin().time())
+        else:
+            raise NotImplementedError
 
     ""
     ##############

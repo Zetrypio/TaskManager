@@ -5,6 +5,8 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 import datetime
 
+from .items.DatetimeItemPart import *
+
 from util.widgets.Dialog import *
 
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
@@ -126,6 +128,27 @@ class AbstractDisplayedCalendar(Frame):
 
         self.updateAffichage()
 
+    def getVisiblePart(self, part):
+        """
+        Permet d'obtenir la partie visible d'un DatetimeItemPart.
+        @return l'objet inchangé si celui-ci est complètement visible.
+        @return un nouveau DatetimeItemPart si celui-ci est partiellement visible,
+        ce nouvel objet sera normalement entièrement visible.
+        @return None si l'objet n'est pas visible du tout.
+        """
+        # Test du jour :
+        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin():
+            return None
+        
+        # Test de l'intégrité :
+        if part.getHeureDebut() >= self.getHeureDebut() and part.getHeureFin() <= self.getHeureFin():
+            return part
+        
+        # Sinon : correction du début et de la fin :
+        debut = max(part.getHeureDebut(), self.getHeureDebut())
+        fin   = min(part.getHeureFin(),   self.getHeureFin())
+        
+        return DatetimeItemPart(part.getJour(), debut, fin)
     
     def getJourFin(self):
         return self.jourFin

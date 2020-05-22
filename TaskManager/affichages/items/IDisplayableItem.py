@@ -7,7 +7,7 @@ class IDisplayableItem:
     les affichages comme calendrier classique ou gantt par exemple.
     """
     def __init__(self):
-        if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
+        if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
     
     def redraw(self, frameOrCanvas):
         """
