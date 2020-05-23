@@ -31,8 +31,8 @@ class Task(AbstractSchedulableObject):
         super().__init__(nom, periode, desc, color)
         
         # Informations temporelles :
-        self.__debut = debut
-        self.__duree = duree
+        self.__debut = debut + datetime.timedelta() # Faire une copie
+        self.__duree = duree + datetime.timedelta()
         
         # Informations des répétitions :
         self.__rep   = rep    # répétition
@@ -134,10 +134,10 @@ class Task(AbstractSchedulableObject):
         @return une copie de la tâche.
         """
         t = Task(self.getNom(), self.getPeriode(), self.getDescription(), self.getColor(),
-                 self.getDebut(), self.getDuree(), self.rep, self.nbrep, self.getParent())
+                 self.getDebut(), self.getDuree(), self.__rep, self.__nbrep, self.getParent())
         # Doit-on copier les dépendances et le statut ?
-        t.dependances = self.dependances[:]
-        t._statut = self._statut
+        t.__dependances = self.__dependances[:]
+        t.updateStatut()
         # On retourne la copie :
         return t
 
@@ -167,7 +167,21 @@ class Task(AbstractSchedulableObject):
                                    self.getDebut().time(),
                                    self.getFin().time())
         else:
-            raise NotImplementedError
+            debutJour = datetime.time(0, 0, 0)
+            finJour   = datetime.time(23, 59, 59)
+            
+            date = self.getDebut().date()
+            heure1 = self.getDebut().time()
+            heure2 = finJour
+            
+            while date < self.getFin().date():
+                yield DatetimeItemPart(date, heure1, heure2)
+                heure1 = debutJour
+                date += datetime.timedelta(days = 1)
+            
+            heure2 = self.getFin().time()
+            
+            yield DatetimeItemPart(date, heure1, heure2)
 
     ""
     ##############

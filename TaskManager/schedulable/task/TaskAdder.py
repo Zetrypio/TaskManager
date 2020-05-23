@@ -164,7 +164,7 @@ class TaskAdder(Frame):
         for p in self.getApplication().getPeriodManager().getPeriodes():
             if p.nom == self.champPeriode.get():
                 periode = p
-        self.master.ajouter(Task(nom, debut, duree, rep, nbrep, desc, color, periode))
+        self.master.ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
 
     def getApplication(self):
         return self.master.getApplication()
