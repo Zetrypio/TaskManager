@@ -5,7 +5,6 @@ from tkinter import Label, Frame
 import datetime
 
 from ..AbstractDisplayedCalendar import *
-from .TacheEnCalendrier import *
 from .ObjetClassique import *
 
 class AffichageCalendrier(AbstractDisplayedCalendar):
