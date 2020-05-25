@@ -27,16 +27,18 @@ class Groupe(AbstractSchedulableObject):
     # ITaskEditorDisplayableObject #
     ################################
     def getHeader(self):
-        pass # TODO
+        return self.getNom(), self._statut
     
     def iterateDisplayContent(self):
-        pass # TODO
+        yield "Tâches", len(self.__listTasks)
+        yield {}
+        yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
     def getRMenuContent(self, taskEditor, rmenu):
         pass # TODO
     
-    def getFilterStateWith(self):
-        pass # TODO
+#    def getFilterStateWith(self):
+#        pass # TODO
     
     ""
     #######################################
@@ -54,6 +56,30 @@ class Groupe(AbstractSchedulableObject):
 
     def createDisplayableInstance(self, frame, part):
         return DisplayableGroup(frame, self, part)
+
+    def getRepartition(self, displayedCalendar):
+        previous = None
+        for task in sorted(self.__listTasks, key=lambda t: t.getDebut()):
+            for part in task.getRepartition():
+                if previous is None:
+                    previous = part
+                elif self.__canPartsBeOne(previous, part):
+                    previous = DatetimeItemParts(previous.getJour(),
+                                                 previous.getHeureDebut(),
+                                                 part    .getHeureFin())
+                else:
+                    yield previous
+            yield part
+
+    def __canPartsBeOne(self):
+        """
+        Permet de savoir si 2 DatetimeItemParts peuvent être une seule,
+        connaissant le fait que si il y quelque chose entre les 2, ça ne
+        peut pas se fusionner.
+        """
+        # TODO
+        return False
+                    
 
     ""
     ####################
@@ -92,4 +118,3 @@ class Groupe(AbstractSchedulableObject):
     def removeTask(self, task):
         """ Retire une tache de la liste du groupe """
         self.listTasks.remove(task)
-

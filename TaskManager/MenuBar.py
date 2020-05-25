@@ -6,7 +6,7 @@ from tkinter import Label, Frame
 class MenuBar(Menu):
     """Classe de la barre de menu"""
     def __init__(self, root, master):
-        """root est la fen�tre, master est l'Application."""
+        """root est la fenêtre, master est l'Application."""
         Menu.__init__(self, master)
         root.configure(menu = self)
         # Menus Principaux :

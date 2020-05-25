@@ -22,7 +22,7 @@ class Periode(ITaskEditorDisplayableObject):
         self.dateStatut = None
 
         # Création d'un groupe manager de la période
-        self.groupeManager = GroupeManager(self)
+        self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
 
     def __str__(self):

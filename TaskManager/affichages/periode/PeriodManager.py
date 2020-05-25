@@ -17,6 +17,9 @@ class PeriodManager:
     
     def setTaskEditor(self, taskEditor):
         self.taskEditor = taskEditor
+    
+    def getApplication(self):
+        return self.app
 
     def getPeriodes(self):
         return self.periodes

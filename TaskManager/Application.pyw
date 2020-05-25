@@ -77,8 +77,13 @@ def main():
 
     # Création de periode préfaite
 
-    periodeSemaine = app.getPeriodManager().ajouter( Periode(app.getPeriodManager(),"semaine", datetime.date(2020, 5, 4), datetime.date(2020, 5, 27), "semaine pour faciliter les calculs",color = "#7FFF7F"))
-    periodeSemaine = app.getPeriodManager().getPeriodes()[-1]
+    periodeSemaine = Periode(app.getPeriodManager(),
+                             "semaine",
+                             datetime.date(2020, 5, 4),
+                             datetime.date(2020, 5, 27),
+                             "semaine pour faciliter les calculs",
+                             color = "#7FFF7F")
+    app.getPeriodManager().ajouter(periodeSemaine)
 
     # Création de taches  préfaite
     app.getTaskEditor().ajouter(Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
