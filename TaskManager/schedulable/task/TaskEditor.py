@@ -11,6 +11,8 @@ from util.widgets.RMenu import *
 from .Task import *
 from .TaskAdder import *
 
+from ..AbstractSchedulableObject import *
+
 class TaskEditor(Frame):
     """
     Zone à gauche de la fenêtre, dans laquelle sont listée les tâches.
@@ -94,17 +96,18 @@ class TaskEditor(Frame):
             self.__dernieresRecherches.appendleft(text)
         self.barreRecherche.config(values = list(self.__dernieresRecherches))
         
-    def ajouter(self, tache):
-        self.taches.append(tache)
+    def ajouter(self, schedulable):
+        print(schedulable)
+        self.taches.append(schedulable)
         self.redessiner()
-        if isinstance(tache, Task) and tache.statut != "Inconnu":
-            self.master.getDonneeCalendrier().addTask(tache)
+        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
+            self.master.getDonneeCalendrier().addTask(schedulable)
         self.frameInput.updatePossiblePeriods()
-    def supprimer(self, tache):
-        self.taches.remove(tache)
+    def supprimer(self, schedulable):
+        self.taches.remove(schedulable)
         self.redessiner()
-        if isinstance(tache, Task) and tache.statut != "Inconnu":
-            self.master.getDonneeCalendrier()#.removeTask(tache) # TODO
+        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
+            self.master.getDonneeCalendrier()#.removeTask(schedulable) # TODO
         self.frameInput.updatePossiblePeriods()
 
     def redessiner(self):
@@ -122,7 +125,7 @@ class TaskEditor(Frame):
         self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
         self.tree.configure(yscrollcommand = self.scrollbar.set)
 
-        # configuration des colones
+        # configuration des colonnes
         self.tree.column("#0", width = 0)
         self.tree.column(0,    width = 0)
         self.tree.heading("#0", text="Tâche", command = self.tri_alphabetique)

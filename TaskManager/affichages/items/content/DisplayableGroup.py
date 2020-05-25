@@ -9,9 +9,9 @@ class DisplayableGroup(AbstractItemContent):
     """
     Permet d'afficher un groupe.
     """
-    def __init__(self, master, schedulable, **kwargs):
+    def __init__(self, master, schedulable, part, **kwargs):
         # S'assurer que c'est bien un groupe :
-        if not isinstance(schedulable, Group):
+        if not isinstance(schedulable, Groupe):
             raise TypeError("Excpected Group, but got %s for %s"%(schedulable.__class__.__name__, schedulable))
 
         super().__init__(master, schedulable, **kwargs)
@@ -38,7 +38,8 @@ class DisplayableGroup(AbstractItemContent):
         self.pack_propagate(False)
         
         # Ajout des tâches à l'intérieur :
-        
+        # TODO
+        # Et filtrer selon la part.
 
 #        # La selection des taches
 #        self.__texte.bind("<Button-1>", self._clique)
@@ -46,3 +47,5 @@ class DisplayableGroup(AbstractItemContent):
     
     def __getDisplayColor(self):
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
+
+from schedulable.groupe.Groupe import *

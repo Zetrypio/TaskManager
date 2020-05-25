@@ -9,6 +9,8 @@ from .items.DatetimeItemPart import *
 
 from util.widgets.Dialog import *
 
+from schedulable.task.Task import *
+
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 
 class AbstractDisplayedCalendar(Frame):
@@ -184,25 +186,25 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def addTask(self, tache, region = None):
+    def addTask(self, schedulable, region = None):
         """
-      - Permet d'ajouter une tâche sur le panneau d'affichage.
+      - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
       - Méthode à redéfinir dans les sous-classes, en appelant
         la variante parent (celle de SuperCalendrier), car celle-ci
-        s'occuppe de mettre la tâche dans la liste et de demander la durée
+        s'occuppe de mettre le schedulable dans la liste et de demander la durée
         à l'utilisateur quand celle-ci n'est pas définie (càd: elle est de 0).
 
       - Cependant, la suite doit être redéfinie dans les sous-classes pour gérer
         l'affichage de la tâche.
 
-      - Et le plus important : la méthode doit renvoyer la tâche avec sa durée prédéfinie.
+      - Et le plus important : la méthode doit renvoyer le schedulable avec sa durée prédéfinie.
 
       - Dans les sous-classes, ça donne :
 
-        def addTask(self, tache, region = None):
-            '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if (tache := SuperCalendrier.addTask(self, tache, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
+        def addTask(self, schedulable, region = None):
+            '''Permet d'ajouter une schedulable, region correspond au début de la tâche si celle-ci n'en a pas.'''
+            if (schedulable := SuperCalendrier.addTask(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
                 return
 
             ####################
@@ -217,24 +219,24 @@ class AbstractDisplayedCalendar(Frame):
                 # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
-            return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+            return schedulable # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
         """
         if self.__class__ == AbstractDisplayedCalendar:
             raise NotImplementedError
-        if tache is None : return
-        self.listeTask.append(tache)
-        if region and tache.debut is None:
+        if schedulable is None : return
+        self.listeTask.append(schedulable)
+        if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
             # plusieurs fois.
-            tache = tache.copy()
-            tache.debut = region
-        if tache.getDuree() <= datetime.timedelta():
-            tache.setDuree(self.askDureeTache())
-            if not tache.getDuree():
+            schedulable = schedulable.copy()
+            schedulable.setDebut(region)
+        if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
+            schedulable.setDuree(self.askDureeTache())
+            if not schedulable.getDuree():
                 return None
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
-        return tache
+        return schedulable
 
     def askDureeTache(self):
         # Fonction quand on ferme le dialogue :

@@ -13,6 +13,8 @@ from util.Point import *
 from ..AbstractDisplayedCalendar import *
 from .TacheEnGantt import *
 
+from schedulable.groupe.Groupe import *
+
 class AffichageGantt(AbstractDisplayedCalendar):
     """
     Classe qui fait un affichage des tâches selon Gantt.
@@ -354,6 +356,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # Trie par début des taches
 
         for tache in self.listeTaskAffichees:
+            if isinstance(tache.task, Groupe):
+                continue
             ID_TACHE = self.listeTaskAffichees.index(tache)
 
             tache.updateColor() # fonction pour mettre à jour la couleur
