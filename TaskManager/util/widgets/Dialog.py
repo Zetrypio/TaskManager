@@ -48,12 +48,13 @@ class Dialog(Frame):
 
 
     def activate(self):
+        self.__bouton_appuyer = None
         self.parent.winfo_toplevel().attributes("-disabled", True)
         self.dialog.focus_set()
-        self.dialog.state("normal")
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
         self.centerscreenalways()
+        self.dialog.state("normal")
 
     def activateandwait(self):
         self.activate()

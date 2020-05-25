@@ -14,6 +14,7 @@ from affichages.periode.PeriodManager import *
 from task.TaskEditor import *
 
 from MenuBar import *
+from preferences.fenetre import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -47,6 +48,9 @@ class Application(Frame):
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
+
+        self.prefFen = FenetrePreferences(self)
+
     def nouveau(self):pass
     def setModeEditionPeriode(self, enEdition):
         self.calendar.setBarreOutilPeriode(enEdition)
@@ -58,6 +62,10 @@ class Application(Frame):
             self.taskEditor.filter(type = ("Tâche", "Tâche indépendante"))
             self.taskEditor.setEditionPeriode(False)
             pass
+
+    def preferences(self):
+        self.prefFen.activateandwait()
+
     def getPeriodManager(self):
         return self.periodManager
     def getPanneauActif(self):
