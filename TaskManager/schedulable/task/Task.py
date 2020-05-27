@@ -161,27 +161,31 @@ class Task(AbstractSchedulableObject):
         # Ici, on s'en fiche de la part.
         return DisplayableTask(frame, self)
 
+    def getRawRepartition(self, displayedCalendar):
+        return self.getRepartition(displayedCalendar)
+
     def getRepartition(self, displayedCalendar):
         if self.getDebut().date() == self.getFin().date():
             yield DatetimeItemPart(self.getDebut().date(),
                                    self.getDebut().time(),
-                                   self.getFin().time())
+                                   self.getFin().time(),
+                                   self)
         else:
             debutJour = datetime.time(0, 0, 0)
             finJour   = datetime.time(23, 59, 59)
-            
+
             date = self.getDebut().date()
             heure1 = self.getDebut().time()
             heure2 = finJour
-            
+
             while date < self.getFin().date():
-                yield DatetimeItemPart(date, heure1, heure2)
+                yield DatetimeItemPart(date, heure1, heure2, self)
                 heure1 = debutJour
                 date += datetime.timedelta(days = 1)
-            
+
             heure2 = self.getFin().time()
-            
-            yield DatetimeItemPart(date, heure1, heure2)
+
+            yield DatetimeItemPart(date, heure1, heure2, self)
 
     ""
     ##############
@@ -204,7 +208,7 @@ class Task(AbstractSchedulableObject):
             raise ValueError("Impossible de rajouter une tâche dans un conteneur, sachant qu'elle est déjà présente dans un autre conteneur")
         self.subtasks.append(task)
         task.__parent = self    # Possible, au vu que ce sont des objets de même type.
-    
+
     def removeSubTask(self, task):
         if not self.isContainer():
             raise ValueError("Impossible d'enlever une tâche d'une tâche non conteneur.")

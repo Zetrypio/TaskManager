@@ -156,6 +156,9 @@ class AbstractDisplayedCalendar(Frame):
         raise NotImplementedError
     def getPartSpan(self, part):
         raise NotImplementedError
+    
+    def getPartsOfDay(self, day):
+        raise NotImplementedError
 
     def getJourFin(self):
         return self.jourFin

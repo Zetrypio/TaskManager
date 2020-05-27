@@ -23,19 +23,22 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.frame.pack(expand = YES, fill = BOTH)
 
         self.updateAffichage()
+        
+        self.__parts = []
 
         # self.bind("<Configure>", lambda e : self.updateAffichage())
 
     def updateAffichage(self): # override
         # On détruit et recrée le Frame
         self.frame.destroy()
+        self.__parts = []
         self.frame = Frame(self)
         self.frame.pack(expand = YES, fill = BOTH)
         self.frame.bind("<Button-1>", self.mouseClicked, add = True)
         #self.frame.bind("<Escape>",  self.escapePressed)
 
         # On précalcule :
-#        self.__precalculer() # lol
+        self.__precalculer()
 
         # On affiche les trucs
         self.__afficherLesHeures()
@@ -47,6 +50,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
     def getPartSpan(self, part):
         return 1 # TODO
+    
+    def getPartsOfDay(self, day):
+        return (part for part in self.__parts if part.getJour() == day)
 
     def escapePressed(self, event):
         super().escapePressed(event)
@@ -76,7 +82,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         # TODO : A Changer :
         return jour + datetime.timedelta(hours = heure, minutes = minute)
-        
+
+    def __precalculer(self):
+        for displayable in self.listeDisplayableItem:
+            if isinstance(displayable, AbstractMultiFrameItem):
+                self.__parts.extend(displayable.getRepartition())
+
     def __afficherLesHeures(self):
         # On efface ceux déjà présent :
         self.listeLabelHeure = []

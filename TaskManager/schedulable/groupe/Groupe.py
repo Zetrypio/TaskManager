@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+from affichages.items.DatetimeItemPart import *
+
 from ..AbstractSchedulableObject import *
 
 class Groupe(AbstractSchedulableObject):
@@ -60,19 +62,25 @@ class Groupe(AbstractSchedulableObject):
     def createDisplayableInstance(self, frame, part):
         return DisplayableGroup(frame, self, part)
 
+    def getRawRerpartition(self, displayedCalendar):
+        for task in self.__listTasks:
+            yield from task.getRepartition(displayedCalendar)
+
     def getRepartition(self, displayedCalendar):
-        previous = None
-        for task in sorted(self.__listTasks, key=lambda t: t.getDebut()):
-            for part in task.getRepartition(displayedCalendar):
-                if previous is None:
-                    previous = part
-                elif self.__canPartsBeOne(displayedCalendar, previous, part):
-                    previous = DatetimeItemParts(previous.getJour(),
-                                                 previous.getHeureDebut(),
-                                                 part    .getHeureFin())
-                else:
-                    yield previous
-            yield part
+        parts = []
+        for task in self.__listTasks:
+            parts += task.getRepartition(displayedCalendar)
+        parts.sort(key = lambda p: p.getDebut())
+        i = 0
+        while i < len(parts)-1:
+            if self.__canPartsBeOne(displayedCalendar, parts[i], parts[i+1]):
+                parts[i:i+2] = [DatetimeItemPart(parts[i+0].getJour(),
+                                                 parts[i+0].getHeureDebut(),
+                                                 parts[i+1].getHeureFin(),
+                                                 self)]
+                i-=1
+            i += 1
+        yield from parts
 
     def __canPartsBeOne(self, displayedCalendar, partA, partB):
         """
@@ -80,8 +88,17 @@ class Groupe(AbstractSchedulableObject):
         connaissant le fait que si il y quelque chose entre les 2, ça ne
         peut pas se fusionner.
         """
-        # TODO
-        return False
+        if partA.getJour() != partB.getJour():
+            return False
+        if partA.getDebut() > partB.getDebut():
+            partA, partB = partB, partA
+        for part in displayedCalendar.getPartsOfDay(partA.getJour()):
+            if part.getSchedulable() is not self and part.getSchedulable() not in self.__listTasks:
+                if part.intersectWith(partA) or part.intersectWith(partB):
+                    return False
+                if part.getDebut() > partA.getFin() and part.getFin() < partB.getDebut():
+                    return False
+        return True
                     
 
     ""
