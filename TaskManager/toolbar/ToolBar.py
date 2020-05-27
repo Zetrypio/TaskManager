@@ -57,7 +57,7 @@ class ToolBar(Frame):
         # CADRE AVANCEMENT
         self._creationCategorie("Avancement") #cadre Avancement
         # création des boutons
-        self._creationBouton("Validation", self.master.avancementMannuel, getImage("Ressources/textures/par defaut/case à cocher parfaite.png"))
+        self._creationBouton("Validation", self.master.avancementMannuel, getImage("Ressources/textures/par defaut/case a cocher parfaite.png"))
         self._creationBouton("Jour fini", self.master.avancementJourFini, getImage("Ressources/textures/par defaut/avancement_Jour.png"))
         self._creationBouton("Normal", self.master.avancementNormal, getImage("Ressources/textures/par defaut/avancement normal.png"))
 

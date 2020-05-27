@@ -51,6 +51,8 @@ class Application(Frame):
 
         self.prefFen = FenetrePreferences(self)
 
+        self.bind_all("<Control-,>", lambda e=None:self.preferences())
+
     def nouveau(self):pass
     def setModeEditionPeriode(self, enEdition):
         self.calendar.setBarreOutilPeriode(enEdition)

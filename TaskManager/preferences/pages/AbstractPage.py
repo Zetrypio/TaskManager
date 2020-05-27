@@ -4,10 +4,10 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 class AbstractPage(Frame):
-    def __init__(self, master, nom, parent = "", **kwargs):
+    def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         super().__init__(master, **kwargs)
         self.nom = nom
-        self.parent = parent
+        self.iidParent = iid_parent
         self.iid = self.getParent()+"-"+self.getNom()
 
     def getNom(self):
@@ -15,7 +15,7 @@ class AbstractPage(Frame):
 
     def getParent(self):
         """ Retourne la page parente du treeview """
-        return self.parent
+        return self.iidParent
 
     def getIid(self):
         return self.iid

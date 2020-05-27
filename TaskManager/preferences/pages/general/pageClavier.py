@@ -3,14 +3,12 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
-from .AbstractPage import *
+from ..AbstractPage import *
 
-class PageGeneral(AbstractPage):
+class PageClavier(AbstractPage):
     def __init__(self, master, **kwargs):
-        super().__init__(master, nom = "General", **kwargs)
+        super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
 
 
         self.btn = Button(self, text="clickme")
         self.btn.pack(side=LEFT, expand = YES, fill = BOTH)
-
-

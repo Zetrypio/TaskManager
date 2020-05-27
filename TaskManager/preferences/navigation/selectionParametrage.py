@@ -9,18 +9,17 @@ class SelectionParametrage(Frame):
         # Note : self.master est une références vers NavigationZone
 
 
-        """## ZE treeview
+        ## ZE treeview
         self.tv = Treeview(self)
-        self.tv.pack(side = LEFT, fill = BOTH, expand = YES)
 
-        # avec la scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tv.yview)
-        self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
-        self.tv.configure(yscrollcommand = self.scrollbar.set)"""
 
 
 
-
+    def onclick(self, e):
+        # On récupère la cage qu'on a cliqué
+        iidPageSelectionne = self.tv.focus()
+        self.getFenetrePreferences().setPageActive(iidPageSelectionne)
 
     def getNavigationZone(self):
         return self.master
@@ -38,6 +37,7 @@ class SelectionParametrage(Frame):
 
         # On recrée tout
         self.tv = Treeview(self)
+        self.tv.bind("<ButtonRelease-1>", self.onclick)
         self.tv.pack(side = LEFT, fill = BOTH, expand = YES)
 
         # Avec la scrollbar
@@ -47,5 +47,4 @@ class SelectionParametrage(Frame):
 
         # Les lignes
         for page in self.getFenetrePreferences().getListePage():
-            print(page)
-            page.ajouteToiTreeview()
+            page.ajouteToiTreeview(self.tv)
