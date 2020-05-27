@@ -57,17 +57,22 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     def escapePressed(self, event):
         super().escapePressed(event)
     
-    def addTask(self, tache, region = None):
-        '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
-        # ":=  on attribut la variable en plus de tester la condition
-        if not (tache := super().addTask(tache, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
+    def addTask(self, schedulable, region = None):
+        """
+        Permet d'ajouter un objet planifiable à l'affichage dans le calendrier.
+        @param schedulable: l'objet à rajouter pour l'affichage.
+        @param region : correspond au début de l'objet planifiable si celle-ci n'en a pas.
+        @return la tâche qui à peut-être été changé pour des raisons d'affichage.
+        """
+        # :=  on attribut la variable en plus de tester la condition
+        if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
             return
         
-        self.listeDisplayableItem.append(ObjetClassique(self, tache))
+        self.listeDisplayableItem.append(ObjetClassique(self, schedulable))
 
         self.updateAffichage()
 
-        return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+        return schedulable # on revoie le schedulable avec éventuellement son début et sa duree. TRÈS IMPORTANT.
 
     def identify_region(self, x, y):
         # On regarde si c'est trop à gauche (sur les heures):
@@ -84,11 +89,18 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         return jour + datetime.timedelta(hours = heure, minutes = minute)
 
     def __precalculer(self):
+        """
+        Permet de préculculer les Parts non fusionnées
+        des tâches affichées dans ce calendrier.
+        """
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(displayable.getRepartition())
 
     def __afficherLesHeures(self):
+        """
+        Permet de mettre à jour les labels des heures.
+        """
         # On efface ceux déjà présent :
         self.listeLabelHeure = []
 
@@ -107,6 +119,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__adapteGrid()
     
     def __afficherLesJours(self):
+        """
+        Permet de mette à jour les labels des jours.
+        """
         self.listeLabelJour = []
         self.listeSeparateurJour = []
         
@@ -127,43 +142,20 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__adapteGrid()
 
     def __afficherLesTaches(self):
+        """
+        Permet de mettre à jour l'affichage des tâches.
+        """
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.frame)
 
-#        self.listeTaskAffichees = [] # Attribut de l'héritage je rappelle
-#        for task in self.listeTask:
-#            tache = TacheEnCalendrier(self.frame, task)
-#            self.listeTaskAffichees.append(tache)
-#            if tache.task.getDebut().date() >= self.getJourDebut() and tache.task.getDebut().date() <= self.getJourFin():
-#                # Calcul du début :
-#                debut = tache.task.getDebut().hour*60 + tache.task.getDebut().minute + 1
-#                ## Calcul du nombre de lignes :
-#                # Si c'est hors cadre ou pas sur le même jour
-#                if tache.task.getFin().time() <= self.getHeureDebut() or tache.task.getDebut().time() > self.getHeureFin() or tache.task.getDebut().date() != tache.task.getFin().date():
-#                    tache.task.setVisible(False)
-#                # Si ça dépasse : on restreint
-#                elif tache.task.getFin().time() > self.getHeureFin() and tache.task.getDebut().time() < self.getHeureFin():
-#                    enleve = datetime.datetime.combine(tache.task.getFin().date(), self.getHeureFin()) - tache.task.getFin()
-#                    duree = tache.task.getDuree() - enleve
-#                    duree = duree.total_seconds()//60%1440
-#                    tache.task.setVisible(True)
-#                # Si c'est seulement le début qui manque on adapte
-#                elif tache.task.getDebut().time() < self.getHeureDebut() and tache.task.getFin().time() > self.getHeureDebut():
-#                    debut = self.getHeureDebut().hour*60 + 1
-#
-#                    enleve = datetime.datetime.combine(tache.task.getDebut().date(), self.getHeureDebut()) - tache.task.getDebut()
-#                    duree = tache.task.getDuree() - enleve
-#                    duree = duree.total_seconds()//60%1440
-#                    tache.task.setVisible(True)
-#                else: # Si ça dépasse pas :
-#                    duree = tache.task.getDuree().total_seconds()//60%1440 # 1440 est le nombre de minutes dans un jour
-#                    tache.task.setVisible(True)
-#
-#                if tache.task.isVisible():
-#                    tache.grid(row = int(debut)-self.getHeureDebut().hour*60, rowspan = int(duree),
-#                           column = (tache.task.getDebut().date()-self.getJourDebut()).days*2+1, sticky = "nesw")
-
     def __adapteGrid(self):
+        """
+        Permet d'étirer les cases du grid, sauf la ligne d'entête des jours
+        et la colonne d'entête des heures.
+        
+        Cette méthode se doit d'être appelée une fois que tout est dessiné,
+        sinon ce qui serais rajouté après n'aurait pas forcément eu cet étirage des cases.
+        """
         # à mettre À LA FIN ! ! ! (pour les expands)
         for column in range(self.getNbJour()*2+1):
             if column%2 ==0:

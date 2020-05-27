@@ -230,17 +230,39 @@ class Task(AbstractSchedulableObject):
     # Dépendances : #
     #################
     def addDependance(self, task):
+        """
+        Permet d'ajouter une dépendance à cette tâche,
+        c'est-à-dire que notre tâche (self) dépendra de
+        cette nouvelle task.
+        @param task: la tâche dont celle-ci va dépendre.
+        """
         self.__dependances.append(task)
         task.__dependantes.append(self)
 
     def removeDependance(self, task):
+        """
+        Permet d'enlever une dépendance à cette tâche,
+        c'est-à-dire que notre tâche (self) dépendra de
+        cette nouvelle task.
+        @param task: la tâche dont celle-ci dépendait.
+        """
         self.__dependances.remove(task)
         task.__dependantes.remove(self)
 
     def getDependances(self):
+        """
+        Permet d'obtenir une copie de la liste des tâches
+        dont dépend cette tâche.
+        @return: une copie de cette liste.
+        """
         return self.__dependances[:]
 
     def getDependantes(self):
+        """
+        Permet d'obtenir une copie de la liste des tâches
+        dépendant de cette tâche.
+        @return une copie de la liste des tâches dépendantes.
+        """
         return self.__dependantes[:]
 
     ""
@@ -249,6 +271,11 @@ class Task(AbstractSchedulableObject):
     ###########################
 
     def getDebut(self):
+        """
+        Getter pour le début de la tâche.
+        @return un datetime.datetime() correspondant au début de cette tâche si elle en a un.
+        @return None si cette tâche n'a pas de début.
+        """
         return self.__debut + datetime.timedelta() if self.__debut is not None else None # Faire une copie et vérifier les trucs
 
     def setDebut(self, debut, change = "fin"):
@@ -269,9 +296,18 @@ class Task(AbstractSchedulableObject):
             raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
 
     def getDuree(self):
+        """
+        Getter poue la Durée de la tâche.
+        @return un datetime.timedelta() correspondant à la durée de la tâche.
+        """
         return self.__duree + datetime.timedelta() # Faire une copie
 
     def getFin(self):
+        """
+        Getter pour la fin de la tâche.
+        @return un datetime.datetime() correspondant à la fin de la tâche si il existe.
+        @return None si la tâche n'as pas de début (en vrai c'est qu'elle n'as pas de fin).
+        """
         return (self.__debut + self.__duree) if self.__debut is not None else None
 
     ""

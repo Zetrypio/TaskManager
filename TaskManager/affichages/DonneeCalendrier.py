@@ -7,8 +7,17 @@ from .periode.AffichageCalendrierPeriode import *
 from .AbstractDisplayedCalendar import *
 
 class DonneeCalendrier(AbstractDisplayedCalendar):
+    """
+    Classe contenant le panneau à onglet avec tout les
+    affichages des calendriers.
+    """
     def __init__(self, master = None, **kwargs):
-        AbstractDisplayedCalendar.__init__(self, master, **kwargs)
+        """
+        Constructeur de DonneeCalendrier.
+        @param master: master du tkinter.Frame que cet objet est.
+        @param **kwargs: configurations de l'affichage du tkinter.Frame que cet objet est.
+        """
+        super().__init__(master, **kwargs)
         # Note : self.master est référence vers ZoneAffichage.
 
         # Ceci est un panneau à onglet.
@@ -34,12 +43,22 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         self.jourSelectionnes = set()
 
     def clearJourSelectionnes(self):
+        """
+        Permet de déselectionner tout les jours.
+        """
         self.jourSelectionnes.clear()
 
     def addJourSelectionnes(self, jour):
+        """
+        Permet d'ajouter un jour à la liste de ceux sélectionnés.
+        @param jour: le datetime.date()? à sélectionner.
+        """
         self.jourSelectionnes.add(jour)
 
     def intervertir(self):
+        """
+        Permet d'intervertir les 2 jours exactement sélectionnés, affiche une erreur à l'utilisateur sinon.
+        """
         if len(self.jourSelectionnes) != 2 :
             showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
             return
@@ -72,64 +91,120 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         self.updateAffichage()
 
     def getParametreAffichage(self):
+        """
+        Getter pour le ParametreAffichage.
+        @return le ParametreAffichage.
+        """
         return self.master.getParametreAffichage()
 
     def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'Application.
+        """
         return self.master.getApplication()
 
+    def getDonneeCalendrier(self):
+        """
+        Il est important de redéfinir cette méthode car sinon
+        ça prend la variante parente qui n'est pas bonne.
+        @return self
+        """
+        return self
+
     def getZoneAffichage(self):
+        """
+        Getter pour la ZoneAffichage.
+        @return la ZoneAffichage.
+        """
         return self.master
 
     def panneauChange(self, e):
+        """
+        Méthode effectuée lors de l'événement d'un panneau qui à changé,
+        pour faire la configuration des barres d'outils ou autre.
+        @param e: Evenement non utilisé.
+        """
         p = self.getPanneauActif()
         p.doConfiguration(self.master.getParametreAffichage())
 
     def mouseClicked(self, event):
+        """
+        Méthode effectuée lors d'un clic.
+        Répercutée sur le panneau actif.
+        @param event: l'événement, envoyé au panneau actif.
+        """
         self.getPanneauActif().mouseClicked(event)
 
     def escapePressed(self, event):
-        """ On annule ce qu'on fait sur tous les panneux """
+        """
+        Méthode appelée lors de l'appuie de la touche Echappe.
+        On annule ce qu'on fait sur tous les panneux.
+        @param event: l'événement, possiblement utilisé par les panneaux.
+        """
         for panneau in self.listPanneau:
             panneau.escapePressed(event)
     
     def setHeureDebut(self, heure):
-        """Setter pour l'heure du début"""
+        """
+        Setter pour l'heure du début.
+        @param heure: datetime.time() de l'heure du début.
+        """
         for panneau in self.listPanneau:
             panneau.setHeureDebut(heure)
         super().setHeureDebut(heure)
 
     def setHeureFin(self, heure):
-        """Setter pour l'heure de la fin."""
+        """
+        Setter pour l'heure de la fin.
+        @param heure: datetime.time() de l'heure de la fin.
+        """
         for panneau in self.listPanneau:
             panneau.setHeureFin(heure)
         super().setHeureFin(heure)
 
     def setJourDebut(self, jour):
-        """Setter pour le jour du début."""
+        """
+        Setter pour le jour du début de l'affichage.
+        @param jour: datetime.date() du jour du début.
+        """
         for panneau in self.listPanneau:
             panneau.setJourDebut(jour)
         super().setJourDebut(jour)
 
     def setJourFin(self, jour):
-        """Setter pour le jour de fin."""
+        """
+        Setter pour le jour de fin de l'affichage.
+        @param jour: datetime.date() du jour de fin.
+        """
         for panneau in self.listPanneau:
             panneau.setJourFin(jour)
         super().setJourFin(jour)
 
     def setDureeJour(self, jour):
-        """Setter pour le nombre de jour."""
+        """
+        Setter pour le nombre de jour via timedelta.
+        @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
+        """
         for panneau in self.listPanneau:
             panneau.setDureeJour(jour)
         super().setDureeJour(jour)
 
     def setNbJour(self, jour):
-        """Setter pour le nombre de jour."""
+        """
+        Setter pour le nombre de jour via nombre entier.
+        @param jour: int correspondant au nombre de jours à afficher.
+        """
         for panneau in self.listPanneau:
             panneau.setNbJour(jour)
         super().setNbJour(jour)
 
     def setPeriodeActiveDebut(self, jour):
-        """Setter pour le jour du début de la période active."""
+        """
+        Setter pour le jour du début de la période active.
+        @param jour: datetime.date() correspondant au jour
+        du début de la période active à mettre.
+        """
 
         ### Option utile ou pas ?, à voir dans le préférences ?, faire ça seulement si on est au début ? ##
 
@@ -143,27 +218,44 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         self.getPeriodeActive().setDebut(jour)
 
     def setPeriodeActiveFin(self, jour):
-        """Setter pour le jour de fin de la période active."""
+        """
+        Setter pour le jour de fin de la période active.
+        @param jour: datetime.date() correspondant au jour
+        de fin de la période active à mettre.
+        """
         self.getPeriodeActive().setFin(jour)
         # Si le nouveau jour de fin de la période est avant, il faut changer le nouveau jour de fin
         if jour < self.getJourFin():
             self.setJourFin(jour)
     def getPanneauActif(self):
-        """Getter pour le panneau actif."""
+        """
+        Getter pour le panneau actif.
+        @return le panneau actif.
+        """
         # self.panneau.select() renvoie l'id du panneau actif
         # self.panneau.index() renvoie l'index d'un panneau selon son id
         # on peut donc utiliser notre liste avec cet index.
         return self.listPanneau[self.panneau.index(self.panneau.select())]
     
     def getToutLesPanneaux(self):
-        """Renvoie une copie de la liste de tout les panneaux."""
+        """
+        Renvoie une copie de la liste de tout les panneaux.
+        @return une copie de la liste de tout les panneaux.
+        """
         return self.listPanneau[:]
 
     def updateTaskColor(self):
+        """
+        Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
+        @deprecated: sera sûrement grandement modifiée dans le futur.
+        """
         for p in self.getToutLesPanneaux():
             p.updateTaskColor()
 
     def updateAffichage(self):
+        """
+        Permet de mettre à jour l'affichage.
+        """
         # Faire un parcour des panneaux pour pouvoir effectuer les changements
         # sur TOUTES les disposition de calendriers (gantt, calendrier classique etc)
         for panneau in self.listPanneau:
@@ -191,7 +283,12 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             self.master.zoneParametre.boutonApres.configure(state=NORMAL)
 
     def addTask(self, tache, region = None):
-        '''Permet d'ajouter une tâche, region correspond au début de la tâche si celle-ci n'en a pas.'''
+        """
+        Permet d'ajouter une tâche.
+        @param tache: la Task à mettre -> à changer en Schedulable.
+        @parma region: correspond au début de la tâche si celle-ci n'en a pas.
+        @deprecated: task va devenir un schedulable et le nom de la fonction va alors changer.
+        """
         tache = super().addTask(tache, region) # region est géré dans la variante parent : on ne s'en occupe plus ici.
 
         ####################

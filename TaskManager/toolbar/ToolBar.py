@@ -16,7 +16,12 @@ class ToolBar(Frame):
     catégories. Les commandes des boutons doivent présentes dans le master.
     """
     def __init__(self, master, **kwargs):
-        Frame.__init__(self, master, **kwargs)
+        """
+        Constructeur de la barre d'outil.
+        @param master: master du tkinter.Frame() que cet objet est.
+        @param **kwargs: Fonctionnalitées d'affichage du tkinter.Frame() que cet objet est.
+        """
+        super().__init__(master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
 
         self.lesCategories = [] # liste de cadre
@@ -25,6 +30,10 @@ class ToolBar(Frame):
         self._ajouterCategoriesEtBoutons()
         
     def _ajouterCategoriesEtBoutons(self):
+        """
+        Méthode pour ajouter tout les boutons de la barre d'outil.
+        Bon pour une redéfinition dans des sous-classes.
+        """
         # CADRE GESTION
         self._creationCategorie("Gestion") #cadre gestion
         # création des boutons
@@ -64,6 +73,7 @@ class ToolBar(Frame):
     def _creationCategorie(self, texte):
         """
         Permet de créer une catégorie.
+        L'ordre de création est important, car il est répercuté sur l'affichage.
         @param texte : le nom de la catégorie.
         """
         self.lesCategories.append(LabelFrame(self, text=texte))
@@ -76,6 +86,15 @@ class ToolBar(Frame):
         self.lesFramesDesBoutons.append([]) 
 
     def _creationBouton(self, texte, fonction = None, img = None, textVisible = False):
+        """
+        Permet de créer un bouton dans la dernière catégorie crée.
+        L'ordre de création est important, car il est répercuté sur l'affichage.
+        @param texte: Texte du bouton, quand textVisible = True ou que l'image manque.
+        Ce texte sera aussi utilisé pour l'infobulle. TODO : Mettre un message d'infobulle à part, custom ?
+        @param fonction = None: callback du bouton quand celui-ci est appuyé.
+        @param img = None: Image à mettre sur le bouton, ou None si celui-ci n'as pas d'image.
+        @param textVisible = False: True si on affiche toujours le texte, False sinon. 
+        """
         # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
         if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2: 
             self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))

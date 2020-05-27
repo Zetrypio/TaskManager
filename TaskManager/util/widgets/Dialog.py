@@ -8,12 +8,24 @@ from tkinter.messagebox import _show
 def noCommand(*_,**__):pass
 
 class Dialog(Frame):
-    """Boîte de dialogue usuelle"""
+    """
+    Boîte de dialogue usuelle.
+    """
     def __init__(self, master = None, title = 'Dialogue',
                  buttons = ('Ok', 'Appliquer', 'Annuler', 'Aide'),
                  defaultbutton = 'Ok',
                  command = noCommand,
                  exitButton = ('Ok', 'Annuler')):
+        """
+        Constructeur d'un dialogue.
+        @param master: parent du dialogue.
+        @param title: Titre de la fenêtre du dialogue.
+        @param buttons: Liste des textes à mettre sur les boutons à mettre.
+        @param defaultbutton: Le boutons par défaut.
+        @param command: la fonction à exécuter lors de l'appuie sur l'un des boutons.
+        @param exitButton: Liste des boutons qui vont automatiquement désactiver le dialogue
+        quand ils seront pressés. Désactivé ne veut pas dire détruit, simplement caché.
+        """
 
         #if master is None:
         #    master = _default_root = Tk()
@@ -48,6 +60,12 @@ class Dialog(Frame):
 
 
     def activate(self):
+        """
+        Permet d'activer le dialogue.
+        @bug: lors de la fermeture, ferme aussi la fenêtre
+        principale en sortant de la mainloop de tkinter.
+        Utilisez Dialog#activateandwait() à la place.
+        """
         self.parent.winfo_toplevel().attributes("-disabled", True)
         self.dialog.focus_set()
         self.dialog.state("normal")
@@ -56,12 +74,20 @@ class Dialog(Frame):
         self.centerscreenalways()
 
     def activateandwait(self):
+        """
+        Permet d'activer le dialogue et d'attendre sa sortie.
+        @return le bouton appuyé.
+        """
         self.activate()
         while self.__bouton_appuyer is None:
             self.mainloop()
         return self.__bouton_appuyer
 
     def deactivate(self):
+        """
+        Permet de fermer le dialogue sans le détruire.
+        Il est réactivable par la suite.
+        """
         self.parent.winfo_toplevel().attributes("-disabled", False)
         try:
             self.dialog.withdraw()
@@ -70,11 +96,22 @@ class Dialog(Frame):
         self.parent.winfo_toplevel().focus_set()
 
     def destroy(self):
+        """
+        Permet de détruire le dialogue entièrement,
+        il n'est plus réactivable par la suite.
+        """
         self.deactivate()
         Frame.destroy(self)
         self.dialog.destroy()
 
     def execute(self, button):
+        """
+        Méthode permettant de simuler l'appuie sur un bouton du dialogue.
+        Notez que les vrais boutons passent aussi par cette méthode,
+        ainsi que la croix de fermeture de fenêtre (alors avec le texte
+        "WM_DELETE_WINDOW").
+        @param button: le texte du bouton qui aurait été appuyé.
+        """
         self.__bouton_appuyer = button
         try:
             self.command(button)
@@ -89,9 +126,17 @@ class Dialog(Frame):
                 self.quit()
 
     def geometry(self, *a):
+        """
+        Permet de configurer la géométrie de la fenêtre du dialogue,
+        voir Toplevel#geometry() pour plus d'information.
+        """
         return self.dialog.geometry(*a)
 
     def centerscreenalways(self):
+        """
+        Permet de rencentrer la fenêtre du dialogue au
+        centre de l'écran dans tout les cas.
+        """
         xy = self.geometry().split("+")[0]
         x, y = xy.split("x")
         x = int(x)
@@ -105,8 +150,18 @@ class Dialog(Frame):
 
 
 def askString(master, nom, question):
+    """
+    Pose une question à l'utilisateur dans un dialogue,
+    il doit répondre dans un champ d'entrée.
+    @param master: master du dialogue.
+    @param nom: titre du dialogue.
+    @param question: question posée à l'utilisateur.
+    @note: Cela sert aussi d'exemple quant à l'utilisation
+    de la classe Dialog().
+    """
     # Créer l'espace du dialogue :
     dialogue = Dialog(master, nom, ("Ok", "Annuler"))
+    # Il y a des problèmes avec ces bindings...
     dialogue.bind_all("<Return>", lambda e: dialogue.execute("Ok"))
     dialogue.bind_all("<Escape>", lambda e: dialogue.execute("Annuler"))
 
@@ -125,6 +180,6 @@ def askString(master, nom, question):
 
 
 def askyesnowarning(title=None, message=None, **options):
-    "Ask a question with a warning; return true if the answer is yes"
+    "Ask a question with a warning; return true if the answer is yes."
     s = _show(title, message, WARNING, YESNO, **options)
     return s == YES

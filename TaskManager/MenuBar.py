@@ -4,9 +4,15 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 
 class MenuBar(Menu):
-    """Classe de la barre de menu"""
+    """
+    Classe de la barre de menus.
+    """
     def __init__(self, root, master):
-        """root est la fenêtre, master est l'Application."""
+        """
+        Constructeur de la barre de menus.
+        @param root: fenêtre sur laquelle mettre cette barre de menus.
+        @param master: l'Application du programme.
+        """
         Menu.__init__(self, master)
         root.configure(menu = self)
         # Menus Principaux :

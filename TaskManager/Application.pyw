@@ -38,8 +38,16 @@ style.map("Treeview",
 
 
 class Application(Frame):
+    """
+    Application Globale.
+    """
     def __init__(self, master = None, **kwargs):
-        Frame.__init__(self, master, **kwargs)
+        """
+        Constructeur de l'application.
+        @param master: master du tkinter.Frame() que cet objet est.
+        @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
+        """
+        super().__init__(master, **kwargs)
         self.winfo_toplevel().title("Gestionnaire de calendrier")
         self.menu = MenuBar(self.winfo_toplevel(), self)
         self.periodManager = PeriodManager(self)
@@ -47,8 +55,13 @@ class Application(Frame):
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
-    def nouveau(self):pass
+    def nouveau(self):pass # TODO
+
     def setModeEditionPeriode(self, enEdition):
+        """
+        Permet de switcher entre le mode période et le mode normal.
+        @param enEdition: True pour période, False sinon.
+        """
         self.calendar.setBarreOutilPeriode(enEdition)
         if enEdition:
             self.taskEditor.filter(type = ("Période", "Tâche indépendante"))
@@ -58,13 +71,33 @@ class Application(Frame):
             self.taskEditor.filter(type = ("Tâche", "Tâche indépendante"))
             self.taskEditor.setEditionPeriode(False)
             pass
+
     def getPeriodManager(self):
+        """
+        Permet d'obtenir le PeriodManager.
+        @return le periodeManager.
+        """
         return self.periodManager
+
     def getPanneauActif(self):
+        """
+        Permet d'obtenir le panneau actif dans les affichages de calendrier.
+        @return le panneau actif dans les affichages de calendrier.
+        """
         return self.calendar.getPanneauActif()
+
     def getDonneeCalendrier(self):
+        """
+        Permet d'obtenir le DonneeCalendrier.
+        @return le DonneeCalendrier.
+        """
         return self.calendar.getDonneeCalendrier()
+
     def getTaskEditor(self):
+        """
+        Permet d'obtenir le TaskEditor.
+        @return le TaskEditor.
+        """
         return self.taskEditor
 
 

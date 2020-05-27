@@ -82,11 +82,21 @@ class Groupe(AbstractSchedulableObject):
             i += 1
         yield from parts
 
+    ""
+    ####################
+    # Autre méthodes : #
+    ####################
+
     def __canPartsBeOne(self, displayedCalendar, partA, partB):
         """
         Permet de savoir si 2 DatetimeItemParts peuvent être une seule,
         connaissant le fait que si il y quelque chose entre les 2, ça ne
         peut pas se fusionner.
+        @param displayedCalendar: Permet d'avoir des informations pour savoir
+        la liste des parts déjà présentes.
+        @param partA: la première part à fusionner avec la deuxième.
+        @param partB: la deuxième part à fusionner avec la première.
+        @return True si les parts peuvent se fusionner, False sinon.
         """
         if partA.getJour() != partB.getJour():
             return False
@@ -98,13 +108,7 @@ class Groupe(AbstractSchedulableObject):
                     return False
                 if part.getDebut() > partA.getFin() and part.getFin() < partB.getDebut():
                     return False
-        return True
-                    
-
-    ""
-    ####################
-    # Autre méthodes : #
-    ####################
+        return True           
 
     def getGroupeManager(self):
         """
@@ -114,7 +118,10 @@ class Groupe(AbstractSchedulableObject):
         return self.groupeManager
 
     def setGroupeManager(self, groupeManager):
-        """ Setter du groupe Manager """
+        """
+        Setter du groupe Manager.
+        @param groupeManager: le GroupeManager à mettre.
+        """
         self.groupeManager = groupeManager
         self.setPeriode(groupeManager.getPeriode())
 
@@ -128,15 +135,25 @@ class Groupe(AbstractSchedulableObject):
         self.__groupeManager = periode.getGroupeManager()
 
     def getListTasks(self):
-        """ Getter des taches du groupe. """
+        """
+        Getter des tâches du groupe.
+        @return une copie de la liste des tâches de ce groupe.
+        """
         return self.listTasks[:]
 
     def addTask(self, task):
-        """ Ajoute une task à la liste du groupe """
+        """
+        Permet d'ajouter une tâche à la liste du groupe.
+        @param task: la tâche à ajouter à la liste.
+        """
         self.listTasks.add(task)
 
     def removeTask(self, task):
-        """ Retire une tache de la liste du groupe """
+        """
+        Permet de retirer une tâche de la liste du groupe.
+        @param task: la tâche à enlever de la liste.
+        """
         self.listTasks.remove(task)
 
+# L'import est à la fin pour éviter les soucis circulaires d'imports (un vrai cauchemar).
 from affichages.items.content.DisplayableGroup import *

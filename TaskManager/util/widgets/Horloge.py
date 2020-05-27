@@ -6,13 +6,33 @@ import time
 import math
 
 class Horloge(Canvas):
+    """
+    Widget avec une horloge.
+    """
     def __init__(self, master = None, number = True, width = 200, height = 200, **kwargs):
+        """
+        Constructeur de l'horloge.
+        Par défaut, l'horloge se met automatiquement à jour.
+        Utilisez la méthode Horloge#setAuto() pour le désactiver.
+        @param master: master du tkinter.Canvas() que ce widget est.
+        @param number: booléen. -> Affiche-t-on les nombres ?
+        @param width : largeur en pixel du widget.
+        @param height: hauteur en pixel du widget.
+        @param **kwargs: configurations d'affichage du tkinter.Canvas() que ce widget est.
+        """
         Canvas.__init__(self, master, width=width, height=height, **kwargs)
         self.number = number
         self.auto = True
         self.__after = None
         self.setnow()
     def set(self, heure, minute):
+        """
+        Permet de changer l'heure affichée sur l'horloge.
+        Notez que si elle est en automatique, elle sera remise
+        à jour à l'heure actuelle 1 seconde plus tard au maximum.
+        @param heure: l'heure à mettre, de 0 à 23.
+        @param minute: la minute à mettre, de 0 à 59.
+        """
         self.heure = heure
         self.minute = minute
         self.delete(ALL)
@@ -51,19 +71,32 @@ class Horloge(Canvas):
         self.create_line(x3, y3, x2, y2, width=2)
         self.create_oval(97, 97, 103, 103, fill="white")
     def setnow(self):
+        """
+        Permet de mettre l'heure actuelle sur l'horloge.
+        """
         self.set(time.localtime().tm_hour, time.localtime().tm_min)
         if self.auto:
             self.__after = self.after(1000, self.setnow)
     def setAuto(self, auto):
+        """
+        Permet d'activer ou désactiver l'automatisation de l'horloge.
+        @param auto: True si cela doit être automatique, False si cela doit être manuel.
+        """
         if auto:
             self.auto = True
             self.setnow()
         else:
             self.auto = False
-            self.after_cancel(self. __after)
+            if self.__after:
+                self.after_cancel(self.__after)
+                self.__after = None
 
 
 def main():
+    """
+    Exemple d'utilisation de l'horloge.
+    C'est comme un widget normal.
+    """
     hor = Horloge()
     hor.pack()
     hor.mainloop()

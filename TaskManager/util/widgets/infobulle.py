@@ -10,6 +10,10 @@ INFOBULLE = None
 
 
 def infobulle(event, text=""):
+    """
+    Permet d'afficher maintenant l'infobulle avec le texte désiré.
+    @param text: le texte de l'infobulle à mettre.
+    """
     global INFOBULLE
     if INFOBULLE is None:
         INFOBULLE = Toplevel()
@@ -32,6 +36,9 @@ def infobulle(event, text=""):
     except:pass
 
 def delete_infobulle():
+    """
+    Permet d'effacer l'infobulle affichée.
+    """
     global INFOBULLE
     try:
         INFOBULLE.destroy()
@@ -40,10 +47,22 @@ def delete_infobulle():
     INFOBULLE = None
 
 def ajouterInfoBulle(widget, text):
+    """
+    Permet de faire en sorte qu'une infobulle
+    apparaîsse automatiquement sur ce widget.
+    @param widget: le widget sur lequel mettre l'infobulle.
+    @param text: le texte de l'infobulle.
+    """
     widget.bind("<Enter>", lambda e: infobulle(e, text))
     widget.bind("<Leave>", lambda e: delete_infobulle())
 
 def ajouterInfoBulleTag(widget, tag, text):
+    """
+    Permet de mettre une infobulle sur un item d'un widget référencé par un tag.
+    @param widget: le widget concerné.
+    @param tag: le tag concerné.
+    @param text: le texte de l'infobulle.
+    """
     widget.tag_bind(tag, "<Enter>", lambda e: infobulle(e, text))
     widget.tag_bind(tag, "<Leave>", lambda e: delete_infobulle())
 
@@ -52,6 +71,12 @@ def ajouterInfoBulleTag(widget, tag, text):
 _info_infobulles = {}
 
 def ajouterInfoBulleTagCanvas(canvas, tag, text):
+    """
+    Permet de mettre une infobulle sur un item d'un canvas référencé par un tag.
+    @param canvas: le canvas concerné.
+    @param tag: le tag concerné.
+    @param text: le texte de l'infobulle.
+    """
     # Si le canvas n'a jamais été référencé auparavant :
     if not _isCanvasAdded(canvas):
         _addCanvas(canvas)
@@ -62,6 +87,12 @@ def ajouterInfoBulleTagCanvas(canvas, tag, text):
         _info_infobulles[canvas]["texteTags"][t] = text
 
 def ajouterInfoBulleItemCanvas(canvas, tag, text):
+    """
+    Permet de mettre une infobulle sur un item d'un canvas référencé par un id.
+    @param canvas: le canvas concerné.
+    @param tag: l'id de l'item concerné.
+    @param text: le texte de l'infobulle.
+    """
     # Si le canvas n'a jamais été référencé auparavant :
     if not _isCanvasAdded(canvas):
         _addCanvas(canvas)
@@ -69,25 +100,50 @@ def ajouterInfoBulleItemCanvas(canvas, tag, text):
     _info_infobulles[canvas]["texteItems"][tag] = text
 
 def _isCanvasAdded(canvas):
+    """
+    Permet de savoir si ce canvas est déjà pris en compte.
+    @param canvas: le canvas à tester.
+    """
     return canvas in _info_infobulles
 
 def _addCanvas(canvas):
+    """
+    Permet d'ajouter le canvas à la liste des canvas pris
+    en compte.
+    @param canvas: le canvas à rajouter.
+    """
     _info_infobulles[canvas] = {"texteItems" : {}, "texteTags":{}}
     canvas.bind("<Motion>", _bouge, add=True)
     canvas.bind("<Leave>", lambda e: delete_infobulle())
 
 # Pour le Scrolling :
 def _getYScrolling(canvas):
+    """
+    Permet d'obtenir de combien le canvas est scrollé en Y.
+    @param canvas: le canvas à tester.
+    """
     return int(round(canvas.yview()[0]*int(canvas.cget("scrollregion").split(" ")[3])))-2
     
 def _getXScrolling(canvas):
+    """
+    Permet d'obtenir de combien le canvas est scrollé en X.
+    @param canvas: le canvas à tester.
+    """
     return int(round(canvas.xview()[0]*int(canvas.cget("scrollregion").split(" ")[2])))
     
 def _getScrolledPosition(canvas, pos):
+    """
+    Permet d'obtenir la version correcte d'un point suivant
+    le scrolling du canvas.
+    @param canvas: le canvas en question.
+    """
     return Point(pos.x + _getXScrolling(canvas), pos.y + _getYScrolling(canvas))
 
 # Méthode quand la souris bouge : mettre à jour l'infobulle.
 def _bouge(event):
+    """
+    Méthode quand la souris bouge : mettre à jour l'infobulle.
+    """
     # On récupère le canvas
     canvas = event.widget
     # On corrige la position suivant le scrolling:

@@ -13,7 +13,16 @@ from toolbar.dialog.gestionJourDialog import *
 from .ZoneAffichage import *
 
 class CalendarZone(Frame):
+    """
+    Classe contenant la barre d'outil et la zone d'affichage.
+    """
     def __init__(self, master = None, periodeManager = None, **kwargs):
+        """
+        Constructeur de CalendarZone.
+        @param master: master du tkinter.Frame() que cet objet est.
+        @param periodeManager: le PeriodeManager pour la barre d'outil des périodes, conenue dans cet objet.
+        @param **kwargs: Les options d'affichages pour le tkinter.Frame() que cet objet est.
+        """
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est référence vers l'Application.
         
@@ -30,8 +39,18 @@ class CalendarZone(Frame):
         self.zoneDynamicCalendarFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
     def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'application.
+        """
         return self.master
+
     def setBarreOutilPeriode(self, value):
+        """
+        Permet de switcher entre la barre d'outil normale
+        et la barre d'outil des périodes.
+        @param value: True si c'est la barre d'outil des périodes, False sinon.
+        """
         self.__isBarrePeriode = value
         if value:
             self.outilBarPeriode.pack(side=TOP, fill=X, expand=NO)
@@ -39,13 +58,22 @@ class CalendarZone(Frame):
         else:
             self.outilBarPeriode.pack_forget()
             self.outilBar.pack(side=TOP, fill=X, expand=NO)
+
     def getBarreOutilActive(self):
+        """
+        Getter pour la barre d'outil des périodes active.
+        @return la barre d'outil des périodes active.
+        """
         if self.__isBarrePeriode:
             return self.outilBarPeriode
         else:
             return self.outilBar
 
     def ajouterHeure(self):
+        """
+        Méthode exécutée par la barre d'outil des périodes
+        quand l'utilisateur appuie sur le bouton pour rajouter des heures.
+        """
         min = self.getDonneeCalendrier().getHeureDebut()
         max = datetime.timedelta(hours=23) - datetime.timedelta(hours=self.getDonneeCalendrier().getHeureFin().hour)
         max2 = self.getDonneeCalendrier().getHeureFin()
@@ -69,6 +97,10 @@ class CalendarZone(Frame):
                 self.getDonneeCalendrier().setHeureFin(timeHeure)
 
     def ajouterJour(self):
+        """
+        Méthode exécutée par la barre d'outil des périodes
+        quand l'utilisateur appuie sur le bouton pour rajouter des jours.
+        """
         totalJour = self.getDonneeCalendrier().getLongueurPeriode().days-1
         nb, pos = askAjouterJour(totalJour)
         self.gestionJour(nb, pos)
@@ -93,13 +125,25 @@ class CalendarZone(Frame):
 
 
     def selectionnerJour(self):
-        pass
+        """
+        Méthode pour sélectioner les jours correspondants aux tâches sélectionées.
+        """
+        pass # TODO
     def afficherMasquerJour(self):
         pass
     def deplacerIntervertir(self):
+        """
+        Permet d'intervertir 2 jours exactement.
+        Ce sont ceux sélectionnés par l'utilisateur.
+        """
         self.getDonneeCalendrier().intervertir()
 
     def decalerJour(self):
+        """
+        Permet de décaler les tâches sélectionnées par l'utilisateur,
+        d'un certain nombre de jours, suivant ce que l'utilisateur souhaite.
+        Un message lui sera demandé si jamais cela dépasse de la période.
+        """
         # Si la liste est vide on évite la question
         if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
             return
@@ -171,7 +215,12 @@ class CalendarZone(Frame):
         self.getDonneeCalendrier().updateAffichage()
 
 
-    def decalerHeure(self): # TODO : gérer une tache de plusieurs jours (peut-être)
+    def decalerHeure(self): # TODO : gérer une tâche de plusieurs jours (peut-être)
+        """
+        Permet de décaler les tâches sélectionnées par l'utilisateur,
+        d'un certain nombre d'heures, suivant ce que l'utilisateur souhaite.
+        Un message lui sera demandé si jamais cela dépasse de la journée.
+        """
         # Si la liste est vide on évite la question
         if len(self.getDonneeCalendrier().getSelectedTask()) == 0:
             return
@@ -264,11 +313,18 @@ class CalendarZone(Frame):
         self.getDonneeCalendrier().updateAffichage()
 
     def grouper(self):
-        pass
+        """
+        Permet de grouper les tâches.
+        """
+        pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
     def degrouper(self):
-        pass
+        """
+        Permet de dégrouper un groupe.
+        """
+        pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
 
     def avancementMannuel(self):
+        # XXX : Je comprend pas pourquoi !
         for tache in self.getDonneeCalendrier().getSelectedTask():
             tache.reverseStateValide()
 
@@ -285,19 +341,59 @@ class CalendarZone(Frame):
         for tache in self.getDonneeCalendrier().listeTask:
             tache.updateStatut()
 
+    "" # Pour le repli de code je rappelle
+
+    ###################
+    # Autre Getters : #
+    ###################
+
     def getPanneauActif(self):
+        """
+        Getter pour le panneau actif dans DonneeCalendrier.
+        @return le panneau actif dans DonneeCalendrier.
+        """
         return self.getZoneAffichage().getPanneauActif()
+
     def getDonneeCalendrier(self):
+        """
+        Getter pour le DonneeCalendrier.
+        @return le DonneeCalendrier.
+        """
         return self.getZoneAffichage().getDonneeCalendrier()
     
     def getPeriodeActive(self):
-        """ Getter de la periode active """
+        """
+        Getter de la periode active.
+        @return la période active.
+        """
         return self.getDonneeCalendrier().getPeriodeActive()
-    # Pour la barre d'outil des périodes :
+    
+
+    def getParametreAffichage(self):
+        """
+        Getter pour les ParametreAffichage.
+        @return le ParametreAffichage.
+        """
+        return self.getZoneAffichage().getParametreAffichage()
+
+    def getZoneAffichage(self):
+        """
+        Getter pour la ZoneAffichage.
+        @return la ZoneAffichage.
+        """
+        return self.zoneDynamicCalendarFrame
+
+    ""
+    ########################################
+    # Pour la barre d'outil des périodes : #
+    ########################################
+
     def voirTacheDansVue(self):
         pass
+
     def supprimerTache(self):
         pass
+
     def getFirstAndLast(self):
         """
         Getter parmi les taches sélectionnés
@@ -305,6 +401,7 @@ class CalendarZone(Frame):
         @return first : (Task) tache qui fini le plus tot
         @return last  : (Task) tache qui commence le plus tard
         """
+        # XXX : Est-ce vraiment utile ?
         first = None # Contient la tache qui finit    le plus tot
         last  = None # Contient la tache qui commence le plus tard
         for tache in self.getDonneeCalendrier().getSelectedTask():
@@ -313,8 +410,3 @@ class CalendarZone(Frame):
             if last is None or last.getDebut() < tache.getDebut():
                 last = tache
         return first, last
-
-    def getParametreAffichage(self):
-        return self.getZoneAffichage().getParametreAffichage()
-    def getZoneAffichage(self):
-        return self.zoneDynamicCalendarFrame

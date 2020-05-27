@@ -2,9 +2,20 @@
 from .ToolBar import *
 
 class PeriodToolBar(ToolBar):
+    """
+    Classe pour la barre d'outil des périodes.
+    """
     def __init__(self, master, periodeManager, **kwargs):
+        """
+        Constructeur de la barred d'outil des périodes.
+        @param master: master du tkinter.Frame() que cet objet est.
+        @param periodeManager: le gestionnaire de périodes nécéssaire
+        pour les activations de certains boutons.
+        @param **kwargs: Fonctionnalitées d'affichage du tkinter.Frame() que cet objet est.
+        """
         self.periodeManager = periodeManager
         super().__init__(master, **kwargs)
+
     def _ajouterCategoriesEtBoutons(self):
         # CADRE Gestion des périodes
         self._creationCategorie("Gestion des périodes")

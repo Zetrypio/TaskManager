@@ -10,6 +10,13 @@ class DisplayableGroup(AbstractItemContent):
     Permet d'afficher un groupe.
     """
     def __init__(self, master, schedulable, part, **kwargs):
+        """
+        Constructeur de l'affichage d'un groupe.
+        @param master: master du tkinter.Frame que cet objet est.
+        @param schedulable: le groupe à gérer.
+        @param part: la partie d'affichage géré par cet objet.
+        @param **kwargs: les options d'affichage du tkinter.Frame que cet objet est.
+        """
         # S'assurer que c'est bien un groupe :
         if not isinstance(schedulable, Groupe):
             raise TypeError("Excpected Group, but got %s for %s"%(schedulable.__class__.__name__, schedulable))
@@ -46,6 +53,10 @@ class DisplayableGroup(AbstractItemContent):
 #        self.__texte.bind("<Control-Button-1>", self.multiSelection)
     
     def __getDisplayColor(self):
+        """
+        Getter pour savoir la véritable couleur d'affichage,
+        suivant que le groupe soit sélectionné ou non.
+        """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
 
 from schedulable.groupe.Groupe import *

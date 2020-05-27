@@ -71,6 +71,7 @@ class AbstractMultiFrameItem(IDisplayableItem):
     def getPartSpan(self, part):
         """
         Permet de savoir sur combien se répartie le DatetimeItemPart.
+        @return le nombre de sur combien se répartie le DatetimeItemPart.
         """
         return self.master.getPartSpan(part)
 

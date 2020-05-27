@@ -1,4 +1,4 @@
-# *-* coding:utf-8 *-*
+# -*- coding:utf-8 -*-
 import sys, os
 try:
     from PIL import Image, ImageTk
@@ -33,10 +33,10 @@ except:
 
 IMAGES = {} # dictionnaire des images charg�es (mieux vaut utiliser la fonction getImage())
 def getImage(imageName):
-#    """
-#    Manière sécurisé d'obtenir les images sans problèmes
-#    (on ne doit pas charger 2 fois la même image)
-#    """
+    """
+    Manière sécurisé d'obtenir les images sans problèmes
+    (on ne doit pas charger 2 fois la même image).
+    """
     if not imageName in IMAGES:
         IMAGES[imageName] = ImageTk.PhotoImage(Image.open(imageName))
     return IMAGES[imageName]

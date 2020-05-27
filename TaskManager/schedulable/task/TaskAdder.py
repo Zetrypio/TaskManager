@@ -11,12 +11,15 @@ from .dialog.datetimeDialog import *
 from .Task import *
 
 class TaskAdder(Frame):
-    """Classe permettant d'ajouter des tâches (widget de gauche de l'Application)."""
+    """
+    Classe permettant d'ajouter des tâches (widget de gauche de l'Application).
+    """
     def __init__(self, master = None, menubar = None, **kwargs):
         """
-        master : TaskEditor.
-        menubar : MenuBar.
-        **kwargs : options de configuration du Frame, voir Frame.config() et Frame.keys()
+        Constructeur du TaskAdder.
+        @param master : TaskEditor.
+        @param menubar : MenuBar.
+        @param **kwargs : options de configuration du Frame, voir Frame.config() et Frame.keys()
         """
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers TaskEditor
@@ -86,10 +89,16 @@ class TaskAdder(Frame):
         self.champDescription .grid(row = 4, column = 0, columnspan = 8, sticky ="ew")
 
     def askcolor(self):
+        """
+        Permet de demander une couleur à l'utilisateur.
+        """
         self.color = askcolor()[1]
         self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
+        """
+        Permet de demander le début de la tâche à l'utilisateur.
+        """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
@@ -101,6 +110,9 @@ class TaskAdder(Frame):
         self.updatePossiblePeriods()
 
     def askDateFin(self):
+        """
+        Permet de demander la fin de la tâche à l'utilisateur.
+        """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
@@ -113,28 +125,49 @@ class TaskAdder(Frame):
         self.updatePossiblePeriods()
 
     def getDebut(self):
+        """
+        Permet d'obtenir le début déjà choisi par l'utilisateur.
+        @return le début de la tâche à créer.
+        """
         return (self.debut + datetime.timedelta()) if self.debut is not None else None
 
     def getDuree(self):
+        """
+        Permet d'obtenir la durée calculée selon le début et la fin.
+        @return la durée de la tâche à créer.
+        """
         ecart = self.fin - (self.debut if self.debut is not None else self.fin)
         return ecart
 
     def getFin(self):
+        """
+        Permet d'obtenir la fin déjà choisie par l'utilisateur.
+        @return la fin de la tâche à créer.
+        """
         return (self.fin + datetime.timedelta()) if self.fin is not None else None
 
     def autoSetDuree(self):
+        """
+        Permet de mettre à jour les widets de durée de tâche.
+        """
         ecart = self.getDuree()
         self.champJour.set(ecart.days)
         self.champHeure.set(ecart.seconds//3600)
         self.champMinute.set(ecart.seconds//60%60)
 
     def getRepetitionTime(self):
+        """
+        Permet d'obtenir les informations de répétition.
+        @return val, unit : val est tout les combiens d'unit on répète.
+        """
         unit = self.champUniteeRepet.get()
         val = int(self.champRepetition.get())
         return val, unit
 
     def updatePossiblePeriods(self):
-        """Méthode à appeler dès que les périodes possibles changent."""
+        """
+        Méthode à appeler dès que les périodes possibles changent.
+        """
         periodes = self.getApplication().getPeriodManager().getPeriodes()
         print(periodes)
         # Trouver les périodes présentes dans la plage sélectionnée :
@@ -153,6 +186,10 @@ class TaskAdder(Frame):
             self.champPeriode.set("(Aucune)")
 
     def valider(self):
+        """
+        Méthode quand on valide la création d'une tâche.
+        @return la nouvelle tâche juste créée.
+        """
         nom = self.champNom.get()
         debut = self.getDebut()
         duree = self.getDuree()
@@ -167,4 +204,8 @@ class TaskAdder(Frame):
         self.master.ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
 
     def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'Application.
+        """
         return self.master.getApplication()

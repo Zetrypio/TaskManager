@@ -10,6 +10,17 @@ __INSTANCE = None
 class __TaskInDnd(Toplevel):
     """Cette classe correspond à une tâche en mouvement."""
     def __init__(self, pos, master, task, command, **kwargs):
+        """
+        Constructeur d'une tâche en Drag&Drop.
+        À noter que c'est une Singleton.
+        @param pos: Position de la tâche initiale.
+        @param master: master du tkinter.Toplevel() que cet objet est.
+        @param task: la tâche Drag&Dropée.
+        @param command: fonction à exécuter en tant que callback quand
+        le drag&drop est fini.
+        @param **kwargs: fonctionnalitées d'affichages pour le tkinter.Toplevel()
+        que cet objet est.
+        """
         # Note : On utilise une fenêtre dépendente (Toplevel) car c'est un truc
         # qui doit pouvoir se déplacer indépendamment de toute chose.
         Toplevel.__init__(self, master, **kwargs)
@@ -49,7 +60,9 @@ class __TaskInDnd(Toplevel):
         self.after(10, self.__move)
         self.__dnd() # Résoudre les coordonées d'affichages
     def __fondudebut(self):
-        """Méthode pour faire un petit fondu au début."""
+        """
+        Méthode pour faire un petit fondu au début.
+        """
         self.__alpha += 0.05
         self.attributes("-alpha", self.__alpha)
         if self.__alpha < 1: # si on a pas fini, on continue :
@@ -57,7 +70,9 @@ class __TaskInDnd(Toplevel):
         else: # sinon on indique qu'on a fini :
             self.__commence = True
     def __dnd(self, event = None):
-        """Méthode pour bouger l'ensemble."""
+        """
+        Méthode pour bouger l'ensemble.
+        """
         if not self.__fin:
             try: # il peut y avoir des exceptions avec la fermeture etc.
                 # On extrait la géométrie actuelle
@@ -80,6 +95,10 @@ class __TaskInDnd(Toplevel):
             except:
                 pass
     def __move(self):
+        """
+        Méthode pour bouger fluidement,
+        vers la souris, tant que faire se peut.
+        """
         try:
             # On extrait la géométrie actuelle
             dim, x, y = self.geometry().split("+") 
@@ -97,7 +116,9 @@ class __TaskInDnd(Toplevel):
             self._report_exception()
 
     def __end(self, event = None):
-        """Méthode pour terminer le drag&drop."""
+        """
+        Méthode pour terminer le drag&drop.
+        """
         if self.__commence and self.__fin == False: # on ne peut disparaître seulement si on est complètement commencé (=apparu)
             self.__fin = True
             self.unbind_all(self.__b1)
@@ -136,6 +157,13 @@ def TaskInDnd(pos, master, task, **kwargs):
     """
     Cette classe correspond à une tâche en mouvement.
     Elle est Singleton.
+    @param pos: Position de la tâche initiale.
+    @param master: master du tkinter.Toplevel() que cet objet est.
+    @param task: la tâche Drag&Dropée.
+    @param command: fonction à exécuter en tant que callback quand
+    le drag&drop est fini.
+    @param **kwargs: fonctionnalitées d'affichages pour le tkinter.Toplevel()
+    que cet objet est.
     """
     global __INSTANCE
     if __INSTANCE != None:

@@ -7,6 +7,9 @@ class IDisplayableItem:
     les affichages comme calendrier classique ou gantt par exemple.
     """
     def __init__(self):
+        """
+        Constructeur interdisant l'instanciation direct de IDisplayableItem.
+        """
         if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
     
     def redraw(self, frameOrCanvas):

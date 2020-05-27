@@ -1,6 +1,15 @@
 # -*- coding:utf-8 -*-
 
 class ITaskEditorDisplayableObject:
+    """
+    Cette interface liste les méthode qu'il est nécéssaire
+    d'implémenter pour les objets s'affichant dans le
+    Treeview du TaskEditor. (Qui en vrai gère plus que de
+    simple tâches - groupes ou périodes sont les exemples).
+    Ces méthodes permettent de choisir ce qui est affiché
+    dans ce Treeview, ainsi que le menu quand on fait
+    clic-droit dessus.
+    """
     def __init__(self):
         if self.__class__ == TaskEditorDisplayableObject:
             raise RuntimeError("Impossible d'instancier l'interface ITaskEditorDisplayableObject directement")

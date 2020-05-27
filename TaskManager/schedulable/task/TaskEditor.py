@@ -20,8 +20,10 @@ class TaskEditor(Frame):
     """
     def __init__(self, master, menubar, periodManager):
         """
+        Constructeur du TaskEditor.
         @param master : Référence vers le widget sur lequel on veut le placer.
         @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
+        @param periodManager: Gestionnaire de périodes, pour l'ajouteur de période.
         """
         Frame.__init__(self, master, bg="red")
         # Note : master est une référence vers Application
@@ -77,6 +79,8 @@ class TaskEditor(Frame):
     def filter(self, **filtre):
         """
         Méthode pour rajouter un filtre.
+        @param **filtre: Filtre à mettre.
+        Voir dans les objets filtrés (ITaskEditorDisplayableObject#getFilterState()) pour plus d'info.
         """
         for k in filtre:
             k = k.lower()
@@ -88,6 +92,11 @@ class TaskEditor(Frame):
         self.redessiner()
     
     def __chercher(self, text):
+        """
+        Méthode pour rechercher un texte
+        (normalement via la barre de recherche).
+        @param text: Le texte cherché.
+        """
         text = text.lower().strip()
         self.filter(name = text)
         if text:
@@ -97,13 +106,22 @@ class TaskEditor(Frame):
         self.barreRecherche.config(values = list(self.__dernieresRecherches))
         
     def ajouter(self, schedulable):
+        """
+        Permet d'ajouter un objet planifiable à la liste.
+        @param schedulable: l'objet à rajouter.
+        """
         print(schedulable)
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             self.master.getDonneeCalendrier().addTask(schedulable)
         self.frameInput.updatePossiblePeriods()
+
     def supprimer(self, schedulable):
+        """
+        Permet de supprimer un objet planifiable de la liste.
+        @param schedulable: l'objet à enlever.
+        """
         self.taches.remove(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
@@ -111,6 +129,9 @@ class TaskEditor(Frame):
         self.frameInput.updatePossiblePeriods()
 
     def redessiner(self):
+        """
+        Méthode pour mettre à jour l'affichage du Treeview.
+        """
         # On efface tout :
         self.tree.destroy()
         self.scrollbar.destroy()
@@ -215,6 +236,8 @@ class TaskEditor(Frame):
     
     def __filterStateOf(self, t):
         """
+        Permet de savoir l'état de filtrage d'une tâche.
+        @deprecated: Je crois même que ce n'est plus utilisé du tout.
         @return  1 Si la tâche est acceptée par le filtre et qu'elle doit être prioritaire.
         @return  0 Si la tâche est acceptée par le filtre sans être prioritaire.
         @return -1 Si la tâche n'est pas accetpée par le filtre.
@@ -230,15 +253,36 @@ class TaskEditor(Frame):
         return -1
 
     def __mouseReleased(self, event):
+        """
+        Méthode pour dire que la souris n'est plus pressée.
+        @param event: non utilisé.
+        """
         self.mousepress = False
+
     def __mousePressedBefore(self, event):
+        """
+        Méthode pour quand on sélectionne un truc dans le treeview,
+        juste avant qu'il soit réellement sélectionné.
+        @param event: infos sur l'évement de sélection.
+        """
         self.mousepress = True
         for elem in self.tree.selection():
             self.tree.selection_remove(elem)
         self.after(10, self.__mousePressed, event)
+
     def __mousePressed(self, event):
+        """
+        Méthode qui ne fait rien.
+        @param event: non utilisé.
+        """
         pass
+
     def __mouseDragged(self, event):
+        """
+        Méthode pour commencer le Drag&Drop d'une tâche.
+        @param event: Evenement pour positionner la tâche
+        en Drag&Drop suivant la position de la souris.
+        """
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
@@ -254,6 +298,9 @@ class TaskEditor(Frame):
         """
         Cette méthode doit trouver en fonction des coordonnées x et y par rapport à l'écran,
         où mettre la tâche reçue en argument.
+        @param tache: la tâche dont on doit trouver la position.
+        @param x: La position en X demandée.
+        @param y: La position en Y demandée.
         """
         panneau = self.master.getPanneauActif()
         x -= panneau.winfo_rootx() # transformer les coordonnées pour qu'elles soient relatives au panneau.
@@ -276,6 +323,13 @@ class TaskEditor(Frame):
                 self.redessiner()
     
     def __askHeureExacte(self, region):
+        """
+        Permet de faire un dialogue à l'utilisateur
+        lui demandant de confirmer l'heure exacte à laquelle
+        la tâche rajoutée via Drag&Drop doit-être rajoutée.
+        @param region: L'heure auapravant calculée.
+        @return la nouvelle heure calculée.
+        """
         heure1 = region.hour
         minute1 = region.minute
         def onClose(bouton):
@@ -327,8 +381,16 @@ class TaskEditor(Frame):
         return region
 
     def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'Application.
+        """
         return self.master
     def tri_alphabetique(self):
+        """
+        Méthode pour aller sur le prochain
+        mode de tri alphabétique.
+        """
         if self.MODE_TRI == "Alpha":
             self.MODE_TRI = "Alpha_reverse"
         else:
@@ -336,6 +398,10 @@ class TaskEditor(Frame):
         self.taches.sort(key=lambda t: t.nom, reverse=self.MODE_TRI=="Alpha_reverse")
         self.redessiner()
     def tri_statut(self):
+        """
+        Méthode pour aller sur le prochain
+        mode de tri selon les statuts.
+        """
         if self.MODE_TRI == "Statut_importance":
             self.MODE_TRI = "Statut_prochain"
             self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
