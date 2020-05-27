@@ -48,3 +48,6 @@ class SelectionParametrage(Frame):
         # Les lignes
         for page in self.getFenetrePreferences().getListePage():
             page.ajouteToiTreeview(self.tv)
+
+    def getApplication(self):
+        return self.master.getApplication()

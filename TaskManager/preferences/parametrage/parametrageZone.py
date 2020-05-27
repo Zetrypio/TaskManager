@@ -13,3 +13,6 @@ class ParametrageZone(Frame):
 
     def getFenetrePreferences(self):
         return self.master
+
+    def getApplication(self):
+        return self.master.getApplication()

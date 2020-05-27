@@ -13,8 +13,8 @@ class TacheEnGantt(AbstractDisplayedTask):
         # Note : self.master est une référence vers AffichageGantt
         self.jeCherche = False
         
-#        self.bind("<Button-1>", self.__clique)       # On bind la frame
-#        self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
+        #self.bind("<Button-1>", self.__clique)       # On bind la frame
+        #self.texte.bind("<Button-1>", self.__clique) # On bind le Text qui remplie tout la Frame
         self.ID_PLUS = None
 
         # RMenu
@@ -152,10 +152,10 @@ class TacheEnGantt(AbstractDisplayedTask):
         else:
             y1=(self.getPosGrille()[-1]+0.5)*self.master.TAILLE_LIGNE+self.master.TAILLE_BANDEAU_JOUR
             # TODO : le x1 n'est pas détecté car soucis de datetime
-#             Si on est après la période affiché
+             #Si on est après la période affiché
             if self.task.debut.date() > self.master.getJourFin() - datetime.timedelta(days=1):
                 x1 = self.master.can.winfo_width()+10 # On se place en dehors du cote droit
-#             Si on est avant le début
+             #Si on est avant le début
             elif self.task.debut.date() < self.master.getJourDebut():
                 x1 = -10 # On se place en dehors du cote gauche
             # Si c'est juste le plus qui n'est plus affiché car il y a déjà un lien existant

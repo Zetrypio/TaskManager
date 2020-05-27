@@ -15,6 +15,7 @@ from task.TaskEditor import *
 
 from MenuBar import *
 from preferences.fenetre import *
+from util.data import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -50,6 +51,7 @@ class Application(Frame):
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
         self.prefFen = FenetrePreferences(self)
+        self.__data = Data()
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
 
@@ -76,6 +78,10 @@ class Application(Frame):
         return self.calendar.getDonneeCalendrier()
     def getTaskEditor(self):
         return self.taskEditor
+
+    def getData(self):
+        """ Retourne le Gestionnaire des données """
+        return self.__data
 
 
 

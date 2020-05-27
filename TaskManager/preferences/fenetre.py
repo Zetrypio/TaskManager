@@ -61,9 +61,12 @@ class FenetrePreferences(Dialog):
     def updateTreeview(self):
         self.getNavigationZone().updateTreeview()
 
-    def valider(self, txtBtn):pass
+    def valider(self, txtBtn):
+        if txtBtn == "Appliquer" or txtBtn == "Ok":
+            for page in self.getListePage():
+                page.appliqueEffet(self.getApplication())
 
-    def getApp(self):
+    def getApplication(self):
         return self.app
 
     def getPageActive(self):

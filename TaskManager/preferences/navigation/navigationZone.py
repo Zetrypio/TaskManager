@@ -14,7 +14,8 @@ class NavigationZone(Frame):
         self.selectionParamatrage = SelectionParametrage(self)
         self.selectionParamatrage.pack(side = LEFT, expand = YES, fill = BOTH)
 
-
+    def getApplication(self):
+        return self.master.getApplication()
 
     def getFenetrePreferences(self):
         return self.master
