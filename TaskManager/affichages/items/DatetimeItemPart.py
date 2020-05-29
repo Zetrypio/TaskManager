@@ -21,6 +21,14 @@ class DatetimeItemPart:
         self.__heureFin    = heureFin
         self.__jour        = jour
         self.__schedulable = schedulable
+
+    def __eq__(self, other):
+        if isinstance(other, DatetimeItemPart):
+            return (self.__heureDebut  == other.__heureDebut
+                and self.__heureFin    == other.__heureFin
+                and self.__jour        == other.__jour
+                and self.__schedulable == other.__schedulable)
+        return NotImplemented
     
     def getDebut(self):
         """

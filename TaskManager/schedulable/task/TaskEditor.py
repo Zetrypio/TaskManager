@@ -110,7 +110,7 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-        print(schedulable)
+#        print(schedulable)
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
@@ -287,11 +287,11 @@ class TaskEditor(Frame):
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
             for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-                print(i)
-                print(self.tree.item(i))
+#                print(i)
+#                print(self.tree.item(i))
                 for t in self.taches:
                     if isinstance(t, Task) and t.statut == "Inconnu":
-                        print(i)
+#                        print(i)
                         if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
     def __trouverPositionTache(self, tache, x, y):
