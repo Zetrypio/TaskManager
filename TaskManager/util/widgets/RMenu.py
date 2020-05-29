@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
@@ -10,11 +11,11 @@ class RMenu(Menu):
         """
         Constructeur du RMenu.
         @param master: master du tkinter.Menu() que cet widget est.
-        @param andInside: binder sur tout les widgets trouvés dedans de manière récursive ?
-        @param biner: le widget binder avec la méthode bind. Si None : master sera utilisé.
+        @param andInside: binder sur tout les widgets trouvÃ©s dedans de maniÃ¨re rÃ©cursive ?
+        @param biner: le widget binder avec la mÃ©thode bind. Si None : master sera utilisÃ©.
         @param bindWithId: permet de bind seulement un id ou tag d'un item d'un widget si celui-ci
         les supporte. Si sur None, bind sur le widget tout entier.
-        @param **args: Paramètre supplémentaire pour le tkinter.Menu() que ce widget est.
+        @param **args: ParamÃ¨tre supplÃ©mentaire pour le tkinter.Menu() que ce widget est.
         """
         try:del args["tearoff"]
         except:pass
@@ -33,8 +34,8 @@ class RMenu(Menu):
 
     def __bind_inside_of(self, widget):
         """
-        Permet de binder récursivement sur tout les widgets trouvés
-        à l'intérieur de celui passé en arguement.
+        Permet de binder rÃ©cursivement sur tout les widgets trouvÃ©s
+        Ã€ l'intÃ©rieur de celui passÃ© en arguement.
         @param widget: le widget en question.
         """
         widget.bind("<Button-3>", self.right_menu_event)
@@ -47,17 +48,17 @@ class RMenu(Menu):
 
     def right_menu_event(self, event):
         """
-        Méthode exécutée lors d'un clic-droit.
-        Sert à ouvrir le menu à la position de la
-        souris trouvée dans le
-        @param event: événement avec la position de la souris.
+        MÃ©thode exÃ©cutÃ©e lors d'un clic-droit.
+        Sert Ã  ouvrir le menu Ã  la position de la
+        souris trouvÃ©e dans le
+        @param event: Ã©vÃ©nement avec la position de la souris.
         """
         self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
         self.tk_popup(event.x_root, event.y_root)
     
     def destroy(self):
         """
-        Méthode pour détruire le RMenu, et le débinder.
+        MÃ©thode pour dÃ©truire le RMenu, et le dÃ©binder.
         """
         try:
             self.binder.unbind(self.__binding)

@@ -18,7 +18,7 @@ from schedulable.groupe.Groupe import *
 class AffichageGantt(AbstractDisplayedCalendar):
     """
     Classe qui fait un affichage des tâches selon Gantt.
-    Hérite de SuperCalendrier et donc de Frame.
+    Hérite de AbstractDisplayedCalendar et donc de Frame.
     """
     ESPACEMENT = 4
     TAILLE_LIGNE = 50 + ESPACEMENT
@@ -46,12 +46,27 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.can.config(yscrollcommand = self.scrollbar.set) # 2e reliage de la scrollbar
 
         # Bindings du Canvas :
+        #
+        # TODO : Utiliser des events virtuels,
+        # et un gestionnaire de clavier.
+        #
+        
+        # Binding d'events virtuels :
+        self.can.bind_all("<ButtonRelease-1>",  lambda e: self.can.event_generate("<<canvas-scrolled>>"))
+        self.can.bind_all("<Button-1>",         lambda e: self.can.event_generate("<<Deselect-all>>"))
+        self.can.bind_all("<Control-Button-1>", lambda e: self.can.event_generate("<<Deselect-all>>"))
+        self.can.bind_all("<Escape>",           lambda e: self.can.event_generate("<<Deselect-all>>"))
+        self.can.bind_all("<Delete>",           lambda e: self.can.event_generate("<<Deselect-all>>"))
+        
+        # Définitnion des events virtuels :
+        self.can.bind_all("<<canvas-scrolled>>" , lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
+        self.can.bind_all("<<only-select>>"     , self.mouseClicked)
+        self.can.bind_all("<<multi-select>>"    , self.__multiSelection)
+        self.can.bind_all("<<deselect-all>>"    , self.escapePressed)
+        self.can.bind_all("<<delete-selected>>" , self.__suppr)
+
+        # Ne dépend pas d'event virtuels :
         self.can.bind("<Configure>", lambda e : self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
-        self.can.bind_all("<ButtonRelease-1>", lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
-        self.can.bind_all("<Button-1>",         self.mouseClicked)
-        self.can.bind_all("<Control-Button-1>", self.__multiSelection)
-        self.can.bind_all("<Escape>",           self.escapePressed)
-        self.can.bind_all("<Delete>",           self.__suppr)
 
         ## Valeurs possibles : "", "delDep" et "addDep"
         # Défini les différents modes pour savoir si on ajoute ou retire qqchose ou pas.
@@ -63,6 +78,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.event_generate("<<RMenu-Opened>>")
 
     def configureRMenu(self, event):
+        """
+        @deprecated: Va être supprimé, géré dans la classe ObjetGantt
+        """
         # On déselectionne
         self._deselectionnerLesLiens()
         pos = self.getScrolledPosition(event) # Si ca marche pas, 2 solutions, mais on verra plus tard
