@@ -16,7 +16,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         super().__init__(master, schedulable)
 
-    def redraw(self, frame):
+    def redraw(self, canvas):
         # On se supprime :
         self.delete()
         
@@ -25,12 +25,15 @@ class ObjetGantt(AbstractMultiFrameItem):
             # Si la partie est visible :
             if part := self.getVisiblePart(part):
                 # On crée le cadre
-                f = Frame(frame, bg=self._schedulable.getColor())
+                f = Frame(canvas, bg=self._schedulable.getColor())
                 
                 self._schedulable.createDisplayableInstance(f, part).pack(expand = YES, fill = BOTH)
                 
                 # On le place :
                 # TODO
+                colonne = (self._schedulable.getDebut().date() - self.master.getJourDebut()).days
+                if colonne >= 0 and colonne < self.master.getNbJour():
+                    print(self.schedulable)
 
                 # On le mémorise :
                 self._listeCadre.append(f)
