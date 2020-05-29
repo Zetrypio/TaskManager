@@ -11,7 +11,7 @@ class PageClavier(AbstractPage):
         super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
 
 
-        self.btn = Button(self, text="clickme")
-        self.btn.pack(side=LEFT, expand = YES, fill = BOTH)
+        self.btn = Button(self._mFrame, text="clickme")
+        self.btn.grid(column = 0, row = 2, sticky = "NSEW")
 
     def appliqueEffet(self, application):pass

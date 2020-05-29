@@ -10,6 +10,7 @@ from .parametrage.parametrageZone import *
 # Pages
 from .pages.pageGeneral import *
 from .pages.general.pageClavier import *
+from .pages.general.pageTheme import *
 
 
 class FenetrePreferences(Dialog):
@@ -32,6 +33,7 @@ class FenetrePreferences(Dialog):
         # Ajout des pages
         self.__ajouterPage(PageGeneral(self.getParametrageZone()))
         self.__ajouterPage(PageClavier(self.getParametrageZone()))
+        self.__ajouterPage(PageTheme(self.getParametrageZone()))
 
         # Initialisation de la page de garde
         self.setPageActive("-General")

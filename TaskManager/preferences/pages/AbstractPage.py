@@ -11,6 +11,15 @@ class AbstractPage(Frame):
         self.iidParent = iid_parent
         self.iid = self.getParent()+"-"+self.getNom()
 
+        self._mFrame = Frame(self)
+        self.__lbTitre = Label(self, text=self.nom)
+        self.__sepTitre = Separator(self, orient=HORIZONTAL)
+
+
+        self._mFrame.pack(side = BOTTOM, expand = YES, fill = BOTH)
+        self.__sepTitre.pack(side = BOTTOM, fill = X)
+        self.__lbTitre.pack(side = LEFT, fill = X)
+
     def getNom(self):
         return self.nom
 

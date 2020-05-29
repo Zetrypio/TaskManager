@@ -42,6 +42,9 @@ style.map("Treeview",
 class Application(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
+
+        self.__data = Data()
+
         self.winfo_toplevel().title("Gestionnaire de calendrier")
         self.menu = MenuBar(self.winfo_toplevel(), self)
         self.periodManager = PeriodManager(self)
@@ -51,7 +54,6 @@ class Application(Frame):
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
         self.prefFen = FenetrePreferences(self)
-        self.__data = Data()
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
 
