@@ -87,7 +87,7 @@ class ZoneAffichage(Frame):
         if valeur == "d": # Si on appui sur remetre au début
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
         elif valeur == "f": # Si on appuie sur mettre à la fin
-            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour())
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour()+datetime.timedelta(days=1))
         else:
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getJourDebut()+datetime.timedelta(days = valeur))
             #self.getDonneeCalendrier().setJourFin(self.getDonneeCalendrier().getJourFin()+datetime.timedelta(days = valeur))
