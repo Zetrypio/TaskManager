@@ -21,7 +21,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
     Hérite de AbstractDisplayedCalendar et donc de Frame.
     """
     ESPACEMENT = 4
-    TAILLE_LIGNE = 50 + ESPACEMENT
+    HAUTEUR_TACHE = 50
+    TAILLE_LIGNE = HAUTEUR_TACHE + ESPACEMENT
     TAILLE_BANDEAU_JOUR = 20
 
     def __init__(self, master = None, **kwargs):
@@ -85,6 +86,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet de préculculer les Parts non fusionnées
         des tâches affichées dans ce calendrier.
         """
+        self.__parts = []
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(displayable.getRepartition())
@@ -301,6 +303,15 @@ class AffichageGantt(AbstractDisplayedCalendar):
             w = self.can.winfo_width()
             h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
             self.can.config(scrollregion = (0, 0, w, h))
+
+    def getPartPosition(self, part):
+        index = 0
+        for p in self.__parts:
+            if p == part:
+                return index
+            if p.getJour() == part.getJour():
+                index += 1
+        return index
 
     def getPartsOfDay(self, day):
         return (part for part in self.__parts if part.getJour() == day)
