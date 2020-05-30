@@ -25,7 +25,7 @@ class TaskEditor(Frame):
         @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
         @param periodManager: Gestionnaire de périodes, pour l'ajouteur de période.
         """
-        Frame.__init__(self, master, bg="red")
+        Frame.__init__(self, master)
         # Note : master est une référence vers Application
         
         # Attributs normaux :
