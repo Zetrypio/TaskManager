@@ -75,7 +75,7 @@ class ZoneAffichage(Frame):
         else: # Si c'est une période
             self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
-    
+
     def envoyerChangementJourDebut(self, valeur):
         """
         Permet d'envoyer les informations de changement de jours, suivant le bouton
