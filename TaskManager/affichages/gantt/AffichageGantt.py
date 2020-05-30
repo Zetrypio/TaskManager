@@ -289,7 +289,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             # On efface TOUT :
             for tache in self.listeTaskAffichees:
                 tache.PlusCoord = None
-#            self.can.delete(ALL)
+            self.can.delete(ALL)
 
             # On réaffiche touououououout :
             self.__precalculer()

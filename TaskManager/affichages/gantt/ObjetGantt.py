@@ -31,18 +31,16 @@ class ObjetGantt(AbstractMultiFrameItem):
                 if not self.__isPartPresent(part):
                     f = Frame(canvas, bg=self._schedulable.getColor())
                     self._schedulable.createDisplayableInstance(f, part).pack(expand = YES, fill = BOTH)
-                    id = canvas.create_window(1, 1, width=42, height=42, window = f)
-                    self.__parts.append((part, f, id))
+                    self.__parts.append((part, f))
 
-                id = self.__getIdForPart(part)
+                f = self.__getFrameForPart(part)
                 colonne = (self._schedulable.getDebut().date() - self.master.getJourDebut()).days
                 x = int(self.master.tailleColonne * colonne)
                 y = int(AffichageGantt.TAILLE_BANDEAU_JOUR)
                 width = int(self.master.tailleColonne * self.master.facteurW)
                 height = int(AffichageGantt.TAILLE_LIGNE)
-                canvas.coords(id, x, y)
-                canvas.itemconfig(id, width = width, height = height)
                 print(x, y, width, height)
+                canvas.create_window(x, y, width=width, height=height, window = f, anchor="nw")
 
     def __isPartPresent(self, part):
         for p in self.__parts:
@@ -50,10 +48,10 @@ class ObjetGantt(AbstractMultiFrameItem):
                 return True
         return False
 
-    def __getIdForPart(self, part):
+    def __getFrameForPart(self, part):
         for p in self.__parts:
             if p[0] == part:
-                return p[2]
+                return p[1]
 
     def delete(self):
         # TODO
