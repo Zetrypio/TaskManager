@@ -286,7 +286,7 @@ class AbstractDisplayedCalendar(Frame):
         debut = max(part.getHeureDebut(), self.getHeureDebut())
         fin   = min(part.getHeureFin(),   self.getHeureFin())
         
-        return DatetimeItemPart(part.getJour(), debut, fin)
+        return DatetimeItemPart(part.getJour(), debut, fin, part.getSchedulable())
 
     def getPartPosition(self, part):
         """

@@ -11,7 +11,13 @@ class IDisplayableItem:
         Constructeur interdisant l'instanciation direct de IDisplayableItem.
         """
         if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
-    
+
+    def __del__(self):
+        try:
+            self.delete()
+        except:
+            pass
+
     def redraw(self, frameOrCanvas):
         """
         Permet de mettre à jour l'affichage.
