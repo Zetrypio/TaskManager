@@ -72,6 +72,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Ne dépend pas d'event virtuels :
 #        self.can.bind("<Configure>", lambda e : self.after(1000, lambda :self.updateAffichage())) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
 
+        # Infobulle toujours vraie :
+        ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
+
         ## Valeurs possibles : "", "delDep" et "addDep"
         # Défini les différents modes pour savoir si on ajoute ou retire qqchose ou pas.
         self.mode = ""

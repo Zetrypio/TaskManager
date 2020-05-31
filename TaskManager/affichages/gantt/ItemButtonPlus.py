@@ -17,8 +17,8 @@ class ItemButtonPlus(IDisplayableItem):
         """
         colonne = (self.__part.getJour() - self.__ganttObj.master.getJourDebut()).days
 
-        s = min(24, int(self.__ganttObj.master.tailleColonne * (1-self.__ganttObj.master.facteurW)*0.5))
-        r = s // 2
+        d = min(24, int(self.__ganttObj.master.tailleColonne * (1-self.__ganttObj.master.facteurW)*0.5))
+        r = d // 2
 
         x1 = int(self.__ganttObj.master.tailleColonne * colonne + self.__ganttObj.master.facteurW * self.__ganttObj.master.tailleColonne)
         y1 = int(AffichageGantt.TAILLE_BANDEAU_JOUR + self.__ganttObj.master.getPartPosition(self.__part)*AffichageGantt.TAILLE_LIGNE)
@@ -29,7 +29,12 @@ class ItemButtonPlus(IDisplayableItem):
         cx = (x1 + x2) // 2
         cy = (y1 + y2) // 2
 
-        canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="grey")
+        canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="light grey", tag="plus")
+        
+        s = int(r * 0.6)
+        completion = 1-s%2
+        canvas.create_line(cx-s, cy, cx+s+completion, cy, tag="plus")
+        canvas.create_line(cx, cy-s, cx, cy+s+completion, tag="plus")
     
     def delete(self):
         """
