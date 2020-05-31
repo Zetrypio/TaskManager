@@ -142,6 +142,10 @@ class PageTheme(AbstractPage):
 
     def __askcolor(self, value):
         color = askcolor()[1]
+        # Si on clique sur la croix on annule l'opération
+        if color is None:
+            return
+
         if value == 1:
             self.__boutonColor1.config(bg = color, activebackground = color)
             self.__varLb1.set(color)
@@ -155,10 +159,10 @@ class PageTheme(AbstractPage):
             self.__boutonColor4.config(bg = color, activebackground = color)
             self.__varLb4.set(color)
 
-
-        self.__listValueComboTheme.append("Thème personalisé")
+        if not "Thème personalisé" in self.__listValueComboTheme:
+            self.__listValueComboTheme.append("Thème personalisé")
+            self.__comboThemeExistant.config(value = self.__listValueComboTheme)
         self.__comboThemeExistant.set(self.__listValueComboTheme[-1])
-        self.__comboThemeExistant.config(value = self.__listValueComboTheme)
 
     def configCombobox(self):
         """
@@ -224,4 +228,4 @@ class PageTheme(AbstractPage):
             elif self.__currentElem == "Barre d'outils secondaire"+"Couleur de boutons":
                 self.__varBOSCDB = recupAuBonEndroit()
 
-            self.__currentElem = iidElementSelectionne
+        self.__currentElem = iidElementSelectionne
