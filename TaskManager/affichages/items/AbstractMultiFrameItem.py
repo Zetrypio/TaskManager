@@ -22,6 +22,9 @@ class AbstractMultiFrameItem(IDisplayableItem):
         self._listeCadre = []
         self._schedulable = schedulable
 
+    def getSchedulable(self):
+        return self._schedulable
+
     def getRepartition(self):
         """
         Permet de savoir de où à où les différents cadre doivent aller.

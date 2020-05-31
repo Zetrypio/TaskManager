@@ -61,6 +61,9 @@ class ObjetGantt(AbstractMultiFrameItem):
             else:
                 p[2].redraw(canvas)
 
+        # Bindings :
+        canvas.tag_bind("plus%s"%(id(self._schedulable)), "<Button-1>", lambda e:print(self._schedulable))
+
     def __isPartPresent(self, part):
         for p in self.__parts:
             if p[0] == part:

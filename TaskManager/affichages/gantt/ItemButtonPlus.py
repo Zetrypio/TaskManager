@@ -29,12 +29,12 @@ class ItemButtonPlus(IDisplayableItem):
         cx = (x1 + x2) // 2
         cy = (y1 + y2) // 2
 
-        canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="light grey", tag="plus")
+        canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="light grey", tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
         
         s = int(r * 0.6)
         completion = 1-s%2
-        canvas.create_line(cx-s, cy, cx+s+completion, cy, tag="plus")
-        canvas.create_line(cx, cy-s, cx, cy+s+completion, tag="plus")
+        canvas.create_line(cx-s, cy, cx+s+completion, cy, tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
+        canvas.create_line(cx, cy-s, cx, cy+s+completion, tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
     
     def delete(self):
         """
