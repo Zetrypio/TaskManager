@@ -7,10 +7,13 @@ from util.widgets.Dialog import *
 from .navigation.navigationZone import *
 from .parametrage.parametrageZone import *
 
+
 # Pages
 from .pages.pageGeneral import *
 from .pages.general.pageClavier import *
 from .pages.general.pageTheme import *
+
+from .pages.pageCalendrier import *
 
 
 class FenetrePreferences(Dialog):
@@ -34,6 +37,8 @@ class FenetrePreferences(Dialog):
         self.__ajouterPage(PageGeneral(self.getParametrageZone()))
         self.__ajouterPage(PageClavier(self.getParametrageZone()))
         self.__ajouterPage(PageTheme(self.getParametrageZone()))
+
+        self.__ajouterPage(PageCalendrier(self.getParametrageZone()))
 
         # Initialisation de la page de garde
         self.setPageActive("-General")

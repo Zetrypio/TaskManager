@@ -6,6 +6,7 @@ class Data:
         self.__affichageNombreHorloge = True
         self.__currentThemeName = "Classique"
         self.__adaptColorTask = False
+        self.__allowTtkButton = True
 
     def testBool(self, value):
         """ Test pour savoir si value est un Booléen """
@@ -53,4 +54,16 @@ class Data:
         self.testBool(value)
         self.__adaptColorTask = value
 
+    def getAllowTtkButton(self):
+        """
+        getter de la variable qui veux ou non des boutons de ttk
+        """
+        return self.__allowTtkButton
+
+    def setAllowTtkButton(self, value):
+        """
+        setter du mode des ttk buttons
+        """
+        self.testBool(value)
+        self.__allowTtkButton = value
 
