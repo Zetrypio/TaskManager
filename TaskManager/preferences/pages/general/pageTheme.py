@@ -65,7 +65,7 @@ class PageTheme(AbstractPage):
         self.__frameZoneSelection = Frame(self._mFrame)
         ## TreeView des zones dont les couleurs sont configurables
         self.__tree = Treeview(self.__frameZoneSelection)
-        self.__tree.bind("<Button-1>", self.onclick)
+        self.__tree.bind("<ButtonRelease-1>", self.onclick)
         self.__scrollbar = Scrollbar(self.__frameZoneSelection, orient = VERTICAL, command = self.__tree.yview)
         self.__tree.configure(yscrollcommand = self.__scrollbar.set)
 
@@ -205,7 +205,30 @@ class PageTheme(AbstractPage):
         sec = self.__cfg[nomTheme.upper()]
         sec['attribut'] =  'valeur'
         """
-        pass
+        self.__cfg[self.__comboThemeExistant.get().upper()] = {"Name" : self.__comboThemeExistant.get(),
+                            "Couleur principale": self.__lbColor1.cget("text") or "#ffffff",
+                            "Couleur secondaire": self.__lbColor2.cget("text") or "#ffffff",
+                            "Couleur tertiaire" : self.__lbColor3.cget("text") or "#ffffff",
+                            "# Couleur par élément" : "",
+                            "General-Couleur du texte" : self.__varGCDT or "Couleur principale",
+                            "Liste des tâches-Couleur de fond" : self.__varLDTCDF or "Couleur principale",
+                            "Ajout des tâches-Couleur de fond" : self.__varADTCDF or "Couleur principale",
+                            "Zone des onglets-Couleur de fond" : self.__varZDOCDF or "Couleur principale",
+                            "Zone des onglets-Couleur de fond du calendrier" : self.__varZDOCDFDC or "Couleur principale",
+                            "Zone des onglets-Couleur de fond de l'affichage Gantt" : self.__varZDOCDFDAG or "Couleur principale",
+                            "Zone des onglets-Couleur de fond de l'affichage des périodes" : self.__varZDOCDFDADP or "Couleur principale",
+                            "Zone des onglets-Couleur de fond de l'affichage des tâches suivantes" : self.__varZDOCDFDADTS or "Couleur principale",
+                            "Zone de l'affichage-Couleur de fond" : self.__varZDACDF or "Couleur principale",
+                            "Barre d'outils principale-Couleur de fond" : self.__varBOPCDF or "Couleur principale",
+                            "Barre d'outils principale-Couleur des boutons" : self.__varBOPCDB or "Couleur principale",
+                            "Barre d'outils secondaire-Couleur de fond" : self.__varBOSCDF or "Couleur principale",
+                            "Barre d'outils secondaire-Couleur des boutons" : self.__varBOSCDB or "Couleur principale",
+                            "# Autre que les couleurs" : "",
+                            "Boutons de ttk" : self.__varTtkButton.get()}
+
+        # Et on enregistre
+        with open("theme.ini", "w") as tfile:
+            self.__cfg.write(tfile)
 
     def enregistrerSous(self):  #TODO : enregistrer toutes les options
         """
@@ -260,7 +283,6 @@ class PageTheme(AbstractPage):
         """
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
             self.__cfg.remove_section(self.__comboThemeExistant.get().upper())
-
             with open("theme.ini", "w") as file:
                 self.__cfg.write(file)
 
@@ -270,19 +292,17 @@ class PageTheme(AbstractPage):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
         """
-        pass
+        theme = self.__cfg[self.__comboThemeExistant.get().upper()]
+        self.__boutonColor1.config(bg=theme["Couleur principale"], activebackground=theme["Couleur principale"])
+        self.__varLb1.set(theme["Couleur principale"])
+        self.__boutonColor2.config(bg=theme["Couleur secondaire"], activebackground=theme["Couleur secondaire"])
+        self.__varLb2.set(theme["Couleur secondaire"])
+        self.__boutonColor3.config(bg=theme["Couleur tertiaire"], activebackground=theme["Couleur tertiaire"])
+        self.__varLb3.set(theme["Couleur tertiaire"])
+        self.__varTtkButton.set(theme["boutons de ttk"])
 
-    def appliqueEffet(self, application):
-        # Récupération des valeurs
-        nomTheme = self.__comboThemeExistant.get()
-        adaptCouleur = self.__varAdapteTexteTache.get()
-        ttkButton = self.__varTtkButton.get()
-
-        # Enregistrements
-        self.getApplication().getData().setCurrentThemeName(nomTheme)
-        self.getApplication().getData().setAdaptColorTask(adaptCouleur)
-        self.getApplication().getData().setAllowTtkButton(ttkButton)
-
+        if self.__currentElem is not None:
+            self.__comboCouleur.set(theme[self.__currentElem])
 
     def recupCouleur(self):
         def recupAuBonEndroit():
@@ -322,14 +342,27 @@ class PageTheme(AbstractPage):
             elif self.__currentElem == "Barre d'outils secondaire"+"-Couleur des boutons":
                 self.__varBOSCDB = recupAuBonEndroit()
 
-
-
     def onclick(self, e):
         # On récupère la cage qu'on a cliqué
-        iidElementSelectionne = self.__tree.focus()
 
         self.recupCouleur()
+        iidElementSelectionne = self.__tree.focus()
 
-        self.__currentElem = iidElementSelectionne
-        self.__comboCouleur.set(self.__cfg[self.__comboThemeExistant.get().upper][iidElementSelectionne])
+        # Si on est dans une catégorie c'est pas une clé donc pas de valeur
+        try:
+            print("o", iidElementSelectionne)
+            self.__comboCouleur.set(self.__cfg[self.__comboThemeExistant.get().upper()][iidElementSelectionne])
+            self.__currentElem = iidElementSelectionne
+        except:pass
+
+    def appliqueEffet(self, application):
+        # Récupération des valeurs
+        nomTheme = self.__comboThemeExistant.get()
+        adaptCouleur = self.__varAdapteTexteTache.get()
+        ttkButton = self.__varTtkButton.get()
+
+        # Enregistrements
+        self.getApplication().getData().setCurrentThemeName(nomTheme)
+        self.getApplication().getData().setAdaptColorTask(adaptCouleur)
+        self.getApplication().getData().setAllowTtkButton(ttkButton)
 
