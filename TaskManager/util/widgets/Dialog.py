@@ -105,7 +105,7 @@ class Dialog(Frame):
         self.update()
 
 
-def askString(master, nom, question):
+def askstring(master, nom, question):
     # Créer l'espace du dialogue :
     dialogue = Dialog(master, nom, ("Ok", "Annuler"))
     dialogue.bind_all("<Return>", lambda e: dialogue.execute("Ok"))

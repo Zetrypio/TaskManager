@@ -6,7 +6,7 @@ from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
 
 from ..AbstractPage import *
-from util.widgets.Dialog import askString, askyesnowarning
+from util.widgets.Dialog import askstring, askyesnowarning
 
 class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
@@ -18,9 +18,6 @@ class PageTheme(AbstractPage):
         self.__cfg.read("theme.ini") # Prise de conscience de ce qu'il y a dedans
 
         self.__listValueComboTheme = []
-        for section in self.__cfg.sections():
-            print(section)
-            self.__listValueComboTheme.append(self.__cfg[section]["Name"])
 
 
         self.__currentElem = None # iid de l'élément sélectionné dans le TreeView
@@ -193,6 +190,12 @@ class PageTheme(AbstractPage):
         Fonction qui va ajouter tous les thèmes qui ont été créer et tous les thèmes créé par l'utilisateur
         """
         # Mise en place dans le combobox du thème actuel
+        self.__listValueComboTheme = []
+        for section in self.__cfg.sections():
+            self.__listValueComboTheme.append(self.__cfg[section]["Name"])
+
+        self.__comboThemeExistant.config(value=self.__listValueComboTheme)
+        # A voir comment on fait, si on garde etc
         self.__comboThemeExistant.set(self.getApplication().getData().getCurrentThemeName())
 
     def enregistrer(self):
@@ -219,9 +222,8 @@ class PageTheme(AbstractPage):
             else:
                 return value"""
 
-        name = askString(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
+        name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
         self.recupCouleur()
-        print(self.__varTtkButton.get(), type(self.__varGCDT))
         # Enregistrement
 
 
@@ -250,8 +252,7 @@ class PageTheme(AbstractPage):
         with open("theme.ini", "w") as tfile:
             self.__cfg.write(tfile)
 
-        self.__listValueComboTheme.append(name)
-        self.__comboThemeExistant.set(self.__listValueComboTheme[-1])
+        self.configCombobox()
 
     def supprimerTheme(self):
         """
@@ -263,8 +264,7 @@ class PageTheme(AbstractPage):
             with open("theme.ini", "w") as file:
                 self.__cfg.write(file)
 
-            self.__listValueComboTheme.remove(self.__comboThemeExistant.get())
-            self.__comboThemeExistant.set(self.__listValueComboTheme[-1])
+            self.configCombobox()
 
     def chargerTheme(self, e):
         """
