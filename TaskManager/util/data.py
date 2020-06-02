@@ -4,9 +4,6 @@ from configparser import *
 class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
-
-        self.read("theme.ini")
-        print("data sections", self.sections())
         # Création des attributs
         self.__affichageNombreHorloge = True
         self.__currentThemeName = "Classique"

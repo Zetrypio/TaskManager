@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
+import tkinter.messagebox
 
 from ..AbstractPage import *
 from util.widgets.Dialog import askstring, askyesnowarning
@@ -268,6 +269,15 @@ class PageTheme(AbstractPage):
         """
         self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
         name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
+        if name is None:
+            return
+        while name.upper() in self.getData().sections():
+            messagebox.showwarning("Nom incorrect", "Vous ne pouvez pas utiliser \"%s\" comme nom car c'est déjà le nom d'un autre thème.\n La casse n'est pas pris en compte."%name)
+            name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
+            # Quand on clique sur annuler
+            if name is None:
+                return
+
         self.recupCouleur()
         # Enregistrement
 
