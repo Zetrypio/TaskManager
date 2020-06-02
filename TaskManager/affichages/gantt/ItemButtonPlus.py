@@ -8,6 +8,7 @@ class ItemButtonPlus(IDisplayableItem):
         super().__init__()
         self.__ganttObj = ganttObject
         self.__part = part
+        self.__x = self.__y = 0
 
     def redraw(self, canvas):
         """
@@ -26,8 +27,8 @@ class ItemButtonPlus(IDisplayableItem):
         x2 = int(self.__ganttObj.master.tailleColonne * (colonne+1))
         y2 = int(AffichageGantt.TAILLE_BANDEAU_JOUR + (self.__ganttObj.master.getPartPosition(self.__part)+1)*AffichageGantt.TAILLE_LIGNE)
 
-        cx = (x1 + x2) // 2
-        cy = (y1 + y2) // 2
+        self.__x = cx = (x1 + x2) // 2
+        self.__y = cy = (y1 + y2) // 2
 
         canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="light grey", tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
         
@@ -35,10 +36,20 @@ class ItemButtonPlus(IDisplayableItem):
         completion = 1-s%2
         canvas.create_line(cx-s, cy, cx+s+completion, cy, tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
         canvas.create_line(cx, cy-s, cx, cy+s+completion, tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
-    
+
+        # Bindings :
+        canvas.tag_bind("plus%s"%(id(self.__ganttObj.getSchedulable())), "<Button-1>", lambda e: canvas.after(10, lambda :self.__ganttObj.beginLigneVerte(self)))
+
     def delete(self):
         """
         Permet de supprimer cet objet de l'affichage.
         @override delete in IDisplayableItem.
         """
         pass
+
+    def getX(self):
+        return self.__x
+
+    def getY(self):
+        return self.__y
+

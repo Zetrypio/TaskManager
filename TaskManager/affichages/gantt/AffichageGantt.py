@@ -30,10 +30,15 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Note : self.master est référence vers Notebook.
         
         # Listes des tâches et des liens :
-        self.listeLien  = []
+#        self.listeLien  = []
         self.listeDisplayableItem = []
         self.__parts = []
 
+        # Ligne verte pour quand on est en train de relier plusieurs tâches ou autre :
+        self.__id_LigneVerte = None
+        self.__x1_LigneVerte = None
+        self.__y1_LigneVerte = None
+        self.__activeGanttObject = None
 
         # La taille de la colonne dépend de la taille du Canvas :
         self.tailleColonne = 0
@@ -56,18 +61,21 @@ class AffichageGantt(AbstractDisplayedCalendar):
         #
         
         # Binding d'events virtuels :
-        self.can.bind_all("<ButtonRelease-1>",  lambda e: self.can.event_generate("<<canvas-scrolled>>"))
-        self.can.bind_all("<Button-1>",         lambda e: self.can.event_generate("<<only-select>>"))
-        self.can.bind_all("<Control-Button-1>", lambda e: self.can.event_generate("<<multi-select>>"))
-        self.can.bind_all("<Escape>",           lambda e: self.can.event_generate("<<deselect-all>>"))
-        self.can.bind_all("<Delete>",           lambda e: self.can.event_generate("<<delete-selected>>"))
+        self.can.bind_all("<ButtonRelease-1>",  lambda e: self.can.event_generate("<<canvas-scrolled>>"), add=1)
+        self.can.bind_all("<Button-1>",         lambda e: self.can.event_generate("<<only-select>>")    , add=1)
+        self.can.bind_all("<Control-Button-1>", lambda e: self.can.event_generate("<<multi-select>>")   , add=1)
+        self.can.bind_all("<Motion>",           lambda e: self.can.event_generate("<<mouse-moved>>")    , add=1)
+        self.can.bind_all("<Escape>",           lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
+        self.can.bind_all("<Delete>",           lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         
         # Définitnion des events virtuels :
 #        self.can.bind_all("<<canvas-scrolled>>" , lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
-#        self.can.bind_all("<<only-select>>"     , self.mouseClicked)
+        self.can.bind_all("<<only-select>>"     , lambda e: self.__cancelLigneVerte())
 #        self.can.bind_all("<<multi-select>>"    , self.__multiSelection)
-#        self.can.bind_all("<<deselect-all>>"    , self.escapePressed)
+        self.can.bind_all("<<deselect-all>>"    , lambda e: self.__cancelLigneVerte())
 #        self.can.bind_all("<<delete-selected>>" , self.__suppr)
+#        self.can.bind("<<mouse-moved>>", self.__updateLigneVerte)
+        self.can.bind("<Motion>", self.__updateLigneVerte)
 
         # Ne dépend pas d'event virtuels :
 #        self.can.bind("<Configure>", lambda e : self.after(1000, lambda :self.updateAffichage())) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
@@ -77,12 +85,35 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         ## Valeurs possibles : "", "delDep" et "addDep"
         # Défini les différents modes pour savoir si on ajoute ou retire qqchose ou pas.
-        self.mode = ""
+#        self.mode = ""
 
         #RMenu des liens
 #        self.can.bind_all("<<RMenu-Opened>>", self.configureRMenu)
 #        self.rmenu = RMenu(self, binder = self.can, bindWithId="lienDep")
 #        self.event_generate("<<RMenu-Opened>>")
+
+    def beginLigneVerte(self, objGantt):
+        self.__cancelLigneVerte()
+        self.__activeGanttObject = objGantt
+        self.__x1_LigneVerte = self.__activeGanttObject.getXPlus()
+        self.__y1_LigneVerte = self.__activeGanttObject.getYPlus()
+        self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte, self.__x1_LigneVerte, self.__y1_LigneVerte, fill="#00CF00", width = 2)
+
+    def __updateLigneVerte(self, event):
+        if self.__id_LigneVerte is not None:
+            self.__x1_LigneVerte = event.x
+            self.__y1_LigneVerte = event.y
+            self.can.coords(self.__id_LigneVerte, self.__x1_LigneVerte, self.__y1_LigneVerte, self.__activeGanttObject.getXPlus(), self.__activeGanttObject.getYPlus())
+
+    def __cancelLigneVerte(self):
+        try:
+            self.can.delete(self.__id_LigneVerte)
+        except:
+            pass
+        self.__id_LigneVerte = None
+        self.__x1_LigneVerte = None
+        self.__y1_LigneVerte = None
+        self.__activeGanttObject = None
 
     def __precalculer(self):
         """
@@ -442,8 +473,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #                    tache.affichePlusLien(tache.ID_PLUS)
 
     def __afficherLesDependances(self):
-        for lien in self.listeLien:
-            lien.afficherLesLiens()
+#        for lien in self.listeLien:
+#            lien.afficherLesLiens()
 
         # Ordre d'affichage
         self.can.tag_raise("top")

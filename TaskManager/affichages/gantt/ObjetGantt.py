@@ -21,6 +21,8 @@ class ObjetGantt(AbstractMultiFrameItem):
         self.__parts = []
         self.__plus = []
 
+        self.__activePlus = None
+
     def __del__(self):
         for p in self.__parts:
             p[1].destroy()
@@ -61,8 +63,15 @@ class ObjetGantt(AbstractMultiFrameItem):
             else:
                 p[2].redraw(canvas)
 
-        # Bindings :
-        canvas.tag_bind("plus%s"%(id(self._schedulable)), "<Button-1>", lambda e:print(self._schedulable))
+    def beginLigneVerte(self, plus):
+        self.__activePlus = plus
+        self.master.beginLigneVerte(self)
+
+    def getXPlus(self):
+        return self.__activePlus.getX()
+
+    def getYPlus(self):
+        return self.__activePlus.getY()
 
     def __isPartPresent(self, part):
         for p in self.__parts:
