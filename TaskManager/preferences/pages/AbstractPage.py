@@ -45,3 +45,6 @@ class AbstractPage(Frame):
 
     def getApplication(self):
         return self.master.getApplication()
+
+    def getData(self):
+        return self.getApplication().getData()

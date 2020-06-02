@@ -1,6 +1,7 @@
 # *-* coding:utf-8 *-*
+from configparser import *
 
-class Data:
+class Data(ConfigParser):
     def __init__(self):
         # Création des attributs
         self.__affichageNombreHorloge = True
