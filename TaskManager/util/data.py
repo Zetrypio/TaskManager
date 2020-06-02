@@ -3,11 +3,14 @@ from configparser import *
 
 class Data(ConfigParser):
     def __init__(self):
+        super().__init__(self)
+
+        self.read("theme.ini")
+        print("data sections", self.sections())
         # Création des attributs
         self.__affichageNombreHorloge = True
         self.__currentThemeName = "Classique"
         self.__adaptColorTask = False
-        self.__allowTtkButton = True
 
     def testBool(self, value):
         """ Test pour savoir si value est un Booléen """
@@ -18,6 +21,15 @@ class Data(ConfigParser):
         """ Test pour savoir si value est un String """
         if not isinstance(value, str):
             raise TypeError("Exptected a string")
+
+    def sauv(self, fichier):
+        """
+        Ecrit dans le fichier puis
+        @param fichier : <str> contient le nom + extension du fichier dans lequel Data doit écrire
+        # Note : une lecture de ce fichier est conseillé avant afin de ne pas supprimer tout le contenu inutilement
+        """
+        with open(fichier, "w") as tfile:
+            self.write(tfile)
 
     def getAffichageNombreHorloge(self):
         """ getter de l'affichage lié aux nombre sur les bords de l'horloge """
@@ -55,16 +67,4 @@ class Data(ConfigParser):
         self.testBool(value)
         self.__adaptColorTask = value
 
-    def getAllowTtkButton(self):
-        """
-        getter de la variable qui veux ou non des boutons de ttk
-        """
-        return self.__allowTtkButton
-
-    def setAllowTtkButton(self, value):
-        """
-        setter du mode des ttk buttons
-        """
-        self.testBool(value)
-        self.__allowTtkButton = value
 

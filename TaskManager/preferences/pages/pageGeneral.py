@@ -21,7 +21,7 @@ class PageGeneral(AbstractPage):
         self.__caseTypeHorloge.pack(side = TOP, expand = NO, fill = X)
 
     def appliqueEffet(self, application):
-        self.getApplication().getData().setAffichageNombreHorloge(self.__varCaseTypeHorloge.get())
+        self.getData().setAffichageNombreHorloge(self.__varCaseTypeHorloge.get())
 
 
 
