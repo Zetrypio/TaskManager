@@ -22,3 +22,11 @@ class AbstractItemContent(Frame):
         super().__init__(master, **kwargs)
         # Note : self.master est une référence vers un cadre contenu dans AbstractMultiFrameItem ou GroupeAffichable
         self._schedulable = schedulable
+
+    def bindTo(self, binding, command, add=None):
+        """
+        Permet de binder un binding sur tout les sous-widget de ce widget,
+        à redéfinir explicitement dans les sous-classes.
+        Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
+        """
+        raise NotImplementedError

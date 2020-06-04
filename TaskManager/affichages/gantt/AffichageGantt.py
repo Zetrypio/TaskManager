@@ -105,6 +105,12 @@ class AffichageGantt(AbstractDisplayedCalendar):
             self.__y1_LigneVerte = event.y
             self.can.coords(self.__id_LigneVerte, self.__x1_LigneVerte, self.__y1_LigneVerte, self.__activeGanttObject.getXPlus(), self.__activeGanttObject.getYPlus())
 
+    def clicSurObjet(self, objGantt):
+        if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
+            if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
+                self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
+            print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
+
     def __cancelLigneVerte(self):
         try:
             self.can.delete(self.__id_LigneVerte)

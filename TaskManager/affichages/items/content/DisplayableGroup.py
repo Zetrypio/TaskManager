@@ -59,4 +59,9 @@ class DisplayableGroup(AbstractItemContent):
         """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
 
+    def bindTo(self, binding, command, add=None):
+        self.bind(binding, command, add)
+        self.__texte.bind(binding, command, add)
+        # TODO : Ajouter les sous-tâches.
+
 from schedulable.groupe.Groupe import *

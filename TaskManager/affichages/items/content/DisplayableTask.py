@@ -49,3 +49,7 @@ class DisplayableTask(AbstractItemContent):
         suivant que la tâche soit sélectionnée ou non.
         """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
+
+    def bindTo(self, binding, command, add=None):
+        self.bind(binding, command, add)
+        self.__texte.bind(binding, command, add)

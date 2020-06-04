@@ -39,11 +39,21 @@ class ObjetGantt(AbstractMultiFrameItem):
         for part in self.getRepartition():
             # Si la partie est visible :
             if part := self.getVisiblePart(part):
-                
                 if not self.__isPartPresent(part):
+                    # On fait dans tout les cas un frame pour ne pas prendre de risque de positionnement :
                     f = Frame(canvas, bg=self._schedulable.getColor())
-                    self._schedulable.createDisplayableInstance(f, part).pack(expand = YES, fill = BOTH)
+
+                    # Ce "widget" est une instance d'une sous-classe de AbstractItemContent :
+                    widget = self._schedulable.createDisplayableInstance(f, part)
+                    widget.pack(expand = YES, fill = BOTH)
+                    # C'est pour ça que l'on fait cette méthode-ci pour le bind.
+                    # Cela permet de s'assurer que tout les sous-widgets seront binds aussi :
+                    widget.bindTo("<Button-1>", self.clic)
+
+                    # On crée le plus qui correspond à cet objet.
                     plus = ItemButtonPlus(self, part)
+
+                    # On mémorise tout cet ensemble.
                     self.__parts.append((part, f, plus))
 
                 f = self.__getFrameForPart(part)
@@ -54,7 +64,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                 height = int(AffichageGantt.HAUTEUR_TACHE)
                 print(x, y, width, height)
                 canvas.create_window(x, y, width=width, height=height, window = f, anchor="nw")
-        
+
         # Suppression des parties qui ne sont plus visibles :
         for p in reversed(self.__parts):
             if not self.getVisiblePart(p[0]):
@@ -66,6 +76,9 @@ class ObjetGantt(AbstractMultiFrameItem):
     def beginLigneVerte(self, plus):
         self.__activePlus = plus
         self.master.beginLigneVerte(self)
+
+    def clic(self, event):
+        self.master.clicSurObjet(self)
 
     def getXPlus(self):
         return self.__activePlus.getX()
