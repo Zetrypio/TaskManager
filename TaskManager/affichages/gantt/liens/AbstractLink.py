@@ -10,7 +10,7 @@ from util.util import *
 class AbstractLink(IDisplayableItem):
     """
     Classe abstraite permettant de dessiner un lien depuis
-    un DatetimeItemPart|AbstractItemContent vers un autre.
+    un AbstractItemContent[via DatetimeItemPart] vers un autre.
     """
     def __init__(self, affichageGantt, partA, partB):
         """
@@ -92,6 +92,43 @@ class AbstractLink(IDisplayableItem):
         # Première façon : #
         ####################
         if self.__partA.getJour() == self.__partB.getJour():
+            # Demi-cercle au début :
+            r = rectA.getHeight() / 2 //2
+            canvas.create_arc(rectA.getX1() - r,
+                              rectA.getCenterY(),
+                              rectA.getX1() + r,
+                              rectA.getY2()-1,
+                              start=-90, extent=180, style=ARC, width = self.__strokeWeight, outline = self.__color)
+            # Ligne horizontale vers la gauche à la suite de l'arc :
+            canvas.create_line(rectA.getX1(),
+                               rectA.getY2()-1,
+                               rectB.getX2()-6, # -6 Pour la flèche
+                               rectA.getY2()-1,
+                               width = self.__strokeWeight, fill = self.__color)
+            # Permier quart de cercle :
+            canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
+                              rectA.getY2()-1,
+                              rectB.getX2() + r-6, # -6 Pour la flèche
+                              rectA.getY2() + r*2,
+                              start=90, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color)
+            # Ligne verticale vers le bas à la suite de l'arc :
+            canvas.create_line(rectB.getX2() - r-6, # -6 Pour la flèche
+                               rectA.getY2() + r,
+                               rectB.getX2() - r-6, # -6 Pour la flèche
+                               rectB.getCenterY() - r,
+                               width = self.__strokeWeight, fill = self.__color)
+            # Deuxième arc de cercle qui fini :
+            canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
+                              rectB.getCenterY() - r*2,
+                              rectB.getX2() + r-6, # -6 Pour la flèche
+                              rectB.getCenterY(),
+                              start=180, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color)
+            # Petite ligne finale pour avoir le bout de la flèche :
+            canvas.create_line(rectB.getX2()-6, # -6 Pour la flèche
+                               rectB.getCenterY(),
+                               rectB.getX2(),
+                               rectB.getCenterY(),
+                               arrow = LAST, width = self.__strokeWeight, fill = self.__color)
             pass # TODO
         ####################
         # Deuxième Façon : #
