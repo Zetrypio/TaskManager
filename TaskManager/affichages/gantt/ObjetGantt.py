@@ -15,21 +15,19 @@ class ObjetGantt(AbstractMultiFrameItem):
     def __init__(self, master, schedulable):
         """
         Constructeur d'un objet classique.
+        @param master: AffichageGantt.
+        @param schedulable: objet dont on fait l'affichage.
         """
         super().__init__(master, schedulable)
         
         self.__parts = []
-        self.__plus = []
 
         self.__activePlus = None
 
     def __del__(self):
         for p in self.__parts:
             p[1].destroy()
-        for p in self.__plus:
-            p.delete()
         self.__parts = []
-        self.__plus = []
 
     def redraw(self, canvas):
         # On se supprime :
@@ -50,11 +48,20 @@ class ObjetGantt(AbstractMultiFrameItem):
                     # Cela permet de s'assurer que tout les sous-widgets seront binds aussi :
                     widget.bindTo("<Button-1>", self.clic)
 
-                    # On crée le plus qui correspond à cet objet.
-                    plus = ItemButtonPlus(self, part)
+                    # Si cette part à besoin d'un plus :
+                    if widget.needButtonPlus(self.master):
+                        # On crée le plus qui correspond à cet objet.
+                        plus = ItemButtonPlus(self, part)
 
-                    # On mémorise tout cet ensemble.
-                    self.__parts.append((part, f, plus))
+                        # On mémorise tout cet ensemble.
+                        self.__parts.append((part, f, widget, plus))
+                    else:
+                        # Sinon pas de plus
+                        self.__parts.append((part, f, widget))
+#                # Si le plus à disparu :
+#                elif not self.__getWidgetForPart(part).needButtonPlus(self.master) and self.__getPlusForPart() is not None:
+#                    
+#                    pass
 
                 f = self.__getFrameForPart(part)
                 colonne = (part.getJour() - self.master.getJourDebut()).days
@@ -70,8 +77,8 @@ class ObjetGantt(AbstractMultiFrameItem):
             if not self.getVisiblePart(p[0]):
                 p[1].destroy()
                 self.__parts.remove(p)
-            else:
-                p[2].redraw(canvas)
+            elif len(p) > 3:
+                p[3].redraw(canvas)
 
     def beginLigneVerte(self, plus):
         self.__activePlus = plus
@@ -85,14 +92,6 @@ class ObjetGantt(AbstractMultiFrameItem):
 
     def getYPlus(self):
         return self.__activePlus.getY()
-
-    def getFirstPart(self):
-        for part in self.getRepartition():
-            return part
-
-    def getLastPart(self):
-        for part in self.getRepartition(): pass
-        return part
 
     def __isPartPresent(self, part):
         for p in self.__parts:

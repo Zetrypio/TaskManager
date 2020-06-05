@@ -64,4 +64,7 @@ class DisplayableGroup(AbstractItemContent):
         self.__texte.bind(binding, command, add)
         # TODO : Ajouter les sous-tâches.
 
+    def needButtonPlus(self, affichageGantt):
+        return False
+
 from schedulable.groupe.Groupe import *

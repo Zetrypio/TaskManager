@@ -40,7 +40,22 @@ class AbstractMultiFrameItem(IDisplayableItem):
         datetime indiquant le début et la fin de ce cadre.
         """
         return self._schedulable.getRepartition(self.master)
+
     
+    def getFirstPart(self):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getFirstPart(self.master)
+
+    def getLastPart(self):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getLastPart(self.master)
+
     def getVisiblePart(self, part):
         """
         Permet d'obtenir la partie visible d'un DatetimeItemPart.

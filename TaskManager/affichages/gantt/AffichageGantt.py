@@ -12,9 +12,10 @@ from util.widgets.RMenu import *
 from util.util import *
 
 from ..AbstractDisplayedCalendar import *
-from .liens.AbstractLink import *
+from .liens.DependanceLink import *
 
 from schedulable.groupe.Groupe import *
+from schedulable.task.Task import *
 
 class AffichageGantt(AbstractDisplayedCalendar):
     """
@@ -108,11 +109,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
     def clicSurObjet(self, objGantt):
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
-            if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
-                self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
-            print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
-            self.listeDisplayableItem.append(AbstractLink(self, self.__activeGanttObject.getLastPart(), objGantt.getFirstPart()))
-            
+            if isinstance(objGantt.getSchedulable(), Task):
+                if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
+                    self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
+                print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
+                self.listeDisplayableItem.append(DependanceLink(self, self.__activeGanttObject.getLastPart(), objGantt.getFirstPart()))
 
     def __cancelLigneVerte(self):
         try:

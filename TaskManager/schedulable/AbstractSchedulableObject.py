@@ -126,6 +126,25 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def getFirstPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            return part
+
+    def getLastPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            pass
+        return part
+
     ""
     ############
     # Setters: #

@@ -159,7 +159,7 @@ class Task(AbstractSchedulableObject):
 
     def createDisplayableInstance(self, frame, part):
         # Ici, on s'en fiche de la part.
-        return DisplayableTask(frame, self)
+        return DisplayableTask(frame, self, part)
 
     def getRawRepartition(self, displayedCalendar):
         return self.getRepartition(displayedCalendar)

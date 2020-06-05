@@ -30,3 +30,11 @@ class AbstractItemContent(Frame):
         Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
         """
         raise NotImplementedError
+
+    def needButtonPlus(self, affichageGantt):
+        """
+        Permet de savoir si cette part à besoin d'un bouton
+        plus à côté d'elle lors d'un affichage en Gantt.
+        @return true si il y a besoin d'un bouton plus, false sinon.
+        """
+        raise NotImplementedError

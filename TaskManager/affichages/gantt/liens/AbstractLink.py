@@ -65,8 +65,6 @@ class AbstractLink(IDisplayableItem):
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
         """
-        # TODO : Dessiner correctement les liens selon le visibilitée partielle !
-        
         # On vide la liste des points de la courbe.
         self.__points = []
         
