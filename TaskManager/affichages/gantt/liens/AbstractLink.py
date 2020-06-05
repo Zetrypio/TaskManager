@@ -24,7 +24,6 @@ class AbstractLink(IDisplayableItem):
         super().__init__()
 
         # Attributs :
-        self.__can = can
         self.__affichageGantt = affichageGantt
         self.__partA = partA
         self.__partB = partB
@@ -69,7 +68,7 @@ class AbstractLink(IDisplayableItem):
             y1 = rectA.getCenterY()
             y2 = rectB.getCenterY()
             self.__drawSinus(x1, y1, x2, y2, orient = HORIZONTAL)
-            self.__can.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color)
+            self.canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color)
         #####################
         # Troisième façon : #
         #####################
@@ -84,5 +83,5 @@ class AbstractLink(IDisplayableItem):
             y4 = rectB.getCenterY()
             self.__drawSinus(x1, y1, x2, y2, orient = HORIZONTAL)
             self.__drawSinus(x3, y3, x4, y4, orient = HORIZONTAL)
-            self.__can.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color)
+            self.canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color)
         

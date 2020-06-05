@@ -86,6 +86,14 @@ class ObjetGantt(AbstractMultiFrameItem):
     def getYPlus(self):
         return self.__activePlus.getY()
 
+    def getFirstPart(self):
+        for part in self.getRepartition():
+            return part
+
+    def getLastPart(self):
+        for part in self.getRepartition(): pass
+        return part
+
     def __isPartPresent(self, part):
         for p in self.__parts:
             if p[0] == part:

@@ -11,7 +11,7 @@ from util.widgets.RMenu import *
 from util.util import *
 
 from ..AbstractDisplayedCalendar import *
-#from .TacheEnGantt import *
+from .liens.AbstractLink import *
 
 from schedulable.groupe.Groupe import *
 
@@ -110,6 +110,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                 self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
             print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
+            self.listeDisplayableItem.append(AbstractLink(self, self.__activeGanttObject.getLastPart(), objGantt.getFirstPart()))
+            
 
     def __cancelLigneVerte(self):
         try:
