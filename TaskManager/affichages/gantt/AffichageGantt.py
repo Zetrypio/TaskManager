@@ -4,11 +4,11 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 import datetime
 
+from util.geom.Point import *
 from util.widgets.Dialog import *
 from util.widgets.infobulle import *
 from util.widgets.RMenu import *
 from util.util import *
-from util.Point import *
 
 from ..AbstractDisplayedCalendar import *
 #from .TacheEnGantt import *
