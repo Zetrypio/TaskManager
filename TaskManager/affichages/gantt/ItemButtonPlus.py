@@ -30,23 +30,19 @@ class ItemButtonPlus(IDisplayableItem):
         @param canvas: le Canvas sur lequel afficher cet objet.
         @override redraw in IDisplayableItem.
         """
-        # Colonne du plus :
-        colonne = (self.__part.getJour() - self.__ganttObj.master.getJourDebut()).days
+        # Zone de l'objet :
+        rect = self.__ganttObj.master.getPartRectangle(self.__part)
 
-        # Taille du plus :
-        d = min(24, int(self.__ganttObj.master.tailleColonne * (1-self.__ganttObj.master.facteurW)*0.5))
+        # On extrait la zone du plus :
+        rect.setX1(rect.getX1() + rect.getWidth()*self.__ganttObj.master.facteurW)
+
+        # Taille du plus (diamètre et rayon) :
+        d = int(min(rect.getWidth()/2, rect.getHeight()/2))
         r = d // 2
 
-        # Bordure de la zone possible ou mettre le plus en X et en Y, en minimum et en maximum :
-        x1 = int(self.__ganttObj.master.tailleColonne * colonne + self.__ganttObj.master.facteurW * self.__ganttObj.master.tailleColonne)
-        y1 = int(AffichageGantt.TAILLE_BANDEAU_JOUR + self.__ganttObj.master.getPartPosition(self.__part)*AffichageGantt.TAILLE_LIGNE)
-
-        x2 = int(self.__ganttObj.master.tailleColonne * (colonne+1))
-        y2 = int(AffichageGantt.TAILLE_BANDEAU_JOUR + (self.__ganttObj.master.getPartPosition(self.__part)+1)*AffichageGantt.TAILLE_LIGNE)
-
         # Position du centre du plus :
-        self.__x = cx = (x1 + x2) // 2
-        self.__y = cy = (y1 + y2) // 2
+        self.__x = cx = int(rect.getCenterX())
+        self.__y = cy = int(rect.getCenterY())
 
         # Création du rond :
         canvas.create_oval(cx-r, cy-r, cx+r, cy+r, fill="light grey", tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
