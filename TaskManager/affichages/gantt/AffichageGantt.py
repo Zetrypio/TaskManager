@@ -112,8 +112,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if isinstance(objGantt.getSchedulable(), Task):
                 if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                     self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
-                print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
+#                print("Création lien de %s à %s."%(self.__activeGanttObject, objGantt))
                 self.listeDisplayableItem.append(DependanceLink(self, self.__activeGanttObject.getLastPart(), objGantt.getFirstPart()))
+                self.updateAffichage()
 
     def __cancelLigneVerte(self):
         try:
