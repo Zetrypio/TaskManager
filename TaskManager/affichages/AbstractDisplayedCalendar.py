@@ -30,7 +30,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         assert self.__class__ != AbstractDisplayedCalendar # interdire instanciation direct (classe abstraite version simple)
         kwargs["bg"] = "light gray"
-        Frame.__init__(self, master, **kwargs)
+        super().__init__(master, **kwargs)
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
@@ -137,7 +137,7 @@ class AbstractDisplayedCalendar(Frame):
         Getter pour le DonneeCalendrier.
         @return: le DonneeCalendrier.
         """
-        return self.master.master # Skip le NoteBook
+        return self.master.master # Skip le NoteBook : pas le choix, désolé l'OO :/
 
     def getApplication(self):
         """
@@ -298,6 +298,14 @@ class AbstractDisplayedCalendar(Frame):
         """
         Permet d'obtenir l'information de répartition de la partie à afficher.
         @return diffère suivant les besoins dans les sous-classes.
+        """
+        raise NotImplementedError
+
+    def getPartRectangle(self, part):
+        """
+        Permet d'obtenir le rectangle dans laquelle la part doit être dessiné.
+        Aussi utilisé par les ItemButtonPlus et les AbstractLink pour calculer
+        leur positionnement.
         """
         raise NotImplementedError
     

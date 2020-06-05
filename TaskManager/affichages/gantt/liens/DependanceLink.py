@@ -7,46 +7,69 @@ import datetime
 from util.widgets.infobulle import *
 from util.util import *
 
-class LienDependance: # Classe qui gère toutes les dépendances niveau visuel
-    def __init__(self, tacheDebut, tacheFin, canvas):
-        self.tacheD = tacheDebut # Où part   le lien | TacheEnGantt
-        self.tacheF = tacheFin #   Où arrive le lien | TacheEnGantt
+from ..items.IDisplayableItem import *
+
+class LienDependance(IDisplayableItem):
+    """
+    Classe permettant de dessiner une flèche pour les dépendances,
+    dans l'affichage Gantt.
+    
+    La flèche est soit courbée, si elle est sur un jour, en une forme ressemblant
+    à une sorte de S en mirroir, soit de manière sinusoïdale parcourrant entre
+    les tâches des jours entre le début et la fin.
+    """
+    def __init__(self, canvas, objGantt_A, objGantt_B):
+        """
+        Constructeur du lien.
         
-        for tache in self.tacheD.task.getDependances(): # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas
-            if self.tacheF.task == tache:
-                raise ValueError("Lien déjà existant.")
-
-        self.chemin = [] # Chemin que va suivre le lien pour la gestion de l'affichage
+        @param canvas: tkinter.Canvas() sur lequel dessiner la flèche.
+        @param objGanttA: ObjetGantt de départ du lien.
+        @param objGanttB: ObjetGantt de fin du lien.
+        """
+        # Constructeur parent :
+        super().__init__()
         
-        self.ID_LIEN = None
+        # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas :
+        if objGantt_B.getSchedulable() in objGantt_A.getSchedulable().getDependances():
+            raise RuntimeError("Lien déjà existant.")
 
-        self.canvas = canvas
-        self.select = False # variable qui sait si on est selectionne ou pas
+        # Attributs :
+        self.__objGantt_A = objGantt_A
+        self.__objGantt_B = objGantt_B
+        self.__can = canvas
 
-        self.tacheF.task.addDependance(self.tacheD.task) # On créer la dépendance dans la tache
+#        self.__chemin = [] # Chemin que va suivre le lien pour la gestion de l'affichage
+#        self.__ID_LIEN = None
+#        self.__select = False # variable qui sait si on est selectionne ou pas
 
-    def suppression(self):
-        self.tacheD.master.listeLien.remove(self)
-        self.tacheD.gestionRMenu()
-        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
-        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
-        self.tacheD.master.updateAffichage()
+        # Création de la dépendance :
+        objGantt_A.getSchedulable().addDependance(objGantt_B.getSchedulable())
+
+#    def suppression(self):
+#        self.tacheD.master.listeLien.remove(self)
+#        self.tacheD.gestionRMenu()
+#        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
+#        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
+#        self.tacheD.master.updateAffichage()
 
     def inverserLaDependances(self):
         """
-        Permet de changer le sens de la flèche
+        Permet de changer le sens de la flèche.
         """
-        self.tacheF.task.removeDependance(self.tacheD.task)
-        self.tacheD, self.tacheF = self.tacheF, self.tacheD
-        self.tacheF.task.addDependance(self.tacheD.task)
-        
+        if self.__objGantt_A.getSchedulable().getDebut() > self.__objGantt_B.getSchedulable().getDebut():
+            self.__objGantt_B.getSchedulable().removeDependance(self.__objGantt_A.getSchedulable())
+            self.__objGantt_A, self.__objGantt_B = self.__objGantt_B, self.__objGantt_A
+            self.__objGantt_B.getSchedulable().addDependance(self.__objGantt_A.getSchedulable())
+
     def afficherLesLiens(self, couleur = "#000000"):
+        """
+        @deprecated: Utiliser IDisplayableItem#redraw() à la place.
+        """
         from .AffichageGantt import AffichageGantt # Pour éviter les imports circulaires
         # On ne fait pas si on est pas dans la periode a afficher
         if (self.tacheD.task.getDebut().date() == self.tacheF.task.getDebut().date() and (self.tacheF.task.getFin().date() <  self.tacheD.master.getJourDebut() or self.tacheD.task.getFin().date()  >= self.tacheD.master.getJourFin())) \
         or (self.tacheD.task.getDebut().date() != self.tacheF.task.getDebut().date() and (self.tacheF.task.getFin().date() <= self.tacheD.master.getJourDebut() or self.tacheD.task.getDebut().date() > self.tacheD.master.getJourFin())):
             return
-        
 
         self.pathCalculing() # On calcul le nouveau chemin
 
