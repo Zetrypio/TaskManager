@@ -5,6 +5,7 @@ from tkinter import Label, Frame
 import datetime
 
 from util.geom.Point import *
+from util.geom.Rectangle import *
 from util.widgets.Dialog import *
 from util.widgets.infobulle import *
 from util.widgets.RMenu import *
@@ -354,6 +355,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if p.getJour() == part.getJour():
                 index += 1
         return index
+
+    def getPartRectangle(self, part):
+        colonne = (part.getJour() - self.getJourDebut()).days
+        return Rectangle(x1 = int(self.tailleColonne * colonne),
+                         y1 = AffichageGantt.TAILLE_BANDEAU_JOUR + self.getPartPosition(part)*AffichageGantt.TAILLE_LIGNE,
+                         width = self.tailleColonne,
+                         height = AffichageGantt.TAILLE_LIGNE)
 
     def getPartsOfDay(self, day):
         return (part for part in self.__parts if part.getJour() == day)

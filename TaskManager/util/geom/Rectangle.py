@@ -69,7 +69,7 @@ class Rectangle:
         Getter pour X2
         @return x2
         """
-        return self.__x1
+        return self.__x2
 
     def getY2(self):
         """

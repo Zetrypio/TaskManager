@@ -306,6 +306,8 @@ class AbstractDisplayedCalendar(Frame):
         Permet d'obtenir le rectangle dans laquelle la part doit être dessiné.
         Aussi utilisé par les ItemButtonPlus et les AbstractLink pour calculer
         leur positionnement.
+        @param part: La partie dont on veut tester la position.
+        @return util.geom.Rectangle() correspondant à la zone de cette partition.
         """
         raise NotImplementedError
     
