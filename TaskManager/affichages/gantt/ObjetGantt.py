@@ -58,10 +58,6 @@ class ObjetGantt(AbstractMultiFrameItem):
                     else:
                         # Sinon pas de plus
                         self.__parts.append((part, f, widget))
-#                # Si le plus à disparu :
-#                elif not self.__getWidgetForPart(part).needButtonPlus(self.master) and self.__getPlusForPart() is not None:
-#                    
-#                    pass
 
                 f = self.__getFrameForPart(part)
                 rect = self.master.getPartRectangle(part)
@@ -77,7 +73,8 @@ class ObjetGantt(AbstractMultiFrameItem):
                 p[1].destroy()
                 self.__parts.remove(p)
             elif len(p) > 3:
-                p[3].redraw(canvas)
+                if p[2].needButtonPlus(self.master):
+                    p[3].redraw(canvas)
 
     def beginLigneVerte(self, plus):
         self.__activePlus = plus
