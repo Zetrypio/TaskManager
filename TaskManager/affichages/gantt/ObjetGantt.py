@@ -37,7 +37,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         for part in self.getRepartition():
             # Si la partie est visible :
             if part := self.getVisiblePart(part):
-                if not self.__isPartPresent(part):
+                if not self.__isPartPresent(part): # Si on a pas déjà créé ce cadre exact :
                     # On fait dans tout les cas un frame pour ne pas prendre de risque de positionnement :
                     f = Frame(canvas, bg=self._schedulable.getColor())
 
@@ -59,6 +59,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                         # Sinon pas de plus
                         self.__parts.append((part, f, widget))
 
+                # On récupère et met à jour la position :
                 f = self.__getFrameForPart(part)
                 rect = self.master.getPartRectangle(part)
                 x = rect.getX1()+1
@@ -73,6 +74,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                 p[1].destroy()
                 self.__parts.remove(p)
             elif len(p) > 3:
+                # Mise à jour de la présence du bouton Plus (+) :
                 if p[2].needButtonPlus(self.master):
                     p[3].redraw(canvas)
 
