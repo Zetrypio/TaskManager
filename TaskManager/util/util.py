@@ -30,4 +30,5 @@ def err(e):
     return "%s : %s" % (e.__class__.__name__, e)
 
 def ppcm(a, b):
+    """Renvoie le plus petit commun multiple (ppcm) des 2 nombres a et b."""
     return (a*b)//math.gcd(a,b)

@@ -17,8 +17,8 @@ class AbstractDisplayedCalendar(Frame):
     """
     Classe représentant un calendrier qui doit être affiché,
     il se trouve qu'il y a également la classe qui contient tout
-    ces affichages de calendrier qui hérite aussi de cette classe.
-    (je parle de DonneeCalendrier)
+    ces affichages de calendrier qui hérite aussi de cette classe
+    (je parle ici de DonneeCalendrier).
     """
     def __init__(self, master = None, **kwargs):
         """
@@ -43,7 +43,6 @@ class AbstractDisplayedCalendar(Frame):
 
         # liste des tâches :
         self.listeTask = []
-        self.listeTaskAffichees = []
 
     def mouseClicked(self, event):
         """
@@ -294,6 +293,7 @@ class AbstractDisplayedCalendar(Frame):
         @return diffère suivant les besoins dans les sous-classes.
         """
         raise NotImplementedError
+
     def getPartSpan(self, part):
         """
         Permet d'obtenir l'information de répartition de la partie à afficher.
@@ -364,6 +364,9 @@ class AbstractDisplayedCalendar(Frame):
         de début, on utilisera pour cela la classe datetime.datetime().
 
         Méthode à redéfinir dans les sous-classes.
+        @param x: Position X relative à ce widget, sera bien souvent la position de la souris.
+        @param y: Position Y relative à ce widget, sera bien souvent la position de la souris.
+        @return datetime.datetime() indiquant la région trouvé aux coordonnées indiquées.
         """
         raise NotImplementedError
 
@@ -401,6 +404,11 @@ class AbstractDisplayedCalendar(Frame):
                 # d'affichage d'une tâche custom.
 
             return schedulable # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+        
+        @param schedulable: le schedulable à rajouter
+        @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
+        @return le schedulable, potentiellement changé.
+        @deprecated: va être renommé en addSchedulable()
         """
         if self.__class__ == AbstractDisplayedCalendar:
             raise NotImplementedError

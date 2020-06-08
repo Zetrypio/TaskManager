@@ -29,7 +29,7 @@ class DependanceLink(AbstractLink):
         """
         # Constructeur parent :
         super().__init__(affichageGantt, partA, partB)
-        
+
         # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas :
         if partB.getSchedulable() in partA.getSchedulable().getDependances():
             raise RuntimeError("Lien déjà existant.")

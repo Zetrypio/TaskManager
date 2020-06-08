@@ -9,15 +9,14 @@ class DisplayableTask(AbstractItemContent):
     """
     Permet d'afficher une tâche.
     """
-
     def __init__(self, master, schedulable, part, **kwargs):
         super().__init__(master, schedulable, **kwargs)
         """
         Constructeur de l'affichage d'une tâche.
-        @param master: master du tkinter.Frame que cet objet est.
+        @param master: master du tkinter.Frame() que cet objet est.
         @param schedulable: la tâche à gérer.
         @param part: la partie d'affichage géré par cet objet.
-        @param **kwargs: les options d'affichage du tkinter.Frame que cet objet est.
+        @param **kwargs: les options d'affichage du tkinter.Frame() que cet objet est.
         """
 
         # Création des widgets :

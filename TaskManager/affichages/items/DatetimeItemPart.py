@@ -23,6 +23,14 @@ class DatetimeItemPart:
         self.__schedulable = schedulable
 
     def __eq__(self, other):
+        """
+        /!\ SURCHARGE DE L'OPÉRATEUR "==" /!\.
+        Permet de faire le test d'égalité selon les états des DatetimeItemPart()s.
+        TOUT LES ATTRIBUTS SONT TESTÉS.
+        @param other: l'autre DatetimeItemPart() dont on teste l'égalité.
+        @return True si les états de ces 2 objets sont égaux, False sinon
+        @return NotImplemented si other n'est pas un DatetimeItemPart().
+        """
         if isinstance(other, DatetimeItemPart):
             return (self.__heureDebut  == other.__heureDebut
                 and self.__heureFin    == other.__heureFin
@@ -33,8 +41,9 @@ class DatetimeItemPart:
     def __hash__(self):
         """
         Renvoie hash(self).
-        Doit être redéfini car la méthode __eq__() est redéfinie et qu'on va utiliser cet objet dans un set().
+        Doit être redéfini car la méthode #__eq__() est redéfinie et qu'on va utiliser cet objet dans un set().
         Doit renvoyer un nombre le plus unique possible pour chaque instance en fonction de ses attributs.
+        @return hash(self.__schedulable)
         """
         return hash(self.__schedulable)
     

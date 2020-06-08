@@ -12,14 +12,14 @@ class DisplayableGroup(AbstractItemContent):
     def __init__(self, master, schedulable, part, **kwargs):
         """
         Constructeur de l'affichage d'un groupe.
-        @param master: master du tkinter.Frame que cet objet est.
+        @param master: master du tkinter.Frame() que cet objet est.
         @param schedulable: le groupe à gérer.
         @param part: la partie d'affichage géré par cet objet.
-        @param **kwargs: les options d'affichage du tkinter.Frame que cet objet est.
+        @param **kwargs: les options d'affichage du tkinter.Frame() que cet objet est.
         """
         # S'assurer que c'est bien un groupe :
         if not isinstance(schedulable, Groupe):
-            raise TypeError("Excpected Group, but got %s for %s"%(schedulable.__class__.__name__, schedulable))
+            raise TypeError("Excpected Group, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
 
         super().__init__(master, schedulable, **kwargs)
         

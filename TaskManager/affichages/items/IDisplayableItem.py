@@ -13,6 +13,9 @@ class IDisplayableItem:
         if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
 
     def __del__(self):
+        """
+        Le destructeur appel la méthode self#delete() si elle fonctionne.
+        """
         try:
             self.delete()
         except:
@@ -28,5 +31,6 @@ class IDisplayableItem:
     def delete(self):
         """
         Permet de supprimer cet objet de l'affichage.
+        Aussi appelée quand cet objet est supprimé.
         """
         raise NotImplementedError

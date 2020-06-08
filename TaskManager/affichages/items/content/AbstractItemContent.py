@@ -11,12 +11,12 @@ class AbstractItemContent(Frame):
     def __init__(self, master, schedulable, **kwargs):
         """
         Ne peut pas être instancié directement.
-        Constructeur d'un contenu d'un AbstractMultiFrameItem.
-        @param master: master du Frame que cet objet est.
-        @param schedulable: l'AbstractSchedulableObject considéré
+        Constructeur d'un contenu d'un AbstractMultiFrameItem().
+        @param master: master du tkinter.Frame() que cet objet est.
+        @param schedulable: l'AbstractSchedulableObject() considéré
         par cet objet.
         @param **kwargs: options à passer au constructeur parent,
-        celui de tkinter.Frame().
+        celui de tkinter.Frame() que cet objet est.
         """
         if self.__class__ == AbstractItemContent: raise RuntimeError("Can't instanciate abstract class AbstractItemContent directly.")
         super().__init__(master, **kwargs)
@@ -35,6 +35,6 @@ class AbstractItemContent(Frame):
         """
         Permet de savoir si cette part à besoin d'un bouton
         plus à côté d'elle lors d'un affichage en Gantt.
-        @return true si il y a besoin d'un bouton plus, false sinon.
+        @return True si il y a besoin d'un bouton plus, False sinon.
         """
         raise NotImplementedError

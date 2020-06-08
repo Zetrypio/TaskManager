@@ -65,18 +65,6 @@ class AbstractMultiFrameItem(IDisplayableItem):
         @return None si l'objet n'est pas visible du tout.
         """
         return self.master.getVisiblePart(part)
-
-#    def getPartsNumberAt(self, part):
-#        """
-#        Permet de savoir le nombre de DatetimeItemPart qui sont en même temps,
-#        à savoir le nombre de colonnes nécéssaire dans un affichage type
-#        calendrier classique pour afficher toutes les tâches qui seraient
-#        en même temps. Si il n'y a pas de tâches qui se superposent, cela
-#        peut renvoyer plus que 1, mais dans ce cas le getColumnSpanAt renverra
-#        le même nombre également.
-#        @return le nombre de DatetimeItemPart en même temps en tant qu'int.
-#        """
-#        return self.master.getColumnsNumberAt(part)
     
     def getPartPosition(self, part):
         """

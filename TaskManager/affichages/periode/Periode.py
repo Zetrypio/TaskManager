@@ -9,7 +9,19 @@ from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 
 class Periode(ITaskEditorDisplayableObject):
+    """
+    Classe représentant une période.
+    """
     def __init__(self, periodManager, nom, debut, fin, desc, color = "white"):
+        """
+        Constrcuteur de la période.
+        @param periodManager: Gestionnaire de période.
+        @param nom: Nom de la période.
+        @param debut: datetime.date() de début de la période.
+        @param fin: datetime.date() de fin de la période.
+        @param desc: Description de la période.
+        @param color = "white": Couleur d'affichage de la période.
+        """
         self.periodManager = periodManager
         self.nom = nom
         self.debut = debut + datetime.timedelta()
@@ -26,25 +38,45 @@ class Periode(ITaskEditorDisplayableObject):
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
 
     def __str__(self):
+        """Return a nice string representation for Period objects."""
         return "Periode: %s, from %s to %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
 
     def getColor(self):
+        """
+        Getter pour la couleur native d'affichage de l'objet.
+        Par native, j'entend que ça ne prend pas en compte la couleur
+        de sélection si jamais c'est sélectionné ou non.
+        @return la couleur native d'affichage de l'objet.
+        """
         return self.color
 
     def getDateStatut(self):
-        """ Getter de la datetime clé """
+        """
+        Getter de la datetime clé
+        @deprecated: On va complètement changer ce système.
+        """
         return self.dateStatut
 
     def getDebut(self):
+        """
+        Getter pour le début de la période.
+        @return datetime.date() correspondant au début de la période.
+        """
         return self.debut + datetime.timedelta() # Faire une copie de la date
-    def getDuree(self):
-        return self.fin - self.debut
-    def getFin(self):
-        return self.fin + datetime.timedelta() # Faire une copie de la date
 
-    def getGroupeManager(self):
-        """ Getter du groupe Manager """
-        return self.groupeManager
+    def getDuree(self):
+        """
+        Permet d'obtenir la durée de la période.
+        @return datetime.timedelta() correspondant à la durée de la période.
+        """
+        return self.fin - self.debut
+
+    def getFin(self):
+        """
+        Getter pour la fin de la période.
+        @return datetime.date() correspondant à la fin de la période.
+        """
+        return self.fin + datetime.timedelta() # Faire une copie de la date
 
     def setDebut(self, debut, change = "duree"):
         """
@@ -62,6 +94,7 @@ class Periode(ITaskEditorDisplayableObject):
             self.fin = self.debut + duree
         else:
             raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
+
     def setFin(self, fin, change = "duree"):
         """
         Permet de mettre la fin de la période.
@@ -80,31 +113,86 @@ class Periode(ITaskEditorDisplayableObject):
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
         
     def intersectWith(self, periode):
+        """
+        Permet de savoir si cette période s'intersectionne avec une autre.
+        @param periode: la période dont on teste l'intersection avec celle-ci.
+        @return True si les 2 périodes s'intersectionnent, False sinon.
+        """
         return (self.getDebut() >= periode.getDebut() and self.getDebut() <= periode.getFin()) \
             or (periode.getDebut() >= self.getDebut() and periode.getDebut() <= self.getFin())
 
+    def getGroupeManager(self):
+        """
+        Getter pour le gestionnaire de groupe de cette période.
+        @return le GroupManager de cette période.
+        """
+        return self.groupeManager
+
     def isSelected(self):
+        """
+        Getter pour savoir si la période est sélectionnée dans l'affichage de calendrier des périodes.
+        @return True si la période est sélectionnée dans l'affichage de calendrier des périodes, False sinon.
+        """
         return self.selected
+
     def setSelected(self, value):
+        """
+        Setter pour indiquer si la période est sélectionnée dans l'affichage de calendrier des périodes.
+        @param value: True si la période doit être sélectionnée, False sinon.
+        """
         if not isinstance(value, bool): raise TypeError("Exptected a boolean")
         self.selected = value
     
     def setDateStatut(self, datetime):
-        """ Setter du datetime """
+        """
+        Setter du datetime de limite de statut.
+        @deprecated: On va complètement changer ce système.
+        """
         self.dateStatut = datetime
 
     def isActuelle(self):
+        """
+        Permet de savoir si la période est actuellement en cours,
+        c'est à dire que le Maintenant est entre le début et la fin de cette période.
+        @return True si la période est actuellement en cours, False sinon.
+        """
         return self.debut >= datetime.datetime.now().date() and self.debut <= datetime.datetime.now().date()
 
     def getHeader(self):
-        return self.nom, self.isActuelle()
+        """
+        Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @return le nom suivi de :
+         - "En cours" si la période est actuelle (voire #isActuelle()) ;
+         - "Prochainement" si la période n'est pas encore commencée ;
+         - "Finie" si la période est déjà finie.
+        @specified by getHeader() in ITaskEditorDisplayableObject().
+        """
+        return self.nom, "En cours" if self.isActuelle()\
+                    else "Prochainement" if self.debut > datetime.datetime.now().date()\
+                    else "Finie"
+
     def iterateDisplayContent(self):
+        """
+        Permet de donner les lignes de contenu de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @yield "Debut :" suivi de la date de début.
+        @yield "Durée :" suivi de la durée.
+        @yield "Fin :" suivi de la date de fin.
+        @yield "Description :" suivi de la description.
+        @specified by iterateDisplayContent() in ITaskEditorDisplayableObject().
+        """
         yield "Debut :", self.debut
         yield "Durée :", self.getDuree()
         yield "Fin :", self.fin
         yield "Description :", self.desc
 
     def getRMenuContent(self, taskEditor, rmenu):
+        """
+        Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
+        @param taskEditor: le TaskEditor()
+        @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
+        @return la liste des commandes nécéssaire.
+        @specified by getRMenuContent() in ITaskEditorDisplayableObject().
+        """
          # Mise en place de simplicitées :
         retour = []
         add = lambda a, b=None: retour.append((a, b if b else {}))
@@ -114,6 +202,13 @@ class Periode(ITaskEditorDisplayableObject):
         return retour
     
     def getFilterStateWith(self, filter):
+        """
+        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+        @param filter: Dictionnaire du filtre.
+        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        """
         # Si non autorisé par le filtre :
         if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
         or ("type" in filter and not "Période" in filter["type"]):

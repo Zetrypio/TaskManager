@@ -229,6 +229,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     # Autre méthodes : #
     ####################
     def getFilterStateWith(self, filter):
+        """
+        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+        @param filter: Dictionnaire du filtre.
+        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        """
         
         # TODO : À modifier
         
