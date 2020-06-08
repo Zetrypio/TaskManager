@@ -13,6 +13,8 @@ class ObjetClassique(AbstractMultiFrameItem):
     def __init__(self, master, schedulable):
         """
         Constructeur d'un objet classique.
+        @param master: AffichageClassique.
+        @param schedulable: Objet à afficher.
         """
         super().__init__(master, schedulable)
 
@@ -29,20 +31,28 @@ class ObjetClassique(AbstractMultiFrameItem):
                 
                 self._schedulable.createDisplayableInstance(f, part).pack(expand = YES, fill = BOTH)
                 
-                # On le place :
-                temps0 = 1 + self.master.getHeureDebut().hour * 60 + self.master.getHeureDebut().minute
-                temps1 = 1 + part.getHeureDebut()       .hour * 60 + part.getHeureDebut()       .minute
-                temps2 = 1 + part.getHeureFin()         .hour * 60 + part.getHeureFin()         .minute
+#                # On le place :
+#                temps0 = 1 + self.master.getHeureDebut().hour * 60 + self.master.getHeureDebut().minute
+#                temps1 = 1 + part.getHeureDebut()       .hour * 60 + part.getHeureDebut()       .minute
+#                temps2 = 1 + part.getHeureFin()         .hour * 60 + part.getHeureFin()         .minute
+#
+#                ligne1 = 1 + temps1 - temps0
+#                ligne2 = 1 + temps2 - temps0
+#
+#                lignespan = ligne2 - ligne1
+#
+#                colonne = self.getPartPosition(part)
+#                colonnespan = self.getPartSpan(part)
 
-                ligne1 = 1 + temps1 - temps0
-                ligne2 = 1 + temps2 - temps0
+                rect = self.master.getPartRectangle(part)
+                ligne       = int(rect.getY1())
+                lignespan   = int(rect.getHeight())
+                colonne     = int(rect.getX1())
+                colonnespan = int(rect.getWidth())
+                
+                print("classique:", ligne, lignespan, colonne, colonnespan)
 
-                lignespan = ligne2 - ligne1
-
-                colonne = self.getPartPosition(part)
-                colonnespan = self.getPartSpan(part)
-
-                f.grid(row = ligne1, rowspan = lignespan, column = colonne, columnspan = colonnespan, sticky="nsew")
+                f.grid(row = ligne, rowspan = lignespan, column = colonne, columnspan = colonnespan, sticky="nsew")
 
                 # On le mémorise :
                 self._listeCadre.append(f)

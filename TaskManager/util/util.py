@@ -28,3 +28,6 @@ def posY(t, x1, y1, x2, y2):
 def err(e):
     """Return a nice string representation for error objects."""
     return "%s : %s" % (e.__class__.__name__, e)
+
+def ppcm(a, b):
+    return (a*b)//math.gcd(a,b)

@@ -6,6 +6,8 @@ import datetime
 
 from ..AbstractDisplayedCalendar import *
 from .ObjetClassique import *
+from util.geom.Rectangle import *
+from util.util import *
 
 class AffichageCalendrier(AbstractDisplayedCalendar):
     def __init__(self, master = None, **kwargs):
@@ -25,6 +27,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.updateAffichage()
         
         self.__parts = []
+
+        self.__nbColonneParJour = 1
 
         # self.bind("<Configure>", lambda e : self.updateAffichage())
 
@@ -50,6 +54,24 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
     def getPartSpan(self, part):
         return 1 # TODO
+
+    def getPartRectangle(self, part):
+        colonnespan = self.__nbColonneParJour / self.__getNbColonnePourJour(part.getJour())
+        jour = part.getJour()
+        colonne = 1 + ((jour - self.getJourDebut()).days)*(self.__nbColonneParJour+1)
+        print(jour, colonne)
+        
+        # Lignes :
+        temps0 = 1 + self.getHeureDebut().hour * 60 + self.getHeureDebut().minute
+        temps1 = 1 + part.getHeureDebut().hour * 60 + part.getHeureDebut().minute
+        temps2 = 1 + part.getHeureFin()  .hour * 60 + part.getHeureFin()  .minute
+
+        ligne1 = 1 + temps1 - temps0
+        ligne2 = 1 + temps2 - temps0
+#
+#        lignespan = ligne2 - ligne1
+        rect = Rectangle(x1 = colonne, width = colonnespan, y1 = ligne1, y2 = ligne2)
+        return rect
     
     def getPartsOfDay(self, day):
         return (part for part in self.__parts if part.getJour() == day)
@@ -96,6 +118,22 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(displayable.getRepartition())
+        jour = self.getJourDebut()
+        self.__nbColonneParJour = 1
+        for compteur in range(self.getNbJour()):
+            self.__nbColonneParJour = ppcm(self.__nbColonneParJour, self.__getNbColonnePourJour(jour))
+            jour += datetime.timedelta(days = 1)
+    
+    def __getNbColonnePourJour(self, jour):
+        colonnePourJour = 1
+        for part in self.getPartsOfDay(jour):
+            colonnePourPart = 1
+            for part2 in self.getPartsOfDay(jour):
+                if part is part2: continue
+                if part.intersectWith(part2):
+                    colonnePourPart += 1
+                    colonnePourJour = max(colonnePourJour, colonnePourPart)
+        return colonnePourJour
 
     def __afficherLesHeures(self):
         """
@@ -132,10 +170,10 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             self.listeLabelJour.append(Label(self.frame, text=JOUR[jour.weekday()], bg = "light grey"))
             self.listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectTaskJour(jour))
             self.listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectTaskJour(jour, control=True))
-            self.listeLabelJour[-1].grid(row=0, column=1+((jour-self.getJourDebut()).days)*2, sticky="NSWE")
+            self.listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")
             if jour < self.getJourFin():
                 self.listeSeparateurJour.append(Separator(self.frame, orient=VERTICAL))
-                self.listeSeparateurJour[-1].grid(row=0, column=2+2*(jour-self.getJourDebut()).days, rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
+                self.listeSeparateurJour[-1].grid(row=0, column=(self.__nbColonneParJour+1)*(1+(jour-self.getJourDebut()).days), rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
 
             jour += datetime.timedelta(days = 1)
             
@@ -157,8 +195,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         sinon ce qui serais rajouté après n'aurait pas forcément eu cet étirage des cases.
         """
         # à mettre À LA FIN ! ! ! (pour les expands)
-        for column in range(self.getNbJour()*2+1):
-            if column%2 ==0:
+        for column in range(self.getNbJour()*(self.__nbColonneParJour+1)):
+            if column % (self.__nbColonneParJour+1) ==0:
                 self.frame.columnconfigure(column,weight=0)
             else:
                 self.frame.columnconfigure(column, weight=1)
