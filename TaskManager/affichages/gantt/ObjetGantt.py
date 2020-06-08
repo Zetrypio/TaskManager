@@ -64,12 +64,11 @@ class ObjetGantt(AbstractMultiFrameItem):
 #                    pass
 
                 f = self.__getFrameForPart(part)
-                colonne = (part.getJour() - self.master.getJourDebut()).days
-                x = 2+int(self.master.tailleColonne * colonne)
-                y = 1+int(AffichageGantt.TAILLE_BANDEAU_JOUR + self.getPartPosition(part)*AffichageGantt.TAILLE_LIGNE)
-                width = int(self.master.tailleColonne * self.master.facteurW)
-                height = int(AffichageGantt.HAUTEUR_TACHE)
-                print(x, y, width, height)
+                rect = self.master.getPartRectangle(part)
+                x = rect.getX1()+1
+                y = rect.getY1()+1
+                width = rect.getWidth() * self.master.facteurW
+                height = rect.getHeight() - 4
                 canvas.create_window(x, y, width=width, height=height, window = f, anchor="nw")
 
         # Suppression des parties qui ne sont plus visibles :
