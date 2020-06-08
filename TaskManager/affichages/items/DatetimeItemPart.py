@@ -29,6 +29,14 @@ class DatetimeItemPart:
                 and self.__jour        == other.__jour
                 and self.__schedulable == other.__schedulable)
         return NotImplemented
+
+    def __hash__(self):
+        """
+        Renvoie hash(self).
+        Doit être redéfini car la méthode __eq__() est redéfinie et qu'on va utiliser cet objet dans un set().
+        Doit renvoyer un nombre le plus unique possible pour chaque instance en fonction de ses attributs.
+        """
+        return hash(self.__schedulable)
     
     def getDebut(self):
         """

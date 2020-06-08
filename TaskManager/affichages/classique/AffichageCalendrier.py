@@ -29,6 +29,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__parts = []
 
         self.__nbColonneParJour = 1
+        self.__partsParColonnes = []
 
         # self.bind("<Configure>", lambda e : self.updateAffichage())
 
@@ -58,7 +59,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     def getPartRectangle(self, part):
         colonnespan = self.__nbColonneParJour / self.__getNbColonnePourJour(part.getJour())
         jour = part.getJour()
-        colonne = 1 + ((jour - self.getJourDebut()).days)*(self.__nbColonneParJour+1)
+        colonne = 1 + ((jour - self.getJourDebut()).days)*(self.__nbColonneParJour+1) + self.__getNoColonnePourPart(part)
         print(jour, colonne)
         
         # Lignes :
@@ -120,20 +121,41 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                 self.__parts.extend(displayable.getRepartition())
         jour = self.getJourDebut()
         self.__nbColonneParJour = 1
+        self.__partsParColonnes = []
         for compteur in range(self.getNbJour()):
+            self.__partsParColonnes.append(self.__computePartsParColonnesDuJour(jour))
             self.__nbColonneParJour = ppcm(self.__nbColonneParJour, self.__getNbColonnePourJour(jour))
             jour += datetime.timedelta(days = 1)
     
-    def __getNbColonnePourJour(self, jour):
-        colonnePourJour = 1
+    def __computePartsParColonnesDuJour(self, jour):
+        partsParColonnes = []
         for part in self.getPartsOfDay(jour):
-            colonnePourPart = 1
-            for part2 in self.getPartsOfDay(jour):
-                if part is part2: continue
-                if part.intersectWith(part2):
-                    colonnePourPart += 1
-                    colonnePourJour = max(colonnePourJour, colonnePourPart)
-        return colonnePourJour
+            index = 0
+            intersecting = True
+            while intersecting:
+                intersecting = False
+                if len(partsParColonnes) <= index:
+                    partsParColonnes.append(set())
+                for p in partsParColonnes[index]:
+                    if part.intersectWith(p):
+                        index += 1
+                        intersecting = True
+                        break
+            partsParColonnes[index].add(part)
+        return partsParColonnes
+
+    def __getNbColonnePourJour(self, jour):
+        return max(1, len(self.__partsParColonnes[(jour - self.getJourDebut()).days]))
+
+    def __getNoColonnePourPart(self, part):
+        for jour in range(len(self.__partsParColonnes)):
+            colonne = 0
+            for st in self.__partsParColonnes[jour]:
+                for p in st:
+                    if p == part:
+                        return colonne
+                colonne +=1
+#        return 0
 
     def __afficherLesHeures(self):
         """
