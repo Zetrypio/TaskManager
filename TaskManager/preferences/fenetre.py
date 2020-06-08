@@ -14,6 +14,9 @@ from .pages.general.pageClavier import *
 from .pages.general.pageTheme import *
 
 from .pages.pageCalendrier import *
+from .pages.calendrier.pageClassique import *
+from .pages.calendrier.pageGantt import *
+from .pages.calendrier.pagePeriode import *
 
 
 class FenetrePreferences(Dialog):
@@ -39,6 +42,9 @@ class FenetrePreferences(Dialog):
         self.__ajouterPage(PageTheme(self.getParametrageZone()))
 
         self.__ajouterPage(PageCalendrier(self.getParametrageZone()))
+        self.__ajouterPage(PageClassique(self.getParametrageZone()))
+        self.__ajouterPage(PageGantt(self.getParametrageZone()))
+        self.__ajouterPage(PagePeriode(self.getParametrageZone()))
 
         # Initialisation de la page de garde
         self.setPageActive("-General")
