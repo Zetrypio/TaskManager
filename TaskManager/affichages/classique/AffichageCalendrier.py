@@ -61,6 +61,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         objClassique.getSchedulable().setSelected(True)
         self.getDonneeCalendrier().updateColor()
 
+    def __onClicSurFrame(self):
+        self.deselectEverything()
+
     def updateAffichage(self):
         """
         Permet de mettre à jour l'affichage.
@@ -71,7 +74,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__parts = []
         self.__frame = Frame(self)
         self.__frame.pack(expand = YES, fill = BOTH)
-#        self.__frame.bind("<Button-1>", self.mouseClicked, add = True)
+        self.__frame.bind("<Button-1>", lambda e: self.__onClicSurFrame(), add = True)
         #self.__frame.bind("<Escape>",  self.escapePressed)
 
         # On précalcule :
@@ -87,7 +90,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
         """
         for displayable in self.listeDisplayableItem:
-            displayable.updateColor()
+            displayable.updateColor(self.__frame)
 
     def getPartRectangle(self, part):
         """

@@ -42,11 +42,7 @@ class DependanceLink(AbstractLink):
         # Création de la dépendance :
         partB.getSchedulable().addDependance(partA.getSchedulable())
 
-    def redraw(self, canvas):
-        """
-        Méthode pour dessiner la flèche.
-        @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
-        """
+    def __setColor(self):
         # TODO : Couleur lors Ajout et Suppression.
         if self.__selected:
             self.setColor("#0078FF")
@@ -54,10 +50,21 @@ class DependanceLink(AbstractLink):
         else:
             self.setColor("black")
             self.setStrokeWeight(2)
+
+    def redraw(self, canvas):
+        """
+        Méthode pour dessiner la flèche.
+        @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
+        """
+        self.__setColor()
         super().redraw(canvas)
 
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))
+
+    def updateColor(self, canvas):
+        self.__setColor()
+        super().updateColor(canvas)
 
 #    def suppression(self):
 #        self.tacheD.master.listeLien.remove(self)

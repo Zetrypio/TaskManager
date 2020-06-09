@@ -29,14 +29,27 @@ class MultiFrameItemInnerLink(AbstractLink):
 
         # TODO : tester lien déjà existant ?
 
+    def __setColor(self):
+        # TODO : Couleur lors Ajout et Suppression.
+        if self.getPartA().getSchedulable().isSelected():
+            self.setColor("#0078FF")
+            self.setStrokeWeight(3)
+        else:
+            self.setColor("grey")
+            self.setStrokeWeight(2)
+
     def redraw(self, canvas):
         """
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
         """
-        self.setColor("grey")
+        self.__setColor()
         self.setStrokeWeight(2)
         super().redraw(canvas)
 
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), str(self.getPartA().getSchedulable()))
+
+    def updateColor(self, canvas):
+        self.__setColor()
+        super().updateColor(canvas)

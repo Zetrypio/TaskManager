@@ -120,9 +120,11 @@ class ObjetGantt(AbstractMultiFrameItem):
         self._schedulable.inverseSelection()
         self.master.getDonneeCalendrier().updateColor()
 
-    def updateColor(self):
+    def updateColor(self, canvas):
         for p in self.__parts:
             p[2].updateColor()
+        for l in self.__liens:
+            l.updateColor(canvas)
 
     def getXPlus(self):
         """

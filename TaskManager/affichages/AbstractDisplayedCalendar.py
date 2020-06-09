@@ -52,6 +52,11 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
+    def deselectEverything(self):
+        for s in self.listeTask: # Getter ?
+            s.setSelected(False)
+        self.getDonneeCalendrier().updateColor()
+
 #    def mouseClicked(self, event):
 #        """
 #        Méthode exécutée quand un clic est fait sur le calendrier.

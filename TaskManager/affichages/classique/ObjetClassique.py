@@ -66,7 +66,7 @@ class ObjetClassique(AbstractMultiFrameItem):
         self._schedulable.inverseSelection()
         self.master.getDonneeCalendrier().updateColor()
 
-    def updateColor(self):
+    def updateColor(self, frame):
         for w in self.__widget:
             w.updateColor()
 

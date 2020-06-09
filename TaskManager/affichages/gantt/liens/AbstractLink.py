@@ -44,6 +44,12 @@ class AbstractLink(IDisplayableItem):
         """
         return self.__partB
 
+    def updateColor(self, canvas):
+        """
+        Permet de mettre à jour la couleur du lien.
+        """
+        canvas.itemconfigure(self.getTag(), fill=self.__color)
+
     def setColor(self, color):
         """
         Setter pour la couleur.

@@ -71,21 +71,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # En attente des préférences du clavier
         #
         
-        # Binding d'events virtuels :
-        self.can.bind_all("<ButtonRelease-1>",  lambda e: self.can.event_generate("<<canvas-scrolled>>"), add=1)
-        self.can.bind_all("<Button-1>",         lambda e: self.can.event_generate("<<only-select>>")    , add=1)
-        self.can.bind_all("<Control-Button-1>", lambda e: self.can.event_generate("<<multi-select>>")   , add=1)
-        self.can.bind_all("<Motion>",           lambda e: self.can.event_generate("<<mouse-moved>>")    , add=1)
-        self.can.bind_all("<Escape>",           lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
-        self.can.bind_all("<Delete>",           lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+        # Binding d'events virtuels : ?
+        self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
+        self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         
         # Définitnion des events virtuels :
-#       self.can.bind_all("<<canvas-scrolled>>" , lambda e: self.updateAffichage()) # Faire en sorte que les coordonées de la scrollbar soient prisent en compte quand on la bouge.
-        self.can.bind_all("<<only-select>>"     , lambda e: self.__cancelLigneVerte())
-#       self.can.bind_all("<<multi-select>>"    , self.__multiSelection)
-        self.can.bind_all("<<deselect-all>>"    , lambda e: self.__cancelLigneVerte())
-#       self.can.bind_all("<<delete-selected>>" , self.__suppr)
-#       self.can.bind("<<mouse-moved>>", self.__updateLigneVerte)
+        self.can.bind_all("<<deselect-all>>", lambda e: self.__onClicSurCanvas())
+        self.can.bind("<Button-1>", lambda e: self.__onClicSurCanvas())
         self.can.bind("<Motion>", self.__updateLigneVerte)
 
         # Infobulle toujours vraie :
@@ -105,7 +97,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet de commencer une ligne verte pour un lien depuis un objetGantt.
         @param objGantt: l'objetGantt depuis lequel commence le lien.
         """
-        self.__cancelLigneVerte()
+        self.__onClicSurCanvas()
         self.__activeGanttObject = objGantt
         self.__x1_LigneVerte = self.__activeGanttObject.getXPlus()
         self.__y1_LigneVerte = self.__activeGanttObject.getYPlus()
@@ -146,24 +138,26 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self.getVisiblePart(objGantt.getFirstPart())))
                 self.updateAffichage()
         elif self.__activeGanttObject is None:
-            for s in self.listeTask: # Getter ?
-                s.setSelected(False)
+            self.deselectEverything()
             objGantt.getSchedulable().setSelected(True)
             self.getDonneeCalendrier().updateColor()
 
-    def __cancelLigneVerte(self):
+    def __onClicSurCanvas(self):
         """
         Méthode exécutée quand on appuie sur echappe ou qu'on appuie
-        dans le vide pour annuler le lien de la ligne verte.
+        dans le vide pour annuler le lien de la ligne verte. Sinon pour déselectionner les tâches.
         """
-        try:
-            self.can.delete(self.__id_LigneVerte)
-        except:
-            pass
-        self.__id_LigneVerte = None
-        self.__x1_LigneVerte = None
-        self.__y1_LigneVerte = None
-        self.__activeGanttObject = None
+        if self.__activeGanttObject is not None:
+            try:
+                self.can.delete(self.__id_LigneVerte)
+            except:
+                pass
+            self.__id_LigneVerte = None
+            self.__x1_LigneVerte = None
+            self.__y1_LigneVerte = None
+            self.__activeGanttObject = None
+        else:
+            self.deselectEverything()
 
     def __precalculer(self):
         """
@@ -395,8 +389,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Sécurité :
         if self.can.winfo_width() != 0:
             # On efface TOUT :
-#            for tache in self.listeTaskAffichees:
-#                tache.PlusCoord = None
             self.can.delete(ALL)
 
             # On réaffiche touououououout :
@@ -415,7 +407,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
         """
         for displayable in self.listeDisplayableItem:
-            displayable.updateColor()
+            displayable.updateColor(self.can)
 
     def getPartPosition(self, part):
         """

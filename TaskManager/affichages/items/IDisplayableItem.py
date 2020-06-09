@@ -28,11 +28,11 @@ class IDisplayableItem:
         """
         raise NotImplementedError
 
-    def updateColor(self):
+    def updateColor(self, frameOrCanvas):
         """
         Permet de mettre à jour la couleur de l'objet.
         """
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
     
     def delete(self):
         """
