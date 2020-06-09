@@ -188,6 +188,13 @@ class Task(AbstractSchedulableObject):
         # Ici, on s'en fiche de la part.
         return DisplayableTask(frame, self, part)
 
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peut importe le sens.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
+        """
+        return isinstance(schedulable, Task) and not self.intersectWith(schedulable)
+
     def getRawRepartition(self, displayedCalendar):
         """
         @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
@@ -368,6 +375,15 @@ class Task(AbstractSchedulableObject):
         @return None si la tâche n'as pas de début (en vrai c'est qu'elle n'as pas de fin).
         """
         return (self.__debut + self.__duree) if self.__debut is not None else None
+
+    def intersectWith(self, task):
+        """
+        Permet de savoir si cette tâche s'intersectionne avec une autre.
+        @param task: la tâche dont on teste l'intersection avec celle-ci.
+        @return True si les 2 tâches s'intersectionnent, False sinon.
+        """
+        return (self.getDebut() >= task.getDebut() and self.getDebut() <= task.getFin()) \
+            or (task.getDebut() >= self.getDebut() and task.getDebut() <= self.getFin())
 
     ""
     ####################

@@ -264,5 +264,12 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peut importe le sens.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
+        """
+        raise NotImplementedError
+
 
 

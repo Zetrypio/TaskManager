@@ -132,7 +132,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Si on est en mode ajout de lien :
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
             # Si le lien est accepté :
-            if isinstance(objGantt.getSchedulable(), Task):
+            if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
                 # On inverse le lien si il est à l'envers.
                 if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                     self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
@@ -202,6 +202,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
 #    def __getBtnChangeJour(self):
 #        return self.getParametreAffichage().getBoutonsChangementJours()
+
     def getParametreAffichage(self):
         """
         Getter de ParametreAffichage.
@@ -543,7 +544,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can)
-
 
     def __afficherLesDependances(self):
         """
