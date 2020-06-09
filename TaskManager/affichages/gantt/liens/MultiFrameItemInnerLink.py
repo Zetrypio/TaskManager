@@ -2,6 +2,8 @@
 
 from .AbstractLink import *
 
+from util.widgets.infobulle import *
+
 class MultiFrameItemInnerLink(AbstractLink):
     """
     Cette classe permet de faire un lien entre 2 AbstractItemContent() d'un même
@@ -23,7 +25,7 @@ class MultiFrameItemInnerLink(AbstractLink):
         super().__init__(affichageGantt, partA, partB)
 
         if partA.getSchedulable() != partB.getSchedulable():
-            raise RuntimeError("Le lien doit commencer et terminer sur le même lien.")
+            raise RuntimeError("Le lien doit commencer et terminer sur le même objet planifiable.")
 
         # TODO : tester lien déjà existant ?
 
@@ -32,7 +34,9 @@ class MultiFrameItemInnerLink(AbstractLink):
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
         """
-        # TODO : Couleur lors Ajout et Suppression.
         self.setColor("grey")
         self.setStrokeWeight(2)
         super().redraw(canvas)
+
+        # Ajouter infobulle :
+        ajouterInfoBulleTagCanvas(canvas, self.getTag(), str(self.getPartA().getSchedulable()))

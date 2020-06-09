@@ -56,6 +56,9 @@ class DependanceLink(AbstractLink):
             self.setStrokeWeight(2)
         super().redraw(canvas)
 
+        # Ajouter infobulle :
+        ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))
+
 #    def suppression(self):
 #        self.tacheD.master.listeLien.remove(self)
 #        self.tacheD.gestionRMenu()
