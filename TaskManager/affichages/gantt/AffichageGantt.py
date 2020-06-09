@@ -145,6 +145,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self.getVisiblePart(self.__activeGanttObject.getLastPart()),
                         self.getVisiblePart(objGantt.getFirstPart())))
                 self.updateAffichage()
+        elif self.__activeGanttObject is None:
+            for s in self.listeTask: # Getter ?
+                s.setSelected(False)
+            objGantt.getSchedulable().setSelected(True)
+            self.getDonneeCalendrier().updateColor()
 
     def __cancelLigneVerte(self):
         """

@@ -51,6 +51,16 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         # self.bind("<Configure>", lambda e : self.updateAffichage())
 
+    def clicSurObjet(self, objClassique):
+        """
+        Méthode exécutée lors d'un clic sur un objet.
+        @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
+        """
+        for s in self.listeTask: # Getter ?
+            s.setSelected(False)
+        objClassique.getSchedulable().setSelected(True)
+        self.getDonneeCalendrier().updateColor()
+
     def updateAffichage(self):
         """
         Permet de mettre à jour l'affichage.
@@ -71,6 +81,13 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
+        """
+        for displayable in self.listeDisplayableItem:
+            displayable.updateColor()
 
     def getPartRectangle(self, part):
         """
@@ -275,13 +292,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.__frame)
-
-    def updateColor(self):
-        """
-        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
-        """
-        for displayable in self.listeDisplayableItem:
-            displayable.updateColor()
 
     def __adapteGrid(self):
         """

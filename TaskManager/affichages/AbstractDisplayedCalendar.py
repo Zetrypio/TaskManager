@@ -44,12 +44,13 @@ class AbstractDisplayedCalendar(Frame):
         # liste des tâches :
         self.listeTask = []
 
-    def clicSurObjet(self, objGantt):
+    def clicSurObjet(self, objet):
         """
-        Méthode à exécuter quand on clic sur l'un des objets de gantt.
-        Peut créer un lien si on était en mode d'ajout de liens etc.
-        @param objGantt: l'objet sur lequel on a cliqué.
+        Méthode à exécuter quand on clic sur l'un des objets.
+        Utile pour sélectionner une tâche par exemple.
+        @param objet: l'objet sur lequel on a cliqué.
         """
+        raise NotImplementedError
 
 #    def mouseClicked(self, event):
 #        """
