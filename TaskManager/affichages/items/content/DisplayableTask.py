@@ -43,10 +43,6 @@ class DisplayableTask(AbstractItemContent):
         # Autre attributs :
         self.__part = part
 
-#        # La selection des taches
-#        self.__texte.bind("<Button-1>", self._clique)
-#        self.__texte.bind("<Control-Button-1>", self.multiSelection)
-
     def __getDisplayColor(self):
         """
         Getter pour savoir la véritable couleur d'affichage,
@@ -62,3 +58,9 @@ class DisplayableTask(AbstractItemContent):
         if self._schedulable.getLastPart(affichageGantt) == self.__part and len(self._schedulable.getDependantes()) == 0:
             return True
         return False
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
+        """
+        self.__texte.config(bg=self.__getDisplayColor())

@@ -195,7 +195,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         Si l'objet était sélectionné, il ne le sera plus
         et inversement.
         """
-        self.selected = not self.selected
+        self.__selected = not self.__selected
 
     def setVisible(self, visible):
         """

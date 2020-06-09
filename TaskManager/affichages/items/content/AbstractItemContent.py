@@ -38,3 +38,9 @@ class AbstractItemContent(Frame):
         @return True si il y a besoin d'un bouton plus, False sinon.
         """
         raise NotImplementedError
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
+        """
+        raise NotImplementedError

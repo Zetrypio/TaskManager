@@ -25,7 +25,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         # Création du contenu des différents onglets.
         self.listPanneau = []
-        self.listPanneau.append(AffichageCalendrier(self.panneau)) #liste de tout les panneaux pour appliquer un changement à tous
+        self.listPanneau.append(AffichageCalendrier(self.panneau)) # Liste de tout les panneaux pour appliquer un changement à tous
         self.listPanneau.append(AffichageGantt(self.panneau))
         self.listPanneau.append(AffichageCalendrierPeriode(self.panneau))
 
@@ -244,14 +244,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         return self.listPanneau[:]
 
-    def updateTaskColor(self):
-        """
-        Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
-        @deprecated: sera sûrement grandement modifiée dans le futur.
-        """
-        for p in self.getToutLesPanneaux():
-            p.updateTaskColor()
-
     def updateAffichage(self):
         """
         Permet de mettre à jour l'affichage.
@@ -281,6 +273,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         else:
             self.master.zoneParametre.boutonBienApres.configure(state=NORMAL)
             self.master.zoneParametre.boutonApres.configure(state=NORMAL)
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
+        @deprecated: sera sûrement grandement modifiée dans le futur.
+        """
+        for p in self.getToutLesPanneaux():
+            p.updateColor()
 
     def addTask(self, tache, region = None):
         """

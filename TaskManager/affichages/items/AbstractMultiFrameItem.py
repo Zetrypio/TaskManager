@@ -19,7 +19,6 @@ class AbstractMultiFrameItem(IDisplayableItem):
         if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instanciate abtract class AbstractMultiFrameItem directly.")
         super().__init__()
         self.master = master
-        self._listeCadre = []
         self._schedulable = schedulable
 
     def getSchedulable(self):

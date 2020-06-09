@@ -182,7 +182,8 @@ class AbstractLink(IDisplayableItem):
         @param x2: Fin en X de la courbe.
         @param y2: Fin en Y de la courbe.
         """
-        for x in range(int(x1), int(x2)+1):
+        for x in range(int(x1), int(x2)):
             y = posY(x, x1, y1, x2, y2) # Fait un sinus, est défini dans util.util
             self.__points.append([x, y])
+        self.__points.append([x2, y2])
         

@@ -67,4 +67,10 @@ class DisplayableGroup(AbstractItemContent):
     def needButtonPlus(self, affichageGantt):
         return False
 
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
+        """
+        self.__texte.config(bg=self.__getDisplayColor())
+
 from schedulable.groupe.Groupe import *

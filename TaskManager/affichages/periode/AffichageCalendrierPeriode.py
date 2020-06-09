@@ -138,6 +138,14 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
             NEW_TAG_ID += 1
 
+    def updateColor(self):
+        """
+        Permet de mettre à jour les couleurs des objets affichés.
+        Ici, comme il n'y a pour le moment pas moyen de faire autrement,
+        on redessine tout, comme un #updateAffichage() normale.
+        """
+        self.updateAffichage()
+
     def getPeriodeYPosition(self, p):
         """
         Permet d'obtenir la position Y de la période pour qu'elle ne se superpose pas avec les autres lors de l'affichage.

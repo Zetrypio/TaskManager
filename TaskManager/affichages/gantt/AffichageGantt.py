@@ -128,6 +128,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Méthode à exécuter quand on clic sur l'un des objets de gantt.
         Peut créer un lien si on était en mode d'ajout de liens etc.
         @param objGantt: l'objet sur lequel on a cliqué.
+        @override clicSurObjet(obj) in AbstractDisplayedCalendar()
         """
         # Si on est en mode ajout de lien :
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
@@ -403,6 +404,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
             w = self.can.winfo_width()
             h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
             self.can.config(scrollregion = (0, 0, w, h))
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
+        """
+        for displayable in self.listeDisplayableItem:
+            displayable.updateColor()
 
     def getPartPosition(self, part):
         """

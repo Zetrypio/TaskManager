@@ -57,7 +57,8 @@ class ObjetGantt(AbstractMultiFrameItem):
                     widget.pack(expand = YES, fill = BOTH)
                     # C'est pour ça que l'on fait cette méthode-ci pour le bind.
                     # Cela permet de s'assurer que tout les sous-widgets seront binds aussi :
-                    widget.bindTo("<Button-1>", self.clic)
+                    widget.bindTo("<Button-1>", lambda e: self.__onSelect())
+                    widget.bindTo("<Control-Button-1>", lambda e: self.__onMultiSelect())
 
                     # Si cette part à besoin d'un plus :
                     if widget.needButtonPlus(self.master):
@@ -99,18 +100,29 @@ class ObjetGantt(AbstractMultiFrameItem):
     def beginLigneVerte(self, plus):
         """
         Permet de commencer la ligne verte,
-        et mémorise sur Quel plus (+) on a cliqué.
+        et mémorise sur quel plus (+) on a cliqué.
         @param plus: le plus sur lequel on a cliqué.
         """
         self.__activePlus = plus
         self.master.beginLigneVerte(self)
 
-    def clic(self, event):
+    def __onSelect(self):
         """
         Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
         Utile pour la création des liens par exemple, ou la sélection des tâches etc.
         """
         self.master.clicSurObjet(self)
+
+    def __onMultiSelect(self):
+        """
+        Permet d'inverser l'état de sélection de l'objet schedulable.
+        """
+        self._schedulable.inverseSelection()
+        self.master.getDonneeCalendrier().updateColor()
+
+    def updateColor(self):
+        for p in self.__parts:
+            p[2].updateColor()
 
     def getXPlus(self):
         """

@@ -61,7 +61,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__parts = []
         self.__frame = Frame(self)
         self.__frame.pack(expand = YES, fill = BOTH)
-        self.__frame.bind("<Button-1>", self.mouseClicked, add = True)
+#        self.__frame.bind("<Button-1>", self.mouseClicked, add = True)
         #self.__frame.bind("<Escape>",  self.escapePressed)
 
         # On précalcule :
@@ -275,6 +275,13 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.__frame)
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
+        """
+        for displayable in self.listeDisplayableItem:
+            displayable.updateColor()
 
     def __adapteGrid(self):
         """

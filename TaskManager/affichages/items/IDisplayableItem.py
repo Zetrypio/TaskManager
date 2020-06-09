@@ -27,6 +27,12 @@ class IDisplayableItem:
         @param frameOrCanvas: le Frame ou le Canvas sur lequel afficher cet objet.
         """
         raise NotImplementedError
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de l'objet.
+        """
+        raise NotImplementedError
     
     def delete(self):
         """
