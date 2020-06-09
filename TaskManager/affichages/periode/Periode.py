@@ -118,8 +118,7 @@ class Periode(ITaskEditorDisplayableObject):
         @param periode: la période dont on teste l'intersection avec celle-ci.
         @return True si les 2 périodes s'intersectionnent, False sinon.
         """
-        return (self.getDebut() >= periode.getDebut() and self.getDebut() <= periode.getFin()) \
-            or (periode.getDebut() >= self.getDebut() and periode.getDebut() <= self.getFin())
+        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
 
     def getGroupeManager(self):
         """

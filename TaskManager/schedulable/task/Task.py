@@ -382,8 +382,7 @@ class Task(AbstractSchedulableObject):
         @param task: la tâche dont on teste l'intersection avec celle-ci.
         @return True si les 2 tâches s'intersectionnent, False sinon.
         """
-        return (self.getDebut() >= task.getDebut() and self.getDebut() <= task.getFin()) \
-            or (task.getDebut() >= self.getDebut() and task.getDebut() <= self.getFin())
+        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
 
     ""
     ####################

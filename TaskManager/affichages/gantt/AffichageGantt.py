@@ -138,7 +138,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
                 # On crée le lien et met donc à jour l'affichage.
-                self.listeDisplayableItem.append(DependanceLink(self, self.__activeGanttObject.getLastPart(), objGantt.getFirstPart()))
+                self.listeDisplayableItem.append(
+                    DependanceLink(
+                        self,
+                        self.getVisiblePart(self.__activeGanttObject.getLastPart()),
+                        self.getVisiblePart(objGantt.getFirstPart())))
                 self.updateAffichage()
 
     def __cancelLigneVerte(self):
@@ -163,7 +167,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__parts = []
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
-                self.__parts.extend(displayable.getRepartition())
+                self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
 
 #    def configureRMenu(self, event):
 #        """
