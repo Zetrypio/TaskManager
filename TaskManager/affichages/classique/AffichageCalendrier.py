@@ -223,7 +223,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                     if p == part:
                         return colonne
                 colonne +=1
-#        return 0
+        return 0
 
     def __afficherLesHeures(self):
         """

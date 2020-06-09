@@ -6,6 +6,7 @@ from tkinter import Frame, Label
 from ..items.AbstractMultiFrameItem import *
 from .AffichageGantt import *
 from .ItemButtonPlus import *
+from .liens.MultiFrameItemInnerLink import *
 
 class ObjetGantt(AbstractMultiFrameItem):
     """
@@ -20,8 +21,9 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         super().__init__(master, schedulable)
 
-        # Liste des différentes DatetimeItemPart()
+        # Liste des différentes DatetimeItemPart(), Frame(), AbstractItemContent(), et ItemBoutonPlus().
         self.__parts = []
+        self.__liens = []
 
         # Permet d'avoir l'info de Où commence la ligne verte quand il y a plusieurs plus.
         self.__activePlus = None
@@ -86,6 +88,13 @@ class ObjetGantt(AbstractMultiFrameItem):
                 # Mise à jour de la présence du bouton Plus (+) :
                 if p[2].needButtonPlus(self.master):
                     p[3].redraw(canvas)
+        
+        self.__liens = []
+        self.__parts.sort(key=lambda p:p[0].getDebut())
+        for i in range(len(self.__parts)-1):
+            self.__liens.append(MultiFrameItemInnerLink(self.master, self.__parts[i][0], self.__parts[i+1][0]))
+        for l in self.__liens:
+            l.redraw(canvas)
 
     def beginLigneVerte(self, plus):
         """

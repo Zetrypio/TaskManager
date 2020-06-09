@@ -136,7 +136,7 @@ class AbstractLink(IDisplayableItem):
             x2 = rectB.getX2()
             y1 = rectA.getCenterY()
             y2 = rectB.getCenterY()
-            self.__drawSinus(x1, y1, x2 - 8, y2, orient = HORIZONTAL) # Le -8 est pour que le bout de la flèche soit droite.
+            self.__drawSinus(x1, y1, x2, y2) # Le -8 est pour que le bout de la flèche soit droite.
             self.__points.append([x2, y2])
             canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color, arrow = LAST)
         #####################
