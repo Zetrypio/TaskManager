@@ -15,7 +15,7 @@ class DependanceLink(AbstractLink):
     dans l'affichage Gantt.
     
     La flèche est soit courbée, si elle est sur un jour, en une forme ressemblant
-    à une sorte de S en mirroir, soit de manière sinusoïdale parcourrant entre
+    à une sorte de S en miroir, soit de manière sinusoïdale parcourant entre
     les tâches des jours entre le début et la fin.
     """
     def __init__(self, affichageGantt, partA, partB):
@@ -62,14 +62,34 @@ class DependanceLink(AbstractLink):
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))
 
+    def _onClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self._getAffichageGantt().deselectEverything()
+        self.__selected = True
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
+
+    def _onControlClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self.__selected = not self.__selected
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
+
     def updateColor(self, canvas):
         self.__setColor()
         super().updateColor(canvas)
 
+    def setSelected(self, value):
+        """
+        Permet de changer l'état de sélection du lien.
+        @param value: True si le lien doit être sélectionné, False sinon.
+        """
+        if not isinstance(value, bool):
+            raise TypeError("Expected a boolean but got %s"%value)
+        self.__selected = value
+
 #    def suppression(self):
 #        self.tacheD.master.listeLien.remove(self)
 #        self.tacheD.gestionRMenu()
-#        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppresssion car on prends en compte le lien actuel
+#        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppression car on prends en compte le lien actuel
 #        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
 #        self.tacheD.master.updateAffichage()
 

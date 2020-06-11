@@ -161,7 +161,7 @@ class AbstractDisplayedCalendar(Frame):
     def getPeriodeActive(self):
         """
         Getter pour la période active.
-        Nécéssaire pour savoir quelle période afficher.
+        Nécessaire pour savoir quelle période afficher.
         @return la période active.
         """
         return self.getApplication().getPeriodManager().getActivePeriode()

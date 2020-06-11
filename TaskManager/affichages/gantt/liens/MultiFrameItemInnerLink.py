@@ -30,6 +30,9 @@ class MultiFrameItemInnerLink(AbstractLink):
         # TODO : tester lien déjà existant ?
 
     def __setColor(self):
+        """
+        Méthode qui permet de mettre la bonne couleur selon ce qu'il y a besoin.
+        """
         # TODO : Couleur lors Ajout et Suppression.
         if self.getPartA().getSchedulable().isSelected():
             self.setColor("#0078FF")
@@ -49,6 +52,18 @@ class MultiFrameItemInnerLink(AbstractLink):
 
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), str(self.getPartA().getSchedulable()))
+
+    def _onClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self._getAffichageGantt().deselectEverything()
+        self.getPartA().getSchedulable().setSelected(True)
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
+
+    def _onControlClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self.getPartA().getSchedulable().inverseSelection()
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
+        
 
     def updateColor(self, canvas):
         self.__setColor()

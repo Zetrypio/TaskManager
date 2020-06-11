@@ -70,6 +70,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # et un gestionnaire de clavier.
         # En attente des préférences du clavier
         #
+
+        # Pour savoir si un événement à été annulé.
+        # Seul événement annulable : clic sur le canvas.
+        self.__eventCanceled = False
         
         # Binding d'events virtuels : ?
         self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
@@ -91,6 +95,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        self.can.bind_all("<<RMenu-Opened>>", self.configureRMenu)
 #        self.rmenu = RMenu(self, binder = self.can, bindWithId="lienDep")
 #        self.event_generate("<<RMenu-Opened>>")
+
+    def deselectEverything(self):
+        super().deselectEverything()
+        for item in self.listeDisplayableItem:
+            if isinstance(item, DependanceLink):
+                item.setSelected(False)
+                item.updateColor(self.can)
 
     def beginLigneVerte(self, objGantt):
         """
@@ -147,17 +158,22 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Méthode exécutée quand on appuie sur echappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour déselectionner les tâches.
         """
-        if self.__activeGanttObject is not None:
-            try:
-                self.can.delete(self.__id_LigneVerte)
-            except:
-                pass
-            self.__id_LigneVerte = None
-            self.__x1_LigneVerte = None
-            self.__y1_LigneVerte = None
-            self.__activeGanttObject = None
-        else:
-            self.deselectEverything()
+        if not self.__eventCanceled:
+            if self.__activeGanttObject is not None:
+                try:
+                    self.can.delete(self.__id_LigneVerte)
+                except:
+                    pass
+                self.__id_LigneVerte = None
+                self.__x1_LigneVerte = None
+                self.__y1_LigneVerte = None
+                self.__activeGanttObject = None
+            else:
+                self.deselectEverything()
+        self.__eventCanceled = False
+
+    def cancelEvent(self):
+        self.__eventCanceled = True
 
     def __precalculer(self):
         """

@@ -21,6 +21,9 @@ class AbstractLink(IDisplayableItem):
         @param partA: DatetimeItemPart qui correspond au moment du début de la flèche.
         @param partB: DatetimeItemPart qui correspond au moment de la fin de la flèche.
         """
+        if self.__class__==AbstractLink:
+            raise RuntimeError("Can't instantiate abstract class AbstractLink directly.")
+
         # Constructeur parent :
         super().__init__()
 
@@ -31,6 +34,8 @@ class AbstractLink(IDisplayableItem):
         self.__color = "black"
         self.__strokeWeight = 2
         self.__points = []
+        self.__binding1 = None
+        self.__binding2 = None
 
     def getPartA(self):
         """
@@ -48,7 +53,7 @@ class AbstractLink(IDisplayableItem):
         """
         Permet de mettre à jour la couleur du lien.
         """
-        canvas.itemconfigure(self.getTag(), fill=self.__color)
+        canvas.itemconfigure(self.getTag(), fill=self.__color, width = self.__strokeWeight)
 
     def setColor(self, color):
         """
@@ -84,6 +89,13 @@ class AbstractLink(IDisplayableItem):
         """
         return "link%s"%id(self)
 
+    def _getAffichageGantt(self):
+        """
+        Getter pour l'affichage Gantt
+        @return l'affichage Gantt.
+        """
+        return self.__affichageGantt
+
     def redraw(self, canvas):
         """
         Méthode pour dessiner la flèche.
@@ -93,8 +105,8 @@ class AbstractLink(IDisplayableItem):
         self.__points = []
         
         ################################################################################################################################
-        # Il y a 3 possibilitées pour dessiner une flèche :                                                                            #
-        # - Ou bien les 2 parts sont le même jour au quel cas on fait une flèche en forme de S en mirroir ;                            #
+        # Il y a 3 possibilités pour dessiner une flèche :                                                                             #
+        # - Ou bien les 2 parts sont le même jour au quel cas on fait une flèche en forme de S en miroir ;                             #
         # - Ou bien les 2 parts sont 2 jours consécutifs au quel cas on fait simplement un sinus du début vers la fin ;                #
         # - Ou bien dans les autres cas, on fait un premier sinus pour se décaler, puis une ligne droite, puis un sinus pour terminer. #
         ################################################################################################################################
@@ -127,7 +139,7 @@ class AbstractLink(IDisplayableItem):
                                rectB.getX2()-6, # -6 Pour la flèche
                                rectA.getY2()-1,
                                width = self.__strokeWeight, fill = self.__color, tag=self.getTag())
-            # Permier quart de cercle :
+            # Premier quart de cercle :
             canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
                               rectA.getY2()-1,
                               rectB.getX2() + r-6, # -6 Pour la flèche
@@ -179,6 +191,25 @@ class AbstractLink(IDisplayableItem):
             self.__drawSinus(x3, y3, x4 - 8, y4) # Le -8 est pour que le bout de la flèche soit droite.
             self.__points.append([x4, y4])
             canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color, arrow = LAST, tag=self.getTag())
+
+        #############
+        # Binding : #
+        #############
+        if self.__binding1 is None:
+            self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>", lambda e: self._onClic())
+            self.__binding2 = canvas.tag_bind(self.getTag(), "<Control-Button-1>", lambda e: self._onControlClic())
+
+    def _onBinding(self):
+        """
+        Méthode appelée quand un clic est fait sur ce lien.
+        """
+        raise NotImplementedError
+
+    def _onControlClic(self):
+        """
+        Méthode appelée quand un contrôle+clic est fait sur ce lien.
+        """
+        raise NotImplementedError
 
     def __drawSinus(self, x1, y1, x2, y2):
         """

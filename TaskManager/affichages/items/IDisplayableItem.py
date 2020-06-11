@@ -10,7 +10,7 @@ class IDisplayableItem:
         """
         Constructeur interdisant l'instanciation direct de IDisplayableItem.
         """
-        if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instanciate interface IDisplayableItem directly.")
+        if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instantiate interface IDisplayableItem directly.")
 
     def __del__(self):
         """
