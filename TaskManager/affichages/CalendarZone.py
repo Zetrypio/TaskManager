@@ -130,7 +130,10 @@ class CalendarZone(Frame):
         """
         pass # TODO
     def afficherMasquerJour(self):
-        pass
+        """
+        Peremt d'afficher ou masquer un jour... TODO
+        """
+        pass # TODO
     def deplacerIntervertir(self):
         """
         Permet d'intervertir 2 jours exactement.
@@ -324,11 +327,17 @@ class CalendarZone(Frame):
         pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
 
     def avancementMannuel(self):
+        """
+        Doc ?
+        """
         # XXX : Je comprend pas pourquoi !
         for tache in self.getDonneeCalendrier().getSelectedTask():
             tache.reverseStateValide()
 
     def avancementJourFini(self):
+        """
+        Doc ?
+        """
         maintenantJour = datetime.datetime.combine(datetime.date.today(), datetime.time(23,59,59))
         self.getPeriodeActive().setDateStatut(maintenantJour)
         for tache in self.getDonneeCalendrier().listeTask:
@@ -336,6 +345,9 @@ class CalendarZone(Frame):
 
 
     def avancementNormal(self):
+        """
+        Doc ?
+        """
         maintenant = datetime.datetime.now()
         self.getPeriodeActive().setDateStatut(maintenant)
         for tache in self.getDonneeCalendrier().listeTask:
@@ -389,9 +401,19 @@ class CalendarZone(Frame):
     ########################################
 
     def voirTacheDansVue(self):
+        """
+        Permet de voir une tâche dans une autre vue, via demande
+        à l'utilisateur dans une boîte de dialogue usuelle.
+        TODO
+        """
         pass
 
     def supprimerTache(self):
+        """
+        Permet de supprimer une tâche indépendante.
+        Fera-t-on des groupes indépendants ? Si oui -> renommer en supprimerSchedulable()...
+        TODO
+        """
         pass
 
     def getFirstAndLast(self):
@@ -404,6 +426,8 @@ class CalendarZone(Frame):
         # XXX : Est-ce vraiment utile ?
         first = None # Contient la tache qui finit    le plus tot
         last  = None # Contient la tache qui commence le plus tard
+
+        # XXX : Moyen de simplifier ça avec min() et max().
         for tache in self.getDonneeCalendrier().getSelectedTask():
             if first is None or first.getFin() > tache.getFin():
                 first = tache

@@ -19,8 +19,10 @@ class AbstractMultiFrameItem(IDisplayableItem):
         if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instanciate abtract class AbstractMultiFrameItem directly.")
         super().__init__()
         self.master = master
-        self._listeCadre = []
         self._schedulable = schedulable
+
+    def getSchedulable(self):
+        return self._schedulable
 
     def getRepartition(self):
         """
@@ -37,7 +39,22 @@ class AbstractMultiFrameItem(IDisplayableItem):
         datetime indiquant le début et la fin de ce cadre.
         """
         return self._schedulable.getRepartition(self.master)
+
     
+    def getFirstPart(self):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getFirstPart(self.master)
+
+    def getLastPart(self):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getLastPart(self.master)
+
     def getVisiblePart(self, part):
         """
         Permet d'obtenir la partie visible d'un DatetimeItemPart.
@@ -47,18 +64,6 @@ class AbstractMultiFrameItem(IDisplayableItem):
         @return None si l'objet n'est pas visible du tout.
         """
         return self.master.getVisiblePart(part)
-
-#    def getPartsNumberAt(self, part):
-#        """
-#        Permet de savoir le nombre de DatetimeItemPart qui sont en même temps,
-#        à savoir le nombre de colonnes nécéssaire dans un affichage type
-#        calendrier classique pour afficher toutes les tâches qui seraient
-#        en même temps. Si il n'y a pas de tâches qui se superposent, cela
-#        peut renvoyer plus que 1, mais dans ce cas le getColumnSpanAt renverra
-#        le même nombre également.
-#        @return le nombre de DatetimeItemPart en même temps en tant qu'int.
-#        """
-#        return self.master.getColumnsNumberAt(part)
     
     def getPartPosition(self, part):
         """

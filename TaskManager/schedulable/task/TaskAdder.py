@@ -90,14 +90,14 @@ class TaskAdder(Frame):
 
     def askcolor(self):
         """
-        Permet de demander une couleur à l'utilisateur.
+        Permet de demander une couleur à l'utilisateur via boîte de dialogue usuelle.
         """
         self.color = askcolor()[1]
         self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
         """
-        Permet de demander le début de la tâche à l'utilisateur.
+        Permet de demander le début de la tâche à l'utilisateur via boîte de dialogue usuelle.
         """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
@@ -111,7 +111,7 @@ class TaskAdder(Frame):
 
     def askDateFin(self):
         """
-        Permet de demander la fin de la tâche à l'utilisateur.
+        Permet de demander la fin de la tâche à l'utilisateur via boîte de dialogue usuelle.
         """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
@@ -169,7 +169,7 @@ class TaskAdder(Frame):
         Méthode à appeler dès que les périodes possibles changent.
         """
         periodes = self.getApplication().getPeriodManager().getPeriodes()
-        print(periodes)
+#        print(periodes)
         # Trouver les périodes présentes dans la plage sélectionnée :
         if self.debut is not None and self.fin is not None:
             pp = Periode(self.getApplication().getPeriodManager(), "", self.getDebut().date(), self.getFin().date(), "")

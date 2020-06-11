@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 class Point:
     """
     Classe contenant un X et un Y.

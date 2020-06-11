@@ -63,10 +63,16 @@ class PeriodAdder(Frame):
         self.champDescription .grid(row = 2, column = 0, columnspan = 8, sticky ="ew")
         
     def askcolor(self):
+        """
+        Permet de demander à l'utilisateur une couleur pour la période, par l'intermédaire d'une boîte de dialogue usuelle.
+        """
         self.color = askcolor()[1]
         self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
+        """
+        Permet de demander à l'utilisateur une date de début pour la période, par l'intermédaire d'une boîte de dialogue usuelle.
+        """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
@@ -78,6 +84,9 @@ class PeriodAdder(Frame):
         self.autoSetDuree()
 
     def askDateFin(self):
+        """
+        Permet de demander à l'utilisateur une date de fin pour la période, par l'intermédaire d'une boîte de dialogue usuelle.
+        """
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
@@ -89,13 +98,23 @@ class PeriodAdder(Frame):
         self.autoSetDuree()
 
     def getDuree(self):
+        """
+        Permet d'obtenir la durée de la nouvelle période à créer.
+        """
         return self.fin - self.debut
 
     def autoSetDuree(self):
+        """
+        Permet de mettre automatiquement le widget de durée de la période vers
+        la nouvelle valeur selon le début et la fin auparavant sélectionné.
+        """
         ecart = self.getDuree()
         self.champJour.set(ecart.days)
 
     def valider(self):
+        """
+        Méthode exécutée quand on appuie sur le bouton validé, pour créer la nouvelle période et l'ajouter au PeriodManager.
+        """
         # Si il manque un champ, on ne valide pas
         if (not self.champNom.get().strip()
             or self.debut is None

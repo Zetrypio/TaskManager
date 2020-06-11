@@ -17,8 +17,8 @@ class AbstractDisplayedCalendar(Frame):
     """
     Classe représentant un calendrier qui doit être affiché,
     il se trouve qu'il y a également la classe qui contient tout
-    ces affichages de calendrier qui hérite aussi de cette classe.
-    (je parle de DonneeCalendrier)
+    ces affichages de calendrier qui hérite aussi de cette classe
+    (je parle ici de DonneeCalendrier).
     """
     def __init__(self, master = None, **kwargs):
         """
@@ -30,7 +30,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         assert self.__class__ != AbstractDisplayedCalendar # interdire instanciation direct (classe abstraite version simple)
         kwargs["bg"] = "light gray"
-        Frame.__init__(self, master, **kwargs)
+        super().__init__(master, **kwargs)
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
@@ -43,101 +43,113 @@ class AbstractDisplayedCalendar(Frame):
 
         # liste des tâches :
         self.listeTask = []
-        self.listeTaskAffichees = []
 
-    def mouseClicked(self, event):
+    def clicSurObjet(self, objet):
         """
-        Méthode exécutée quand un clic est fait sur le calendrier.
-        Par défaut, déselectionne tout.
-        @param event: non utilisé, sert pour des informations sur l'évenement,
-        comme la position de la souris. Possible à utiliser dans une redéfinition
-        de la méthode, dans les sous-classes.
+        Méthode à exécuter quand on clic sur l'un des objets.
+        Utile pour sélectionner une tâche par exemple.
+        @param objet: l'objet sur lequel on a cliqué.
         """
-        self.deselect()
+        raise NotImplementedError
 
-    def escapePressed(self, event):
-        """
-        Méthode exécutée quand la touche échappe est appuyée.
-        Par défaut, déselectionne tout.
-        @param event: non utilisé, sert pour des informations sur l'évenement.
-        Possible à utiliser dans une redéfinition de la méthode, dans les sous-classes.
-        """
-        self.deselect()
-    
-    def updateTaskColor(self):
-        """
-        @Deprecated : sera supprimée ou alors considérablement changé
-        lors des nouvelles tâches en gantt.
-        """
-        for tache in self.listeTaskAffichees:
-            tache.updateColor()
+    def deselectEverything(self):
+        for s in self.listeTask: # Getter ?
+            s.setSelected(False)
+        self.getDonneeCalendrier().updateColor()
+
+#    def mouseClicked(self, event):
+#        """
+#        Méthode exécutée quand un clic est fait sur le calendrier.
+#        Par défaut, déselectionne tout.
+#        @param event: non utilisé, sert pour des informations sur l'évenement,
+#        comme la position de la souris. Possible à utiliser dans une redéfinition
+#        de la méthode, dans les sous-classes.
+#        """
+#        self.deselect()
+#
+#    def escapePressed(self, event):
+#        """
+#        Méthode exécutée quand la touche échappe est appuyée.
+#        Par défaut, déselectionne tout.
+#        @param event: non utilisé, sert pour des informations sur l'évenement.
+#        Possible à utiliser dans une redéfinition de la méthode, dans les sous-classes.
+#        """
+#        self.deselect()
+#
+#    def updateTaskColor(self):
+#        """
+#        @Deprecated : sera supprimée ou alors considérablement changé
+#        lors des nouvelles tâches en gantt.
+#        """
+#        for tache in self.listeTaskAffichees:
+#            tache.updateColor()
 
     def onIntervertir(self):pass # Juste pour qu'elle existe # Sera considérablement changé
 
-    def multiSelection(self, task):
-        """
-        Permet d'inverser l'état de sélection, et de mettre à jour la couleur
-        des tâches sélectionnées.
-        @param task: la tâche à changer.
-        @deprecated: sera considérablement changé dans le futur.
-        """
-        task.inverseSelection()
-        self.getDonneeCalendrier().updateTaskColor()
-
-    def select(self, tache):
-        """
-        Permet de sélectionner une tâche, et de mettre à jour la couleur
-        d'affichage des tâches.
-        @param tache: La tâche en question.
-        @deprecated: sera considérablement changé dans le futur.
-        """
-        tache.setSelected(True)
-        self.getDonneeCalendrier().updateTaskColor()
-
-    def deselect(self):
-        """
-        Permet de désélectionner toutes les tâches,
-        et de mettre à jour la couleur d'affichage des tâches.
-        @deprecated: sera considérablement changé dans le futur.
-        """
-        self.getDonneeCalendrier().clearJourSelectionnes()
-        for tache in self.getSelectedTask():
-            tache.setSelected(False)
-        self.getDonneeCalendrier().updateTaskColor()
-
-    def getSelectedTask(self):
-        """
-        Permet d'obtenir la liste des tâches sélectionnées.
-        @return: la liste des tâches sélectionées.
-        @deprecated: permettra de renvoyer plus que des tâches,
-        dans le futur. Changera alors de nom.
-        """
-        return [task for task in self.listeTask if task.isSelected()]
-
-    def selectTaskJour(self, jour, control=False):
-        """
-        Permet de sélectionner toutes les tâches d'un jour.
-        @param jour: le jour dont on sélectionne les tâches.
-        @param control: False si on déselectionne d'abord, True si on ajoute.
-        @deprecated: Permettra de gérer plus que de simple tâches. Changera alors de nom.
-        """
-        if not control:
-            self.deselect()
-
-        self.getDonneeCalendrier().addJourSelectionnes(jour)
-
-        for task in self.listeTask:
-            # Si on commence avant ou on est sur le jour et qu'on fini après ou sur le jour
-            if task.getDebut().date() <= jour and task.getFin().date() >= jour:
-                task.setSelected(True)
-        self.updateTaskColor()
+#    def multiSelection(self, task):
+#        """
+#        Permet d'inverser l'état de sélection, et de mettre à jour la couleur
+#        des tâches sélectionnées.
+#        @param task: la tâche à changer.
+#        @deprecated: sera considérablement changé dans le futur.
+#        """
+#        task.inverseSelection()
+#        self.getDonneeCalendrier().updateTaskColor()
+#
+#    def select(self, tache):
+#        """
+#        Permet de sélectionner une tâche, et de mettre à jour la couleur
+#        d'affichage des tâches.
+#        @param tache: La tâche en question.
+#        @deprecated: sera considérablement changé dans le futur.
+#        """
+#        tache.setSelected(True)
+#        self.getDonneeCalendrier().updateTaskColor()
+#
+#    def deselect(self):
+#        """
+#        Permet de désélectionner toutes les tâches,
+#        et de mettre à jour la couleur d'affichage des tâches.
+#        @deprecated: sera considérablement changé dans le futur.
+#        """
+#        self.getDonneeCalendrier().clearJourSelectionnes()
+#        for tache in self.getSelectedTask():
+#            tache.setSelected(False)
+#        self.getDonneeCalendrier().updateTaskColor()
+#
+#    def getSelectedTask(self):
+#        """
+#        Permet d'obtenir la liste des tâches sélectionnées.
+#        @return: la liste des tâches sélectionées.
+#        @deprecated: permettra de renvoyer plus que des tâches,
+#        dans le futur. Changera alors de nom.
+#        """
+#        return [task for task in self.listeTask if task.isSelected()]
+#
+#    def selectTaskJour(self, jour, control=False):
+#        """
+#        Permet de sélectionner toutes les tâches d'un jour.
+#        @param jour: le jour dont on sélectionne les tâches.
+#        @param control: False si on déselectionne d'abord, True si on ajoute.
+#        @deprecated: Permettra de gérer plus que de simple tâches. Changera alors de nom.
+#        """
+#        if not control:
+#            self.deselect()
+#
+#        self.getDonneeCalendrier().addJourSelectionnes(jour)
+#
+#        for task in self.listeTask:
+#            # Si on commence avant ou on est sur le jour et qu'on fini après ou sur le jour
+#            if task.getDebut().date() <= jour and task.getFin().date() >= jour:
+#                task.setSelected(True)
+#        self.updateTaskColor()
 
     def getDonneeCalendrier(self):
         """
         Getter pour le DonneeCalendrier.
         @return: le DonneeCalendrier.
         """
-        return self.master.master # Skip le NoteBook
+        return self.master.master # Skip le NoteBook : pas le choix, désolé l'OO :/
 
     def getApplication(self):
         """
@@ -149,7 +161,7 @@ class AbstractDisplayedCalendar(Frame):
     def getPeriodeActive(self):
         """
         Getter pour la période active.
-        Nécéssaire pour savoir quelle période afficher.
+        Nécessaire pour savoir quelle période afficher.
         @return la période active.
         """
         return self.getApplication().getPeriodManager().getActivePeriode()
@@ -286,7 +298,7 @@ class AbstractDisplayedCalendar(Frame):
         debut = max(part.getHeureDebut(), self.getHeureDebut())
         fin   = min(part.getHeureFin(),   self.getHeureFin())
         
-        return DatetimeItemPart(part.getJour(), debut, fin)
+        return DatetimeItemPart(part.getJour(), debut, fin, part.getSchedulable())
 
     def getPartPosition(self, part):
         """
@@ -294,10 +306,21 @@ class AbstractDisplayedCalendar(Frame):
         @return diffère suivant les besoins dans les sous-classes.
         """
         raise NotImplementedError
+
     def getPartSpan(self, part):
         """
         Permet d'obtenir l'information de répartition de la partie à afficher.
         @return diffère suivant les besoins dans les sous-classes.
+        """
+        raise NotImplementedError
+
+    def getPartRectangle(self, part):
+        """
+        Permet d'obtenir le rectangle dans laquelle la part doit être dessiné.
+        Aussi utilisé par les ItemButtonPlus et les AbstractLink pour calculer
+        leur positionnement.
+        @param part: La partie dont on veut tester la position.
+        @return util.geom.Rectangle() correspondant à la zone de cette partition.
         """
         raise NotImplementedError
     
@@ -354,6 +377,9 @@ class AbstractDisplayedCalendar(Frame):
         de début, on utilisera pour cela la classe datetime.datetime().
 
         Méthode à redéfinir dans les sous-classes.
+        @param x: Position X relative à ce widget, sera bien souvent la position de la souris.
+        @param y: Position Y relative à ce widget, sera bien souvent la position de la souris.
+        @return datetime.datetime() indiquant la région trouvé aux coordonnées indiquées.
         """
         raise NotImplementedError
 
@@ -391,6 +417,11 @@ class AbstractDisplayedCalendar(Frame):
                 # d'affichage d'une tâche custom.
 
             return schedulable # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+        
+        @param schedulable: le schedulable à rajouter
+        @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
+        @return le schedulable, potentiellement changé.
+        @deprecated: va être renommé en addSchedulable()
         """
         if self.__class__ == AbstractDisplayedCalendar:
             raise NotImplementedError
@@ -479,6 +510,12 @@ class AbstractDisplayedCalendar(Frame):
         Méthode pour mettre à jour l'affichage.
         Appelée lors de chaque changements avec
         setHeureDebut, setHeureFin, setJourDebut et setNbJour
+        """
+        raise NotImplementedError
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur uniquement de tout les IDisplayableItems
         """
         raise NotImplementedError
 

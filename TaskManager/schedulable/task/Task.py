@@ -62,9 +62,19 @@ class Task(AbstractSchedulableObject):
     # implémentée par la superclasse de cette classe :    #
     #######################################################
     def getHeader(self):
+        """
+        Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @return Le nom suivi du statut
+        @specified by getHeader() in ITaskEditorDisplayableObject().
+        """
         return self.getNom(), self._statut
 
     def iterateDisplayContent(self, displayDependances = True, displayDependantes = True):
+        """
+        Permet de donner les lignes de contenu de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @yield les informations à afficher (y en a pas mal et elles sont parfois conditionnelles).
+        @specified by iterateDisplayContent() in ITaskEditorDisplayableObject().
+        """
         # Note : on yield par paires.
         if not self.isContainer():
             yield "Début :",           self.getDebut()
@@ -100,6 +110,13 @@ class Task(AbstractSchedulableObject):
             yield from self.getSubTasks()
 
     def getRMenuContent(self, taskEditor, rmenu):
+        """
+        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+        @param filter: Dictionnaire du filtre.
+        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        """
         # Mise en place de simplicitées :
         retour = []
         add = lambda a, b=None: retour.append((a, b if b else {}))
@@ -119,7 +136,10 @@ class Task(AbstractSchedulableObject):
     # de la superclasse.                   #
     ########################################
     def delete(self, app):
-        """Permet de supprimer définitivement cette tâche."""
+        """
+        Permet de supprimer définitivement cette tâche.
+        @param app: Application(), nécéssaire pour la suppression d'une tâche.
+        """
         # TODO : Suppression des calendriers.
         if self.parent is None:
             app.getTaskEditor().supprimer(self)
@@ -142,7 +162,9 @@ class Task(AbstractSchedulableObject):
         return t
 
     def updateStatut(self):
-        """Permet de mettre à jour le statut de la tâche."""
+        """
+        Permet de mettre à jour le statut de la tâche.
+        """
         if self.getDebut() == None:
             self._statut = "Inconnu"
         
@@ -158,13 +180,33 @@ class Task(AbstractSchedulableObject):
         #self._statut = "Inconnu" if self.getDebut() == None else "À faire" if self.__nbrep == 0 else "Répétition"
 
     def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la version affichable d'une tâche.
+        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
+        @param part: DatetimeItemPart() nécéssaire pour savoir quelle partie de la tâche à afficher.
+        """
         # Ici, on s'en fiche de la part.
-        return DisplayableTask(frame, self)
+        return DisplayableTask(frame, self, part)
+
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peut importe le sens.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
+        """
+        return isinstance(schedulable, Task) and not self.intersectWith(schedulable)
 
     def getRawRepartition(self, displayedCalendar):
+        """
+        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        """
         return self.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
+        """
+        @see AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        """
         if self.getDebut().date() == self.getFin().date():
             yield DatetimeItemPart(self.getDebut().date(),
                                    self.getDebut().time(),
@@ -192,37 +234,61 @@ class Task(AbstractSchedulableObject):
     # Container: #
     ##############
     def isContainer(self):
-        """Permet de savoir si cette tâche est une tâche conteneur."""
+        """
+        Permet de savoir si cette tâche est une tâche conteneur.
+        @return True si la tâche est une tâche conteneur, False sinon.
+        """
         self.updateStatut()
         if self._statut == "Inconnu" and not hasattr(self, "subtasks"):
             self.subtasks = []
         return self._statut == "Inconnu"
 
     def addSubTask(self, task):
-        """Il est impératif de gérer la suppression de la tâche dans TaskEditor depuis l'extérieur."""
+        """
+        Permet d'ajouter une sous-tâche si cette tâche est une tâche conteneur.
+        Il est impératif de gérer la suppresion de la tâche dans TaskEditor depuis l'extérieur.
+        @param task: la sous-tâche à ajouter.
+        @raise RuntimeError: si ce n'est pas une tâche conteneur.
+        @raise RuntimeError: si c'est une tâche conteneur mais qu'on rajoute une sous-tâche déjà conteneur.
+        @raise RuntimeError: si la tâche à rajouter est déjà dans une tâche conteneur (peut être celle-ci ou non).
+        """
         if not self.isContainer():
-            raise ValueError("Impossible de rajouter une tâche dans une tâche non conteneur.")
+            raise RuntimeError("Impossible de rajouter une tâche dans une tâche non conteneur.")
         if task.isContainer():
-            raise ValueError("Impossible de rajouter une tâche conteneur dans une autre tâche conteneur")
+            raise RuntimeError("Impossible de rajouter une tâche conteneur dans une autre tâche conteneur")
         if task.__parent is not None:
-            raise ValueError("Impossible de rajouter une tâche dans un conteneur, sachant qu'elle est déjà présente dans un autre conteneur")
+            raise RuntimeError("Impossible de rajouter une tâche dans un conteneur, sachant qu'elle est déjà présente dans un autre conteneur")
         self.subtasks.append(task)
         task.__parent = self    # Possible, au vu que ce sont des objets de même type.
 
     def removeSubTask(self, task):
+        """
+        Permet d'enlever une sous-tâche de cette tâche conteneur.
+        @param task: la sous-tâche à enlever.
+        @raise RuntimeError: si cette tâche n'est pas conteneur.
+        @raise RuntimeError: si la sous-tâche à enlever n'est pas dans ce conteneur.
+        """
         if not self.isContainer():
-            raise ValueError("Impossible d'enlever une tâche d'une tâche non conteneur.")
+            raise RuntimeError("Impossible d'enlever une tâche d'une tâche non conteneur.")
         if task.__parent != self:
-            raise ValueError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
+            raise RuntimeError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
         self.subtasks.remove(task)
     
     def getSubTasks(self):
+        """
+        Permet d'obtenir les sous-tâches de cette tâche conteneur.
+        @return une copie de la liste des sous-tâches de cette tâche conteneur.
+        @raise RuntimeError: si cette tâche n'est pas une tâche conteneur.
+        """
         if not self.isContainer():
-            raise ValueError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
-        return self.subtasks
+            raise RuntimeError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
+        return self.subtasks[:]
     
     def getParent(self):
-        """Retourne la tâche conteneur qui contient cette tâche (si ce conteneur existe)."""
+        """
+        Retourne la tâche conteneur qui contient cette tâche (si ce conteneur existe).
+        @return la tâche parente, ou None le cas échéant.
+        """
         return self.__parent
 
     ""
@@ -309,6 +375,14 @@ class Task(AbstractSchedulableObject):
         @return None si la tâche n'as pas de début (en vrai c'est qu'elle n'as pas de fin).
         """
         return (self.__debut + self.__duree) if self.__debut is not None else None
+
+    def intersectWith(self, task):
+        """
+        Permet de savoir si cette tâche s'intersectionne avec une autre.
+        @param task: la tâche dont on teste l'intersection avec celle-ci.
+        @return True si les 2 tâches s'intersectionnent, False sinon.
+        """
+        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
 
     ""
     ####################

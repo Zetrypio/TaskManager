@@ -11,13 +11,27 @@ from .dialog.scinderPeriodDialog import *
 
 
 class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
-    """Classe permettant la vision des périodes dans un mois."""
+    """
+    Classe permettant la vision des périodes dans un mois.
+    """
     def __init__(self, master = None, **kwargs):
+        """
+        Constructeur de l'affichage en calendrier des périodes.
+        @param master: NoteBook de DonneeCalendrier, master du tkinter.Frame() que cet objet est.
+        @param **kwargs: Options de configuration du tkinter.Frame() que cet objet est.
+        """
+        # Constructeur parent :
         super().__init__(master, **kwargs)
+        # Note : self.master est une référence vers le NoteBook à l'intérieur de DonneeCalendrier.
+
+        # Information du temps de l'affichage.
         self.annee = time.localtime().tm_year
         self.mois = time.localtime().tm_mon
+
+        # Nécéssaire pour gérer l'affichage non-superposé des périodes qui sont en même temps.
         self.__listeHauteur = {}
-        
+
+        # tkinter.Canvas() sur lequel tout s'affiche.
         self.can = Canvas(self, width = 1, height = 1, bd = 0)
         self.can.pack(expand = YES, fill = BOTH)
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
@@ -25,18 +39,40 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.can.bind("<Control-Button-1>", lambda e: self.clic(e, True))
 
     def setJourDebut(self, jour):
-        """Override, car en fait ca fonctionne avec un mois."""
+        """
+        Override, car en fait ca fonctionne avec un mois.
+        @param jour: datetime.date() dont on va récupérer le jour.
+        """
         self.mois = jour.month
         self.annee = jour.year
+
     def getJourDebut(self):
-        """Override, car en fait ça fonctionne avec un mois."""
+        """
+        Override, car en fait ça fonctionne avec un mois.
+        @return datetime.date() correspondant au premier jour du mois actuellement sélectionné.
+        """
         return datetime.date(self.annee, self.mois, 1)
+
     def setJourFin(self, jour):
+        """
+        @deprecated: Utilisez setJourDebut() car ca fait la même chose.
+        """
         self.setJourDebut(jour)
+
     def getJourFin(self):
+        """
+        Override, car en fait ça fonctionne avec un mois.
+        @return datetime.date() correspondant au dernier jour du mois actuellement sélectionné.
+        """
         return self.getJourDebut() + datetime.timedelta(days = tailleMois(self.mois, self.annee))
 
     def clic(self, event, control = False):
+        """
+        Méthode appelée lors d'un clic sur le Canvas().
+        @param event: Evenement du clic.
+        @param control=False: True si l'événement est avec le modifier dû à la touche Contrôle, False sinon.
+        Si c'est avec la touche contrôle, alors la/les période(s) précédemment sélectionnées ne sont pas désélectionées.
+        """
         x, y = event.x, event.y
         if not control:
             for p in self.getApplication().getPeriodManager().getPeriodes():
@@ -51,6 +87,9 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.updateAffichage()
 
     def updateAffichage(self):
+        """
+        Permet de mettre à jour l'affichage.
+        """
         self.can.delete(ALL)
         self.__listeHauteur = {}
         hh = 20
@@ -99,7 +138,20 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
             NEW_TAG_ID += 1
 
+    def updateColor(self):
+        """
+        Permet de mettre à jour les couleurs des objets affichés.
+        Ici, comme il n'y a pour le moment pas moyen de faire autrement,
+        on redessine tout, comme un #updateAffichage() normale.
+        """
+        self.updateAffichage()
+
     def getPeriodeYPosition(self, p):
+        """
+        Permet d'obtenir la position Y de la période pour qu'elle ne se superpose pas avec les autres lors de l'affichage.
+        @param p: la période à tester.
+        @return un int correspondant à la ligne de la période sur l'affichage par rapport aux autres.
+        """
         if p in self.__listeHauteur:
             return self.__listeHauteur[p]*self.getPeriodHeight()
         bannedHeight = []
@@ -112,10 +164,19 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                 return self.__listeHauteur[p]*self.getPeriodHeight()
 
     def getPeriodHeight(self):
+        """
+        Renvoie la hauteur des périodes.
+        TODO : Faire que ca compacte les périodes si manque de place.
+        @return la hauteur des périodes à afficher.
+        """
         return 10
 
     def getSemaineOf(self, jour):
-        """Renvoie le numéro de la ligne de la semaine correspondant au jour demmandé."""
+        """
+        Renvoie le numéro de la ligne de la semaine correspondant au jour demmandé.
+        @param jour: datetime.date() correspondant au jour dont on veut savoir la semaine.
+        @return le numéro de la semaine dans le mois à partir de 0.
+        """
         return (jour.day + self.getJourDebut().weekday()-1) // 7
 
     def doConfiguration(self, paramAffichage):
@@ -123,7 +184,8 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         Méthode pour éventuellement changer la barre d'outil
         secondaire quand ce panneau est actif.
         
-        Ce widget difère pour afficher "1 Mois" dans la liste (et désactive la liste)
+        Ce widget diffère pour afficher "1 Mois" dans la liste (et désactive la liste).
+        @override doConfiguration() in AbstractDisplayedCalendar().
         """
         paramAffichage.setStateListe(DISABLED)
         paramAffichage.setModeListe("1 Mois")

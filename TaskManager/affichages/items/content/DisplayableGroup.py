@@ -12,14 +12,14 @@ class DisplayableGroup(AbstractItemContent):
     def __init__(self, master, schedulable, part, **kwargs):
         """
         Constructeur de l'affichage d'un groupe.
-        @param master: master du tkinter.Frame que cet objet est.
+        @param master: master du tkinter.Frame() que cet objet est.
         @param schedulable: le groupe à gérer.
         @param part: la partie d'affichage géré par cet objet.
-        @param **kwargs: les options d'affichage du tkinter.Frame que cet objet est.
+        @param **kwargs: les options d'affichage du tkinter.Frame() que cet objet est.
         """
         # S'assurer que c'est bien un groupe :
         if not isinstance(schedulable, Groupe):
-            raise TypeError("Excpected Group, but got %s for %s"%(schedulable.__class__.__name__, schedulable))
+            raise TypeError("Excpected Group, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
 
         super().__init__(master, schedulable, **kwargs)
         
@@ -58,5 +58,19 @@ class DisplayableGroup(AbstractItemContent):
         suivant que le groupe soit sélectionné ou non.
         """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
+
+    def bindTo(self, binding, command, add=None):
+        self.bind(binding, command, add)
+        self.__texte.bind(binding, command, add)
+        # TODO : Ajouter les sous-tâches.
+
+    def needButtonPlus(self, affichageGantt):
+        return False
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
+        """
+        self.__texte.config(bg=self.__getDisplayColor())
 
 from schedulable.groupe.Groupe import *

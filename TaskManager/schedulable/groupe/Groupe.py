@@ -29,20 +29,49 @@ class Groupe(AbstractSchedulableObject):
     # ITaskEditorDisplayableObject #
     ################################
     def getHeader(self):
+        """
+        Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @return Le nom suivi du statut
+        @specified by getHeader() in ITaskEditorDisplayableObject().
+        """
         return self.getNom(), self._statut
     
     def iterateDisplayContent(self):
+        """
+        Permet de donner les lignes de contenu de cet objet dans l'affichage du Treeview() du TaskEditor().
+        @yield Tâches suivi du nombre de tâches
+        @yield from les tâches.
+        @specified by iterateDisplayContent() in ITaskEditorDisplayableObject().
+        """
         yield "Tâches", len(self.__listTasks)
         yield {}
         yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
     def getRMenuContent(self, taskEditor, rmenu):
+        """
+        Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
+        @param taskEditor: le TaskEditor()
+        @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
+        @return la liste des commandes nécéssaire.
+        @specified by getRMenuContent() in ITaskEditorDisplayableObject().
+        """
         pass # TODO
     
     def getDebut(self):
+        """
+        Le début de ce groupe, à savoir le début de la tâche qui commence le plus tôt.
+        @return datetime.datetime() du début de ce groupe.
+        """
         return min(self.__listTasks, key=lambda  t:t.getDebut()).getDebut()
     
 #    def getFilterStateWith(self):
+#        """
+#        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+#        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+#        @param filter: Dictionnaire du filtre.
+#        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+#        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+#        """
 #        pass # TODO
     
     ""
@@ -51,22 +80,54 @@ class Groupe(AbstractSchedulableObject):
     # AbstractSchedulableObject           #
     #######################################
     def delete(self, app):
+        """
+        Permet de supprimer ce groupe.
+        TODO
+        """
         pass # TODO
 
     def copy(self):
+        """
+        Permet de copier ce groupe.
+        TODO
+        """
         pass # TODO
 
     def updateStatut(self):
+        """
+        Permet de mettre à jour le statut de ce groupe.
+        TODO
+        """
         pass # TODO
 
     def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la version affichable d'un groupe.
+        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
+        @param part: DatetimeItemPart() nécéssaire pour savoir quelle partie du groupe à afficher.
+        """
         return DisplayableGroup(frame, self, part)
 
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peut importe le sens.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
+        """
+        return False
+
     def getRawRerpartition(self, displayedCalendar):
+        """
+        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        """
         for task in self.__listTasks:
             yield from task.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
+        """
+        @see AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        """
         parts = []
         for task in self.__listTasks:
             parts += task.getRepartition(displayedCalendar)

@@ -126,6 +126,25 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def getFirstPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            return part
+
+    def getLastPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            pass
+        return part
+
     ""
     ############
     # Setters: #
@@ -176,7 +195,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         Si l'objet était sélectionné, il ne le sera plus
         et inversement.
         """
-        self.selected = not self.selected
+        self.__selected = not self.__selected
 
     def setVisible(self, visible):
         """
@@ -210,6 +229,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     # Autre méthodes : #
     ####################
     def getFilterStateWith(self, filter):
+        """
+        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+        @param filter: Dictionnaire du filtre.
+        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        """
         
         # TODO : À modifier
         
@@ -235,6 +261,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @param frame: Le Frame dans lequel mettre l'instance.
         @param part: La partie à afficher si nécéssaire (pour les groupes par exemple).
         @return une instance de la classe représentant la variante affichable de cet objet.
+        """
+        raise NotImplementedError
+
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peut importe le sens.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
         """
         raise NotImplementedError
 
