@@ -53,7 +53,8 @@ class AbstractLink(IDisplayableItem):
         """
         Permet de mettre à jour la couleur du lien.
         """
-        canvas.itemconfigure(self.getTag(), fill=self.__color, width = self.__strokeWeight)
+        canvas.itemconfigure(self.getTag(),        fill=self.__color, width = self.__strokeWeight)
+        canvas.itemconfigure(self.getTag()+"c", outline=self.__color, width = self.__strokeWeight)
 
     def setColor(self, color):
         """
@@ -132,7 +133,8 @@ class AbstractLink(IDisplayableItem):
                               rectA.getCenterY(),
                               rectA.getX1() + r,
                               rectA.getY2()-1,
-                              start=-90, extent=180, style=ARC, width = self.__strokeWeight, outline = self.__color, tag=self.getTag())
+                              start=-90, extent=180, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              tag=(self.getTag(), self.getTag()+"c"))
             # Ligne horizontale vers la gauche à la suite de l'arc :
             canvas.create_line(rectA.getX1(),
                                rectA.getY2()-1,
@@ -144,7 +146,8 @@ class AbstractLink(IDisplayableItem):
                               rectA.getY2()-1,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectA.getY2() + r*2,
-                              start=90, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color, tag=self.getTag())
+                              start=90, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              tag=(self.getTag(), self.getTag()+"c"))
             # Ligne verticale vers le bas à la suite de l'arc :
             canvas.create_line(rectB.getX2() - r-6, # -6 Pour la flèche
                                rectA.getY2() + r,
@@ -156,7 +159,8 @@ class AbstractLink(IDisplayableItem):
                               rectB.getCenterY() - r*2,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectB.getCenterY(),
-                              start=180, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color, tag=self.getTag())
+                              start=180, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              tag=(self.getTag(), self.getTag()+"c"))
             # Petite ligne finale pour avoir le bout de la flèche :
             canvas.create_line(rectB.getX2()-6, # -6 Pour la flèche
                                rectB.getCenterY(),
