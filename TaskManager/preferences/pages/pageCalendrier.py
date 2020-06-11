@@ -54,8 +54,7 @@ class PageCalendrier(AbstractPage):
         self.getData().read(NOMFICHIER)
 
         nom = self.__sbNbJour.get()
-        duree = self.__sbNbJour.get()
-        self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour":duree}
+        self.getData()[nom.upper()] = {"Nom":nom}
 
         self.getData().sauv(NOMFICHIER)
         self.__chargerListBox()
@@ -145,8 +144,6 @@ class PageCalendrier(AbstractPage):
             semaine(str(val//7), val/7)
         else:
             jour(str(val))
-
-        print("et moi ! EUH", self.__sbNbJour.get().split(" "))
 
     def appliqueEffet(self, application):
         pass

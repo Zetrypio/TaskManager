@@ -16,7 +16,7 @@ class Data(ConfigParser):
         """
         if not add:
             self.clear()
-        super().read(fichier)
+        super().read(fichier, encoding="utf-8")
 
     def testBool(self, value):
         """ Test pour savoir si value est un Booléen """
@@ -34,7 +34,7 @@ class Data(ConfigParser):
         @param fichier : <str> contient le nom + extension du fichier dans lequel Data doit écrire
         # Note : une lecture de ce fichier est conseillé avant afin de ne pas supprimer tout le contenu inutilement
         """
-        with open(fichier, "w") as tfile:
+        with open(fichier, "w", encoding="utf-8") as tfile:
             self.write(tfile)
 
     def getAffichageNombreHorloge(self):
