@@ -1,4 +1,9 @@
 # -*- coding:utf-8 -*-
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import Frame, Label
+
+from util.widgets.Dialog import *
 
 def askHeureExacte(master, region):
     """

@@ -5,7 +5,6 @@ from tkinter import Label, Frame
 from collections import deque
 
 from affichages.periode.PeriodAdder import *
-from util.widgets.Dialog import *
 from util.widgets.RMenu import *
 
 from .dialog.askHeureExacteDialog import *

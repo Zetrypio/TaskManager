@@ -50,6 +50,9 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.color
 
+    def getNom(self):
+        return self.nom
+
     def getDateStatut(self):
         """
         Getter de la datetime clé
