@@ -47,6 +47,23 @@ class PageCalendrier(AbstractPage):
         # Fonctions
         self.__chargerListBox()
 
+    def __convSbStrToInt(self, value):
+        """
+        Fonction qui convertie le texte du spinbox et de getData()[section][nom] en nombre de jour
+        @param value : <str> a convertir
+        @return : <int> du nombre de jour
+        """
+        morceau = value.split(" ")
+        # si c'est la période, à la fin
+        if len(morceau) == 1:
+            return 42
+        elif len(morceau) == 2 and morceau[1].startswith("jour"):
+            return int(morceau[0])
+        elif len(morceau) == 2 and morceau[1].startswith("semaine"):
+            return int(morceau[0])*7
+        else:
+            raise AttributeError()
+
     def __ajouter(self):
         """
         Enregistre la nouvelle durée crée
@@ -54,7 +71,8 @@ class PageCalendrier(AbstractPage):
         self.getData().read(NOMFICHIER)
 
         nom = self.__sbNbJour.get()
-        self.getData()[nom.upper()] = {"Nom":nom}
+        duree = self.__sbNbJour.get()
+        self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour" : duree}
 
         self.getData().sauv(NOMFICHIER)
         self.__chargerListBox()
@@ -79,7 +97,7 @@ class PageCalendrier(AbstractPage):
         Permet de mettre toutes les durée dans le listBox
         """
         self.getData().read(NOMFICHIER)
-        self.getData().read("duree.def", add = True)
+        self.getData().read("Ressources/prefs/duree.def", add = True)
 
 
         # On supprime toutes options
@@ -89,7 +107,9 @@ class PageCalendrier(AbstractPage):
         for section in self.getData().sections():
             listName.append(self.getData().get(section, "Nom"))
 
-        # TODO : Trie de la liste
+        # Trie de la liste
+        listName.sort(key = lambda nom : self.__convSbStrToInt(nom))
+
 
         for duree in listName:
             self.__listebDureeCree.insert(END, duree)
@@ -113,7 +133,7 @@ class PageCalendrier(AbstractPage):
 
         # Lecture
         self.getData().read(NOMFICHIER)
-        self.getData().read("duree.def", add = True)
+        self.getData().read("Ressources/prefs/duree.def", add = True)
 
         ## Gestion de val en fct de semaine ou jour
         # Si on est au tout début pour escape l'erreur du calcul

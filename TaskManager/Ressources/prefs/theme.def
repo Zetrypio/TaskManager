@@ -3,24 +3,24 @@ default = <Section: DEFAULT>
 
 [CLASSIQUE]
 name = Classique
-couleur principale = #dc56eb
-couleur secondaire = #bd7cc5
-couleur tertiaire = #000000
-general-couleur du texte = #ffffff
-liste des tã£â¢ches-couleur de fond = Couleur principale
-ajout des tã£â¢ches-couleur de fond = Couleur secondaire
-zone des onglets-couleur de fond = Couleur principale
-zone des onglets-couleur de fond du calendrier = Couleur secondaire
-zone des onglets-couleur de fond de l'affichage gantt = Couleur secondaire
-zone des onglets-couleur de fond de l'affichage des pã£â©riodes = Couleur secondaire
-zone des onglets-couleur de fond de l'affichage des tã£â¢ches suivantes = Couleur secondaire
-zone de l'affichage-couleur de fond = Couleur secondaire
-barre d'outils principale-couleur de fond = Couleur principale
-barre d'outils principale-couleur des boutons = Couleur secondaire
-barre d'outils secondaire-couleur de fond = Couleur principale
-barre d'outils secondaire-couleur des boutons = Couleur secondaire
+couleur principale = #ffffff
+couleur secondaire = #ffffff
+couleur tertiaire = #ffffff
+general-couleur du texte = 
+liste des tã£â¢ches-couleur de fond = 
+ajout des tã£â¢ches-couleur de fond = 
+zone des onglets-couleur de fond = 
+zone des onglets-couleur de fond du calendrier = 
+zone des onglets-couleur de fond de l'affichage gantt = 
+zone des onglets-couleur de fond de l'affichage des pã£â©riodes = 
+zone des onglets-couleur de fond de l'affichage des tã£â¢ches suivantes = 
+zone de l'affichage-couleur de fond = 
+barre d'outils principale-couleur de fond = 
+barre d'outils principale-couleur des boutons = 
+barre d'outils secondaire-couleur de fond = 
+barre d'outils secondaire-couleur des boutons = 
 boutons de ttk = False
-default = <Section: DEFAULT>
+default = 
 
 [COLORFUL]
 name = Colorful

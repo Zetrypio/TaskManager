@@ -31,7 +31,7 @@ from util.widgets.Dialog import askstring, askyesnowarning
             "# Autre que les couleurs" : "",
             "Boutons de ttk" : self.__varTtkButton.get()}
 """
-NOMFICHIER = "theme.ini"
+NOMFICHIER = "Ressources/prefs/theme.def"
 
 
 class PageTheme(AbstractPage):

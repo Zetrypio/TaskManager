@@ -3,7 +3,9 @@ default = <Section: DEFAULT>
 
 [1]
 nom = 1 jour
+Duree en jour = 1
 
 [PERIODE]
 nom = Période
+Duree en jour = -1
 
