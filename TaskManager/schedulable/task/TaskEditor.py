@@ -240,14 +240,14 @@ class TaskEditor(Frame):
         @deprecated: Je crois même que ce n'est plus utilisé du tout.
         @return  1 Si la tâche est acceptée par le filtre et qu'elle doit être prioritaire.
         @return  0 Si la tâche est acceptée par le filtre sans être prioritaire.
-        @return -1 Si la tâche n'est pas accetpée par le filtre.
+        @return -1 Si la tâche n'est pas acceptée par le filtre.
         """
         # Filtre prioritaire ?
-        if "name" not in self.FILTRE or t.nom.lower().startswith(self.FILTRE["name"].lower()):
+        if "name" not in self.FILTRE or t.getNom().lower().startswith(self.FILTRE["name"].lower()):
             return 1
         # Filtre normal ?
         elif ("type" not in self.FILTRE or self.FILTRE["type"]=="Tâche") \
-         and ("name" not in self.FILTRE or t.nom.lower().count(self.FILTRE["name"].lower())>0):
+         and ("name" not in self.FILTRE or t.getNom().lower().count(self.FILTRE["name"].lower())>0):
             return 0
         # Sinon : non filtré.
         return -1
@@ -290,10 +290,11 @@ class TaskEditor(Frame):
                 print(i)
                 print(self.tree.item(i))
                 for t in self.taches:
-                    if isinstance(t, Task) and t.statut == "Inconnu":
+                    if isinstance(t, Task) and t.getStatut() == "Inconnu":
                         print(i)
                         if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
+
     def __trouverPositionTache(self, tache, x, y):
         """
         Cette méthode doit trouver en fonction des coordonnées x et y par rapport à l'écran,
@@ -308,10 +309,8 @@ class TaskEditor(Frame):
         if x >= 0 and y >= 0 and x < panneau.winfo_width() and y < panneau.winfo_height(): # s'assurer qu'on est au-dessus du panneau :
             region = panneau.identify_region(x, y)
             minute1 = region.minute
-            print("region avant :", region)
             minute2 = int(round(minute1/5)*5)
             region += datetime.timedelta(minutes = minute2 - minute1)
-            print("region après :", region)
             region = self.__askHeureExacte(region)
             if region is not None:
                 sousTache = panneau.addTask(tache, region = region)
@@ -327,7 +326,7 @@ class TaskEditor(Frame):
         Permet de faire un dialogue à l'utilisateur
         lui demandant de confirmer l'heure exacte à laquelle
         la tâche rajoutée via Drag&Drop doit-être rajoutée.
-        @param region: L'heure auapravant calculée.
+        @param region: L'heure auparavant calculée.
         @return la nouvelle heure calculée.
         """
         heure1 = region.hour
@@ -386,6 +385,7 @@ class TaskEditor(Frame):
         @return l'Application.
         """
         return self.master
+
     def tri_alphabetique(self):
         """
         Méthode pour aller sur le prochain
@@ -395,8 +395,9 @@ class TaskEditor(Frame):
             self.MODE_TRI = "Alpha_reverse"
         else:
             self.MODE_TRI = "Alpha"
-        self.taches.sort(key=lambda t: t.nom, reverse=self.MODE_TRI=="Alpha_reverse")
+        self.taches.sort(key=lambda t: t.getNom(), reverse=self.MODE_TRI=="Alpha_reverse")
         self.redessiner()
+
     def tri_statut(self):
         """
         Méthode pour aller sur le prochain
@@ -404,31 +405,31 @@ class TaskEditor(Frame):
         """
         if self.MODE_TRI == "Statut_importance":
             self.MODE_TRI = "Statut_prochain"
-            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
-            self.taches.sort(key=lambda t: 0 if t.statut == "À faire" or t.statut == "Répétition"
-                                      else 1 if t.statut == "Inconnu"
+            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
+            self.taches.sort(key=lambda t: 0 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
+                                      else 1 if t.getStatut() == "Inconnu"
                                       else 2)
         elif self.MODE_TRI == "Statut_prochain":
             self.MODE_TRI = "Statut_autre"
             # Alphabétique pout les Inconnus -> tri alphabétique :
-            self.taches.sort(key=lambda t: t.nom)
+            self.taches.sort(key=lambda t: t.getNom())
             # Ne change pas l'ordre des noms des Inconnus
-            # car ils ont tous le même debut qui est None
+            # car ils ont tous le même début qui est None
             # -> tri par début pour le reste :
-            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
+            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
             # Tri selon le statut :
-            self.taches.sort(key=lambda t: 0 if t.statut == "Inconnu"
-                                      else 1 if t.statut == "Retard"
-                                      else 2 if t.statut == "Répétition"
+            self.taches.sort(key=lambda t: 0 if t.getStatut() == "Inconnu"
+                                      else 1 if t.getStatut() == "Retard"
+                                      else 2 if t.getStatut() == "Répétition"
                                       else 3)
         else:
             self.MODE_TRI = "Statut_importance"
-            self.taches.sort(key=lambda t: t.debut if t.debut is not None else datetime.datetime(1, 1, 1))
-            self.taches.sort(key=lambda t: 0 if t.statut == "Retard"
-                                      else 1 if t.statut == "À faire" or t.statut == "Répétition"
+            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
+            self.taches.sort(key=lambda t: 0 if t.getStatut() == "Retard"
+                                      else 1 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
                                       else 2)
         self.redessiner()
-    
+
     def setEditionPeriode(self, enEdition):
         """
         Permet de changer entre l'ajouteur

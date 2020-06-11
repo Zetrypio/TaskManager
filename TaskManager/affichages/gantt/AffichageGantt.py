@@ -310,14 +310,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
             heure = datetime.time(self.getHeureDebut())
         elif y > self.getNbTacheJour(jour) * AffichageGantt.TAILLE_LIGNE:
             try:
-                heure = self.getTache(jour, self.getNbTacheJour(jour)-1).task.getFin().time()
+                heure = self.getTache(jour, self.getNbTacheJour(jour)-1).getSchedulable().getFin().time()
             except ValueError:
                 heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
                 (datetime.datetime.combine(jour, self.getHeureFin  ())
                 -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
         else:
             try:
-                heure = self.getTache(jour, y//AffichageGantt.TAILLE_LIGNE).task.getFin().time()
+                heure = self.getTache(jour, y//AffichageGantt.TAILLE_LIGNE).getSchedulable().getFin().time()
             except ValueError:
                 heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
                 (datetime.datetime.combine(jour, self.getHeureFin  ())

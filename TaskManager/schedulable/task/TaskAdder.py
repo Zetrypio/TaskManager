@@ -53,7 +53,7 @@ class TaskAdder(Frame):
         self.champMinute        = Spinbox(self, from_ = 0, to=59, increment = 1, width = 4)
         # Répétitions :
         self.champNbRepetition  = Spinbox(self, from_ = -1, to=100, increment = 1, width = 4) # Nombre de répétition
-        self.champRepetition    = Spinbox(self, from_ = 1, to=100, increment = 1, width = 4) # quantit�e d'unitée de temps entre 2 rép.
+        self.champRepetition    = Spinbox(self, from_ = 1, to=100, increment = 1, width = 4) # quantitée d'unitée de temps entre 2 répétition.
         self.champUniteeRepet   = Combobox(self, values = ["minutes", "heures", "jours", "semaines", "mois", "années"], state = "readonly", width = 4)
         # valeurs par défaut :
         self.champNbRepetition.set(0)
@@ -158,7 +158,7 @@ class TaskAdder(Frame):
     def getRepetitionTime(self):
         """
         Permet d'obtenir les informations de répétition.
-        @return val, unit : val est tout les combiens d'unit on répète.
+        @return val, unit : val est tout les combien d'unit on répète.
         """
         unit = self.champUniteeRepet.get()
         val = int(self.champRepetition.get())

@@ -18,7 +18,7 @@ class __TaskInDnd(Toplevel):
         @param task: la tâche Drag&Dropée.
         @param command: fonction à exécuter en tant que callback quand
         le drag&drop est fini.
-        @param **kwargs: fonctionnalitées d'affichages pour le tkinter.Toplevel()
+        @param **kwargs: fonctionnalités d'affichages pour le tkinter.Toplevel()
         que cet objet est.
         """
         # Note : On utilise une fenêtre dépendente (Toplevel) car c'est un truc
@@ -30,7 +30,7 @@ class __TaskInDnd(Toplevel):
 
         # on enlève le bandeau et la bordure :
         self.overrideredirect(1)
-        # on reègle les dimensions et la position :
+        # on règle les dimensions et la position :
         self.geometry("200x50+%s+%s"%pos)
         # ça c'est pour faire une animation fluide :
         self.__alpha = 0
@@ -38,14 +38,14 @@ class __TaskInDnd(Toplevel):
         self.attributes("-topmost", True)
         # encore l'animation (le début)
         self.attributes("-alpha", self.__alpha)
-        # on règle la couleur du fond et de la brodure
+        # on règle la couleur du fond et de la bordure
         self.configure(background = "#0078FF")
         self.__frame = Frame(self, bg = "#CCDDFF")
         self.__frame.pack(expand = YES, fill = BOTH, padx = 2, pady = 2)
         self.update()
         # on écrit le texte dedans :
-        Label(self.__frame, text = task.nom, font = "Arial 12 bold", bg = "#CCDDFF").grid(sticky = "w")
-        Label(self.__frame, text = task.desc, bg = "#CCDDFF").grid(sticky = "w", row = 1)
+        Label(self.__frame, text = task.getNom(), font = "Arial 12 bold", bg = "#CCDDFF").grid(sticky = "w")
+        Label(self.__frame, text = task.getDescription(), bg = "#CCDDFF").grid(sticky = "w", row = 1)
         # l'animation est-elle finie ?
         self.__commence = False
         self.__fin = False
@@ -128,12 +128,12 @@ class __TaskInDnd(Toplevel):
             self.after(50, self.__end) # sinon on attend un peu.
     def __fondufin(self):
         """
-        Méthode pour faire un fondu quand ca disparaît.
+        Méthode pour faire un fondu quand ça disparaît.
         C'est le même qu'à l'apparition mais dans l'autre sens.
         """
         if self.__commence:
             self.__alpha -= 0.05
-            try: # il peut ici aussi y avoir des excpetions, mais c'est pas grave.
+            try: # il peut ici aussi y avoir des exceptions, mais c'est pas grave.
                 self.attributes("-alpha", self.__alpha)
                 if self.__alpha > 0:
                     self.after(5, self.__fondufin)
@@ -162,7 +162,7 @@ def TaskInDnd(pos, master, task, **kwargs):
     @param task: la tâche Drag&Dropée.
     @param command: fonction à exécuter en tant que callback quand
     le drag&drop est fini.
-    @param **kwargs: fonctionnalitées d'affichages pour le tkinter.Toplevel()
+    @param **kwargs: fonctionnalités d'affichages pour le tkinter.Toplevel()
     que cet objet est.
     """
     global __INSTANCE
