@@ -9,6 +9,15 @@ class Data(ConfigParser):
         self.__currentThemeName = "Classique"
         self.__adaptColorTask = False
 
+    def read(self, fichier, add = False):
+        """
+        On efface ce qu'on avait en mémoire
+        et on relie tout
+        """
+        if not add:
+            self.clear()
+        super().read(fichier)
+
     def testBool(self, value):
         """ Test pour savoir si value est un Booléen """
         if not isinstance(value, bool):

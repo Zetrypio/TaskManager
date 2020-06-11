@@ -1,0 +1,11 @@
+[DEFAULT]
+default = <Section: DEFAULT>
+
+[5]
+nom = 5
+duree en jour = 5
+
+[10]
+nom = 10
+duree en jour = 10
+

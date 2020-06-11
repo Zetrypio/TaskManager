@@ -294,6 +294,7 @@ class PageTheme(AbstractPage):
         Fonction qui supprime le thème sélectionné dans le combobox
         """
         self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
             self.getData().remove_section(self.__comboThemeExistant.get().upper())
             self.getData().sauv(NOMFICHIER)
