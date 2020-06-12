@@ -39,7 +39,7 @@ class ParametreAffichage(Frame):
     def setModeListe(self, mode = None):
         """
         Permet de changer la valeur du combobox, sans altérer son état de lecture.
-        @param mode = None: None si on met sur le dernier élémént de la liste, ou un autre
+        @param mode = None: None si on met sur le dernier élément de la liste, ou un autre
         texte si on veut quelque chose en particulier.
         """
         etatActuel = self.listeMode.cget("state")

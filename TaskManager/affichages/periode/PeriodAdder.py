@@ -36,11 +36,11 @@ class PeriodAdder(Frame):
         # Widgets :
         # Nom :
         self.champNom           = Entry(self)
-        # Debut :
+        # Début :
         self.champDebut         = Button(self, command = self.askDateDebut)
         # Fin :
         self.champFin           = Button(self, command = self.askDateFin)
-        # Duree
+        # Durée
         self.champJour          = Spinbox(self, from_ = 0, to=9999, increment = 1, width = 4)
         
         # Autres :

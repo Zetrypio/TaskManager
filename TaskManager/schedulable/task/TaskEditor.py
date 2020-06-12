@@ -280,7 +280,7 @@ class TaskEditor(Frame):
     def __mouseDragged(self, event):
         """
         Méthode pour commencer le Drag&Drop d'une tâche.
-        @param event: Evenement pour positionner la tâche
+        @param event: Événement pour positionner la tâche
         en Drag&Drop suivant la position de la souris.
         """
         if self.mousepress:

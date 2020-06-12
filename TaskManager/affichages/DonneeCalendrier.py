@@ -8,7 +8,7 @@ from .AbstractDisplayedCalendar import *
 
 class DonneeCalendrier(AbstractDisplayedCalendar):
     """
-    Classe contenant le panneau à onglet avec tout les
+    Classe contenant le panneau à onglets avec tout les
     affichages des calendriers.
     """
     def __init__(self, master = None, **kwargs):
@@ -72,7 +72,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         tacheJour1 = set()
         tacheJour2 = set()
 
-        # Seulement les taches sélectionnés au cas où il y en a qu'on veux pas switch
+        # Seulement les tâches sélectionnés au cas où il y en a qu'on veux pas switch
         for tache in self.getSelectedTask():
             if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1:
                 tacheJour1.add(tache)
@@ -123,7 +123,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         Méthode effectuée lors de l'événement d'un panneau qui à changé,
         pour faire la configuration des barres d'outils ou autre.
-        @param e: Evenement non utilisé.
+        @param e: Événement non utilisé.
         """
         p = self.getPanneauActif()
         p.doConfiguration(self.master.getParametreAffichage())
@@ -138,8 +138,8 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
     def escapePressed(self, event):
         """
-        Méthode appelée lors de l'appuie de la touche Echappe.
-        On annule ce qu'on fait sur tous les panneux.
+        Méthode appelée lors de l'appuie de la touche Échappe.
+        On annule ce qu'on fait sur tous les panneaux.
         @param event: l'événement, possiblement utilisé par les panneaux.
         """
         for panneau in self.listPanneau:
@@ -183,7 +183,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
     def setDureeJour(self, jour):
         """
-        Setter pour le nombre de jour via timedelta.
+        Setter pour le nombre de jour via datetime.timedelta().
         @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
         """
         for panneau in self.listPanneau:
@@ -248,8 +248,8 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         Permet de mettre à jour l'affichage.
         """
-        # Faire un parcour des panneaux pour pouvoir effectuer les changements
-        # sur TOUTES les disposition de calendriers (gantt, calendrier classique etc)
+        # Faire un parcours des panneaux pour pouvoir effectuer les changements
+        # sur TOUTES les disposition de calendriers (Gantt, calendrier classique etc)
         for panneau in self.listPanneau:
             panneau.updateAffichage()
         
@@ -297,5 +297,5 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.listPanneau:
             tache = panneau.addTask(tache, region)
 
-        return tache # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+        return tache # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
 

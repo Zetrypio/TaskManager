@@ -2,7 +2,7 @@
 
 class GroupeManager():
     """
-    Gestionaire de groupes.
+    Gestionnaire de groupes.
     Il y en a un par période.
     """
     def __init__(self, app, periode):

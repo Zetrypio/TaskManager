@@ -9,7 +9,7 @@ def mymap(n, a, b, x, y): # Fonction map classique
     @param b: la fin du premier interval.
     @param x: le début du deuxième interval.
     @param y: la fin du deuxième interval.
-    @return n converti entre x et y depuix entre a et b.
+    @return n converti entre x et y depuis entre a et b.
     """
     return (n-a)/(b-a)*(y-x)+x
 

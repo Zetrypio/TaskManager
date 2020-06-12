@@ -52,7 +52,7 @@ class Groupe(AbstractSchedulableObject):
         Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
         @param taskEditor: le TaskEditor()
         @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
-        @return la liste des commandes nécéssaire.
+        @return la liste des commandes nécessaire.
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
         pass # TODO
@@ -104,7 +104,7 @@ class Groupe(AbstractSchedulableObject):
         """
         Permet de créer une instance de la version affichable d'un groupe.
         @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
-        @param part: DatetimeItemPart() nécéssaire pour savoir quelle partie du groupe à afficher.
+        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie du groupe à afficher.
         """
         return DisplayableGroup(frame, self, part)
 

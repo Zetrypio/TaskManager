@@ -64,7 +64,7 @@ class ItemButtonPlus(IDisplayableItem):
     def delete(self):
         """
         Permet de supprimer cet objet de l'affichage.
-        Etant donné que tout est déjà effacé dans AffichageGantt
+        Étant donné que tout est déjà effacé dans AffichageGantt
         lors du redessinage, rien a été mis ici.
         @override delete() in IDisplayableItem.
         """

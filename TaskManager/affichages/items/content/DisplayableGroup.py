@@ -19,7 +19,7 @@ class DisplayableGroup(AbstractItemContent):
         """
         # S'assurer que c'est bien un groupe :
         if not isinstance(schedulable, Groupe):
-            raise TypeError("Excpected Group, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
+            raise TypeError("Expected Group, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
 
         super().__init__(master, schedulable, **kwargs)
         
@@ -48,7 +48,7 @@ class DisplayableGroup(AbstractItemContent):
         # TODO
         # Et filtrer selon la part.
 
-#        # La selection des taches
+#        # La selection des tâches
 #        self.__texte.bind("<Button-1>", self._clique)
 #        self.__texte.bind("<Control-Button-1>", self.multiSelection)
     

@@ -20,7 +20,7 @@ class CalendarZone(Frame):
         """
         Constructeur de CalendarZone.
         @param master: master du tkinter.Frame() que cet objet est.
-        @param periodeManager: le PeriodeManager pour la barre d'outil des périodes, conenue dans cet objet.
+        @param periodeManager: le PeriodeManager pour la barre d'outil des périodes, connue dans cet objet.
         @param **kwargs: Les options d'affichages pour le tkinter.Frame() que cet objet est.
         """
         Frame.__init__(self, master, **kwargs)
@@ -84,7 +84,7 @@ class CalendarZone(Frame):
     def gestionHeure(self, nombreHeure, position):
         """
         Fonction qui s'occupe de rajouter des heures visibles.
-        En dehors de la fonction ajouterHeure lié au bouton car on pourrait avoir à ajouter des heures autrements que par le bouton
+        En dehors de la fonction ajouterHeure lié au bouton car on pourrait avoir à ajouter des heures autrement que par le bouton
         @param nombreHeure : int relatif, permet d'ajouter ou retirer des heures
         @param position    : string "Avant" / "Apres" pour savoir ou appliquer les changements
         """
@@ -126,12 +126,12 @@ class CalendarZone(Frame):
 
     def selectionnerJour(self):
         """
-        Méthode pour sélectioner les jours correspondants aux tâches sélectionées.
+        Méthode pour sélectionner les jours correspondants aux tâches sélectionnées.
         """
         pass # TODO
     def afficherMasquerJour(self):
         """
-        Peremt d'afficher ou masquer un jour... TODO
+        Permet d'afficher ou masquer un jour... TODO
         """
         pass # TODO
     def deplacerIntervertir(self):
@@ -191,7 +191,7 @@ class CalendarZone(Frame):
                 tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
                 horsChamp = True
 
-            # Si au final il y a des taches hors champs on demande si on affiche les heures pour voir le.s tache.s
+            # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
             if horsChamp:
                 horsChamp = False
                 choix, periode = askComplicationjour(tache, self.getApplication().getPeriodManager())
@@ -240,7 +240,7 @@ class CalendarZone(Frame):
         heureDebut = self.getDonneeCalendrier().getHeureDebut()
         heureFin   = self.getDonneeCalendrier().getHeureFin()
 
-        lastDiffJour = (last.getDebut().date() - periode.getDebut()).days # .days pour intifier le tout
+        lastDiffJour = (last.getDebut().date() - periode.getDebut()).days # .days pour int-ifier le tout
         firstDiffJour = (periode.getFin() - first.getFin().date()).days
         heureRetirerMax = last.getDebut().hour + lastDiffJour * 24
         heureAjoutMax = heureFin.hour - first.getFin().hour + 1 + firstDiffJour * 24
@@ -277,7 +277,7 @@ class CalendarZone(Frame):
                 tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
                 horsChamp = True
 
-            # Si au final il y a des taches hors champs on demande si on affiche les heures pour voir le.s tache.s
+            # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
             if horsChamp and askChangerHeure():
                 timeAvant = heureDebut
                 timeApres = heureFin
@@ -294,12 +294,12 @@ class CalendarZone(Frame):
                         tacheAvant = tache
                         timeAvant  = tache.getFin().time()
 
-                    # Si la fin est apres le debut (hors date) ET qu'il est apres le referent
+                    # Si la fin est après le début (hors date) ET qu'il est après le referent
                     if tache.getDebut().time() < tache.getFin().time() and tache.getFin().time() > timeApres:
                         tacheApres = tache
                         timeApres  = tache.getFin().time()
 
-                    # Si le début est apres la fin (hors date) ET qu'il est apres le referent
+                    # Si le début est après la fin (hors date) ET qu'il est après le referent
                     elif tache.getDebut().time() > tache.getFin().time() and tache.getDebut().time() > timeApres:
                         tacheApres = tache
                         timeApres  = tache.getDebut().time()
@@ -418,13 +418,13 @@ class CalendarZone(Frame):
 
     def getFirstAndLast(self):
         """
-        Getter parmi les taches sélectionnés
-        Permet de déterminer la tache qui fini le plus tot et la tache qui commence le plus tard
-        @return first : (Task) tache qui fini le plus tot
+        Getter parmi les tâches sélectionnés
+        Permet de déterminer la tache qui fini le plus tôt et la tache qui commence le plus tard
+        @return first : (Task) tache qui fini le plus tôt
         @return last  : (Task) tache qui commence le plus tard
         """
         # XXX : Est-ce vraiment utile ?
-        first = None # Contient la tache qui finit    le plus tot
+        first = None # Contient la tache qui finit    le plus tôt
         last  = None # Contient la tache qui commence le plus tard
 
         # XXX : Moyen de simplifier ça avec min() et max().

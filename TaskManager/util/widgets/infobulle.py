@@ -25,7 +25,7 @@ def infobulle(event, text=""):
     INFOBULLE.update()
     x = event.x_root+10
     y = event.y_root+10
-    try: # peut en effet générer des erreures randoms
+    try: # peut en effet générer des erreurs random
         if x + INFOBULLE.winfo_width() > INFOBULLE.winfo_screenwidth():
             x = x-20-INFOBULLE.winfo_width()
         if y + INFOBULLE.winfo_height() > INFOBULLE.winfo_screenheight():
@@ -49,7 +49,7 @@ def delete_infobulle():
 def ajouterInfoBulle(widget, text):
     """
     Permet de faire en sorte qu'une infobulle
-    apparaîsse automatiquement sur ce widget.
+    apparaisse automatiquement sur ce widget.
     @param widget: le widget sur lequel mettre l'infobulle.
     @param text: le texte de l'infobulle.
     """

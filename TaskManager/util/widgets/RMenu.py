@@ -35,7 +35,7 @@ class RMenu(Menu):
     def __bind_inside_of(self, widget):
         """
         Permet de binder récursivement sur tout les widgets trouvés
-        À l'intérieur de celui passé en arguement.
+        À l'intérieur de celui passé en argument.
         @param widget: le widget en question.
         """
         widget.bind("<Button-3>", self.right_menu_event)

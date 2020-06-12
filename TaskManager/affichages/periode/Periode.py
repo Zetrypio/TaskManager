@@ -14,7 +14,7 @@ class Periode(ITaskEditorDisplayableObject):
     """
     def __init__(self, periodManager, nom, debut, fin, desc, color = "white"):
         """
-        Constrcuteur de la période.
+        Constructeur de la période.
         @param periodManager: Gestionnaire de période.
         @param nom: Nom de la période.
         @param debut: datetime.date() de début de la période.
@@ -35,11 +35,11 @@ class Periode(ITaskEditorDisplayableObject):
 
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
-        # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourras l'obtenir avec une méthode...
+        # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourra l'obtenir avec une méthode...
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
-        return "Periode: %s, from %s to %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
+        return "Période: %s, de %s à %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
 
     def getColor(self):
         """
@@ -96,7 +96,7 @@ class Periode(ITaskEditorDisplayableObject):
             self.debut = debut + datetime.timedelta() # Faire une copie de la date
             self.fin = self.debut + duree
         else:
-            raise ValueError('Mauvaise valeure à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
+            raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
 
     def setFin(self, fin, change = "duree"):
         """
@@ -142,7 +142,7 @@ class Periode(ITaskEditorDisplayableObject):
         Setter pour indiquer si la période est sélectionnée dans l'affichage de calendrier des périodes.
         @param value: True si la période doit être sélectionnée, False sinon.
         """
-        if not isinstance(value, bool): raise TypeError("Exptected a boolean")
+        if not isinstance(value, bool): raise TypeError("Expected a boolean")
         self.selected = value
     
     def setDateStatut(self, datetime):
@@ -176,13 +176,13 @@ class Periode(ITaskEditorDisplayableObject):
     def iterateDisplayContent(self):
         """
         Permet de donner les lignes de contenu de cet objet dans l'affichage du Treeview() du TaskEditor().
-        @yield "Debut :" suivi de la date de début.
+        @yield "Début :" suivi de la date de début.
         @yield "Durée :" suivi de la durée.
         @yield "Fin :" suivi de la date de fin.
         @yield "Description :" suivi de la description.
         @specified by iterateDisplayContent() in ITaskEditorDisplayableObject().
         """
-        yield "Debut :", self.debut
+        yield "Début :", self.debut
         yield "Durée :", self.getDuree()
         yield "Fin :", self.fin
         yield "Description :", self.desc
@@ -192,7 +192,7 @@ class Periode(ITaskEditorDisplayableObject):
         Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
         @param taskEditor: le TaskEditor()
         @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
-        @return la liste des commandes nécéssaire.
+        @return la liste des commandes nécessaire.
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
          # Mise en place de simplicitées :

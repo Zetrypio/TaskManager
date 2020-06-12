@@ -16,7 +16,7 @@ class AbstractMultiFrameItem(IDisplayableItem):
         redraw() de cet objet.
         @param schedulable: l'objet à afficher parmi les différents cadre de cet objet.
         """
-        if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instanciate abtract class AbstractMultiFrameItem directly.")
+        if self.__class__ == AbstractMultiFrameItem: raise RuntimeError("Can't instantiate abstract class AbstractMultiFrameItem directly.")
         super().__init__()
         self.master = master
         self._schedulable = schedulable
@@ -28,15 +28,15 @@ class AbstractMultiFrameItem(IDisplayableItem):
         """
         Permet de savoir de où à où les différents cadre doivent aller.
         En effet, une tâche peut par exemple se dérouler sur plus d'un jour.
-        Dans ce cas, la tâche est affichée 2 fois (ou plus si nécéssaire),
+        Dans ce cas, la tâche est affichée 2 fois (ou plus si nécessaire),
         1 fois par jours. Dès qu'il y a une découpe (nouveau jour, séparation
         pour un groupe etc.), cela va créer un nouveau cadre. Chaque éléments
         de la répartition est un DatetimeItemPart pour indiquer de quand
         à quand ce cadre en question doit être fait.
 
         @return un générateur ou itérateur ou itérable (liste) pouvant être
-        parcourru par une boucle for. Chaque élément doit être une paire de
-        datetime indiquant le début et la fin de ce cadre.
+        parcouru par une boucle for. Chaque élément doit être une paire de
+        datetime.datetime() indiquant le début et la fin de ce cadre.
         """
         return self._schedulable.getRepartition(self.master)
 

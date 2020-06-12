@@ -28,7 +28,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.annee = time.localtime().tm_year
         self.mois = time.localtime().tm_mon
 
-        # Nécéssaire pour gérer l'affichage non-superposé des périodes qui sont en même temps.
+        # Nécessaire pour gérer l'affichage non-superposé des périodes qui sont en même temps.
         self.__listeHauteur = {}
 
         # tkinter.Canvas() sur lequel tout s'affiche.
@@ -69,9 +69,9 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
     def clic(self, event, control = False):
         """
         Méthode appelée lors d'un clic sur le Canvas().
-        @param event: Evenement du clic.
+        @param event: Événement du clic.
         @param control=False: True si l'événement est avec le modifier dû à la touche Contrôle, False sinon.
-        Si c'est avec la touche contrôle, alors la/les période(s) précédemment sélectionnées ne sont pas désélectionées.
+        Si c'est avec la touche contrôle, alors la/les période(s) précédemment sélectionnées ne sont pas désélectionnées.
         """
         x, y = event.x, event.y
         if not control:
@@ -166,14 +166,14 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
     def getPeriodHeight(self):
         """
         Renvoie la hauteur des périodes.
-        TODO : Faire que ca compacte les périodes si manque de place.
+        TODO : Faire que ça compacte les périodes si manque de place.
         @return la hauteur des périodes à afficher.
         """
         return 10
 
     def getSemaineOf(self, jour):
         """
-        Renvoie le numéro de la ligne de la semaine correspondant au jour demmandé.
+        Renvoie le numéro de la ligne de la semaine correspondant au jour demandé.
         @param jour: datetime.date() correspondant au jour dont on veut savoir la semaine.
         @return le numéro de la semaine dans le mois à partir de 0.
         """

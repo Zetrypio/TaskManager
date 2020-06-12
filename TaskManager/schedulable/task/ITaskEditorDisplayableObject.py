@@ -2,7 +2,7 @@
 
 class ITaskEditorDisplayableObject:
     """
-    Cette interface liste les méthode qu'il est nécéssaire
+    Cette interface liste les méthode qu'il est nécessaire
     d'implémenter pour les objets s'affichant dans le
     Treeview du TaskEditor. (Qui en vrai gère plus que de
     simple tâches - groupes ou périodes sont les exemples).
@@ -40,7 +40,7 @@ class ITaskEditorDisplayableObject:
         Cependant, si vous voulez changer la configuration, il suffit de
         yield un autre dictionnaire de configuration.
 
-        Utiliser "yield from" si vous faîtes un générateur
+        Utiliser "yield from" si vous faites un générateur
         pour faire cette récursion vous permettra
         d'ajouter pleins de ITaskEditorDisplayableObject,
         d'un coup, en tant que sous branche de la dernière créée.
@@ -53,7 +53,7 @@ class ITaskEditorDisplayableObject:
 
     def getRMenuContent(self, taskEditor, rmenu):
         """
-        @param taskEditor : permet de faire des interractions avec le TaskEditor
+        @param taskEditor : permet de faire des interactions avec le TaskEditor
         @param rmenu : permet de faire les cascades dans les menus.
         Il sera détruit si cette méthode retourne None.
         @return un itérateur ou itérable (listes etc.) dont chaque éléments
@@ -68,7 +68,7 @@ class ITaskEditorDisplayableObject:
         """
         @return  1 Si l'objet est acceptée par le filtre et qu'elle doit être prioritaire.
         @return  0 Si l'objet est acceptée par le filtre sans être prioritaire.
-        @return -1 Si l'objet n'est pas accetpée par le filtre.
+        @return -1 Si l'objet n'est pas accepté par le filtre.
         """
         raise NotImplementedError
 

@@ -22,7 +22,7 @@ class AbstractDisplayedCalendar(Frame):
     """
     def __init__(self, master = None, **kwargs):
         """
-        Constructeur d'un calendrier quelquonque.
+        Constructeur d'un calendrier quelconque.
         Classe abstraite, donc veuillez utiliser une
         sous-classe pour éviter d'obtenir une erreur.
         Les paramètres sont ceux donnés au constructeur parent,
@@ -120,7 +120,7 @@ class AbstractDisplayedCalendar(Frame):
 #    def getSelectedTask(self):
 #        """
 #        Permet d'obtenir la liste des tâches sélectionnées.
-#        @return: la liste des tâches sélectionées.
+#        @return: la liste des tâches sélectionnées.
 #        @deprecated: permettra de renvoyer plus que des tâches,
 #        dans le futur. Changera alors de nom.
 #        """
@@ -257,7 +257,7 @@ class AbstractDisplayedCalendar(Frame):
         Change la position du jour de fin afin d'y parvenir.
         @param valeur : int correspondant au nombre de jours à afficher.
         """
-        # TODO : Rajouter le check de dépassage de fin de période -> nouvelle méthode.
+        # TODO : Rajouter le check de dépassement de fin de période -> nouvelle méthode.
         self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
         self.updateAffichage()
 
@@ -416,7 +416,7 @@ class AbstractDisplayedCalendar(Frame):
                 # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
-            return schedulable # on revoie la tache avec son début et sa duree. TRÈS IMPORTANT.
+            return schedulable # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
         
         @param schedulable: le schedulable à rajouter
         @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
@@ -485,7 +485,7 @@ class AbstractDisplayedCalendar(Frame):
             d.set(jours)
             
         # Création du dialogue :
-        fen = Dialog(self, title = "Choix de la duree de la tâche",
+        fen = Dialog(self, title = "Choix de la durée de la tâche",
                    buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Annuler',))
         # Widgets du dialogue :
         Label(fen, text = "Choisissez la durée de la Tâche").pack(side = TOP, fill = X)

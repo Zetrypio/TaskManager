@@ -108,7 +108,7 @@ def main():
     app.pack(expand = YES, fill = BOTH)
     
 
-    # Création de periode préfaite
+    # Création d'une période préfaite
 
     periodeSemaine = Periode(app.getPeriodManager(),
                              "semaine",
@@ -118,7 +118,7 @@ def main():
                              color = "#7FFF7F")
     app.getPeriodManager().ajouter(periodeSemaine)
 
-    # Création de taches  préfaite
+    # Création de tâches  préfaites
     app.getTaskEditor().ajouter(Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
     app.getTaskEditor().ajouter(Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 5,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2)))
     app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 5,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))

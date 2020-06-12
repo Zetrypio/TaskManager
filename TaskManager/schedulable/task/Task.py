@@ -41,7 +41,7 @@ class Task(AbstractSchedulableObject):
         # Parent : Garde-t-on cela ?
         self.__parent = parent
 
-        # Liste des dependancies pour les liens
+        # Liste des dépendances pour les liens
         self.__dependances = []
         self.__dependantes = []
 
@@ -138,7 +138,7 @@ class Task(AbstractSchedulableObject):
     def delete(self, app):
         """
         Permet de supprimer définitivement cette tâche.
-        @param app: Application(), nécéssaire pour la suppression d'une tâche.
+        @param app: Application(), nécessaire pour la suppression d'une tâche.
         """
         # TODO : Suppression des calendriers.
         if self.parent is None:
@@ -183,7 +183,7 @@ class Task(AbstractSchedulableObject):
         """
         Permet de créer une instance de la version affichable d'une tâche.
         @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
-        @param part: DatetimeItemPart() nécéssaire pour savoir quelle partie de la tâche à afficher.
+        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie de la tâche à afficher.
         """
         # Ici, on s'en fiche de la part.
         return DisplayableTask(frame, self, part)
@@ -246,7 +246,7 @@ class Task(AbstractSchedulableObject):
     def addSubTask(self, task):
         """
         Permet d'ajouter une sous-tâche si cette tâche est une tâche conteneur.
-        Il est impératif de gérer la suppresion de la tâche dans TaskEditor depuis l'extérieur.
+        Il est impératif de gérer la suppression de la tâche dans TaskEditor depuis l'extérieur.
         @param task: la sous-tâche à ajouter.
         @raise RuntimeError: si ce n'est pas une tâche conteneur.
         @raise RuntimeError: si c'est une tâche conteneur mais qu'on rajoute une sous-tâche déjà conteneur.

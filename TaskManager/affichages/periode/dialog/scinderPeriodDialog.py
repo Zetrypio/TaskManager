@@ -25,7 +25,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     # Vérifications :
     if periode.getDebut() == periode.getFin():
         showerror("Longueur de période invalide", "Il est impossible de scinder une période qui dure un seul jour.")
-        raise ValueError("Impossiblr de scinder une période qui dure un seul jour")
+        raise ValueError("Impossible de scinder une période qui dure un seul jour")
     
     def getDebut():
         return periode.getDebut() + datetime.timedelta(days = 1)
@@ -33,7 +33,7 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     # Une période de 2 jours ne peut être coupé qu'entre les 2 jours,
     # donc le début de la 2ème période dure à partir du 2ème jour,
     # soit la fin de cette période. (on notera que la fonction permet justement d'ignorer le début,
-    # étant donné qu'il est impossible de scinder le même jour que ca commence).
+    # étant donné qu'il est impossible de scinder le même jour que ça commence).
     if getDebut() == periode.getFin():
         return periode.getFin()
 
@@ -152,6 +152,6 @@ def askScinderPeriode(periodManager, taskEditor, periode = None):
     # Activation du dialogue :
     fen.activateandwait()
     
-    # revoie des valeurs
+    # renvoie des valeurs
     return dateScindage
 

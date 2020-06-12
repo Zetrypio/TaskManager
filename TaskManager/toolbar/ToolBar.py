@@ -19,7 +19,7 @@ class ToolBar(Frame):
         """
         Constructeur de la barre d'outil.
         @param master: master du tkinter.Frame() que cet objet est.
-        @param **kwargs: Fonctionnalitées d'affichage du tkinter.Frame() que cet objet est.
+        @param **kwargs: Fonctionnalités d'affichage du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
         # Note : self.master est référence vers CalendarZone.
@@ -54,13 +54,13 @@ class ToolBar(Frame):
         # CADRE DÉCALER
         self._creationCategorie("Décaler") #cadre Décaler
         # création des boutons
-        self._creationBouton("toutes les activitées -> jour", self.master.decalerJour, getImage("Ressources/textures/par defaut/decalage_J.png"))
-        self._creationBouton("toutes les activitées -> heure", self.master.decalerHeure, getImage("Ressources/textures/par defaut/decalage_H.png"))
+        self._creationBouton("toutes les activités -> jour", self.master.decalerJour, getImage("Ressources/textures/par defaut/decalage_J.png"))
+        self._creationBouton("toutes les activités -> heure", self.master.decalerHeure, getImage("Ressources/textures/par defaut/decalage_H.png"))
 
         # CADRE GROUPE
         self._creationCategorie("Groupe") #cadre groupe
         # création des boutons
-        self._creationBouton("Grouper", self.master.grouper, getImage("Ressources/textures/par defaut/grouper.png"))
+        self._creationBouton("grouper", self.master.grouper, getImage("Ressources/textures/par defaut/grouper.png"))
         self._creationBouton("dégrouper", self.master.degrouper, getImage("Ressources/textures/par defaut/degrouper.png"))
         
         # CADRE AVANCEMENT

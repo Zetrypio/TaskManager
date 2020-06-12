@@ -43,11 +43,11 @@ class TaskAdder(Frame):
         # Widgets :
         # Nom :
         self.champNom           = Entry(self)
-        # Debut :
+        # Début :
         self.champDebut         = Button(self, command = self.askDateDebut)
         # Fin :
         self.champFin           = Button(self, command = self.askDateFin)
-        # Duree
+        # Durée
         self.champJour          = Spinbox(self, from_ = 0, to=31, increment = 1, width = 4)
         self.champHeure         = Spinbox(self, from_ = 0, to=23, increment = 1, width = 4)
         self.champMinute        = Spinbox(self, from_ = 0, to=59, increment = 1, width = 4)
@@ -148,7 +148,7 @@ class TaskAdder(Frame):
 
     def autoSetDuree(self):
         """
-        Permet de mettre à jour les widets de durée de tâche.
+        Permet de mettre à jour les widgets de durée de tâche.
         """
         ecart = self.getDuree()
         self.champJour.set(ecart.days)

@@ -8,13 +8,13 @@ from util.widgets.Dialog import *
 
 def askDecalHeure(heureRetirerMax, heureAjoutMax, debut, fin, totBloque, tarBloque):
     """
-    Dialog pour demander comment décaler les taches
+    Dialog pour demander comment décaler les tâches
     @param heureRetirerMax : (int) nombre d'heure que l'on peut retirer maximum à la tache qui commence le plus tardivement
-    @param heureAjoutMax   : (int) nombre d'heure que l'on peut ajouter maximum à la tache qui termine le plus tot
+    @param heureAjoutMax   : (int) nombre d'heure que l'on peut ajouter maximum à la tache qui termine le plus tôt
     @param debut           : (time) heure de début d'affichage
     @param fin             : (time) heure de fin d'affichage
-    @param totBloque       : (int) nombre d'heure à partir duquelle le blocage devient utile
-    @param tarBloque       : (int) nombre d'heure à partir duquelle le blocage devient utile
+    @param totBloque       : (int) nombre d'heure à partir duquel le blocage devient utile
+    @param tarBloque       : (int) nombre d'heure à partir duquel le blocage devient utile
     """
     nbHeure  = None
     position = None
@@ -73,7 +73,7 @@ def askDecalHeure(heureRetirerMax, heureAjoutMax, debut, fin, totBloque, tarBloq
     frameParametre = Frame(fen)
     varRadioParam = StringVar()
     rP1 = Radiobutton(frameParametre, text = "Garder la même durée entre chaque tache", variable = varRadioParam, value = "duree", command = adapteSpinbox)
-    rP2 = Radiobutton(frameParametre, text = "Garder les taches entre %s h %s et %s h %s"%(debut.hour, debut.minute, fin.hour, fin.minute), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
+    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre %s h %s et %s h %s"%(debut.hour, debut.minute, fin.hour, fin.minute), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
     rP1.grid(row=0, sticky="w")
     rP2.grid(row=1, sticky="w")
 
@@ -93,7 +93,7 @@ def askDecalHeure(heureRetirerMax, heureAjoutMax, debut, fin, totBloque, tarBloq
     return nbHeure, position, param
 
 def askChangerHeure():
-    if askyesnowarning("Plage horaire trop court", "Une ou plusieurs taches ne sont plus visibles.\nVoulez-vous adapter la plage horaire ?"):
+    if askyesnowarning("Plage horaire trop court", "Une ou plusieurs tâches ne sont plus visibles.\nVoulez-vous adapter la plage horaire ?"):
         return True
     else:
         return False

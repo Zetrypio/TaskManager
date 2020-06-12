@@ -45,7 +45,7 @@ class PeriodManager:
 
     def ajouter(self, periode):
         """
-        Permet d'ajouter une période au gesionnaire.
+        Permet d'ajouter une période au gestionnaire.
         @param periode: la période à ajouter.
         """
         # On vérifie le nom :
@@ -141,7 +141,7 @@ class PeriodManager:
 
     def dupliquerPeriode(self):
         """
-        Permet de duppliquer la période sélectionnée, via
+        Permet de dupliquer la période sélectionnée, via
         demande à l'utilisateur dans une boîte de dialogue usuelle.
         Il doit y avoir exactement une seule période sélectionnée.
         """

@@ -88,12 +88,12 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     def getRawRepartition(self, displayedCalendar):
         """
         Permet d'obtenir toutes les DatetimeItemParts
-        nécéssaire à l'affichage de cet objet, de manière brute,
+        nécessaire à l'affichage de cet objet, de manière brute,
         c'est-à-dire sans fusion des parties qui pourraient l'être.
         (notamment pour les groupes par exemple).
         Cette méthode sera appelée avant l'affichage pour une
         précalculation de ce qui doit être affiché.
-        Nécéssaire pour savoir si des DatetimeItemParts sont
+        Nécessaire pour savoir si des DatetimeItemParts sont
         fusionnable.
         Les datetimeItemParts doivent avoir self dans l'attribut
         schedulable passé via le constructeur de ces parts.
@@ -104,14 +104,14 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         selon ce qui sera réellement affichable.
 
         @return un itérable (générateur ou autre) de DatetimeItemParts
-        contenant toutes les parts non fusionnées nécéssaires à l'affichage
+        contenant toutes les parts non fusionnées nécessaires à l'affichage
         de cet objet.
         """
         raise NotImplementedError
 
     def getRepartition(self, displayedCalendar):
         """
-        Permet d'avoir toutes les DatetimeItem Parts nécéssaire
+        Permet d'avoir toutes les DatetimeItem Parts nécessaire
         à l'affichage de cet objet, mais de manière fusionné si
         vous en avez envie. Cette méthode est appelée après
         que tout les AbstractSchedulableObject aient appelés
@@ -122,14 +122,14 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
 
         @return un itérable (générateur ou autre) de DatetimeItemParts
         contenant toutes les parts éventuellement fusionnées si
-        vous en avez envie, nécéssaires à l'affichage de cet objet.
+        vous en avez envie, nécessaires à l'affichage de cet objet.
         """
         raise NotImplementedError
 
     def getFirstPart(self, displayedCalendar):
         """
         Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
-        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
         @return la première datetimeItemPart affichée parmi toutes.
         """
         for part in self.getRepartition(displayedCalendar):
@@ -138,7 +138,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     def getLastPart(self, displayedCalendar):
         """
         Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
-        @param displayedCalendar: Nécéssaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
         @return la dernière datetimeItemPart affichée parmi toutes.
         """
         for part in self.getRepartition(displayedCalendar):
@@ -213,7 +213,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         Permet de supprimer l'objet.
         @param app: Référence vers l'application pour obtenir les différents
-        endroits qui doivent être au courrant que cet objet est supprimé.
+        endroits qui doivent être au courant que cet objet est supprimé.
         """
         raise NotImplementedError
     
@@ -259,7 +259,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         Permet de créer une instance de la variante affichable de cet objet.
         @param frame: Le Frame dans lequel mettre l'instance.
-        @param part: La partie à afficher si nécéssaire (pour les groupes par exemple).
+        @param part: La partie à afficher si nécessaire (pour les groupes par exemple).
         @return une instance de la classe représentant la variante affichable de cet objet.
         """
         raise NotImplementedError

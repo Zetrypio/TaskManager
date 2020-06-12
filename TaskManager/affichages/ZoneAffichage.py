@@ -9,7 +9,7 @@ from .ParametreAffichage import *
 
 class ZoneAffichage(Frame):
     """
-    Classe qui contient les paramètre et les données.
+    Classe qui contient les paramètres et les données.
     """
     def __init__(self, master = None, **kwargs):
         """
@@ -84,7 +84,7 @@ class ZoneAffichage(Frame):
         +1 ou -1 pour augmenter ou diminuer de 1 jour.
         """
         duree = self.getDonneeCalendrier().getDureeJour()
-        if valeur == "d": # Si on appui sur remetre au début
+        if valeur == "d": # Si on appuie sur remettre au début
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
         elif valeur == "f": # Si on appuie sur mettre à la fin
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour()+datetime.timedelta(days=1))

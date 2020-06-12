@@ -79,7 +79,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
         self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         
-        # Définitnion des events virtuels :
+        # Définition des events virtuels :
         self.can.bind_all("<<deselect-all>>", lambda e: self.__onClicSurCanvas())
         self.can.bind("<Button-1>", lambda e: self.__onClicSurCanvas())
         self.can.bind("<Motion>", self.__updateLigneVerte)
@@ -155,8 +155,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
     def __onClicSurCanvas(self):
         """
-        Méthode exécutée quand on appuie sur echappe ou qu'on appuie
-        dans le vide pour annuler le lien de la ligne verte. Sinon pour déselectionner les tâches.
+        Méthode exécutée quand on appuie sur échappe ou qu'on appuie
+        dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
         """
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
@@ -177,7 +177,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
     def __precalculer(self):
         """
-        Permet de préculculer les Parts non fusionnées
+        Permet de précalculer les Parts non fusionnées
         des tâches affichées dans ce calendrier.
         """
         self.__parts = []
@@ -191,7 +191,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        """
 #        # On déselectionne
 #        self._deselectionnerLesLiens()
-#        pos = self.getScrolledPosition(event) # Si ca marche pas, 2 solutions, mais on verra plus tard
+#        pos = self.getScrolledPosition(event) # Si ça marche pas, 2 solutions, mais on verra plus tard
 #        lesliens = set()
 #        self.rmenu.delete(0, 'end')
 #        for tag in self.__trouverTags(pos):
@@ -231,7 +231,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         return self.master.master.getParametreAffichage() # Skip le Notebook
 
 #    def __trouverTags(self, pos):
-#        # On parcour les items
+#        # On parcours les items
 #        for item in self.__trouverItems(pos):
 #            # On déduit leurs tags :
 #            tags = self.can.gettags(item)
@@ -256,7 +256,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
 #    def __multiSelection(self, event):
 #        """Ajoute ou enlève les liens à la sélection."""
-#        # Petite vérification élementaire
+#        # Petite vérification élémentaire
 #        if self.getDonneeCalendrier().getPanneauActif() != self:
 #            return
 #
@@ -279,7 +279,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #                    lien.changeSelect()
 
 #    def escapePressed(self, event):
-#        # Petite vérification élementaire
+#        # Petite vérification élémentaire
 #        if self.getDonneeCalendrier().getPanneauActif() != self:
 #            return
 #        super().escapePressed(event)
@@ -289,7 +289,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        self.updateAffichage()
 #
 #    def mouseClicked(self, event):
-#        # Petite vérification élementaire
+#        # Petite vérification élémentaire
 #        if self.getDonneeCalendrier().getPanneauActif() != self:
 #            return
 #        # On corrige la position selon le scroll
@@ -319,7 +319,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #            # Mise à jour graphique :
 #            self.updateAffichage()
 #            return
-#        # On deselectionne les Taches si c'est effectivement pas une tache sur quoi on a cliqué (condition ci dessus)
+#        # On désélectionne les tâches si c'est effectivement pas une tache sur quoi on a cliqué (condition ci dessus)
 #        super().mouseClicked(event)
 #
 #        # Test si on est sur le bandeau des jours
@@ -342,14 +342,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        # Mise à jour graphique :
 #        self.updateAffichage()
 #
-#    def __suppr(self, event): # TODO : ce serait bien de supprimer des taches aussi =)
+#    def __suppr(self, event): # TODO : ce serait bien de supprimer des tâches aussi =)
 #        for lien in self.getLiensSelectionnes():
 #            lien.suppression()
 #
 #    def getLiensSelectionnes(self):
 #        return [lien for lien in self.listeLien if lien.select]
 #
-#    def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépandance
+#    def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépendance
 #        for tache in self.listeTaskAffichees:
 #            if tache.jeCherche == True:
 #                return tache
@@ -366,7 +366,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         Permet de savoir le nombre de ligne totale sur l'ensemble des jours affichés.
         Utile pour savoir jusqu'à où va le scrolling.
-        @return le maximum de #getNbTacheJour() pour tout les jours qui sont actuellements visibles.
+        @return le maximum de #getNbTacheJour() pour tout les jours qui sont actuellement visibles.
         """
         nbLigne = 1
         for jour in self.rangeDate(self.getJourDebut(), self.getJourFin()):
@@ -385,13 +385,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'obtenir la position de manipulation des données via programme à partir d'une position reçue via un event.
         @param pos: Point() (ou Event() car il a les bons attributs aussi) correspondant à la
         position reçue via événement ou qu'on veut scroller.
-        @return un Point() avec la position corrigée selon le scrolling du Canvas(), utilisable donc via le programe sans soucis.
+        @return un Point() avec la position corrigée selon le scrolling du Canvas(), utilisable donc via le programme sans soucis.
         """
         return Point(pos.x, pos.y + self.getYScrolling())
     
     def getScrollableHeight(self):
         """
-        Renvoie la partie visible du canvas en contant tout ce qui peut être scrollé,
+        Renvoie la partie visible du canvas en comptant tout ce qui peut être scrollé,
         mais si la partie scrollable est plus petite que la partie visible, renvoie quand même
         la partie visible.
         @return le plus grand entre la partie scrollable et la hauteur du Canvas
@@ -565,7 +565,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
         """
         # Va changer :
-#        self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # Trie par début des taches
+#        self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can)

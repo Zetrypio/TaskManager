@@ -134,7 +134,7 @@ class Dialog(Frame):
 
     def centerscreenalways(self):
         """
-        Permet de rencentrer la fenêtre du dialogue au
+        Permet de recentrer la fenêtre du dialogue au
         centre de l'écran dans tout les cas.
         """
         xy = self.geometry().split("+")[0]

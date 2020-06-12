@@ -21,7 +21,7 @@ def askAjouterJour(totalJour):
                 nbJour = nbJour*-1
         fen.destroy()
 
-    # Pour adapter le nombre de jour max du spinBoc
+    # Pour adapter le nombre de jour max du spinBox
     def adapteSpinbox():
         newVar = 0
         if   varRadioGestion.get() == "Retirer":

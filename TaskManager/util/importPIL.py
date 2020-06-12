@@ -3,7 +3,7 @@ import sys, os
 try:
     from PIL import Image, ImageTk
 except:
-    ## faudra faire des essais avec ça : (ca marche pas en l'etat)
+    ## faudra faire des essais avec ça : (ça marche pas en l'etat)
     ##if len(sys.argv) < 2:
     ##   sys.argv.append("install")
     #sys.argv[1:1] = "install"
@@ -31,10 +31,10 @@ except:
         os.system("py -3.8 Application.pyw " + ext)
         exit()
 
-IMAGES = {} # dictionnaire des images charg�es (mieux vaut utiliser la fonction getImage())
+IMAGES = {} # dictionnaire des images chargées (mieux vaut utiliser la fonction getImage())
 def getImage(imageName):
     """
-    Manière sécurisé d'obtenir les images sans problèmes
+    Manière sécurisée d'obtenir les images sans problèmes
     (on ne doit pas charger 2 fois la même image).
     """
     if not imageName in IMAGES:

@@ -117,7 +117,7 @@ def askdatetime(style="nombre"):
     h.bind("<Key>", lambda e: prechange(), add = 1)
     h.bind("<Key>", lambda e: h.after(10, heureChange2), add = 1)
     h.pack(side = LEFT, expand = YES, fill = X)
-    # choix de la minute : TODO : in-/dé-crémenter les minutes ou les heures au delà de leurs périodes de définition doit augmenter les heures/ les
+    # choix de la minute : TODO : in-/décrémenter les minutes ou les heures au delà de leurs périodes de définition doit augmenter les heures/ les
     m = Spinbox(cadre, from_ = -1, to=60, increment = 1, width = 4, command = heureChange)
     m.bind("<Key>", lambda e: prechange(), add = 1)
     m.bind("<Key>", lambda e: m.after(10, heureChange2), add = 1)

@@ -9,9 +9,9 @@ class PeriodToolBar(ToolBar):
         """
         Constructeur de la barred d'outil des périodes.
         @param master: master du tkinter.Frame() que cet objet est.
-        @param periodeManager: le gestionnaire de périodes nécéssaire
+        @param periodeManager: le gestionnaire de périodes nécessaire
         pour les activations de certains boutons.
-        @param **kwargs: Fonctionnalitées d'affichage du tkinter.Frame() que cet objet est.
+        @param **kwargs: Fonctionnalités d'affichage du tkinter.Frame() que cet objet est.
         """
         self.periodeManager = periodeManager
         super().__init__(master, **kwargs)

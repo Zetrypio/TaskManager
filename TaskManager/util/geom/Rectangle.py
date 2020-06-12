@@ -11,10 +11,10 @@ class Rectangle:
         @attention: Vous devez utiliser exactement que 2 des 3 paramètres parmi x1, x2 et width. Sinon c'est une erreur.
         @attention: Vous devez utiliser exactement que 2 des 3 paramètres parmi y1, y2 et height. Sinon c'est une erreur.
         
-        @param x1: Coordonée X de la gauche du rectangle.
-        @param y1: Coordonée Y du haut du rectangle.
-        @param x2: Coordonée X de la droite du rectangle.
-        @param y2: Coordonée Y de la gauche du rectangle.
+        @param x1: Coordonnée X de la gauche du rectangle.
+        @param y1: Coordonnée Y du haut du rectangle.
+        @param x2: Coordonnée X de la droite du rectangle.
+        @param y2: Coordonnée Y de la gauche du rectangle.
         @param width : Largeur du rectangle.
         @param height: Hauteur du rectangle.
         """

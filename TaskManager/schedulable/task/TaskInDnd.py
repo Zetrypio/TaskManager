@@ -21,7 +21,7 @@ class __TaskInDnd(Toplevel):
         @param **kwargs: fonctionnalités d'affichages pour le tkinter.Toplevel()
         que cet objet est.
         """
-        # Note : On utilise une fenêtre dépendente (Toplevel) car c'est un truc
+        # Note : On utilise une fenêtre dépendante (Toplevel) car c'est un truc
         # qui doit pouvoir se déplacer indépendamment de toute chose.
         Toplevel.__init__(self, master, **kwargs)
 
@@ -58,7 +58,7 @@ class __TaskInDnd(Toplevel):
         # le fondu du début :
         self.__fondudebut()
         self.after(10, self.__move)
-        self.__dnd() # Résoudre les coordonées d'affichages
+        self.__dnd() # Résoudre les coordonnées d'affichages
     def __fondudebut(self):
         """
         Méthode pour faire un petit fondu au début.
@@ -80,7 +80,7 @@ class __TaskInDnd(Toplevel):
                 x = int(x)
                 y = int(y)
 
-                # Ainsi que la taille de la fenêtre (nécéssaire pour centrer).
+                # Ainsi que la taille de la fenêtre (nécessaire pour centrer).
                 sx, sy = dim.split("x")
                 sx = int(sx)
                 sy = int(sy)

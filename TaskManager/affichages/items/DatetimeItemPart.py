@@ -93,7 +93,7 @@ class DatetimeItemPart:
         """
         Permet de savoir si cette part se situe partiellement en même temps qu'un autre.
         @param other: l'autre part à tester avec celle-ci.
-        @return True si les 2 parts sont partiellements en même temps,
+        @return True si les 2 parts sont partiellement en même temps,
         @return False sinon.
         """
         return self.getJour() == other.getJour() and\

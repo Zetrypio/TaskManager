@@ -86,7 +86,7 @@ class AbstractLink(IDisplayableItem):
 
     def getTag(self):
         """
-        Getter pour obtenir le tag qui est présent sur tout les éléménts du trait.
+        Getter pour obtenir le tag qui est présent sur tout les éléments du trait.
         """
         return "link%s"%id(self)
 

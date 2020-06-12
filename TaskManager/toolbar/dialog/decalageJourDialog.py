@@ -9,11 +9,11 @@ from util.widgets.Dialog import *
 
 def askDecalJour(debut, fin, totBloque, tarBloque):
     """
-    Dialog pour demander comment décaler les taches
+    Dialog pour demander comment décaler les tâches
     @param debut     : (date) jour de début de la période
     @param fin       : (date) jour de fin de la période
-    @param totBloque : (int) nombre de jours à partir duquelle le blocage devient utile
-    @param tarBloque : (int) nombre de jours à partir duquelle le blocage devient utile
+    @param totBloque : (int) nombre de jours à partir duquel le blocage devient utile
+    @param tarBloque : (int) nombre de jours à partir duquel le blocage devient utile
     """
     nbJour  = None
     position = None
@@ -72,7 +72,7 @@ def askDecalJour(debut, fin, totBloque, tarBloque):
     frameParametre = Frame(fen)
     varRadioParam = StringVar()
     rP1 = Radiobutton(frameParametre, text = "Garder la même durée entre chaque tache", variable = varRadioParam, value = "duree", command = adapteSpinbox)
-    rP2 = Radiobutton(frameParametre, text = "Garder les taches entre le %s/%s et le %s/%s"%(debut.day, debut.month, fin.day, fin.month), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
+    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre le %s/%s et le %s/%s"%(debut.day, debut.month, fin.day, fin.month), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
     rP1.grid(row=0, sticky="w")
     rP2.grid(row=1, sticky="w")
 

@@ -37,14 +37,14 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.updateAffichage()
         
         # Pour mémoriser les différentes parts pour savoir si elles sont le même jour qu'une autre.
-        # Est-ce vraiment nécéssaire au vu de l'attribut self.__partsParColonnes qui répartie les parts
+        # Est-ce vraiment nécessaire au vu de l'attribut self.__partsParColonnes qui répartie les parts
         # selon leurs colonnes ET DONC leur jour ?
         self.__parts = []
 
         # Nombre de colonne par jour.
         # En effet, pour que le grid fasse en sorte que toutes les colonnes des jours soient de même taille,
         # il faut que toutes les colonnes de jours aient le même nombre de jours de grille chacunes.
-        # C'est pour cela qu'il s'agit que d'une seule valeure. Elle est recalculée lors de chaque mise à jour
+        # C'est pour cela qu'il s'agit que d'une seule valeur. Elle est recalculée lors de chaque mise à jour
         # d'affichage via la méthode #updateAffichage()
         self.__nbColonneParJour = 1
         self.__partsParColonnes = []
@@ -97,7 +97,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Permet d'obtenir le rectangle qui contient les informations
         de placement du AbstractItemContent lié à la DatetimeItemPart.
         Les coordonnées du rectangle sont comptées en coordonnées des
-        cases dans la grille, et non en pixels. Une unitée correspond à une case,
+        cases dans la grille, et non en pixels. Une unité correspond à une case,
         si l'objet doit se mettre sur plusieurs cases, la largeur ou la hauteur du rectangle
         sera changé sur plus de 1. Dans tout les cas, faites attention à caster les coordonnées en int
         pour éviter les soucis lors du grid, car c'est bel et bien un grid qu'il faut faire ici.
@@ -125,7 +125,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     
     def getPartsOfDay(self, day):
         """
-        Permet d'obtenir toutes les DatetimeItemPart actuellements enregistrées via
+        Permet d'obtenir toutes les DatetimeItemPart actuellement enregistrées via
         la méthode __precalculer() (qui ne prend en compte que les parts qui sont visibles)
         qui sont dans le jour demandé.
         @param day: Jour sur lequel on demande les parts.
@@ -148,7 +148,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         self.updateAffichage()
 
-        return schedulable # on revoie le schedulable avec éventuellement son début et sa duree. TRÈS IMPORTANT.
+        return schedulable # on renvoie le schedulable avec éventuellement son début et sa durée. TRÈS IMPORTANT.
 
     def identify_region(self, x, y):
         """
@@ -182,7 +182,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
     def __precalculer(self):
         """
-        Permet de préculculer les Parts non fusionnées des tâches affichées dans ce calendrier.
+        Permet de précalculer les Parts non fusionnées des tâches affichées dans ce calendrier.
         Permet aussi de calculer les multi-colonnes quand deux objets sont censés s'afficher en même temps.
         """
         for displayable in self.listeDisplayableItem:
@@ -263,7 +263,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                                           column=0,      # Les labels des heures sont réservés à la colonne de gauche.
                                           rowspan=60,    # Mais ils prennent 60 minutes et lignes.
                                           sticky="NSWE") # Permet de centrer le label et d'en remplir les bords par la couleur du fond.
-        # Cela permet de réadapter les lignes et colones qui sont en expand pour le grid.
+        # Cela permet de réadapter les lignes et colonnes qui sont en expand pour le grid.
         self.__adapteGrid()
     
     def __afficherLesJours(self):

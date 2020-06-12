@@ -18,7 +18,7 @@ class AbstractItemContent(Frame):
         @param **kwargs: options à passer au constructeur parent,
         celui de tkinter.Frame() que cet objet est.
         """
-        if self.__class__ == AbstractItemContent: raise RuntimeError("Can't instanciate abstract class AbstractItemContent directly.")
+        if self.__class__ == AbstractItemContent: raise RuntimeError("Can't instantiate abstract class AbstractItemContent directly.")
         super().__init__(master, **kwargs)
         # Note : self.master est une référence vers un cadre contenu dans AbstractMultiFrameItem ou GroupeAffichable
         self._schedulable = schedulable

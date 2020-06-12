@@ -128,14 +128,14 @@ class ObjetGantt(AbstractMultiFrameItem):
 
     def getXPlus(self):
         """
-        Permet d'obtenir la coordonée X du centre du plus actif.
+        Permet d'obtenir la coordonnée X du centre du plus actif.
         @return le milieu en X du plus actif.
         """
         return self.__activePlus.getX()
 
     def getYPlus(self):
         """
-        Permet d'obtenir la coordonée Y du centre du plus actif.
+        Permet d'obtenir la coordonnée Y du centre du plus actif.
         @return le milieu en Y du plus actif.
         """
         return self.__activePlus.getY()
@@ -165,7 +165,7 @@ class ObjetGantt(AbstractMultiFrameItem):
 
     def delete(self):
         """
-        Permet de se supprimer lol ca fait rien car il suffit que cet objet soit delete
+        Permet de se supprimer lol ça fait rien car il suffit que cet objet soit delete
         et que le canvas fasse un delete(ALL) ce qui se fait à chaque update d'affichage.
         """
         pass
