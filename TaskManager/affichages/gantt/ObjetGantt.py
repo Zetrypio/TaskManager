@@ -27,7 +27,6 @@ class ObjetGantt(AbstractMultiFrameItem):
         # Liste des différentes DatetimeItemPart(), Frame(), AbstractItemContent(), et ItemBoutonPlus().
         self.__parts = []
         self.__liens = []
-        self.__rmenu = []
 
         # Permet d'avoir l'info de Où commence la ligne verte.
         self.__debutLigneVerte = Point()
@@ -47,9 +46,6 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         # On se supprime :
         self.delete()
-        for rmenu in self.__rmenu:
-            rmenu.destroy()
-        self.__rmenu = []
 
         # Et on se redessine :
         for part in self.getRepartition():
@@ -67,21 +63,25 @@ class ObjetGantt(AbstractMultiFrameItem):
                     widget.bindTo("<Button-1>", lambda e: self.__onSelect())
                     widget.bindTo("<Control-Button-1>", lambda e: self.__onMultiSelect())
 
+                    # Ajout du RMenu :
+                    rmenu = RMenu(widget, False)
+
                     # Si cette part à besoin d'un plus :
                     if widget.needButtonPlus(self.master):
                         # On crée le plus qui correspond à cet objet.
                         plus = ItemButtonPlus(self, part)
 
                         # On mémorise tout cet ensemble.
-                        self.__parts.append((part, f, widget, plus))
+                        self.__parts.append((part, f, widget, rmenu, plus))
                     else:
                         # Sinon pas de plus
-                        self.__parts.append((part, f, widget))
+                        self.__parts.append((part, f, widget, rmenu))
 
                 # On récupère les informations si jamais on était pas en mode de création
                 # au quel cas les variables juste au-dessus n'existent pas...
                 f      = self.__getFrameForPart(part)
                 widget = self.__getWidgetForPart(part)
+                rmenu  = self.__getRMenuForPart(part)
                 plus   = self.__getPlusForPart(part)
                 
                 # Ainsi que quelques informations supplémentaire, pour pouvoir positionner correctement le cadre de l'objet.
@@ -94,22 +94,23 @@ class ObjetGantt(AbstractMultiFrameItem):
                 # Positionnement de l'objet dans le canvas :
                 canvas.create_window(x, y, width=width, height=height, window = f, anchor="nw")
 
-                ####################
-                # Ajout du RMenu : #
-                ####################
-                rmenu = RMenu(f, True, widget)
-                
-                # Si il est en capacité d'ajouter un lien :
-                if self._schedulable.acceptLink():
-                    rmenu.add_command(label = "Créer un lien", command = lambda : self.beginLigneVerte(rect.getCenterPoint()))
+                # Pour le RMenu : on commence par supprimer tout.
+                try:
+                    rmenu.delete(0, rmenu.index(END))
 
-                    # Si il est en capacité de supprimer un lien :
-                    if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
-                        rmenu.add_command(label = "Supprimer un lien")
-
-                    rmenu.add_separator()
-                rmenu.add_command(label = "Supprimer %s"%self._schedulable)
-                self.__rmenu.append(rmenu)
+                    # Puis on ajoute :
+                    # Si il est en capacité d'ajouter un lien :
+                    if self._schedulable.acceptLink():
+                        rmenu.add_command(label = "Créer un lien", command = lambda : self.beginLigneVerte(rect.getCenterPoint()))
+    
+                        # Si il est en capacité de supprimer un lien :
+                        if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
+                            rmenu.add_command(label = "Supprimer un lien")
+    
+                        rmenu.add_separator()
+                    rmenu.add_command(label = "Supprimer %s"%self._schedulable)
+                except:
+                    pass
 
                 # Mise à jour de la présence du bouton Plus (+) :
                 if plus is not None:
@@ -159,6 +160,16 @@ class ObjetGantt(AbstractMultiFrameItem):
         for l in self.__liens:
             l.updateColor(canvas)
 
+    def highlightLinks(self, mode, canvas):
+        for l in self.__liens:
+            if mode == "+":
+                l.setColor("#FFAF00")
+            elif mode == "-":
+                l.setColor("#FF3F3F")
+            else:
+                l.setColor("black")
+            l.updateColor(canvas)
+
     def getXDebutLigneVerte(self):
         """
         Permet d'obtenir la coordonnée X du centre du plus actif.
@@ -206,6 +217,16 @@ class ObjetGantt(AbstractMultiFrameItem):
             if p[0] == part:
                 return p[2]
 
+    def __getRMenuForPart(self, part):
+        """
+        Permet d'obtenir le RMenu() qui correspond à la DatetimeItemPart() demandé.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le RMenu() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[3]
+
     def __getPlusForPart(self, part):
         """
         Permet d'obtenir le ItemButtonPlus() qui correspond à la DatetimeItemPart() demandé, si il existe.
@@ -214,7 +235,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         for p in self.__parts:
             if p[0] == part:
-                return p[3] if len(p) > 3 else None # On stop la boucle dans tout les cas car de toutes façon ca veut dire qu'on le trouvera pas.
+                return p[4] if len(p) > 4 else None # On stop la boucle dans tout les cas car de toutes façon ca veut dire qu'on le trouvera pas.
 
     def delete(self):
         """

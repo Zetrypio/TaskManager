@@ -87,14 +87,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
 
-        ## Valeurs possibles : "", "delDep" et "addDep"
-        # Défini les différents modes pour savoir si on ajoute ou retire qqchose ou pas.
-#        self.mode = ""
-
         # TODO : RMenu des liens
-#        self.can.bind_all("<<RMenu-Opened>>", self.configureRMenu)
-#        self.rmenu = RMenu(self, binder = self.can, bindWithId="lienDep")
-#        self.event_generate("<<RMenu-Opened>>")
 
     def deselectEverything(self):
         super().deselectEverything()
@@ -110,6 +103,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         self.__onClicSurCanvas()
         self.__activeGanttObject = objGantt
+        self.__activeGanttObject.highlightLinks("+", self.can)
         self.__x1_LigneVerte = self.__activeGanttObject.getXDebutLigneVerte()
         self.__y1_LigneVerte = self.__activeGanttObject.getYDebutLigneVerte()
         self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte,
@@ -188,35 +182,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
-
-#    def configureRMenu(self, event):
-#        """
-#        @deprecated: Va être supprimé, géré dans la classe ObjetGantt
-#        """
-#        # On déselectionne
-#        self._deselectionnerLesLiens()
-#        pos = self.getScrolledPosition(event) # Si ça marche pas, 2 solutions, mais on verra plus tard
-#        lesliens = set()
-#        self.rmenu.delete(0, 'end')
-#        for tag in self.__trouverTags(pos):
-#            for lien in self.listeLien: # On pourrait pas faire une méthode ? (je sais ça n'a rien à voir)
-#                if lien.ID_LIEN == tag:# and tag!="top":
-#                    self.rmenu.add_command(label = "suppression %s→%s"%(lien.tacheD.task.nom, lien.tacheF.task.nom), command = lambda l=lien: l.suppression())
-#                    lesliens.add(lien)
-#                    lien.select = True
-#                    #else:
-#                    #lien.select = False
-#        self.updateAffichage()
-#        self.update()
-#        self.rmenu.add_separator()
-#        self.rmenu.add_command(label = "Supprimer tout les liens sélectionnés", command = lambda :  self.supprimerLiens(lesliens))
-
-#    def supprimerLiens(self, lesliens):
-#        for lien in lesliens:
-#            lien.suppression()
-
-#    def getLiens(self):
-#        return self.listeLien
 
 #    def __trouverItems(self, pos):
 #        """
