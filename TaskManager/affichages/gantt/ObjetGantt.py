@@ -95,9 +95,11 @@ class ObjetGantt(AbstractMultiFrameItem):
                 if self._schedulable:
                     # Ajout du RMenu :
                     rmenu = RMenu(p[1], True, p[2])
-                    rmenu.add_command(label = "Créer un lien")
-                    rmenu.add_command(label = "Supprimer un lien")
-                    rmenu.add_separator()
+                    if self._schedulable.acceptLink():
+                        rmenu.add_command(label = "Créer un lien")
+                        if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
+                            rmenu.add_command(label = "Supprimer un lien")
+                        rmenu.add_separator()
                     rmenu.add_command(label = "Supprimer %s"%self._schedulable)
                     self.__rmenu.append(rmenu)
                 if len(p) > 3:
