@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+from util.geom.Point import *
+
 from .AffichageGantt import *
 from ..items.IDisplayableItem import *
 
@@ -59,7 +61,9 @@ class ItemButtonPlus(IDisplayableItem):
         canvas.create_line(cx, cy-s, cx, cy+s+completion, tag = ("plus", "plus%s"%(id(self.__ganttObj.getSchedulable()))))
 
         # Bindings :
-        canvas.tag_bind("plus%s"%(id(self.__ganttObj.getSchedulable())), "<Button-1>", lambda e: canvas.after(10, lambda :self.__ganttObj.beginLigneVerte(self)))
+        canvas.tag_bind("plus%s"%(id(self.__ganttObj.getSchedulable())), "<Button-1>",
+            lambda e: canvas.after(10,
+                lambda :self.__ganttObj.beginLigneVerte(Point(self.__x, self.__y))))
 
     def delete(self):
         """

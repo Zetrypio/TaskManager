@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+from .Point import *
+
 class Rectangle:
     """
     Classe permettant de manipuler des rectangles.
@@ -91,6 +93,13 @@ class Rectangle:
         @return (y1 + y2) / 2
         """
         return (self.__y1 + self.__y2)/2
+
+    def getCenterPoint(self):
+        """
+        Getter pour le point du centre du rectangle.
+        @return util.geom.Point() correspondant au centre du rectangle.
+        """
+        return Point(self.getCenterX(), self.getCenterY())
 
     def getWidth(self):
         """

@@ -26,7 +26,7 @@ class Groupe(AbstractSchedulableObject):
 
     def __str__(self):
         """Return a nice string representation for Groupe()s objects."""
-        return "Groupe %s, contient %s tâches."%(self.getNom(), len(self.__listTasks))
+        return "Groupe %s, contenant %s tâches."%(self.getNom(), len(self.__listTasks))
 
     ################################
     # Méthode de l'interface       #

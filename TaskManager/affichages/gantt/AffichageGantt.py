@@ -110,9 +110,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         self.__onClicSurCanvas()
         self.__activeGanttObject = objGantt
-        self.__x1_LigneVerte = self.__activeGanttObject.getXPlus()
-        self.__y1_LigneVerte = self.__activeGanttObject.getYPlus()
-        self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte, self.__x1_LigneVerte, self.__y1_LigneVerte, fill="#00CF00", width = 2)
+        self.__x1_LigneVerte = self.__activeGanttObject.getXDebutLigneVerte()
+        self.__y1_LigneVerte = self.__activeGanttObject.getYDebutLigneVerte()
+        self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte,
+                                                    self.__x1_LigneVerte, self.__y1_LigneVerte,
+                                                    fill="#00CF00", width = 2)
 
     def __updateLigneVerte(self, event):
         """
@@ -124,7 +126,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
             pos = self.getScrolledPosition(event)
             self.__x1_LigneVerte = pos.x
             self.__y1_LigneVerte = pos.y
-            self.can.coords(self.__id_LigneVerte, pos.x, pos.y, self.__activeGanttObject.getXPlus(), self.__activeGanttObject.getYPlus())
+            self.can.coords(self.__id_LigneVerte,
+                            pos.x, pos.y,
+                            self.__activeGanttObject.getXDebutLigneVerte(), self.__activeGanttObject.getYDebutLigneVerte())
 
     def clicSurObjet(self, objGantt):
         """

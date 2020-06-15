@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+from util.geom.Point import *
 from util.widgets.RMenu import *
 
 from ..items.AbstractMultiFrameItem import *
@@ -28,8 +29,8 @@ class ObjetGantt(AbstractMultiFrameItem):
         self.__liens = []
         self.__rmenu = []
 
-        # Permet d'avoir l'info de Où commence la ligne verte quand il y a plusieurs plus.
-        self.__activePlus = None
+        # Permet d'avoir l'info de Où commence la ligne verte.
+        self.__debutLigneVerte = Point()
 
     def __del__(self):
         """
@@ -77,50 +78,65 @@ class ObjetGantt(AbstractMultiFrameItem):
                         # Sinon pas de plus
                         self.__parts.append((part, f, widget))
 
-                # On récupère et met à jour la position :
-                f = self.__getFrameForPart(part)
+                # On récupère les informations si jamais on était pas en mode de création
+                # au quel cas les variables juste au-dessus n'existent pas...
+                f      = self.__getFrameForPart(part)
+                widget = self.__getWidgetForPart(part)
+                plus   = self.__getPlusForPart(part)
+                
+                # Ainsi que quelques informations supplémentaire, pour pouvoir positionner correctement le cadre de l'objet.
                 rect = self.master.getPartRectangle(part)
                 x = rect.getX1()+1
                 y = rect.getY1()+1
                 width = rect.getWidth() * self.master.facteurW
                 height = rect.getHeight() - 4
+
+                # Positionnement de l'objet dans le canvas :
                 canvas.create_window(x, y, width=width, height=height, window = f, anchor="nw")
+
+                ####################
+                # Ajout du RMenu : #
+                ####################
+                rmenu = RMenu(f, True, widget)
+                
+                # Si il est en capacité d'ajouter un lien :
+                if self._schedulable.acceptLink():
+                    rmenu.add_command(label = "Créer un lien", command = lambda : self.beginLigneVerte(rect.getCenterPoint()))
+
+                    # Si il est en capacité de supprimer un lien :
+                    if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
+                        rmenu.add_command(label = "Supprimer un lien")
+
+                    rmenu.add_separator()
+                rmenu.add_command(label = "Supprimer %s"%self._schedulable)
+                self.__rmenu.append(rmenu)
+
+                # Mise à jour de la présence du bouton Plus (+) :
+                if plus is not None:
+                    if widget.needButtonPlus(self.master):
+                        plus.redraw(canvas)
 
         # Suppression des parties qui ne sont plus visibles :
         for p in reversed(self.__parts):
             if not self.getVisiblePart(p[0]):
                 p[1].destroy()
                 self.__parts.remove(p)
-            else:
-                if self._schedulable:
-                    # Ajout du RMenu :
-                    rmenu = RMenu(p[1], True, p[2])
-                    if self._schedulable.acceptLink():
-                        rmenu.add_command(label = "Créer un lien")
-                        if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
-                            rmenu.add_command(label = "Supprimer un lien")
-                        rmenu.add_separator()
-                    rmenu.add_command(label = "Supprimer %s"%self._schedulable)
-                    self.__rmenu.append(rmenu)
-                if len(p) > 3:
-                    # Mise à jour de la présence du bouton Plus (+) :
-                    if p[2].needButtonPlus(self.master):
-                        p[3].redraw(canvas)
-        
+
+        # Mise à jour des liens d'intra-multi-Frame-Item.        
         self.__liens = []
         self.__parts.sort(key=lambda p:p[0].getDebut())
         for i in range(len(self.__parts)-1):
-            self.__liens.append(MultiFrameItemInnerLink(self.master, self.__parts[i][0], self.__parts[i+1][0]))
-        for l in self.__liens:
+            l = MultiFrameItemInnerLink(self.master, self.__parts[i][0], self.__parts[i+1][0])
             l.redraw(canvas)
+            self.__liens.append(l)
 
-    def beginLigneVerte(self, plus):
+    def beginLigneVerte(self, point):
         """
         Permet de commencer la ligne verte,
         et mémorise sur quel plus (+) on a cliqué.
         @param plus: le plus sur lequel on a cliqué.
         """
-        self.__activePlus = plus
+        self.__debutLigneVerte = point
         self.master.beginLigneVerte(self)
 
     def __onSelect(self):
@@ -143,19 +159,19 @@ class ObjetGantt(AbstractMultiFrameItem):
         for l in self.__liens:
             l.updateColor(canvas)
 
-    def getXPlus(self):
+    def getXDebutLigneVerte(self):
         """
         Permet d'obtenir la coordonnée X du centre du plus actif.
         @return le milieu en X du plus actif.
         """
-        return self.__activePlus.getX()
+        return self.__debutLigneVerte.x
 
-    def getYPlus(self):
+    def getYDebutLigneVerte(self):
         """
         Permet d'obtenir la coordonnée Y du centre du plus actif.
         @return le milieu en Y du plus actif.
         """
-        return self.__activePlus.getY()
+        return self.__debutLigneVerte.y
 
     def __isPartPresent(self, part):
         """
@@ -172,13 +188,33 @@ class ObjetGantt(AbstractMultiFrameItem):
 
     def __getFrameForPart(self, part):
         """
-        Permet d'obtenir le tkinter.Frame() qui contient le AbstractItemContent qui correspond à la DatetimeItemPart() demandé.
+        Permet d'obtenir le tkinter.Frame() qui contient le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
         @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
         @return le tkinter.Frame() trouvé, ou None dans le cas échéant.
         """
         for p in self.__parts:
             if p[0] == part:
                 return p[1]
+
+    def __getWidgetForPart(self, part):
+        """
+        Permet d'obtenir le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le AbstractItemContent() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[2]
+
+    def __getPlusForPart(self, part):
+        """
+        Permet d'obtenir le ItemButtonPlus() qui correspond à la DatetimeItemPart() demandé, si il existe.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le ItemButtonPlus() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[3] if len(p) > 3 else None # On stop la boucle dans tout les cas car de toutes façon ca veut dire qu'on le trouvera pas.
 
     def delete(self):
         """
