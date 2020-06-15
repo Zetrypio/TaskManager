@@ -170,7 +170,7 @@ class Task(AbstractSchedulableObject):
         
         # XXX : What's this ?
 #        elif (self.getPeriode().getDateStatut() is not None and self.getDebut() < self.getPeriode().getDateStatut()):
-#                self.statut = "Fait"
+#                self._statut = "Fait"
         else:
             self._statut = "À faire"
 
@@ -187,6 +187,14 @@ class Task(AbstractSchedulableObject):
         """
         # Ici, on s'en fiche de la part.
         return DisplayableTask(frame, self, part)
+
+    def acceptLink(self):
+        """
+        Permet de savoir si l'objet peut être à l'origine d'un lien, sans se soucier
+        de la destination pour le moment encore inconnu.
+        @return True si l'objet est en capacité de faire des liens, False sinon.
+        """
+        return self._statut != "Inconnu" and self.getParent() is None
 
     def acceptLinkTo(self, schedulable):
         """

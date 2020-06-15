@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+from util.widgets.RMenu import *
+
 from ..items.AbstractMultiFrameItem import *
 from .AffichageGantt import *
 from .ItemButtonPlus import *
@@ -24,6 +26,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         # Liste des différentes DatetimeItemPart(), Frame(), AbstractItemContent(), et ItemBoutonPlus().
         self.__parts = []
         self.__liens = []
+        self.__rmenu = []
 
         # Permet d'avoir l'info de Où commence la ligne verte quand il y a plusieurs plus.
         self.__activePlus = None
@@ -43,6 +46,9 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         # On se supprime :
         self.delete()
+        for rmenu in self.__rmenu:
+            rmenu.destroy()
+        self.__rmenu = []
 
         # Et on se redessine :
         for part in self.getRepartition():
@@ -85,10 +91,19 @@ class ObjetGantt(AbstractMultiFrameItem):
             if not self.getVisiblePart(p[0]):
                 p[1].destroy()
                 self.__parts.remove(p)
-            elif len(p) > 3:
-                # Mise à jour de la présence du bouton Plus (+) :
-                if p[2].needButtonPlus(self.master):
-                    p[3].redraw(canvas)
+            else:
+                if self._schedulable:
+                    # Ajout du RMenu :
+                    rmenu = RMenu(p[1], True, p[2])
+                    rmenu.add_command(label = "Créer un lien")
+                    rmenu.add_command(label = "Supprimer un lien")
+                    rmenu.add_separator()
+                    rmenu.add_command(label = "Supprimer %s"%self._schedulable)
+                    self.__rmenu.append(rmenu)
+                if len(p) > 3:
+                    # Mise à jour de la présence du bouton Plus (+) :
+                    if p[2].needButtonPlus(self.master):
+                        p[3].redraw(canvas)
         
         self.__liens = []
         self.__parts.sort(key=lambda p:p[0].getDebut())
