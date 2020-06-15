@@ -96,6 +96,18 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 item.setSelected(False)
                 item.updateColor(self.can)
 
+    def __highlightLinks(self, mode):
+        for l in self.listeDisplayableItem:
+            if isinstance(l, DependanceLink):
+                if mode == "+" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
+                                 or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
+                    l.highlight("#FFAF00")
+                elif mode == "-":
+                    l.highlight("#FF3F3F")
+                else:
+                    l.highlight(None)
+        self.updateColor()
+
     def beginLigneVerte(self, objGantt):
         """
         Permet de commencer une ligne verte pour un lien depuis un objetGantt.
@@ -103,7 +115,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         self.__onClicSurCanvas()
         self.__activeGanttObject = objGantt
-        self.__activeGanttObject.highlightLinks("+", self.can)
+        self.__highlightLinks("+")
         self.__x1_LigneVerte = self.__activeGanttObject.getXDebutLigneVerte()
         self.__y1_LigneVerte = self.__activeGanttObject.getYDebutLigneVerte()
         self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte,
@@ -124,12 +136,23 @@ class AffichageGantt(AbstractDisplayedCalendar):
                             pos.x, pos.y,
                             self.__activeGanttObject.getXDebutLigneVerte(), self.__activeGanttObject.getYDebutLigneVerte())
 
+    def __endLigneVerte(self):
+        try:
+            self.can.delete(self.__id_LigneVerte)
+        except:
+            pass
+        self.__id_LigneVerte = None
+        self.__x1_LigneVerte = None
+        self.__y1_LigneVerte = None
+        self.__activeGanttObject = None
+        
+
     def clicSurObjet(self, objGantt):
         """
         Méthode à exécuter quand on clic sur l'un des objets de gantt.
         Peut créer un lien si on était en mode d'ajout de liens etc.
         @param objGantt: l'objet sur lequel on a cliqué.
-        @override clicSurObjet(obj) in AbstractDisplayedCalendar()
+        @override clicSurObjet(objet) in AbstractDisplayedCalendar()
         """
         # Si on est en mode ajout de lien :
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
@@ -145,6 +168,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self,
                         self.getVisiblePart(self.__activeGanttObject.getLastPart()),
                         self.getVisiblePart(objGantt.getFirstPart())))
+                self.__highlightLinks(None)
+                self.__endLigneVerte()
                 self.updateAffichage()
         elif self.__activeGanttObject is None:
             self.deselectEverything()
@@ -156,16 +181,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Méthode exécutée quand on appuie sur échappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
         """
+        self.__highlightLinks(None)
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
-                try:
-                    self.can.delete(self.__id_LigneVerte)
-                except:
-                    pass
-                self.__id_LigneVerte = None
-                self.__x1_LigneVerte = None
-                self.__y1_LigneVerte = None
-                self.__activeGanttObject = None
+                self.__endLigneVerte()
             else:
                 self.deselectEverything()
         self.__eventCanceled = False

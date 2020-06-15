@@ -32,6 +32,7 @@ class AbstractLink(IDisplayableItem):
         self.__partA = partA
         self.__partB = partB
         self.__color = "black"
+        self.__highlight = None
         self.__strokeWeight = 2
         self.__points = []
         self.__binding1 = None
@@ -53,8 +54,11 @@ class AbstractLink(IDisplayableItem):
         """
         Permet de mettre à jour la couleur du lien.
         """
-        canvas.itemconfigure(self.getTag(),        fill=self.__color, width = self.__strokeWeight)
-        canvas.itemconfigure(self.getTag()+"c", outline=self.__color, width = self.__strokeWeight)
+        color = self.__highlight if self.__highlight else self.getColor()
+        sw = 3 if self.__highlight else self.getStrokeWeight()
+
+        canvas.itemconfigure(self.getTag(),        fill=color, width = sw)
+        canvas.itemconfigure(self.getTag()+"c", outline=color, width = sw)
 
     def setColor(self, color):
         """
@@ -69,6 +73,13 @@ class AbstractLink(IDisplayableItem):
         @return la couleur.
         """
         return self.__color
+
+    def highlight(self, color):
+        """
+        Permet de surligner ce lien d'une couleur donnée.
+        @param color: la couleur à mettre.
+        """
+        self.__highlight = color
 
     def setStrokeWeight(self, strokeWeight):
         """
@@ -121,8 +132,7 @@ class AbstractLink(IDisplayableItem):
         width = rectB.getWidth()
         rectB.setX1(rectB.getX1() + rectB.getWidth()*self.__affichageGantt.facteurW)
         rectB.moveby(-width, 0)
-        
-        
+
         ####################
         # Première façon : #
         ####################
@@ -133,40 +143,40 @@ class AbstractLink(IDisplayableItem):
                               rectA.getCenterY(),
                               rectA.getX1() + r,
                               rectA.getY2()-1,
-                              start=-90, extent=180, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              start=-90, extent=180, style=ARC,
                               tag=(self.getTag(), self.getTag()+"c"))
             # Ligne horizontale vers la gauche à la suite de l'arc :
             canvas.create_line(rectA.getX1(),
                                rectA.getY2()-1,
                                rectB.getX2()-6, # -6 Pour la flèche
                                rectA.getY2()-1,
-                               width = self.__strokeWeight, fill = self.__color, tag=self.getTag())
+                               tag=self.getTag())
             # Premier quart de cercle :
             canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
                               rectA.getY2()-1,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectA.getY2() + r*2,
-                              start=90, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              start=90, extent=90, style=ARC,
                               tag=(self.getTag(), self.getTag()+"c"))
             # Ligne verticale vers le bas à la suite de l'arc :
             canvas.create_line(rectB.getX2() - r-6, # -6 Pour la flèche
                                rectA.getY2() + r,
                                rectB.getX2() - r-6, # -6 Pour la flèche
                                rectB.getCenterY() - r,
-                               width = self.__strokeWeight, fill = self.__color, tag=self.getTag())
+                               tag=self.getTag())
             # Deuxième arc de cercle qui fini :
             canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
                               rectB.getCenterY() - r*2,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectB.getCenterY(),
-                              start=180, extent=90, style=ARC, width = self.__strokeWeight, outline = self.__color,
+                              start=180, extent=90, style=ARC,
                               tag=(self.getTag(), self.getTag()+"c"))
             # Petite ligne finale pour avoir le bout de la flèche :
             canvas.create_line(rectB.getX2()-6, # -6 Pour la flèche
                                rectB.getCenterY(),
                                rectB.getX2(),
                                rectB.getCenterY(),
-                               arrow = LAST, width = self.__strokeWeight, fill = self.__color, tag=self.getTag())
+                               arrow = LAST, tag=self.getTag())
             pass # TODO
         ####################
         # Deuxième Façon : #
@@ -178,7 +188,7 @@ class AbstractLink(IDisplayableItem):
             y2 = rectB.getCenterY()
             self.__drawSinus(x1, y1, x2, y2) # Le -8 est ? pour que le bout de la flèche soit droite.
             self.__points.append([x2, y2])
-            canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color, arrow = LAST, tag=self.getTag())
+            canvas.create_line(*self.__points, arrow = LAST, tag=self.getTag())
         #####################
         # Troisième façon : #
         #####################
@@ -189,12 +199,17 @@ class AbstractLink(IDisplayableItem):
             x4 = rectB.getX2()
             y1 = rectA.getCenterY()
             y2 = rectB.getY1() -1 # On bouge jusqu'à la hauteur de l'objet de destination
-            y3 = rectB.getY1() -1 # Et on met -1 pour que ca passe bien ENTRE les autres objets.
+            y3 = rectB.getY1() -1 # Et on met -1 pour que ça passe bien ENTRE les autres objets.
             y4 = rectB.getCenterY()
             self.__drawSinus(x1, y1, x2,     y2)
             self.__drawSinus(x3, y3, x4 - 8, y4) # Le -8 est pour que le bout de la flèche soit droite.
             self.__points.append([x4, y4])
-            canvas.create_line(*self.__points, width = self.__strokeWeight, fill = self.__color, arrow = LAST, tag=self.getTag())
+            canvas.create_line(*self.__points, arrow = LAST, tag=self.getTag())
+
+        #############
+        # Couleur : #
+        #############
+        self.updateColor(canvas)
 
         #############
         # Binding : #

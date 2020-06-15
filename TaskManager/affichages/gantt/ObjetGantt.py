@@ -160,16 +160,6 @@ class ObjetGantt(AbstractMultiFrameItem):
         for l in self.__liens:
             l.updateColor(canvas)
 
-    def highlightLinks(self, mode, canvas):
-        for l in self.__liens:
-            if mode == "+":
-                l.setColor("#FFAF00")
-            elif mode == "-":
-                l.setColor("#FF3F3F")
-            else:
-                l.setColor("black")
-            l.updateColor(canvas)
-
     def getXDebutLigneVerte(self):
         """
         Permet d'obtenir la coordonnée X du centre du plus actif.
