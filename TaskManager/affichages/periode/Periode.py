@@ -115,13 +115,13 @@ class Periode(ITaskEditorDisplayableObject):
         else:
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
         
-    def intersectWith(self, periode):
+    def intersectWith(self, other):
         """
         Permet de savoir si cette période s'intersectionne avec une autre.
-        @param periode: la période dont on teste l'intersection avec celle-ci.
+        @param other: la période dont on teste l'intersection avec celle-ci.
         @return True si les 2 périodes s'intersectionnent, False sinon.
         """
-        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
+        return not (self.getFin() < other.getDebut() or self.getDebut() > other.getFin())
 
     def getGroupeManager(self):
         """
