@@ -40,8 +40,8 @@ class PageGeneral(AbstractPage):
         fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
         """
         path = askdirectory(parent=self)
-        # >= car il détect desktop.ini parfois ...
-        while os.listdir(path):
+        # condition "if not" car il détect desktop.ini parfois ...
+        while len([i for i in os.listdir(path) if not i == "desktop.ini"])!=0:
             showwarning(title="Chemin invalide", message="Le dossier que vous avez choisi n'est pas valide")
             path = askdirectory(parent=self)
             if path == "":
