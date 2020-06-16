@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
+import datetime
 
 from util.widgets.Dialog import *
 
@@ -48,7 +49,7 @@ def askHeureExacte(master, region):
         m.set(minutes)
         h.set(heures)
 
-    fen = Dialog(self, "Confirmez l'heure exacte", ("Ok", "Annuler", "Reset"), command = onClose)
+    fen = Dialog(master, "Confirmez l'heure exacte", ("Ok", "Annuler", "Reset"), command = onClose)
     Label(fen, text = "Veuillez entrer l'heure exacte").pack(side = TOP, expand = YES, fill = BOTH)
     var = BooleanVar(value = False)
     c = Checkbutton(fen, text = "Précision à la minute près ?", command = minutePres, variable = var)

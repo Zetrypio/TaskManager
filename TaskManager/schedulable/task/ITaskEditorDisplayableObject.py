@@ -51,16 +51,14 @@ class ITaskEditorDisplayableObject:
         """
         raise NotImplementedError
 
-    def getRMenuContent(self, taskEditor, rmenu):
+    def setRMenuContent(self, taskEditor, rmenu):
         """
-        @param taskEditor : permet de faire des interactions avec le TaskEditor
-        @param rmenu : permet de faire les cascades dans les menus.
-        Il sera détruit si cette méthode retourne None.
-        @return un itérateur ou itérable (listes etc.) dont chaque éléments
-        sont une paire d'objet avec en premier le type d'élément à rajouter dans le RMenu
-        (sous forme des textes : "command", "cascade", "separator", "radiobutton",
-        et "checkbutton"), et en deuxième l'ensemble de ses options.
-        @return None si il n'y a pas de RMenu à mettre.
+        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
+        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
+        que cette méthode retourne False
+        @param taskEditor : permet de faire des interactions avec le TaskEditor().
+        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
+        @return True si le RMenu() existe, False sinon.
         """
         raise NotImplementedError
 

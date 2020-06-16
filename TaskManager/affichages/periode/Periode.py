@@ -187,21 +187,19 @@ class Periode(ITaskEditorDisplayableObject):
         yield "Fin :", self.fin
         yield "Description :", self.desc
 
-    def getRMenuContent(self, taskEditor, rmenu):
+    def setRMenuContent(self, taskEditor, rmenu):
         """
-        Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
-        @param taskEditor: le TaskEditor()
-        @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
-        @return la liste des commandes nécessaire.
+        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
+        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
+        que cette méthode retourne False
+        @param taskEditor : permet de faire des interactions avec le TaskEditor().
+        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
+        @return True car le RMenu() existe.
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
-         # Mise en place de simplicitées :
-        retour = []
-        add = lambda a, b=None: retour.append((a, b if b else {}))
-        
         # Ajout des menus :
-        add("command", {"label":"Supprimer %s"%self, "command": lambda: self.periodManager.supprimer(self)})
-        return retour
+        rmenu.add_command(label="Supprimer %s"%self, command=lambda: self.periodManager.supprimer(self))
+        return True
     
     def getFilterStateWith(self, filter):
         """

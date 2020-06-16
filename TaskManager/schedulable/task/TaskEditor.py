@@ -196,7 +196,7 @@ class TaskEditor(Frame):
             self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
             
             # On insère les éléments supplémentaires :
-            args = {} # args sont pour la prochaine récursion. kwargs sont pour l'actuelle.
+            args = {} # *args sont pour la prochaine récursion. **kwargs sont pour l'actuelle.
             lastParentIndex = 0
             for indice, ligne in enumerate(displayable.iterateDisplayContent(**kwargs)):
                 # Si c'est de la récursion : on récursionne.
@@ -211,28 +211,15 @@ class TaskEditor(Frame):
             
             # RMenu :
             r = RMenu(self, binder = self.tree, bindWithId = "rmenu%s"%parentNew)
-            self.__rmenu.append(r)
-            rmenu = displayable.getRMenuContent(self, r)
-            if rmenu is not None:
-                for type, kwargs in rmenu:
-                    if type == "command":
-                        func = r.add_command
-                    elif type=="cascade":
-                        func = r.add_cascade
-                    elif type=="checkbutton":
-                        func = r.add_checkbutton
-                    elif type=="radiobutton":
-                        func = r.add_radiobutton
-                    elif type=="separator":
-                        func = r.add_separator
-                    else:
-                        r.destroy()
-                        self.__rmenu.remove(r)
-                        raise ValueError("Got an invalide keyword for rmenu for the TaskEditor's Treeview: %s"%type)
-                    func(**kwargs)
+            rmenu = displayable.setRMenuContent(self, r)
+            if rmenu:
+                self.__rmenu.append(r)
             else:
-                self.__rmenu.remove(r)
-                r.destroy()
+                # Le try except est nécessaire si jamais ce RMenu() à déjà été détruit dans le displayable.setRMenuContent(self, r)
+                try:
+                    r.destroy()
+                except:
+                    pass
     
     def __filterStateOf(self, t):
         """

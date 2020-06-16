@@ -51,15 +51,17 @@ class Groupe(AbstractSchedulableObject):
         yield {}
         yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
-    def getRMenuContent(self, taskEditor, rmenu):
+    def setRMenuContent(self, taskEditor, rmenu):
         """
-        Permet de donner le contenu du RMemnu() de la ligne de cette objet dans le Treeview() du TaskEditor().
-        @param taskEditor: le TaskEditor()
-        @param rmenu: l'instance du RMenu() dont on ajoute du contenu.
-        @return la liste des commandes nécessaire.
+        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
+        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
+        que cette méthode retourne False
+        @param taskEditor : permet de faire des interactions avec le TaskEditor().
+        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
+        @return False car le RMenu() n'existe pas.
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
-        pass # TODO
+        return False # TODO
     
     def getDebut(self):
         """

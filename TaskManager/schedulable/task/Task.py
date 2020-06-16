@@ -109,26 +109,24 @@ class Task(AbstractSchedulableObject):
             yield a
             yield from self.getSubTasks()
 
-    def getRMenuContent(self, taskEditor, rmenu):
+    def setRMenuContent(self, taskEditor, rmenu):
         """
-        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
-        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
-        @param filter: Dictionnaire du filtre.
-        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
-        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
+        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
+        que cette méthode retourne False
+        @param taskEditor : permet de faire des interactions avec le TaskEditor().
+        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
+        @return True car le RMenu() existe.
+        @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
-        # Mise en place de simplicitées :
-        retour = []
-        add = lambda a, b=None: retour.append((a, b if b else {}))
-        
         # Ajout des menus :
         # Si c'est un conteneur :
         if not self.isContainer() and self.__parent is None:
-            add("command", {"label":"Transformer en une tâche déplaçable", "command":lambda: self.transformToDnd(taskEditor, rmenu)})
-            add("separator")
+            rmenu.add_command(label="Transformer en une tâche déplaçable", command=lambda: self.transformToDnd(taskEditor, rmenu))
+            rmenu.add_separator()
         # Dans tout les cas :
-        add("command", {"label":"Supprimer %s"%self, "command": lambda: self.delete(taskEditor.getApplication())})
-        return retour
+        rmenu.add_command(label="Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
+        return True
 
     ""
     ########################################
