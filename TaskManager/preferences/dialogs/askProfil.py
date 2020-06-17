@@ -43,7 +43,7 @@ def askProfil(obligatoire, app):
        # condition "if not" car il détect desktop.ini parfois ...
        while len([i for i in os.listdir(path) if not i == "desktop.ini"])!=0:
            showerror(title="Chemin invalide", message="Le dossier que vous avez choisi n'est pas valide.\nLe dossier de destination doit être vide.")
-           path = askdirectory(parent=self)
+           path = askdirectory(parent=fen)
            # si on clique sur la croix
            if path == "":
                return
