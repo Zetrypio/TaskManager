@@ -11,6 +11,7 @@ from .parametrage.parametrageZone import *
 # Pages
 from .pages.pageGeneral import *
 from .pages.general.pageClavier import *
+from .pages.general.pageProfil import *
 from .pages.general.pageTheme import *
 
 from .pages.pageCalendrier import *
@@ -39,6 +40,7 @@ class FenetrePreferences(Dialog):
         # Ajout des pages
         self.__ajouterPage(PageGeneral(self.getParametrageZone()))
         self.__ajouterPage(PageClavier(self.getParametrageZone()))
+        self.__ajouterPage(PageProfil(self.getParametrageZone()))
         self.__ajouterPage(PageTheme(self.getParametrageZone()))
 
         self.__ajouterPage(PageCalendrier(self.getParametrageZone()))

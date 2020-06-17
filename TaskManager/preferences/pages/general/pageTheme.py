@@ -1,5 +1,4 @@
 # *-* coding:utf-8 *-*
-from configparser import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
@@ -40,7 +39,7 @@ class PageTheme(AbstractPage):
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
         # Traitement du fichier .ini
-        #self.getData() = ConfigParser()
+        # self.getData() = ConfigParser()
         self.getData().read(NOMFICHIER) # Prise de conscience de ce qu'il y a dedans
 
 
