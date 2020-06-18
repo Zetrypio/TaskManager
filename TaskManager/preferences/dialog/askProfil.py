@@ -9,6 +9,7 @@ import os
 
 
 from util.widgets.Dialog import *
+from .askFolder import *
 
 def askProfil(obligatoire, app):
     """
@@ -39,16 +40,10 @@ def askProfil(obligatoire, app):
        """
        fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
        """
-       path = askdirectory(parent=fen)
-       # condition "if not" car il détect desktop.ini parfois ...
-       while len([i for i in os.listdir(path) if not i == "desktop.ini"])!=0:
-           showerror(title="Chemin invalide", message="Le dossier que vous avez choisi n'est pas valide.\nLe dossier de destination doit être vide.")
-           path = askdirectory(parent=fen)
-           # si on clique sur la croix
-           if path == "":
-               return
+       path = askFolder(vide = True)
        # on set le nouveau path
-       varEntryPath.set(path)
+       if path is not None:
+           varEntryPath.set(path)
 
 
     fen = Dialog(title = "Nombre d'heure à déplacer",

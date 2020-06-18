@@ -2,13 +2,10 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
-from tkinter.filedialog import askdirectory
-from tkinter.messagebox import showerror
-import os
 from shutil import move
 
 from json import load, dumps # Pour la lecture/écriture de JSON
-from preferences.dialogs.askProfil import *
+from preferences.dialog.askProfil import *
 
 from ..AbstractPage import *
 
@@ -44,19 +41,13 @@ class PageProfil(AbstractPage):
        """
        fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
        """
-       path = askdirectory(parent=self)
-       # condition "if not" car il détect desktop.ini parfois ...
-       while len([i for i in os.listdir(path) if not i == "desktop.ini"])!=0:
-           showerror(title="Chemin invalide", message="Le dossier que vous avez choisi n'est pas valide.\nLe dossier de destination doit être vide.")
-           path = askdirectory(parent=self)
-           # si on clique sur la croix
-           if path == "":
-               return
+       path = askFolder(vide=True)
        # On bouge les fichiers en place
        #move(self.__varEntryPath.get(), path) Pas en place à cause d'un soucis de première location d'enregistrement
 
        # on set le nouveau path
-       self.__varEntryPath.set(path)
+       if path is not None:
+           self.__varEntryPath.set(path)
 
     def __chargeProfil(self):
         """
