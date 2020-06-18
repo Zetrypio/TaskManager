@@ -24,16 +24,28 @@ def askProfil(obligatoire, app):
     def onClose(bouton):
         # Permet de modifier les valeurs des variables
         nonlocal nom, folder
-        if bouton == 'Ok':
-            # récup les valeurs
-            nom = entryNom.get()
-            folder = varEntryPath.get()
-        elif obligatoire:
-            if not askyesnowarning(title = "Erreur", message="Vous n'avez pas encore de profil, vous devez un créer un pour commencer.\nCliquez sur \"non\" pour fermer l'application"):
-                # Si vraiment il est concient et qu'il veut quitter...
-                app.after(10,quit())
+        # récup les valeurs
+        nom = entryNom.get()
+        folder = varEntryPath.get()
 
-            return
+        if bouton == "Ok" :
+            if nom in app.getProfilManager().getAllNomProfil():
+                showerror(title="Erreur", message="Ce nom est déjà pris pour un autre profil")
+                return
+            elif folder in app.getProfilManager().getAllFolder():
+                showerror(title="Erreur", message="Ce dossier est déjà pris pour un autre profil")
+                return
+
+        # Dans tous les cas quand c'est annulé :
+        else:
+            if obligatoire:
+                if not askyesnowarning(title = "Erreur", message="Vous n'avez pas encore de profil, vous devez un créer un pour commencer.\nCliquez sur \"non\" pour fermer l'application"):
+                    # Si vraiment il est concient et qu'il veut quitter...
+                    app.after(10,app.quit)
+                return
+            else:
+                nom = folder = None
+
         fen.destroy()
 
     def parcourir():
@@ -47,7 +59,7 @@ def askProfil(obligatoire, app):
 
 
     fen = Dialog(title = "Création d'un profil",
-           buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Ok'))
+           buttons = ("Ok", "Annuler"), command = onClose, exitButton = [])
     # Binding des touches
     fen.bind_all("<Return>", lambda e: fen.execute("Ok"))
     fen.bind_all("<Escape>", lambda e: fen.execute("Annuler"))
@@ -75,7 +87,6 @@ def askProfil(obligatoire, app):
     # preset
     entryNom.insert(END, os.getlogin())
     varEntryPath.set((os.path.expanduser("~/.taskManager/")).replace("/", os.sep).replace("\\", os.sep))
-    print("b")
 
 
     fen.activateandwait()

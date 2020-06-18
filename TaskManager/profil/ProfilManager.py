@@ -14,10 +14,11 @@ class ProfilManager:
 
         self.__app = app
 
-        self.__profilActif          = None
-        self.__listeProfilsUser     = None
+        self.__profilActif      = None
 
-        self.__loadProfil()
+        self.__donnee = None
+
+        self.__loadUserProfil()
 
     def getProfilActif(self):
         """
@@ -29,15 +30,27 @@ class ProfilManager:
         """
         @return self.__listeProfilsUser
         """
-        return self.__listeProfilsUser
+        return self.__donnee["user"][os.getlogin()]
 
-    def getProfilFolder(self):
+    def getProfilFolder(self, profil = None):
         """
-        @return path : <str> contient le lien du dossier
+        @param profil : <str> contient le nom du profil
+        @return path  : <str> contient le lien du dossier
         """
-        with open(NOMFICHIER,"r") as f:
-            data = load(f)
-        return data["profil"][self.__profilActif]
+        if profil is None:
+            profil = self.getProfilActif()
+
+        print("profil", profil)
+        return self.__donnee["profil"][profil]
+
+    def getAllNomProfil(self):
+        return self.__donnee["profil"]
+
+    def getAllFolder(self):
+        l = []
+        for profil in self.__donnee["profil"]:
+            l.append(self.__donnee["profil"][profil])
+        return l
 
     def switchProfil(self, nouvProfil):
         """
@@ -50,21 +63,24 @@ class ProfilManager:
         """
         pass
 
-    def createProfil(self):
+    def createProfil(self, obligatoire):
         """
         Permet de créer un profil
+        @param obligatoire : <bool> True  = création d'un profil, pour un user si il en a 0
+                                    False = création d'un profil, facultatif
         """
-        pass
+        nom, folderProfil = askProfil(obligatoire, self.__app)
+        if nom is None:
+            return False
+        self.__donnee["user"][os.getlogin()].append(nom)
+        self.__donnee["profil"][nom] = folderProfil
+
+        self.__write()
+        return True
 
     def __loadUserProfil(self):
         """
         Permet de charger les profils de l'utilisateur
-        """
-        pass
-
-    def __loadProfil(self):
-        """
-        Permet de charger les données du profil
         """
         ## Lecture
         # On test si le fichier existe, sinon on le crée
@@ -72,19 +88,32 @@ class ProfilManager:
             with open(NOMFICHIER, "w") as f:
                 f.write(dumps({"user":{}, "profil":{}}, indent=4))
 
+        self.__read()
+
+        # Si l'utilisateur n'est pas présent, on le crée + on créer un profil
+        if os.getlogin() not in self.__donnee["user"]:
+            self.__donnee["user"][os.getlogin()] = []
+            if not self.createProfil(True):
+                return
+
+        self.__profilActif = self.getListeProfilsUser()[0]
+
+        self.__loadProfil()
+
+    def __loadProfil(self):
+        """
+        Permet de charger les préférences du profil actif
+        """
+        print(self.__profilActif, self.getProfilFolder())
+
+
+    def __read(self):
         # On lit le fichier
         with open(NOMFICHIER,"r") as f:
-            data = load(f)
+            self.__donnee = load(f)
 
-        # On regarde si les valeurs existes
-        try:
-            self.__listeProfilsUser = data["user"][os.getlogin()]
-            self.__profilActif = self.__listeProfilsUser[0]
-        except:
-            print("a")
-            self.__profilActif, folderProfil = askProfil(True, self.__app)
-            self.__listeProfilsUser = [self.__profilActif]
-            data = {"user" : {os.getlogin() : [self.__profilActif]}, "profil":{self.__profilActif : folderProfil}}
-            with open(NOMFICHIER, "w") as f:
-                f.write(dumps(data, indent=4))
+    def __write(self):
+        # On écrit dessus
+        with open(NOMFICHIER, "w") as f:
+            f.write(dumps(self.__donnee, indent=4))
 

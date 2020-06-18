@@ -5,6 +5,7 @@ from util.importPIL import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+import os
 
 from affichages.CalendarZone import *
 from affichages.groupe.Groupe import *
@@ -43,6 +44,8 @@ style.map("Treeview",
 class Application(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
+
+        os.makedirs(os.path.expanduser("~/.taskManager/"), exist_ok = True)
 
         self.__data = Data()
 
