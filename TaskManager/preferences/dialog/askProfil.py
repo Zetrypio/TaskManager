@@ -59,7 +59,7 @@ def askProfil(obligatoire, app):
            varEntryPath.set(path)
 
 
-    fen = Dialog(title = "Création d'un profil",
+    fen = Dialog(master = app, title = "Création d'un profil",
            buttons = ("Ok", "Annuler"), command = onClose, exitButton = [])
     # Binding des touches
     fen.bind_all("<Return>", lambda e: fen.execute("Ok"))
