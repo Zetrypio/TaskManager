@@ -38,6 +38,7 @@ class Dialog(Frame):
         self.__separator.pack(side = BOTTOM, fill = X)
         self.__bouton_appuyer = None
         self.__destroyed = False
+        self.__mainloop = False
         self.pack(side = TOP, expand = YES, fill = BOTH)
 
         self.__buttons = []
@@ -58,12 +59,16 @@ class Dialog(Frame):
         self.dialog.state("normal")
 
     def activateandwait(self):
+        self.__mainloop = True
         self.activate()
         while self.__bouton_appuyer is None and not self.__destroyed:
             self.mainloop()
+        self.__mainloop = False
         return self.__bouton_appuyer
 
     def deactivate(self):
+        if self.__mainloop:
+            self.quit()
         self.parent.winfo_toplevel().attributes("-disabled", False)
         try:
             self.dialog.withdraw()
