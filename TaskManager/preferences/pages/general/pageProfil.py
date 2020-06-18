@@ -56,9 +56,7 @@ class PageProfil(AbstractPage):
         """
         Fonction pour crée un nouveau profil
         """
-        print("61.5")
         if self.getProfilManager().createProfil(False):
-            print("on sait jamais")
             self.__chargeProfil(self.getProfilManager().getListeProfilsUser()[-1])
 
     def __chargeProfil(self, profil):
@@ -66,8 +64,8 @@ class PageProfil(AbstractPage):
         Fonction qui va chercher les infos via le ProfilManager
         """
         self.__varEntryPath.set(self.getProfilManager().getProfilFolder(profil))
-        print(self.getProfilManager().getListeProfilsUser()[:])
         self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
+        self.__cbProfil.set(profil)
 
     def getProfilManager(self):
         return self.getApplication().getProfilManager()

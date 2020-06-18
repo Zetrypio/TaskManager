@@ -39,8 +39,6 @@ class ProfilManager:
         """
         if profil is None:
             profil = self.getProfilActif()
-
-        print("profil", profil)
         return self.__donnee["profil"][profil]
 
     def getAllNomProfil(self):
