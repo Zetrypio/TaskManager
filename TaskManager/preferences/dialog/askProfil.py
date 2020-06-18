@@ -75,6 +75,7 @@ def askProfil(obligatoire, app):
     # preset
     entryNom.insert(END, os.getlogin())
     varEntryPath.set((os.path.expanduser("~/.taskManager/")).replace("/", os.sep).replace("\\", os.sep))
+    print("b")
 
 
     fen.activateandwait()

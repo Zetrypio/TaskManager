@@ -16,6 +16,7 @@ from task.TaskEditor import *
 from MenuBar import *
 from preferences.fenetre import *
 from profil.data import *
+from profil.ProfilManager import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -53,6 +54,7 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
+        self.__profilManager = ProfilManager(self)
         self.prefFen = FenetrePreferences(self)
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
@@ -84,6 +86,10 @@ class Application(Frame):
     def getData(self):
         """ Retourne le Gestionnaire des données """
         return self.__data
+
+    def getProfilManager(self):
+        """ Retourne de Profil Manager """
+        return self.__profilManager
 
 
 

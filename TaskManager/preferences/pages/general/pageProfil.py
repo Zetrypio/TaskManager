@@ -5,12 +5,8 @@ from tkinter import Label, Frame, Button as TkButton
 from shutil import move
 import os
 
-from json import load, dumps # Pour la lecture/écriture de JSON
-from preferences.dialog.askProfil import *
-
 from ..AbstractPage import *
 
-NOMFICHIER = "Ressources/prefs/profils.json"
 
 
 class PageProfil(AbstractPage):
@@ -56,7 +52,7 @@ class PageProfil(AbstractPage):
         Pour : parametrer le combobox des profils
                remplir le champs du dossier d'enregistrement
         """
-        ## Lecture
+        """## Lecture
         # On test si le fichier existe, sinon on le crée
         if not os.path.exists(NOMFICHIER):
             with open(NOMFICHIER, "w") as f:
@@ -75,7 +71,15 @@ class PageProfil(AbstractPage):
             nomProfil, folderProfil = askProfil(True, self.getApplication())
             data = {"user" : {os.getlogin() : nomProfil}, "profil":{nomProfil : folderProfil}}
             with open(NOMFICHIER, "w") as f:
-                f.write(dumps(data, indent=4))
+                f.write(dumps(data, indent=4))"""
+
+        self.__varEntryPath.set(self.getProfilManager().getProfilFolder())
+
+        self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser())
+        self.__cbProfil.set(self.getProfilManager().getProfilActif()[0])
+
+    def getProfilManager(self):
+        return self.getApplication().getProfilManager()
 
     def appliqueEffet(self, application):
        pass

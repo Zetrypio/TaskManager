@@ -1,16 +1,23 @@
 # *-* coding:utf-8 *-*
 from json import *
+import os
+
+from preferences.dialog.askProfil import *
+
+NOMFICHIER = "Ressources/prefs/profils.json"
 
 class ProfilManager:
-    def __init__(self, parent):
+    def __init__(self, app):
         """
         Classe qui s'occupe de manier les profils et de transmettres ses infos à la pageProfil
         """
-        # Note : self.master renvoie à l'Application
 
-        self.__profilActif         = None
+        self.__app = app
+
+        self.__profilActif          = None
         self.__listeProfilsUser     = None
-        self.__listeProfilsPossible = None
+
+        self.__loadProfil()
 
     def getProfilActif(self):
         """
@@ -24,15 +31,22 @@ class ProfilManager:
         """
         return self.__listeProfilsUser
 
-    def getListeProfilsPossible(self):
+    def getProfilFolder(self):
         """
-        @return self.__listeProfilsPossible
+        @return path : <str> contient le lien du dossier
         """
-        return self.__listeProfilsPossible
+        with open(NOMFICHIER,"r") as f:
+            data = load(f)
+        return data["profil"][self.__profilActif]
 
-    def switchProfil(self):
+    def switchProfil(self, nouvProfil):
         """
         Permet de changer de profil
+        @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
+        """
+        """
+        self.__profilActif = nouvProfil
+        self.__loadProfil()
         """
         pass
 
@@ -48,20 +62,29 @@ class ProfilManager:
         """
         pass
 
-    def __loadProfilPossible(self):
-        """
-        Permet de charger les profils auquels l'utilisateur à accès via sa session
-        """
-        pass
-
     def __loadProfil(self):
         """
         Permet de charger les données du profil
         """
-        pass
+        ## Lecture
+        # On test si le fichier existe, sinon on le crée
+        if not os.path.exists(NOMFICHIER):
+            with open(NOMFICHIER, "w") as f:
+                f.write(dumps({"user":{}, "profil":{}}, indent=4))
 
-    def __loadPreferences(self):
-        """
-        Permet de charger les préférences du profil
-        """
-        pass
+        # On lit le fichier
+        with open(NOMFICHIER,"r") as f:
+            data = load(f)
+
+        # On regarde si les valeurs existes
+        try:
+            self.__listeProfilsUser = data["user"][os.getlogin()]
+            self.__profilActif = self.__listeProfilsUser[0]
+        except:
+            print("a")
+            self.__profilActif, folderProfil = askProfil(True, self.__app)
+            self.__listeProfilsUser = [self.__profilActif]
+            data = {"user" : {os.getlogin() : [self.__profilActif]}, "profil":{self.__profilActif : folderProfil}}
+            with open(NOMFICHIER, "w") as f:
+                f.write(dumps(data, indent=4))
+
