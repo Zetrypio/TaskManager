@@ -57,11 +57,8 @@ class ProfilManager:
         Permet de changer de profil
         @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
         """
-        """
         self.__profilActif = nouvProfil
         self.__loadProfil()
-        """
-        pass
 
     def createProfil(self, obligatoire):
         """

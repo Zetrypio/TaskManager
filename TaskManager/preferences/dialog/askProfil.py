@@ -29,6 +29,7 @@ def askProfil(obligatoire, app):
         folder = varEntryPath.get()
 
         if bouton == "Ok" :
+            print("je suis OK")
             if nom in app.getProfilManager().getAllNomProfil():
                 showerror(title="Erreur", message="Ce nom est déjà pris pour un autre profil")
                 return
@@ -90,4 +91,5 @@ def askProfil(obligatoire, app):
 
 
     fen.activateandwait()
+    print(nom, folder)
     return nom, folder

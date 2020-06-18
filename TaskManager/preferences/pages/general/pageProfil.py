@@ -18,6 +18,7 @@ class PageProfil(AbstractPage):
        self.__frameChoixProfil = Frame(self._mFrame)
        self.__lbProfil = Label(self.__frameChoixProfil, text="Profil :")
        self.__cbProfil = Combobox(self.__frameChoixProfil, state="readonly")
+       self.__cbProfil.bind("<<ComboboxSelected>>", lambda e :self.__varEntryPath.set(self.getProfilManager().getProfilFolder(self.__cbProfil.get())))
        self.__btnAjouter = Button(self.__frameChoixProfil, text="Ajouter", command=self.__ajouter)
        # Folder location
        self.__lbPathCustomFile = Label(self._mFrame, text = "Chemin d'enregistrement de vos fichiers de préférences")
@@ -55,20 +56,26 @@ class PageProfil(AbstractPage):
         """
         Fonction pour crée un nouveau profil
         """
-        self.getProfilManager().createProfil(False)
+        print("61.5")
+        if self.getProfilManager().createProfil(False):
+            print("on sait jamais")
+            self.__chargeProfil(self.getProfilManager().getListeProfilsUser()[-1])
 
     def __chargeProfil(self, profil):
         """
         Fonction qui va chercher les infos via le ProfilManager
         """
         self.__varEntryPath.set(self.getProfilManager().getProfilFolder(profil))
-        self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser())
+        print(self.getProfilManager().getListeProfilsUser()[:])
+        self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
 
     def getProfilManager(self):
         return self.getApplication().getProfilManager()
 
     def appliqueEffet(self, application):
-       pass
-
+       move(self.getProfilManager().getProfilFolder(), self.__varEntryPath.get())
+       # Si on change de profil
+       if self.__cbProfil.get() != self.getProfilManager().getProfilActif():
+           self.getProfilManager().switchProfil(self.__cbProfil.get())
 
 
