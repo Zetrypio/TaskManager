@@ -15,7 +15,7 @@ from task.TaskEditor import *
 
 from MenuBar import *
 from preferences.fenetre import *
-from util.data import *
+from profil.data import *
 
 
 # CECI est la CORRECTION d'un BUG :

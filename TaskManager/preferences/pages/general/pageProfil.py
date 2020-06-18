@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
 from shutil import move
+import os
 
 from json import load, dumps # Pour la lecture/écriture de JSON
 from preferences.dialog.askProfil import *
@@ -57,14 +58,22 @@ class PageProfil(AbstractPage):
         """
         ## Lecture
         # On test si le fichier existe, sinon on le crée
+        if not os.path.exists(NOMFICHIER):
+            with open(NOMFICHIER, "w") as f:
+                f.write(dumps({"user":{}, "profil":{}}, indent=4))
 
-        try: # TODO : retravailler pour prendre en compte plusieurs utilisateurs
-            with open(NOMFICHIER,"r") as f:
-                data = load(f)
-                data["user"]
+        # On lit le fichier
+        with open(NOMFICHIER,"r") as f:
+            data = load(f)
+
+        # On regarde si les valeurs existes
+        try:
+            listNomProfil = data["user"][os.getlogin()]
+            nomProfil = listNomProfil[0]
+            folderProfil  = data["profil"][nomProfil]
         except:
-            nom, folder = askProfil(True, self.getApplication())
-            data = {"user" : {os.getlogin() : nom}, "folder":{nom : folder}}
+            nomProfil, folderProfil = askProfil(True, self.getApplication())
+            data = {"user" : {os.getlogin() : nomProfil}, "profil":{nomProfil : folderProfil}}
             with open(NOMFICHIER, "w") as f:
                 f.write(dumps(data, indent=4))
 

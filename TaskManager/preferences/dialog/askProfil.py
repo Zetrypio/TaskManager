@@ -46,8 +46,8 @@ def askProfil(obligatoire, app):
            varEntryPath.set(path)
 
 
-    fen = Dialog(title = "Nombre d'heure à déplacer",
-           buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Ok', 'Annuler', "WM_DELETE_WINDOW"))
+    fen = Dialog(title = "Création d'un profil",
+           buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Ok'))
     # Binding des touches
     fen.bind_all("<Return>", lambda e: fen.execute("Ok"))
     fen.bind_all("<Escape>", lambda e: fen.execute("Annuler"))
@@ -64,7 +64,7 @@ def askProfil(obligatoire, app):
     btnParcourir = Button(framePath, text = "...", command = parcourir, width=3)
 
     # Affichage
-    lbDebut.grid(column = 0, row = 0, sticky="wens")
+    lbDebut.grid(column = 0, row = 0, columnspan = 2, sticky="wens", pady=3)
     lbNom.grid(column = 0, row = 1, sticky = "w")
     entryNom.grid(column = 1, row = 1, sticky = "we")
     framePath.grid(column = 0, row = 2, columnspan = 2, sticky = "wens")
@@ -74,7 +74,7 @@ def askProfil(obligatoire, app):
 
     # preset
     entryNom.insert(END, os.getlogin())
-    varEntryPath.set(os.path.expanduser("~/.taskManager/"))
+    varEntryPath.set((os.path.expanduser("~/.taskManager/")).replace("/", os.sep).replace("\\", os.sep))
 
 
     fen.activateandwait()
