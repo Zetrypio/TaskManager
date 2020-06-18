@@ -5,12 +5,8 @@ from tkinter import Label, Frame, Button as TkButton
 from shutil import move
 import os
 
-from json import load, dumps # Pour la lecture/écriture de JSON
-from preferences.dialog.askProfil import *
-
 from ..AbstractPage import *
 
-NOMFICHIER = "Ressources/prefs/profils.json"
 
 
 class PageProfil(AbstractPage):
@@ -19,8 +15,10 @@ class PageProfil(AbstractPage):
        super().__init__(master, nom = "Profil", iid_parent ="-General", **kwargs)
 
        ## Widgets
-       self.__lbProfil = Label(self._mFrame, text="Profil :")
-       self.__cbProfil = Combobox(self._mFrame, state="readonly")
+       self.__frameChoixProfil = Frame(self._mFrame)
+       self.__lbProfil = Label(self.__frameChoixProfil, text="Profil :")
+       self.__cbProfil = Combobox(self.__frameChoixProfil, state="readonly")
+       self.__btnAjouter = Button(self.__frameChoixProfil, text="Ajouter", command=self.__ajouter)
        # Folder location
        self.__lbPathCustomFile = Label(self._mFrame, text = "Chemin d'enregistrement de vos fichiers de préférences")
        self.__varEntryPath = StringVar()
@@ -29,14 +27,17 @@ class PageProfil(AbstractPage):
 
 
        # Affichage
+       self.__frameChoixProfil.grid(column = 0, row = 0, sticky = "wens")
        self.__lbProfil.grid(column = 0, row = 0, sticky = "w")
        self.__cbProfil.grid(column = 1, row = 0, sticky="we")
+       self.__btnAjouter.grid(column=2, row=0, sticky="e")
        self.__lbPathCustomFile.grid(column = 0, row = 1, sticky = "w")
        self.__entryPathCustomFile.grid(column = 0, row = 2, sticky = "we")
        self.__btnParcourir.grid(column = 1, row = 2, sticky = "w")
 
        # Fonction de parametrage
-       self.__chargeProfil()
+       self.__chargeProfil(self.getProfilManager().getProfilActif())
+       self.__cbProfil.set(self.getProfilManager().getProfilActif())
 
     def __parcourir(self):
        """
@@ -50,32 +51,21 @@ class PageProfil(AbstractPage):
        if path is not None:
            self.__varEntryPath.set(path)
 
-    def __chargeProfil(self):
+    def __ajouter(self):
         """
-        Fonction qui va chercher la position de sauvegarde des fichiers
-        Pour : parametrer le combobox des profils
-               remplir le champs du dossier d'enregistrement
+        Fonction pour crée un nouveau profil
         """
-        ## Lecture
-        # On test si le fichier existe, sinon on le crée
-        if not os.path.exists(NOMFICHIER):
-            with open(NOMFICHIER, "w") as f:
-                f.write(dumps({"user":{}, "profil":{}}, indent=4))
+        self.getProfilManager().createProfil(False)
 
-        # On lit le fichier
-        with open(NOMFICHIER,"r") as f:
-            data = load(f)
+    def __chargeProfil(self, profil):
+        """
+        Fonction qui va chercher les infos via le ProfilManager
+        """
+        self.__varEntryPath.set(self.getProfilManager().getProfilFolder(profil))
+        self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser())
 
-        # On regarde si les valeurs existes
-        try:
-            listNomProfil = data["user"][os.getlogin()]
-            nomProfil = listNomProfil[0]
-            folderProfil  = data["profil"][nomProfil]
-        except:
-            nomProfil, folderProfil = askProfil(True, self.getApplication())
-            data = {"user" : {os.getlogin() : nomProfil}, "profil":{nomProfil : folderProfil}}
-            with open(NOMFICHIER, "w") as f:
-                f.write(dumps(data, indent=4))
+    def getProfilManager(self):
+        return self.getApplication().getProfilManager()
 
     def appliqueEffet(self, application):
        pass

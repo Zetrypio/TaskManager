@@ -5,6 +5,7 @@ from util.importPIL import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+import os
 
 from affichages.CalendarZone import *
 from affichages.groupe.Groupe import *
@@ -16,6 +17,7 @@ from task.TaskEditor import *
 from MenuBar import *
 from preferences.fenetre import *
 from profil.data import *
+from profil.ProfilManager import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -43,6 +45,8 @@ class Application(Frame):
     def __init__(self, master = None, **kwargs):
         Frame.__init__(self, master, **kwargs)
 
+        os.makedirs(os.path.expanduser("~/.taskManager/"), exist_ok = True)
+
         self.__data = Data()
 
         self.winfo_toplevel().title("Gestionnaire de calendrier")
@@ -53,6 +57,7 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
+        self.__profilManager = ProfilManager(self)
         self.prefFen = FenetrePreferences(self)
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
@@ -84,6 +89,10 @@ class Application(Frame):
     def getData(self):
         """ Retourne le Gestionnaire des données """
         return self.__data
+
+    def getProfilManager(self):
+        """ Retourne de Profil Manager """
+        return self.__profilManager
 
 
 
