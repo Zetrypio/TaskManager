@@ -37,6 +37,7 @@ class Dialog(Frame):
         self.__separator = Separator(self.dialog, orient = HORIZONTAL)
         self.__separator.pack(side = BOTTOM, fill = X)
         self.__bouton_appuyer = None
+        self.__destroyed = False
         self.pack(side = TOP, expand = YES, fill = BOTH)
 
         self.__buttons = []
@@ -58,7 +59,7 @@ class Dialog(Frame):
 
     def activateandwait(self):
         self.activate()
-        while self.__bouton_appuyer is None:
+        while self.__bouton_appuyer is None and not self.__destroyed:
             self.mainloop()
         return self.__bouton_appuyer
 
@@ -72,6 +73,7 @@ class Dialog(Frame):
 
     def destroy(self):
         self.deactivate()
+        self.__destroyed = True
         Frame.destroy(self)
         self.dialog.destroy()
 
