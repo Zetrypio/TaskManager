@@ -6,7 +6,7 @@ from tkinter.messagebox import showerror
 
 from .AbstractPage import *
 
-NOMFICHIER = "duree"
+NOMFICHIER = os.sep + "duree"
 
 class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):

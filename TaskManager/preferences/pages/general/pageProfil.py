@@ -6,6 +6,7 @@ from shutil import move
 import os
 
 from ..AbstractPage import *
+from preferences.dialog.askProfil import *
 
 
 
@@ -45,12 +46,15 @@ class PageProfil(AbstractPage):
        fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
        """
        path = askFolder(vide=True)
-       # On bouge les fichiers en place
-       #move(self.__varEntryPath.get(), path) Pas en place à cause d'un soucis de première location d'enregistrement
 
        # on set le nouveau path
        if path is not None:
            self.__varEntryPath.set(path)
+           for file in os.listdir(self.getProfilFolder()):
+               print(self.getProfilFolder()+os.sep+file)
+               move(self.getProfilFolder()+os.sep+file, path)
+
+           self.getProfilManager().saveNewPath(path, self.__cbProfil.get())
 
     def __ajouter(self):
         """
@@ -68,9 +72,8 @@ class PageProfil(AbstractPage):
         self.__cbProfil.set(profil)
 
     def appliqueEffet(self, application):
-       move(self.getProfilFolder(), self.__varEntryPath.get())
-       # Si on change de profil
-       if self.__cbProfil.get() != self.getProfilManager().getProfilActif():
+        # Si on change de profil
+        if self.__cbProfil.get() != self.getProfilManager().getProfilActif():
            self.getProfilManager().switchProfil(self.__cbProfil.get())
 
 

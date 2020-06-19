@@ -40,7 +40,7 @@ class FenetrePreferences(Dialog):
         # Ajout des pages
         self.__ajouterPage(PageGeneral(self.getParametrageZone()))
         self.__ajouterPage(PageClavier(self.getParametrageZone()))
-        self.__ajouterPage(PageProfil(self.getParametrageZone()))
+        #self.__ajouterPage(PageProfil(self.getParametrageZone()))
         self.__ajouterPage(PageTheme(self.getParametrageZone()))
 
         self.__ajouterPage(PageCalendrier(self.getParametrageZone()))
@@ -48,6 +48,7 @@ class FenetrePreferences(Dialog):
         self.__ajouterPage(PageGantt(self.getParametrageZone()))
         self.__ajouterPage(PagePeriode(self.getParametrageZone()))
 
+        self.__ajouterPage(PageProfil(self.getParametrageZone())) # Pour la mettre a la fin de la liste
         # Initialisation de la page de garde
         self.setPageActive("-General")
 

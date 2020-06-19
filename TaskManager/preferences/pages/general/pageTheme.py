@@ -31,7 +31,7 @@ from util.widgets.Dialog import askstring, askyesnowarning
             "Boutons de ttk" : self.__varTtkButton.get()}
 """
 
-NOMFICHIER = "theme"
+NOMFICHIER = os.sep + "theme"
 
 
 class PageTheme(AbstractPage):

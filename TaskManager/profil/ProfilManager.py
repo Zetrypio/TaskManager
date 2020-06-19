@@ -73,6 +73,16 @@ class ProfilManager:
         self.__write()
         return True
 
+    def saveNewPath(self, path, profil):
+        """
+        Fonction qui va juste changer le path du profil courrant
+        @param path   : <str> contient le chemin du folder
+        @param profil : <str> contient le nom du profil
+        """
+        self.__read()
+        self.__donnee["profil"][profil] = path
+        self.__write()
+
     def __loadUserProfil(self):
         """
         Permet de charger les profils de l'utilisateur
