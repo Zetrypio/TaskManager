@@ -14,7 +14,7 @@ class ProfilManager:
 
         self.__app = app
 
-        self.__profilActif      = None
+        self.__profilActif = None
 
         self.__donnee = None
 
@@ -25,6 +25,16 @@ class ProfilManager:
         @return self.__profilActif
         """
         return self.__profilActif
+
+    def setProfilActif(self, profil):
+        """
+        Permet aussi de changer le nom de la fenetre
+        @param profil : <str> nom du profil (doit être dans la liste)
+        """
+        if profil in self.getAllNomProfil():
+            self.__profilActif = profil
+            self.__app.winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
+
 
     def getListeProfilsUser(self):
         """
@@ -55,7 +65,7 @@ class ProfilManager:
         Permet de changer de profil
         @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
         """
-        self.__profilActif = nouvProfil
+        self.setProfilActif(nouvProfil)
         self.__loadProfil()
 
     def createProfil(self, obligatoire):
@@ -101,7 +111,7 @@ class ProfilManager:
             if not self.createProfil(True):
                 return
 
-        self.__profilActif = self.getListeProfilsUser()[0]
+        self.setProfilActif(self.getListeProfilsUser()[0])
 
         self.__loadProfil()
 
