@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
+import os
 
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
@@ -10,6 +11,7 @@ class AbstractPage(Frame):
         self.nom = nom
         self.iidParent = iid_parent
         self.iid = self.getParent()+"-"+self.getNom()
+
 
         self._mFrame = Frame(self)
         self.__lbTitre = Label(self, text=self.nom)
@@ -29,6 +31,21 @@ class AbstractPage(Frame):
 
     def getIid(self):
         return self.iid
+
+    def getProfilManager(self):
+        return self.getApplication().getProfilManager()
+
+    def getProfilFolder(self, profil = None):
+        return self.getProfilManager().getProfilFolder(profil)
+
+    def readFile(self, nom):
+        """
+        Fonction qui va lire les fichier de préférences
+        @param nom : <str> nom du fichier à lire (sans l'extension)
+        """
+        self.getData().read("Ressources/prefs/"+nom+".def")
+        if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
+            self.getData().read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
 
     def appliqueEffet(self, application):
         raise NotImplementedError

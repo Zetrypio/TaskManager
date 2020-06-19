@@ -63,15 +63,12 @@ class PageProfil(AbstractPage):
         """
         Fonction qui va chercher les infos via le ProfilManager
         """
-        self.__varEntryPath.set(self.getProfilManager().getProfilFolder(profil))
+        self.__varEntryPath.set(self.getProfilFolder(profil))
         self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
         self.__cbProfil.set(profil)
 
-    def getProfilManager(self):
-        return self.getApplication().getProfilManager()
-
     def appliqueEffet(self, application):
-       move(self.getProfilManager().getProfilFolder(), self.__varEntryPath.get())
+       move(self.getProfilFolder(), self.__varEntryPath.get())
        # Si on change de profil
        if self.__cbProfil.get() != self.getProfilManager().getProfilActif():
            self.getProfilManager().switchProfil(self.__cbProfil.get())

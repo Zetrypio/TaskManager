@@ -30,7 +30,8 @@ from util.widgets.Dialog import askstring, askyesnowarning
             "# Autre que les couleurs" : "",
             "Boutons de ttk" : self.__varTtkButton.get()}
 """
-NOMFICHIER = "Ressources/prefs/theme.def"
+
+NOMFICHIER = "theme"
 
 
 class PageTheme(AbstractPage):
@@ -40,7 +41,7 @@ class PageTheme(AbstractPage):
 
         # Traitement du fichier .ini
         # self.getData() = ConfigParser()
-        self.getData().read(NOMFICHIER) # Prise de conscience de ce qu'il y a dedans
+        self.readFile(NOMFICHIER) # Prise de conscience de ce qu'il y a dedans
 
 
         self.__currentElem = None # iid de l'élément sélectionné dans le TreeView
@@ -228,7 +229,7 @@ class PageTheme(AbstractPage):
         """
         Fonction qui va ajouter tous les thèmes qui ont été créer et tous les thèmes créé par l'utilisateur
         """
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER)
         # Mise en place dans le combobox du thème actuel
         self.__listValueComboTheme = []
         for section in self.getData().sections():
@@ -256,17 +257,17 @@ class PageTheme(AbstractPage):
         """
         Enregistre les modifications dans le thème sélectionné dans le combobox
         """
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER)
         self.getData()[self.__comboThemeExistant.get().upper()] = self.dictTheme(self.__comboThemeExistant.get())
 
         # Et on enregistre
-        self.getData().sauv(NOMFICHIER)
+        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
     def enregistrerSous(self):
         """
         On demande le nom du nouveau thème pour ensuite le créer
         """
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER)
         name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
         if name is None:
             return
@@ -284,27 +285,29 @@ class PageTheme(AbstractPage):
         self.getData()[name.upper()] = self.dictTheme(name)
 
         # Et on enregistre
-        self.getData().sauv(NOMFICHIER)
+        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
         self.configCombobox()
+        self.__comboThemeExistant.set(name)
+        self.chargerTheme()
 
     def supprimerTheme(self):
         """
         Fonction qui supprime le thème sélectionné dans le combobox
         """
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
 
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
             self.getData().remove_section(self.__comboThemeExistant.get().upper())
-            self.getData().sauv(NOMFICHIER)
+            self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
             self.configCombobox()
+            self.chargerTheme()
 
-    def chargerTheme(self, e):
+    def chargerTheme(self, event=None):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
         """
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
         theme = self.getData()[self.__comboThemeExistant.get().upper()]
 
 
@@ -370,8 +373,7 @@ class PageTheme(AbstractPage):
 
 
     def onclick(self, e):
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
-        # On récupère la cage qu'on a cliqué
+        self.readFile(NOMFICHIER)
 
         self.recupCouleur() # Enregistrement de la valer de l'ancienne case
         iidElementSelectionne = self.__tree.focus()
@@ -384,7 +386,7 @@ class PageTheme(AbstractPage):
 
     def appliqueEffet(self, application):
         # Récupération des valeurs
-        self.getData().read(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER)
 
         self.enregistrer() # les modifications d'un thème, # Note : à voir si on garde
         nomTheme = self.__comboThemeExistant.get()
