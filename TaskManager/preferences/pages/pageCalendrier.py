@@ -6,7 +6,7 @@ from tkinter.messagebox import showerror
 
 from .AbstractPage import *
 
-NOMFICHIER = "duree.cfg"
+NOMFICHIER = "duree"
 
 class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):
@@ -68,20 +68,20 @@ class PageCalendrier(AbstractPage):
         """
         Enregistre la nouvelle durée crée
         """
-        self.getData().read(NOMFICHIER)
+        self.readFile(NOMFICHIER)
 
         nom = self.__sbNbJour.get()
         duree = self.__sbNbJour.get()
         self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour" : duree}
 
-        self.getData().sauv(NOMFICHIER)
+        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
 
     def __supprimer(self):
         """
         Supprime la durée sélectionné du combobox
         """
-        self.getData().read(NOMFICHIER)
+        self.readFile(NOMFICHIER)
 
         section = self.__listebDureeCree.get(self.__listebDureeCree.curselection()).upper()
         if section in self.getData().sections():
@@ -89,15 +89,14 @@ class PageCalendrier(AbstractPage):
         else:
             showerror("Action incorrect", "Vous ne pouvez pas retirer ce choix.")
 
-        self.getData().sauv(NOMFICHIER)
+        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
 
     def __chargerListBox(self):
         """
         Permet de mettre toutes les durée dans le listBox
         """
-        self.getData().read(NOMFICHIER)
-        self.getData().read("Ressources/prefs/duree.def", add = True)
+        self.readFile(NOMFICHIER)
 
 
         # On supprime toutes options
@@ -132,8 +131,7 @@ class PageCalendrier(AbstractPage):
             self.__sbNbJour.set(v + " jours")
 
         # Lecture
-        self.getData().read(NOMFICHIER)
-        self.getData().read("Ressources/prefs/duree.def", add = True)
+        self.readFile(NOMFICHIER)
 
         ## Gestion de val en fct de semaine ou jour
         # Si on est au tout début pour escape l'erreur du calcul
