@@ -68,8 +68,7 @@ class PageCalendrier(AbstractPage):
         """
         Enregistre la nouvelle durée crée
         """
-        self.readFile(NOMFICHIER)
-
+        self.readFile(NOMFICHIER, lireDef=False)
         nom = self.__sbNbJour.get()
         duree = self.__sbNbJour.get()
         self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour" : duree}
@@ -81,13 +80,14 @@ class PageCalendrier(AbstractPage):
         """
         Supprime la durée sélectionné du combobox
         """
-        self.readFile(NOMFICHIER)
+        self.readFile(NOMFICHIER, lireDef=False)
 
         section = self.__listebDureeCree.get(self.__listebDureeCree.curselection()).upper()
         if section in self.getData().sections():
             self.getData().remove_section(section)
         else:
             showerror("Action incorrect", "Vous ne pouvez pas retirer ce choix.")
+
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()

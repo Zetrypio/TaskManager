@@ -38,14 +38,23 @@ class AbstractPage(Frame):
     def getProfilFolder(self, profil = None):
         return self.getProfilManager().getProfilFolder(profil)
 
-    def readFile(self, nom):
+    def readFile(self, nom, lireDef = True, lireCfg = True):
         """
-        Fonction qui va lire les fichier de préférences
+        Fonction qui va lire les fichiers de préférences
         @param nom : <str> nom du fichier à lire (sans l'extension)
         """
-        self.getData().read("Ressources/prefs/"+nom+".def")
-        if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-            self.getData().read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
+        self.getData().clear()
+        if lireDef and lireCfg:
+            self.getData().read("Ressources/prefs/"+nom+".def")
+            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
+                self.getData().read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
+
+        # On ne met pas le add sinon
+        elif not lireDef and lireCfg:
+            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
+                self.getData().read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
+        elif lireDef and not lireCfg:
+            self.getData().read("Ressources/prefs/"+nom+".def")
 
     def appliqueEffet(self, application):
         raise NotImplementedError

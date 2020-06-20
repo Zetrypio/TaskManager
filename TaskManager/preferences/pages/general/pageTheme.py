@@ -238,6 +238,7 @@ class PageTheme(AbstractPage):
         self.__comboThemeExistant.config(value=self.__listValueComboTheme)
         # A voir comment on fait, si on garde etc
         self.__comboThemeExistant.set(self.getApplication().getData().getCurrentThemeName())
+        self.__stateSaveBtn()
 
     def dictTheme(self, nomTheme):
         """
@@ -257,12 +258,14 @@ class PageTheme(AbstractPage):
         """
         Enregistre les modifications dans le thème sélectionné dans le combobox
         """
+        # On doit lire le fichier en entier pour avoir les clés existantes
         self.readFile(NOMFICHIER)
-        self.getData()[self.__comboThemeExistant.get().upper()] = self.dictTheme(self.__comboThemeExistant.get())
+        dict = self.dictTheme(self.__comboThemeExistant.get())
 
-        # Et on enregistre
+        # On enregistre
+        self.readFile(NOMFICHIER, lireDef = False)
+        self.getData()[self.__comboThemeExistant.get().upper()] = dict
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
-
     def enregistrerSous(self):
         """
         On demande le nom du nouveau thème pour ensuite le créer
@@ -280,13 +283,15 @@ class PageTheme(AbstractPage):
 
         self.recupCouleur()
         # Enregistrement
+        self.readFile(NOMFICHIER) # Lire les clés qui existent
+        dict = self.dictTheme(name)
 
+        self.readFile(NOMFICHIER, lireDef=False)
+        self.getData()[name.upper()] = dict
 
-        self.getData()[name.upper()] = self.dictTheme(name)
-
-        # Et on enregistre
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
+        self.getApplication().getData().setCurrentThemeName(name)
         self.configCombobox()
         self.__comboThemeExistant.set(name)
         self.chargerTheme()
@@ -297,15 +302,28 @@ class PageTheme(AbstractPage):
         """
 
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
+            self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
             self.getData().remove_section(self.__comboThemeExistant.get().upper())
             self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
             self.configCombobox()
             self.chargerTheme()
 
+    def __stateSaveBtn(self):
+        """
+        Fonction qui gere l'état du bouton d'enregistrememnt
+        """
+        self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
+        if self.__comboThemeExistant.get().upper() not in self.getData().sections():
+            self.__btnEnregistrement.config(state = "disabled")
+        else:
+            self.__btnEnregistrement.config(state = "normal")
+
+
     def chargerTheme(self, event=None):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
+        + gérer la disponibilité de enregistrer
         """
         self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
         theme = self.getData()[self.__comboThemeExistant.get().upper()]
@@ -324,6 +342,8 @@ class PageTheme(AbstractPage):
 
         if self.__currentElem is not None:
             self.__comboCouleur.set(theme[self.__currentElem])
+
+        self.__stateSaveBtn()
 
     def chercheComboValeur(self, val):
         """
@@ -385,10 +405,6 @@ class PageTheme(AbstractPage):
         except:pass
 
     def appliqueEffet(self, application):
-        # Récupération des valeurs
-        self.readFile(NOMFICHIER)
-
-        self.enregistrer() # les modifications d'un thème, # Note : à voir si on garde
         nomTheme = self.__comboThemeExistant.get()
         adaptCouleur = self.__varAdapteTexteTache.get()
 
