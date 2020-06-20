@@ -40,7 +40,7 @@ class FenetrePreferences(Dialog):
         # Ajout des pages
         self.__ajouterPage(PageGeneral(self.getParametrageZone()))
         self.__ajouterPage(PageClavier(self.getParametrageZone()))
-        #self.__ajouterPage(PageProfil(self.getParametrageZone()))
+        self.__ajouterPage(PageProfil(self.getParametrageZone()))
         self.__ajouterPage(PageTheme(self.getParametrageZone()))
 
         self.__ajouterPage(PageCalendrier(self.getParametrageZone()))
@@ -48,7 +48,14 @@ class FenetrePreferences(Dialog):
         self.__ajouterPage(PageGantt(self.getParametrageZone()))
         self.__ajouterPage(PagePeriode(self.getParametrageZone()))
 
-        self.__ajouterPage(PageProfil(self.getParametrageZone())) # Pour la mettre a la fin de la liste
+
+        # Pour que la page profil soit la dernière a être activé lorsqu'on fais appliqueEffet
+        # Comme ça chacun enregistre ses choix dans son fichier
+        # À la fin, on déplace les fichier si jamais on choisis de changer
+        for page in self.listePage:
+            if isinstance(page, PageProfil):
+                self.listePage.append(self.listePage.pop(self.listePage.index(page)))
+
         # Initialisation de la page de garde
         self.setPageActive("-General")
 

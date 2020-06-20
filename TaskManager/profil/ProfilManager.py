@@ -66,6 +66,14 @@ class ProfilManager:
         @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
         """
         self.setProfilActif(nouvProfil)
+
+        ## Changement de l'ordre des profils
+        # Variable pour que la ligne d'après soit plus lisible
+        listProfil = self.__donnee["user"][os.getlogin()]
+        listProfil.insert(0,listProfil.pop(listProfil.index(nouvProfil)))
+        self.__donnee["user"][os.getlogin()] = listProfil
+        self.__write()
+
         self.__loadProfil()
 
     def createProfil(self, obligatoire):
