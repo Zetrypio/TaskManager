@@ -57,7 +57,7 @@ class PageTheme(AbstractPage):
         # Widget
         self.__lbCombo = Label(self.__frameChoixTheme, text = "Sélectionnez un thème")
         self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly")
-        self.__comboThemeExistant.bind("<<ComboboxSelected>>", self.chargerTheme)
+        self.__comboThemeExistant.bind("<<ComboboxSelected>>", self.loadTheme)
         self.__btnSuppr = Button(self.__frameChoixTheme, text="Supprimer", command = self.supprimerTheme)
 
 
@@ -159,7 +159,7 @@ class PageTheme(AbstractPage):
         self.__varTtkButton = BooleanVar()
         self.__listeVarTheme += [self.__varTtkButton] # Le str vide pour le commentaire
         self.__caseTtkButton = Checkbutton(self.__frameZoneBasSelection, text="Voulez-vous utiliser les boutons de ttk ?", variable=self.__varTtkButton)
-        self.__btnEnregistrement = Button(self.__frameZoneBasSelection, text="Enregistrer", command=self.enregistrer)
+        self.__btnEnregistrement = Button(self.__frameZoneBasSelection, text="Enregistrer", command=lambda e=None :self.enregistrer(self.getNomCombobox()))
         self.__btnEnregistrementSous = Button(self.__frameZoneBasSelection, text="Enregistrer-sous", command=self.enregistrerSous)
 
 
@@ -225,6 +225,24 @@ class PageTheme(AbstractPage):
             self.__boutonColor4.config(bg = color, activebackground = color)
             self.__varLb4.set(color)
 
+    def getNomCombobox(self):
+        return self.__comboThemeExistant.get()
+
+    def setNomCombobox(self, nom):
+        self.__comboThemeExistant.set(nom)
+        self.__stateSaveBtn()
+
+    def __stateSaveBtn(self):
+        # Fonction qui gere l'état du bouton d'enregistrememnt
+        self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
+        if  self.__comboThemeExistant.get().upper() not in self.getData().sections():
+            self.__btnEnregistrement.config(state = "disabled")
+            self.__btnSuppr.config(state = "disabled")
+        else:
+            self.__btnEnregistrement.config(state = "normal")
+            self.__btnSuppr.config(state = "normal")
+
+
     def configCombobox(self):
         """
         Fonction qui va ajouter tous les thèmes qui ont été créer et tous les thèmes créé par l'utilisateur
@@ -237,35 +255,41 @@ class PageTheme(AbstractPage):
 
         self.__comboThemeExistant.config(value=self.__listValueComboTheme)
         # A voir comment on fait, si on garde etc
-        self.__comboThemeExistant.set(self.getApplication().getData().getCurrentThemeName())
-        self.__stateSaveBtn()
+        self.setNomCombobox(self.getApplication().getData().getCurrentThemeName())
 
     def dictTheme(self, nomTheme):
         """
         Fonction qui retourne un dictionnaire (enfin je crois que c'est ça) avec toutes les valeurs que contient la page
         """
-        # Pour récupérer ce qu'on a commencer
+        # Pour récupérer ce qu'on a commencé
         self.recupCouleur()
         dict = {}
         for indice, cle in enumerate(self.getData()[self.getData().getCurrentThemeName().upper()]):
             if indice == 0: # Pour le nom c'est un srting tout court
+                print(indice, cle, self.__listeVarTheme[indice])
                 dict[cle] = nomTheme
             else:
+                print(indice, cle, self.__listeVarTheme[indice].get())
+                # Ici c'est des StringVar() donc il faut un ".get()"
                 dict[cle] = self.__listeVarTheme[indice].get()
+        print("dict final :", dict)
         return dict
 
-    def enregistrer(self):
+    def enregistrer(self, nom):
         """
-        Enregistre les modifications dans le thème sélectionné dans le combobox
+        Enregistre les modifications
+        @param nom : <str> nom du thème
         """
+        print("nom : ",nom)
         # On doit lire le fichier en entier pour avoir les clés existantes
         self.readFile(NOMFICHIER)
-        dict = self.dictTheme(self.__comboThemeExistant.get())
+        dict = self.dictTheme(nom)
 
         # On enregistre
-        self.readFile(NOMFICHIER, lireDef = False)
-        self.getData()[self.__comboThemeExistant.get().upper()] = dict
+        self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
+        self.getData()[nom.upper()] = dict
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
+
     def enregistrerSous(self):
         """
         On demande le nom du nouveau thème pour ensuite le créer
@@ -281,20 +305,21 @@ class PageTheme(AbstractPage):
             if name is None:
                 return
 
-        self.recupCouleur()
         # Enregistrement
+        self.enregistrer(name)
+        """
         self.readFile(NOMFICHIER) # Lire les clés qui existent
         dict = self.dictTheme(name)
-
         self.readFile(NOMFICHIER, lireDef=False)
         self.getData()[name.upper()] = dict
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
-
+        """
+        # Bonus de enregistrer sous
         self.getApplication().getData().setCurrentThemeName(name)
         self.configCombobox()
         self.__comboThemeExistant.set(name)
-        self.chargerTheme()
+        self.loadTheme()
 
     def supprimerTheme(self):
         """
@@ -303,24 +328,13 @@ class PageTheme(AbstractPage):
 
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
             self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
-            self.getData().remove_section(self.__comboThemeExistant.get().upper())
+            self.getData().remove_section(self.get.upper())
             self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
             self.configCombobox()
-            self.chargerTheme()
+            self.loadTheme()
 
-    def __stateSaveBtn(self):
-        """
-        Fonction qui gere l'état du bouton d'enregistrememnt
-        """
-        self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
-        if self.__comboThemeExistant.get().upper() not in self.getData().sections():
-            self.__btnEnregistrement.config(state = "disabled")
-        else:
-            self.__btnEnregistrement.config(state = "normal")
-
-
-    def chargerTheme(self, event=None):
+    def loadTheme(self, event=None):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
         + gérer la disponibilité de enregistrer
@@ -379,6 +393,9 @@ class PageTheme(AbstractPage):
             return self.__varBOSCDB
 
     def recupCouleur(self):
+        """
+        Va cherche la couleur et la valeur associé (ligne du treeview) concerné par cette couleur
+        """
         def recupAuBonEndroit():
             """ Fonction embarqué qui va retourner la valeur qu'il faut selon le choix su combobox """
             ou = self.__comboCouleur.get()
@@ -393,6 +410,9 @@ class PageTheme(AbstractPage):
 
 
     def onclick(self, e):
+        """
+        Pour le treeview
+        """
         self.readFile(NOMFICHIER)
 
         self.recupCouleur() # Enregistrement de la valer de l'ancienne case

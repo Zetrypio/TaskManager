@@ -6,21 +6,20 @@ name = Classique
 couleur principale = #ffffff
 couleur secondaire = #ffffff
 couleur tertiaire = #ffffff
-general-couleur du texte = 
-liste des tã£â¢ches-couleur de fond = 
-ajout des tã£â¢ches-couleur de fond = 
-zone des onglets-couleur de fond = 
-zone des onglets-couleur de fond du calendrier = 
-zone des onglets-couleur de fond de l'affichage gantt = 
-zone des onglets-couleur de fond de l'affichage des pã£â©riodes = 
-zone des onglets-couleur de fond de l'affichage des tã£â¢ches suivantes = 
-zone de l'affichage-couleur de fond = 
-barre d'outils principale-couleur de fond = 
-barre d'outils principale-couleur des boutons = 
-barre d'outils secondaire-couleur de fond = 
-barre d'outils secondaire-couleur des boutons = 
+general-couleur du texte = Couleur principale
+liste des tã£â¢ches-couleur de fond = Couleur principale
+ajout des tã£â¢ches-couleur de fond = Couleur principale
+zone des onglets-couleur de fond = Couleur principale
+zone des onglets-couleur de fond du calendrier = Couleur principale
+zone des onglets-couleur de fond de l'affichage gantt = Couleur principale
+zone des onglets-couleur de fond de l'affichage des pã£â©riodes = Couleur principale
+zone des onglets-couleur de fond de l'affichage des tã£â¢ches suivantes = Couleur principale
+zone de l'affichage-couleur de fond = Couleur principale
+barre d'outils principale-couleur de fond = Couleur principale
+barre d'outils principale-couleur des boutons = Couleur principale
+barre d'outils secondaire-couleur de fond = Couleur principale
+barre d'outils secondaire-couleur des boutons = Couleur principale
 boutons de ttk = False
-default = 
 
 [COLORFUL]
 name = Colorful
@@ -41,7 +40,6 @@ barre d'outils principale-couleur des boutons = Couleur secondaire
 barre d'outils secondaire-couleur de fond = Couleur secondaire
 barre d'outils secondaire-couleur des boutons = Couleur principale
 boutons de ttk = True
-default = <Section: DEFAULT>
 
 [AUBERGINE]
 name = Aubergine
@@ -62,5 +60,4 @@ barre d'outils principale-couleur des boutons = Couleur secondaire
 barre d'outils secondaire-couleur de fond = Couleur principale
 barre d'outils secondaire-couleur des boutons = Couleur secondaire
 boutons de ttk = False
-default = <Section: DEFAULT>
 
