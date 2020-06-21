@@ -47,7 +47,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__id_LinkingLine = None
         self.__x1_LinkingLine = None
         self.__y1_LinkingLine = None
-        self.__color_LinkingLine = None
+        self.__mode_LinkingLine = None
         self.__activeGanttObject = None
 
         # La taille de la colonne dépend de la taille du Canvas :
@@ -119,12 +119,12 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__highlightLinks(mode)
         self.__x1_LinkingLine = self.__activeGanttObject.getXDebutLinkingLine()
         self.__y1_LinkingLine = self.__activeGanttObject.getYDebutLinkingLine()
-        self.__color_LinkingLine = "#00CF00" if mode == "+" else "#CF0000"
+        self.__mode_LinkingLine = mode
         self.__id_LinkingLine = self.can.create_line(self.__x1_LinkingLine,
                                                      self.__y1_LinkingLine,
                                                      self.__x1_LinkingLine,
                                                      self.__y1_LinkingLine,
-                                                     fill=self.__color_LinkingLine,
+                                                     fill="#00CF00" if mode == "+" else "#CF0000",
                                                      width = 2)
 
     def __updateLinkingLine(self, event):
@@ -149,6 +149,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__id_LinkingLine = None
         self.__x1_LinkingLine = None
         self.__y1_LinkingLine = None
+        self.__mode_LinkingLine = None
         self.__activeGanttObject = None
         
 
@@ -159,23 +160,57 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @param objGantt: l'objet sur lequel on a cliqué.
         @override clicSurObjet(objet) in AbstractDisplayedCalendar()
         """
-        # Si on est en mode ajout de lien :
+        # Si on est en mode ajout ou suppression de lien :
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
-            # Si le lien est accepté :
-            if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
-                # On inverse le lien si il est à l'envers.
-                if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
-                    self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
+            
+            # Pour le mode d'ajout :
+            if self.__mode_LinkingLine == "+":
+                # Si le lien est accepté :
+                if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
+                    
+                    # On inverse le lien si il est à l'envers.
+                    if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
+                        self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
+    
+                    # On crée le lien et met donc à jour l'affichage.
+                    self.listeDisplayableItem.append(
+                        DependanceLink(
+                            self,
+                            self.getVisiblePart(self.__activeGanttObject.getLastPart()),
+                            self.getVisiblePart(objGantt.getFirstPart())))
+                    self.__highlightLinks(None)
+                    self.__endLinkingLine()
+                    self.updateAffichage()
+            
+            # Pour le mode de suppression de liens :
+            elif self.__mode_LinkingLine == "-":
+                # Si les liens sont normalement possibles :
+                if self.__activeGanttObject.getSchedulable().acceptLinkTo(objGantt.getSchedulable()):
 
-                # On crée le lien et met donc à jour l'affichage.
-                self.listeDisplayableItem.append(
-                    DependanceLink(
-                        self,
-                        self.getVisiblePart(self.__activeGanttObject.getLastPart()),
-                        self.getVisiblePart(objGantt.getFirstPart())))
-                self.__highlightLinks(None)
-                self.__endLinkingLine()
-                self.updateAffichage()
+                    print("Suppression du lien entre %s et %s"%(self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable()))
+
+                    # Il faut trouver le lien :
+                    for lien in reversed(self.listeDisplayableItem):
+                        if isinstance(lien, DependanceLink):
+                            if (lien.getPartA().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())
+                            and lien.getPartB().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())):
+                                self.listeDisplayableItem.remove(lien)
+                                break
+
+                    # Si le lien existe dans un premier sens :
+                    if self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependances():
+                        objGantt.getSchedulable().removeDependance(self.__activeGanttObject.getSchedulable())
+                    # Dans le deuxième sens :
+                    elif self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependantes():
+                        self.__activeGanttObject.getSchedulable().removeDependance(objGantt.getSchedulable())
+                    
+                    # On met à jour l'affichage :
+                    self.__highlightLinks(None)
+                    self.__endLinkingLine()
+                    self.updateAffichage()
+
+        # Sinon on désélectionne tout les liens et les tâches,
+        # pour ne sélectionner que la tâche sur laquelle on a cliqué.
         elif self.__activeGanttObject is None:
             self.deselectEverything()
             objGantt.getSchedulable().setSelected(True)
