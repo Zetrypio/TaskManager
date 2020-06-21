@@ -63,7 +63,7 @@ class ItemButtonPlus(IDisplayableItem):
         # Bindings :
         canvas.tag_bind("plus%s"%(id(self.__ganttObj.getSchedulable())), "<Button-1>",
             lambda e: canvas.after(10,
-                lambda :self.__ganttObj.beginLigneVerte(Point(self.__x, self.__y))))
+                lambda :self.__ganttObj.beginLinkingLine(Point(self.__x, self.__y))))
 
     def delete(self):
         """

@@ -29,7 +29,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         self.__liens = []
 
         # Permet d'avoir l'info de Où commence la ligne verte.
-        self.__debutLigneVerte = Point()
+        self.__debutLinkingLine = Point()
 
     def __del__(self):
         """
@@ -101,12 +101,12 @@ class ObjetGantt(AbstractMultiFrameItem):
                     # Puis on ajoute :
                     # Si il est en capacité d'ajouter un lien :
                     if self._schedulable.acceptLink():
-                        rmenu.add_command(label = "Créer un lien", command = lambda : self.beginLigneVerte(rect.getCenterPoint()))
+                        rmenu.add_command(label = "Créer un lien", command = lambda : self.beginLinkingLine(rect.getCenterPoint()))
     
                         # Si il est en capacité de supprimer un lien :
                         if len(self._schedulable.getDependances()) or len(self._schedulable.getDependantes()):
-                            rmenu.add_command(label = "Supprimer un lien")
-    
+                            rmenu.add_command(label = "Supprimer un lien", command = lambda : self.beginLinkingLine(rect.getCenterPoint(), mode = "-"))
+
                         rmenu.add_separator()
                     rmenu.add_command(label = "Supprimer %s"%self._schedulable)
                 except:
@@ -131,14 +131,14 @@ class ObjetGantt(AbstractMultiFrameItem):
             l.redraw(canvas)
             self.__liens.append(l)
 
-    def beginLigneVerte(self, point):
+    def beginLinkingLine(self, point, mode = "+"):
         """
         Permet de commencer la ligne verte,
         et mémorise sur quel plus (+) on a cliqué.
         @param plus: le plus sur lequel on a cliqué.
         """
-        self.__debutLigneVerte = point
-        self.master.beginLigneVerte(self)
+        self.__debutLinkingLine = point
+        self.master.beginLinkingLine(self, mode)
 
     def __onSelect(self):
         """
@@ -160,19 +160,19 @@ class ObjetGantt(AbstractMultiFrameItem):
         for l in self.__liens:
             l.updateColor(canvas)
 
-    def getXDebutLigneVerte(self):
+    def getXDebutLinkingLine(self):
         """
         Permet d'obtenir la coordonnée X du centre du plus actif.
         @return le milieu en X du plus actif.
         """
-        return self.__debutLigneVerte.x
+        return self.__debutLinkingLine.x
 
-    def getYDebutLigneVerte(self):
+    def getYDebutLinkingLine(self):
         """
         Permet d'obtenir la coordonnée Y du centre du plus actif.
         @return le milieu en Y du plus actif.
         """
-        return self.__debutLigneVerte.y
+        return self.__debutLinkingLine.y
 
     def __isPartPresent(self, part):
         """

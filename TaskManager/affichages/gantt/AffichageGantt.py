@@ -44,9 +44,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__parts = []
 
         # Ligne verte pour quand on est en train de relier plusieurs tâches ou autre :
-        self.__id_LigneVerte = None
-        self.__x1_LigneVerte = None
-        self.__y1_LigneVerte = None
+        self.__id_LinkingLine = None
+        self.__x1_LinkingLine = None
+        self.__y1_LinkingLine = None
+        self.__color_LinkingLine = None
         self.__activeGanttObject = None
 
         # La taille de la colonne dépend de la taille du Canvas :
@@ -82,7 +83,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Définition des events virtuels :
         self.can.bind_all("<<deselect-all>>", lambda e: self.__onClicSurCanvas())
         self.can.bind("<Button-1>", lambda e: self.__onClicSurCanvas())
-        self.can.bind("<Motion>", self.__updateLigneVerte)
+        self.can.bind("<Motion>", self.__updateLinkingLine)
 
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
@@ -108,42 +109,46 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     l.highlight(None)
         self.updateColor()
 
-    def beginLigneVerte(self, objGantt):
+    def beginLinkingLine(self, objGantt, mode="+"):
         """
         Permet de commencer une ligne verte pour un lien depuis un objetGantt.
         @param objGantt: l'objetGantt depuis lequel commence le lien.
         """
         self.__onClicSurCanvas()
         self.__activeGanttObject = objGantt
-        self.__highlightLinks("+")
-        self.__x1_LigneVerte = self.__activeGanttObject.getXDebutLigneVerte()
-        self.__y1_LigneVerte = self.__activeGanttObject.getYDebutLigneVerte()
-        self.__id_LigneVerte = self.can.create_line(self.__x1_LigneVerte, self.__y1_LigneVerte,
-                                                    self.__x1_LigneVerte, self.__y1_LigneVerte,
-                                                    fill="#00CF00", width = 2)
+        self.__highlightLinks(mode)
+        self.__x1_LinkingLine = self.__activeGanttObject.getXDebutLinkingLine()
+        self.__y1_LinkingLine = self.__activeGanttObject.getYDebutLinkingLine()
+        self.__color_LinkingLine = "#00CF00" if mode == "+" else "#CF0000"
+        self.__id_LinkingLine = self.can.create_line(self.__x1_LinkingLine,
+                                                     self.__y1_LinkingLine,
+                                                     self.__x1_LinkingLine,
+                                                     self.__y1_LinkingLine,
+                                                     fill=self.__color_LinkingLine,
+                                                     width = 2)
 
-    def __updateLigneVerte(self, event):
+    def __updateLinkingLine(self, event):
         """
         Permet de mettre à jour la ligne verte.
         Appelée quand la souris bouge sur le Canvas() contenu dans cet objet.
         @param event: informations sur l'événement contenant la position de la souris.
         """
-        if self.__id_LigneVerte is not None:
+        if self.__id_LinkingLine is not None:
             pos = self.getScrolledPosition(event)
-            self.__x1_LigneVerte = pos.x
-            self.__y1_LigneVerte = pos.y
-            self.can.coords(self.__id_LigneVerte,
+            self.__x1_LinkingLine = pos.x
+            self.__y1_LinkingLine = pos.y
+            self.can.coords(self.__id_LinkingLine,
                             pos.x, pos.y,
-                            self.__activeGanttObject.getXDebutLigneVerte(), self.__activeGanttObject.getYDebutLigneVerte())
+                            self.__activeGanttObject.getXDebutLinkingLine(), self.__activeGanttObject.getYDebutLinkingLine())
 
-    def __endLigneVerte(self):
+    def __endLinkingLine(self):
         try:
-            self.can.delete(self.__id_LigneVerte)
+            self.can.delete(self.__id_LinkingLine)
         except:
             pass
-        self.__id_LigneVerte = None
-        self.__x1_LigneVerte = None
-        self.__y1_LigneVerte = None
+        self.__id_LinkingLine = None
+        self.__x1_LinkingLine = None
+        self.__y1_LinkingLine = None
         self.__activeGanttObject = None
         
 
@@ -169,7 +174,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self.getVisiblePart(self.__activeGanttObject.getLastPart()),
                         self.getVisiblePart(objGantt.getFirstPart())))
                 self.__highlightLinks(None)
-                self.__endLigneVerte()
+                self.__endLinkingLine()
                 self.updateAffichage()
         elif self.__activeGanttObject is None:
             self.deselectEverything()
@@ -184,7 +189,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__highlightLinks(None)
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
-                self.__endLigneVerte()
+                self.__endLinkingLine()
             else:
                 self.deselectEverything()
         self.__eventCanceled = False
