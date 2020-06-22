@@ -75,13 +75,18 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Pour savoir si un événement à été annulé.
         # Seul événement annulable : clic sur le canvas.
         self.__eventCanceled = False
-        
+
         # Binding d'events virtuels : ?
         self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
         self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+#        self.master.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+#        self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         
         # Définition des events virtuels :
-        self.can.bind_all("<<deselect-all>>", lambda e: self.__onClicSurCanvas())
+        self.can.bind_all("<<deselect-all>>",    lambda e: self.__onClicSurCanvas(), add=1)
+        self.can.bind_all("<<delete-selected>>", lambda e: self.__deleteSelected() , add=1)
+
+        # Définition des bindings inchangeables (souris):
         self.can.bind("<Button-1>", lambda e: self.__onClicSurCanvas())
         self.can.bind("<Motion>", self.__updateLinkingLine)
 
@@ -228,6 +233,28 @@ class AffichageGantt(AbstractDisplayedCalendar):
             else:
                 self.deselectEverything()
         self.__eventCanceled = False
+        self.can.focus_set()
+
+    def __deleteSelected(self):
+        """
+        Permet de supprimer les objets qui sont actuellements sélectionnés.
+        Pour le moment ne gère que les liens, mais gèrera à terme
+        les autres schedulables aussi.
+        """
+        for item in reversed(self.listeDisplayableItem):
+            if isinstance(item, AbstractLink):
+                if item.isSelected():
+                    print(item)
+                    item.delete()
+                    self.listeDisplayableItem.remove(item)
+            elif isinstance(item, ObjetGantt):
+                obj = item.getSchedulable()
+                if obj.isSelected():
+                    # Environ...
+                    item.delete()
+                    self.listeDisplayableItem.remove(item)
+                    
+        self.updateAffichage()
 
     def cancelEvent(self):
         self.__eventCanceled = True

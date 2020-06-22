@@ -86,12 +86,14 @@ class DependanceLink(AbstractLink):
             raise TypeError("Expected a boolean but got %s"%value)
         self.__selected = value
 
-#    def suppression(self):
-#        self.tacheD.master.listeLien.remove(self)
-#        self.tacheD.gestionRMenu()
-#        self.tacheF.gestionRMenu() # Savoir si on supprime l'option retirer lien A mettre avant suppression car on prends en compte le lien actuel
-#        self.tacheF.task.removeDependance(self.tacheD.task) # On retire la dépendance dans la tache
-#        self.tacheD.master.updateAffichage()
+    def isSelected(self):
+        """
+        Permet de savoir si le lien est sélectionné.
+        """
+        return self.__selected
+
+    def delete(self):
+        self.getPartB().getSchedulable().removeDependance(self.getPartA().getSchedulable())
 
     def inverserLaDependances(self):
         """

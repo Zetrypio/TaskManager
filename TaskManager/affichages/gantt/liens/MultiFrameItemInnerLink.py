@@ -34,7 +34,7 @@ class MultiFrameItemInnerLink(AbstractLink):
         Méthode qui permet de mettre la bonne couleur selon ce qu'il y a besoin.
         """
         # TODO : Couleur lors Ajout et Suppression.
-        if self.getPartA().getSchedulable().isSelected():
+        if self.isSelected():
             self.setColor("#0078FF")
             self.setStrokeWeight(3)
         else:
@@ -63,7 +63,9 @@ class MultiFrameItemInnerLink(AbstractLink):
         self._getAffichageGantt().cancelEvent()
         self.getPartA().getSchedulable().inverseSelection()
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
-        
+
+    def isSelected(self):
+        return self.getPartA().getSchedulable().isSelected()
 
     def updateColor(self, canvas):
         self.__setColor()

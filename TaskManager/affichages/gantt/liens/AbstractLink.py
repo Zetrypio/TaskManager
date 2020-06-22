@@ -60,6 +60,9 @@ class AbstractLink(IDisplayableItem):
         canvas.itemconfigure(self.getTag(),        fill=color, width = sw)
         canvas.itemconfigure(self.getTag()+"c", outline=color, width = sw)
 
+    def isSelected(self):
+        raise NotImplementedError
+
     def setColor(self, color):
         """
         Setter pour la couleur.
