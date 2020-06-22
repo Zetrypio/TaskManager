@@ -11,10 +11,7 @@ class SelectionParametrage(Frame):
 
         ## ZE treeview
         self.tv = Treeview(self)
-
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tv.yview)
-
-
 
     def onclick(self, e):
         # On récupère la cage qu'on a cliqué
