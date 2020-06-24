@@ -4,7 +4,8 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from ..AbstractPage import *
-from profil.BindingManager import *
+
+NOMFICHIER = "clavier"
 
 class PageClavier(AbstractPage):
     def __init__(self, master, **kwargs):
@@ -13,8 +14,6 @@ class PageClavier(AbstractPage):
         """
         # Note : self.master renvoie a ParametrageZone
         super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
-
-        self.__bindingManager = BindingManager(self.getApplication())
 
         ## Treeview
         self.__treeB = Treeview(self._mFrame, columns = ("2", "3"))
@@ -39,8 +38,13 @@ class PageClavier(AbstractPage):
         """
         Fonction qui rajoute toutes lignes de bind du treeview
         """
-        self.__bindingManager.bindingInsertToi(self.__treeB)
-        self.__treeB.insert("", END, "general", text="Général", open=True, tag="header")
+        #Parcours des sections (qui sont des ensembles)
+        """
+        self.__read(NOMFICHIER)
+        for section in self.getData().sections():
+            self.__treeB.insert("", END, section.capitalize(), text="Général", open=True, tag="header")
+        """
+        self.__treeB.insert("", END, iid="general", text="Général", open=True, tag="header")
         self.__treeB.insert("general", END, "moi", text = "Quitter", value=("Permet de quitter l'application", "Esc"))
         self.__treeB.insert("general", END, "moib", text = "Ouvrir", value=("Permet d'ouvrir un fichier", "Ctrl + O"))
         self.__treeB.tag_configure("header", font="arial 10 bold") # à voir si on garde une stylisation comme ça
