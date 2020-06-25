@@ -108,7 +108,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 if mode == "+" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
                                  or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
                     l.highlight("#FFAF00")
-                elif mode == "-":
+                elif mode == "-" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
+                                   or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
                     l.highlight("#FF3F3F")
                 else:
                     l.highlight(None)
