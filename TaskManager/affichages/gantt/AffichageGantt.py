@@ -93,8 +93,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
 
-        # TODO : Ordre des plans d'affichages des items/group tag.
-
     def deselectEverything(self):
         super().deselectEverything()
         for item in self.listeDisplayableItem:
