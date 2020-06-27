@@ -18,6 +18,7 @@ from MenuBar import *
 from preferences.fenetre import *
 from profil.data import *
 from profil.ProfilManager import *
+from profil.BindingManager import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -57,7 +58,8 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
-        self.__profilManager = ProfilManager(self)
+        self.__profilManager  = ProfilManager(self)
+        self.__BindingManager = BindingManager(self)
         self.prefFen = FenetrePreferences(self)
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
@@ -91,8 +93,11 @@ class Application(Frame):
         return self.__data
 
     def getProfilManager(self):
-        """ Retourne de Profil Manager """
+        """ Retourne le Profil Manager """
         return self.__profilManager
+    def getBindingManager(self):
+        """ Retourne le Profil Manager """
+        return self.__BindingManager
 
 
 

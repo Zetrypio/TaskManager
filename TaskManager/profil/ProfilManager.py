@@ -108,7 +108,7 @@ class ProfilManager:
         ## Lecture
         # On test si le fichier existe, sinon on le crée
         if not os.path.exists(NOMFICHIER):
-            with open(NOMFICHIER, "w") as f:
+            with open(NOMFICHIER, "w", encoding="utf-8") as f:
                 f.write(dumps({"user":{}, "profil":{}}, indent=4))
 
         self.__read()
@@ -132,11 +132,11 @@ class ProfilManager:
 
     def __read(self):
         # On lit le fichier
-        with open(NOMFICHIER,"r") as f:
+        with open(NOMFICHIER,"r", encoding="utf-8") as f:
             self.__donnee = load(f)
 
     def __write(self):
         # On écrit dessus
-        with open(NOMFICHIER, "w") as f:
+        with open(NOMFICHIER, "w", encoding="utf-8") as f:
             f.write(dumps(self.__donnee, indent=4))
 

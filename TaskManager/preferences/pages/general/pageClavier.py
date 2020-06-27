@@ -60,19 +60,19 @@ class PageClavier(AbstractPage):
         Fonction qui rajoute toutes lignes de bind du treeview
         """
         #Parcours des sections (qui sont des ensembles)
-        """
-        self.__read(NOMFICHIER)
-        for index, section in enumerate(self.getData().sections()):
+
+        for section in self.getBinding():
             self.__treeB.insert("", END,iid=section, text= section.capitalize(), open=True, tag="header")
-            self.__listeSection.append([])
-            k = self.getData()[section]
-            print(k)
-            #for key in self.getData()[section]:
-            #    self.__listeSection[index].append(self.__treeB.insert(section, END,iid = section + k, text = k, value=("Permet de quitter l'application", "Esc")))
+            for binding in self.getBinding()[section]:
+                bd = self.getBinding()[section][binding]
+                self.__treeB.insert(section, END,iid=section+binding, text=binding.capitalize(), value=(bd["description"], bd["bindings"]))
+                self.__listeSection.append([])
+
         """
         self.a = self.__treeB.insert("", END, iid="general", text="Général", open=True, tag="header")
         self.b = self.__treeB.insert("general", END, "moi", text = "Quitter", value=("Permet de quitter l'application", "Esc"))
         self.c = self.__treeB.insert("general", END, "moib", text = "Ouvrir", value=("Permet d'ouvrir un fichier", "Ctrl + O"))
+        """
         self.__treeB.tag_configure("header", font="arial 10 bold") # à voir si on garde une stylisation comme ça
 
     def __save(self):
@@ -105,5 +105,11 @@ class PageClavier(AbstractPage):
         self.__btnSave.config(state = mode)
         self.__champBind.config(state = mode)
         self.__listConflit.config(state = mode)
+
+    def getBinding(self):
+        """
+        @return un dictionnaire des bindings
+        """
+        return self.getApplication().getBindingManager().getBinding()
 
     def appliqueEffet(self, application):pass
