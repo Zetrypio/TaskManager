@@ -106,14 +106,14 @@ class Rectangle:
         Getter pour la largeur du rectangle.
         @return x2 - x1
         """
-        return self.__x2 - self.__x1
+        return abs(self.__x2 - self.__x1)
 
     def getHeight(self):
         """
         Getter pour la hauteur du rectangle.
         @return y2 - y1.
         """
-        return self.__y2 - self.__y1
+        return abs(self.__y2 - self.__y1)
 
     def moveby(self, amtX, amtY):
         """
