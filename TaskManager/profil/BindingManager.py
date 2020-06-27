@@ -2,6 +2,21 @@
 from json import *
 import os
 
+"""
+{
+    "affichage-gantt": {
+        "deselect-all": {
+            "description": "Déselectionner Tout",
+            "bindings": ["Escape"]
+            },
+        "delete-selected": {
+            "description": "Supprimer l'élément sélectionné",
+            "bindings": ["Delete", "Backspace"]
+            }
+        },
+    "General": {}
+}
+"""
 NOMFICHIER = "clavier"
 
 class BindingManager:
@@ -15,9 +30,9 @@ class BindingManager:
         self.__donneeUtil = None
         self.__donnee = None # Addition des 2 précédents
 
-        self.__read()
+        self.__load()
 
-    def __read(self, lireCfg = True, lireDef = True):
+    def __load(self, lireCfg = True, lireDef = True):
         """
         Permet de lire les fichiers
         @param lireCfg = <bool> lit ou pas le json de l'utilisateur
@@ -47,6 +62,16 @@ class BindingManager:
 
         self.__donnee = self.__donneeUtil
         print("Donnee :",self.__donnee)
+
+    def save(self, dico):
+        """
+        Fonction qui va écrire le json de l'utilisateur
+        @param dico : <dict> qui contient les nouvelles données
+        """
+        with open(self.getProfilFolder() + NOMFICHIER + ".json", "w", encoding="utf-8") as f:
+            f.write(dumps(dico, indent=4))
+
+        self.__load()
 
     def getProfilFolder(self):
         return self.getApplication().getProfilManager().getProfilFolder(None)

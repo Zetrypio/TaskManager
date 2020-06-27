@@ -18,7 +18,7 @@ class PageClavier(AbstractPage):
         ## Treeview
         self.__treeB = Treeview(self._mFrame, columns = ("2", "3"))
         self.__treeB.bind("<<TreeviewSelect>>", self.__selected)
-        self.__listeSection = []
+        self.__listeItemTreeview = []
         # La config :
         self.__treeB.heading("#0",text="Nom",anchor="w")
         self.__treeB.heading("2", text="Description",anchor="w")
@@ -31,7 +31,7 @@ class PageClavier(AbstractPage):
 
         # Frame du bas
         self.__frameBas = Frame(self._mFrame)
-        self.__btnSave = Button(self.__frameBas, text = "Sauverager", command = self.__save)
+        self.__btnSave = Button(self.__frameBas, text = "Sauvegarder", command = self.__save)
         self.__lbListConflit = Label(self.__frameBas, text = "Liste des conflits :")
         self.__listConflit = Listbox(self.__frameBas)
         self.__lbChampBind = Label(self.__frameBas, text="Combinaison de touches :")
@@ -65,22 +65,27 @@ class PageClavier(AbstractPage):
             self.__treeB.insert("", END,iid=section, text= section.capitalize(), open=True, tag="header")
             for binding in self.getBinding()[section]:
                 bd = self.getBinding()[section][binding]
-                self.__treeB.insert(section, END,iid=section+binding, text=binding.capitalize(), value=(bd["description"], bd["bindings"]))
-                self.__listeSection.append([])
+                self.__listeItemTreeview.append(self.__treeB.insert(section, END,iid=section+binding, text=binding.capitalize(), value=(bd["description"], bd["bindings"])))
 
-        """
-        self.a = self.__treeB.insert("", END, iid="general", text="Général", open=True, tag="header")
-        self.b = self.__treeB.insert("general", END, "moi", text = "Quitter", value=("Permet de quitter l'application", "Esc"))
-        self.c = self.__treeB.insert("general", END, "moib", text = "Ouvrir", value=("Permet d'ouvrir un fichier", "Ctrl + O"))
-        """
+
         self.__treeB.tag_configure("header", font="arial 10 bold") # à voir si on garde une stylisation comme ça
 
     def __save(self):
         """
         Fonction qui sauvegarde les préférences.
         """
-        self.__treeB.selection_set(self.a)
-        print("test :", "a")
+        # On commence par faire un dico
+        dict = self.getBinding()
+        # Ensuite on le change avec les nouvelles options
+        print(dict)
+        for item in self.__listeItemTreeview:
+            nom = self.__treeB.item(item, "text").lower()
+            section = item[0:len(item)-len(nom)] # retourne un str avec la section
+            binding = self.__treeB.item(item, "value")[1] # Les Raccourcis
+            print("section :",section, "\nnom :", nom, "\nbinding :", binding)
+            dict[section][nom]["bindings"] = binding
+
+        self.getApplication().getBindingManager().save(dict)
 
     def __reset(self):
         """
@@ -90,8 +95,7 @@ class PageClavier(AbstractPage):
 
     def __selected(self, e):
         elem = self.__treeB.focus()
-        if elem in self.__listeSection:
-            print("oui")
+        if elem in self.__listeItemTreeview:
             self.stateFrameBas("normal")
         else:
             self.stateFrameBas("disabled")
@@ -102,7 +106,6 @@ class PageClavier(AbstractPage):
         @param mode : <str> "normal" ou "disabled", else error
         """
         self.__btnReset.config(state = mode)
-        self.__btnSave.config(state = mode)
         self.__champBind.config(state = mode)
         self.__listConflit.config(state = mode)
 
