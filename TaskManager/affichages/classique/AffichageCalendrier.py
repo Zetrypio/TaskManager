@@ -64,7 +64,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     def __onClicSurFrame(self):
         self.deselectEverything()
 
-    def updateAffichage(self):
+    def updateAffichage(self, force = False):
         """
         Permet de mettre à jour l'affichage.
         @override #updateAffichage() in AbstractDisplayedCalendar

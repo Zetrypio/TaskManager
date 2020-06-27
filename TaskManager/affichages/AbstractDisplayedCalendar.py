@@ -500,11 +500,14 @@ class AbstractDisplayedCalendar(Frame):
         fen.activateandwait()
         return duree
 
-    def updateAffichage(self):
+    def updateAffichage(self, force = False):
         """
         Méthode pour mettre à jour l'affichage.
         Appelée lors de chaque changements avec
         setHeureDebut, setHeureFin, setJourDebut et setNbJour
+        @param force: Si mis sur True, force la mise à jour totale de l'affichage,
+        utile quand il y a des bugs sur les liens d'"interframmeInner link" quand
+        le nombre d'heures de la journée à été changé.
         """
         raise NotImplementedError
 

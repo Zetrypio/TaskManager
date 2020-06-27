@@ -244,14 +244,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         return self.listPanneau[:]
 
-    def updateAffichage(self):
+    def updateAffichage(self, force = False):
         """
         Permet de mettre à jour l'affichage.
         """
         # Faire un parcours des panneaux pour pouvoir effectuer les changements
         # sur TOUTES les disposition de calendriers (Gantt, calendrier classique etc)
         for panneau in self.listPanneau:
-            panneau.updateAffichage()
+            panneau.updateAffichage(force)
         
         if self.getJourDebut() == self.getDebutPeriode():
             self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)

@@ -86,7 +86,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                         p.setSelected(True if not control else not p.isSelected())
         self.updateAffichage()
 
-    def updateAffichage(self):
+    def updateAffichage(self, force = False):
         """
         Permet de mettre à jour l'affichage.
         """

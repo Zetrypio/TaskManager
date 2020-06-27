@@ -80,6 +80,7 @@ class CalendarZone(Frame):
         nbHeure = max2.hour - min.hour
         nb, pos = askAjouterHeure(min, max, nbHeure)
         self.gestionHeure(nb, pos)
+        self.getDonneeCalendrier().updateAffichage(force = True)
 
     def gestionHeure(self, nombreHeure, position):
         """

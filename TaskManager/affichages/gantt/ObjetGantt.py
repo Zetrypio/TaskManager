@@ -39,13 +39,17 @@ class ObjetGantt(AbstractMultiFrameItem):
             p[1].destroy()
         self.__parts = []
 
-    def redraw(self, canvas):
+    def redraw(self, canvas, force = False):
         """
         Permet de mettre à jour l'affichage de l'objet.
         @param canvas: le Canvas sur lequel dessiner l'objet (et son plus etc.)
         """
         # On se supprime :
         self.delete()
+
+        # Si on force le redessinement tout entier :
+        if force:
+            self.__parts = []
 
         # Et on se redessine :
         for part in self.getRepartition():
@@ -123,7 +127,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                 p[1].destroy()
                 self.__parts.remove(p)
 
-        # Mise à jour des liens d'intra-multi-Frame-Item.        
+        # Mise à jour des liens d'intra-multi-Frame-Item.
         self.__liens = []
         self.__parts.sort(key=lambda p:p[0].getDebut())
         for i in range(len(self.__parts)-1):

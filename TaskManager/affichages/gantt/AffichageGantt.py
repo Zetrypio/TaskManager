@@ -329,7 +329,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         return max(self.can.winfo_height(), int(self.can.cget("scrollregion").split(" ")[3]))
 
-    def updateAffichage(self):
+    def updateAffichage(self, force = False):
         """
         Mise à jour graphique.
         """
@@ -341,7 +341,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             # On réaffiche touououououout :
             self.__precalculer()
             self.__afficherLesJours()
-            self.__afficherLesTaches()
+            self.__afficherLesTaches(force)
             self.__ordonnerAffichage()
 
             # On update la zone scrollable :
@@ -490,7 +490,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                                  width = w,
                                  text=JOUR[(jour+self.getJourDebut().weekday())%7])
 
-    def __afficherLesTaches(self):
+    def __afficherLesTaches(self, force = False):
         """
         Permet d'afficher les tâches et autres schedulables et les liens.
         @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
@@ -499,7 +499,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
-            displayable.redraw(self.can)
+            displayable.redraw(self.can, force)
 
     def __ordonnerAffichage(self):
         """
