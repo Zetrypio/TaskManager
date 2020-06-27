@@ -93,7 +93,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
 
-        # TODO : RMenu des liens
+        # TODO : Ordre des plans d'affichages des items/group tag.
 
     def deselectEverything(self):
         super().deselectEverything()
@@ -114,6 +114,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 else:
                     l.highlight(None)
         self.updateColor()
+        self.__ordonnerAffichage()
 
     def beginLinkingLine(self, objGantt, mode="+"):
         """
@@ -227,12 +228,12 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Méthode exécutée quand on appuie sur échappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
         """
-        self.__highlightLinks(None)
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
                 self.__endLinkingLine()
             else:
                 self.deselectEverything()
+        self.__highlightLinks(None)
         self.__eventCanceled = False
         self.can.focus_set()
 
@@ -285,130 +286,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @return ParametreAffichage.
         """
         return self.master.master.getParametreAffichage() # Skip le Notebook
-
-#    def __trouverTags(self, pos):
-#        # On parcours les items
-#        for item in self.__trouverItems(pos):
-#            # On déduit leurs tags :
-#            tags = self.can.gettags(item)
-#
-#            # Si il n'existent pas :
-#            if tags is None or len(tags) == 0:
-#                continue
-#            yield from tags
-
-#    def _deselectionnerLesLiens(self):
-#        # On cherche ce qui fait le trait vert
-#        chercheur = self.getQuiCherche()
-#        
-#        # Si c'est lui qui existe, c'est lui qui est annulé:
-#        if chercheur is not None:
-#            chercheur.jeCherche = False
-#
-#        # Sinon c'est la désélection des liens si on clique ailleurs
-#        else:
-#            for lien in self.getLiensSelectionnes():
-#                lien.select = False
-
-#    def __multiSelection(self, event):
-#        """Ajoute ou enlève les liens à la sélection."""
-#        # Petite vérification élémentaire
-#        if self.getDonneeCalendrier().getPanneauActif() != self:
-#            return
-#
-#        # On corrige la position selon le scroll
-#        pos = self.getScrolledPosition(event)
-#
-#        # Test si on est sur le bandeau des jours
-#        if pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-#            indice = pos.x//self.tailleColonne
-#            jour = self.getJourDebut() + datetime.timedelta(days=indice)
-#            self.selectTaskJour(jour, control=True)
-#            return
-#
-#        # On boucle sur les items qui sont on niveau du clic :
-#        for tag in self.__trouverTags(pos):
-#            # Pour tout les liens, on cherche lequel est le bon :
-#            for lien in self.listeLien:
-#                if lien.ID_LIEN == tag:
-#                    # Si il est bon : on inverse la sélection du lien.
-#                    lien.changeSelect()
-
-#    def escapePressed(self, event):
-#        # Petite vérification élémentaire
-#        if self.getDonneeCalendrier().getPanneauActif() != self:
-#            return
-#        super().escapePressed(event)
-#        # On retourne sur le mode par défaut :
-#        self.mode = ""
-#        self._deselectionnerLesLiens()
-#        self.updateAffichage()
-#
-#    def mouseClicked(self, event):
-#        # Petite vérification élémentaire
-#        if self.getDonneeCalendrier().getPanneauActif() != self:
-#            return
-#        # On corrige la position selon le scroll
-#        pos = self.getScrolledPosition(event)
-#        
-#        # On cherche à détruire le lien si on est dans le mode adéquat
-#        if self.mode == "delDep":
-#            for tag in self.__trouverTags(pos):
-#                if tag == "top":
-#                    continue
-#                # Détection des lien :
-#                for lien in self.listeLien[:]:
-#                    if lien.ID_LIEN == tag:
-#                        lien.cliqueSuppr()
-#
-#        # Si on clique que un bouton de changement de jour (on ne déselectionne pas) pour la ligne verte
-#        if event.widget in self.__getBtnChangeJour():
-#            self.updateAffichage()
-#            return
-#
-#        # On retourne sur le mode par défaut :
-#        self.mode = ""
-#        self._deselectionnerLesLiens()
-#
-#        # Si c'est pas le canvas, on s'en fiche (on joue le truc qu'on a cliqué) :
-#        if event.widget != self.can or event.widget in self.listeTaskAffichees:
-#            # Mise à jour graphique :
-#            self.updateAffichage()
-#            return
-#        # On désélectionne les tâches si c'est effectivement pas une tache sur quoi on a cliqué (condition ci dessus)
-#        super().mouseClicked(event)
-#
-#        # Test si on est sur le bandeau des jours
-#        if pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-#            indice = pos.x//self.tailleColonne
-#            jour = self.getJourDebut() + datetime.timedelta(days=indice)
-#            self.selectTaskJour(jour)
-#            return
-#
-#        for tag in self.__trouverTags(pos):
-#            # Détection des lien :
-#            for lien in self.listeLien:
-#                if lien.ID_LIEN == tag:
-#                    lien.select = True
-#            # Détection des plus :
-#            for t in self.listeTaskAffichees:
-#                if t.ID_PLUS == tag:
-#                    t.addDependance()
-#
-#        # Mise à jour graphique :
-#        self.updateAffichage()
-#
-#    def __suppr(self, event): # TODO : ce serait bien de supprimer des tâches aussi =)
-#        for lien in self.getLiensSelectionnes():
-#            lien.suppression()
-#
-#    def getLiensSelectionnes(self):
-#        return [lien for lien in self.listeLien if lien.select]
-#
-#    def getQuiCherche(self): # retourne la tache qui est en train de chercher une dépendance
-#        for tache in self.listeTaskAffichees:
-#            if tache.jeCherche == True:
-#                return tache
 
     def getNbTacheJour(self, jour):
         """
@@ -467,7 +344,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             self.__precalculer()
             self.__afficherLesJours()
             self.__afficherLesTaches()
-            self.__afficherLesDependances()
+            self.__ordonnerAffichage()
 
             # On update la zone scrollable :
             w = self.can.winfo_width()
@@ -626,16 +503,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can)
 
-    def __afficherLesDependances(self):
+    def __ordonnerAffichage(self):
         """
-        Au final cette méthode n'affiche pas les dépendances...
-        Elle ne gère que l'ordre des plans d'affichage.
-        @deprecated: Va changer de nom.
+        Cette méthode gère l'ordre des plans d'affichage.
         """
 
         # Ordre d'affichage
-        self.can.tag_raise("top")
-        self.can.tag_raise("topLine")
-        self.can.tag_raise("topPlus")
+        self.can.tag_raise("line")
+        self.can.tag_raise("highlight")
+        self.can.tag_raise("plus")
 
 from .ObjetGantt import *

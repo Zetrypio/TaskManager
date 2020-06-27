@@ -42,21 +42,23 @@ class DependanceLink(AbstractLink):
         # Création de la dépendance :
         partB.getSchedulable().addDependance(partA.getSchedulable())
 
-    def __setColor(self):
-        # TODO : Couleur lors Ajout et Suppression.
-        if self.__selected:
-            self.setColor("#0078FF")
-            self.setStrokeWeight(3)
+    def highlight(self, color):
+        """
+        Permet de surligner ce lien d'une couleur donnée.
+        @param color: la couleur à mettre.
+        """
+        if color is not None:
+            super().highlight(color)
+        elif self.__selected:
+            super().highlight("#0078FF")
         else:
-            self.setColor("black")
-            self.setStrokeWeight(2)
+            super().highlight(None)
 
     def redraw(self, canvas):
         """
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
         """
-        self.__setColor()
         super().redraw(canvas)
 
         # Ajouter infobulle :
@@ -72,10 +74,6 @@ class DependanceLink(AbstractLink):
         self._getAffichageGantt().cancelEvent()
         self.__selected = not self.__selected
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
-
-    def updateColor(self, canvas):
-        self.__setColor()
-        super().updateColor(canvas)
 
     def setSelected(self, value):
         """

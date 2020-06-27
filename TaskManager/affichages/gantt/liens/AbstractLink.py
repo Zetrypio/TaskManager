@@ -60,6 +60,14 @@ class AbstractLink(IDisplayableItem):
         canvas.itemconfigure(self.getTag(),        fill=color, width = sw)
         canvas.itemconfigure(self.getTag()+"c", outline=color, width = sw)
 
+        # Update du tag :
+        if self.__highlight:
+            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line", "highlight"))
+            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line", "highlight"))
+        else:
+            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line"))
+            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line"))
+
     def isSelected(self):
         raise NotImplementedError
 
@@ -147,40 +155,40 @@ class AbstractLink(IDisplayableItem):
                               rectA.getX1() + r,
                               rectA.getY2()-1,
                               start=-90, extent=180, style=ARC,
-                              tag=(self.getTag(), self.getTag()+"c"))
+                              tag=(self.getTag(), self.getTag()+"c", "line"))
             # Ligne horizontale vers la gauche à la suite de l'arc :
             canvas.create_line(rectA.getX1(),
                                rectA.getY2()-1,
                                rectB.getX2()-6, # -6 Pour la flèche
                                rectA.getY2()-1,
-                               tag=self.getTag())
+                               tag=(self.getTag(), self.getTag()+"l", "line"))
             # Premier quart de cercle :
             canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
                               rectA.getY2()-1,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectA.getY2() + r*2,
                               start=90, extent=90, style=ARC,
-                              tag=(self.getTag(), self.getTag()+"c"))
+                              tag=(self.getTag(), self.getTag()+"c", "line"))
             # Ligne verticale vers le bas à la suite de l'arc :
             canvas.create_line(rectB.getX2() - r-6, # -6 Pour la flèche
                                rectA.getY2() + r,
                                rectB.getX2() - r-6, # -6 Pour la flèche
                                rectB.getCenterY() - r,
-                               tag=self.getTag())
+                               tag=(self.getTag(), self.getTag()+"l", "line"))
             # Deuxième arc de cercle qui fini :
             canvas.create_arc(rectB.getX2() - r-6, # -6 Pour la flèche
                               rectB.getCenterY() - r*2,
                               rectB.getX2() + r-6, # -6 Pour la flèche
                               rectB.getCenterY(),
                               start=180, extent=90, style=ARC,
-                              tag=(self.getTag(), self.getTag()+"c"))
+                              tag=(self.getTag(), self.getTag()+"c", "line"))
             # Petite ligne finale pour avoir le bout de la flèche :
             canvas.create_line(rectB.getX2()-6, # -6 Pour la flèche
                                rectB.getCenterY(),
                                rectB.getX2(),
                                rectB.getCenterY(),
-                               arrow = LAST, tag=self.getTag())
-            pass # TODO
+                               arrow = LAST,
+                               tag=(self.getTag(), self.getTag()+"l", "line"))
         ####################
         # Deuxième Façon : #
         ####################
@@ -191,7 +199,7 @@ class AbstractLink(IDisplayableItem):
             y2 = rectB.getCenterY()
             self.__drawSinus(x1, y1, x2, y2) # Le -8 est ? pour que le bout de la flèche soit droite.
             self.__points.append([x2, y2])
-            canvas.create_line(*self.__points, arrow = LAST, tag=self.getTag())
+            canvas.create_line(*self.__points, arrow = LAST, tag=(self.getTag(), self.getTag()+"l", "line"))
         #####################
         # Troisième façon : #
         #####################
@@ -207,7 +215,7 @@ class AbstractLink(IDisplayableItem):
             self.__drawSinus(x1, y1, x2,     y2)
             self.__drawSinus(x3, y3, x4 - 8, y4) # Le -8 est pour que le bout de la flèche soit droite.
             self.__points.append([x4, y4])
-            canvas.create_line(*self.__points, arrow = LAST, tag=self.getTag())
+            canvas.create_line(*self.__points, arrow = LAST, tag=(self.getTag(), self.getTag()+"l", "line"))
 
         #############
         # Couleur : #

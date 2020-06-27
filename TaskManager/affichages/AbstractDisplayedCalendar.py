@@ -53,6 +53,9 @@ class AbstractDisplayedCalendar(Frame):
         raise NotImplementedError
 
     def deselectEverything(self):
+        """
+        Méthode qui permet de désélectionner tout ce qui l'est actuellement.
+        """
         for s in self.listeTask: # Getter ?
             s.setSelected(False)
         self.getDonneeCalendrier().updateColor()
@@ -75,14 +78,6 @@ class AbstractDisplayedCalendar(Frame):
 #        Possible à utiliser dans une redéfinition de la méthode, dans les sous-classes.
 #        """
 #        self.deselect()
-#
-#    def updateTaskColor(self):
-#        """
-#        @Deprecated : sera supprimée ou alors considérablement changé
-#        lors des nouvelles tâches en gantt.
-#        """
-#        for tache in self.listeTaskAffichees:
-#            tache.updateColor()
 
     def onIntervertir(self):pass # Juste pour qu'elle existe # Sera considérablement changé
 
@@ -354,7 +349,7 @@ class AbstractDisplayedCalendar(Frame):
         @bug: Il semblerait que cela ne fonctionne pas correctement.
         @param jourA: début du générateur, sera yield.
         @param jourB: fin du générateur, sera yield si et
-        seulementsi last est sur True (défaut).
+        seulement si last est sur True (défaut).
         @param last = True: True si on doit inclure le jour de fin.
         """
         if jourA is not None and jourB is not None:
