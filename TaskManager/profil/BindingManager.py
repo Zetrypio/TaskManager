@@ -73,11 +73,26 @@ class BindingManager:
 
         self.__load()
 
+    def getBind(self, path, section, bindingVirtuel):
+        """
+        Fonction qui va lire une ligne précise du fichier indiqué par path
+
+        @param path : <str> chemin ver le fichier
+        @param section : <str> nom du dictionnaire à consulter
+        @param bindingVirtuel : <str> nom du binding virtuel à consulter
+
+        @return bind : <str> contient le bind
+        """
+        with open(path + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
+            donnee = load(f)
+
+        return donnee[section][bindingVirtuel]["bindings"]
+
     def getProfilFolder(self):
         return self.getApplication().getProfilManager().getProfilFolder(None)
 
     def getApplication(self):
         return self.__app
 
-    def getBinding(self):
+    def getBindings(self):
         return self.__donnee
