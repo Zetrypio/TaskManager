@@ -70,7 +70,7 @@ class PageClavier(AbstractPage):
             self.__treeB.insert("", END,iid=section, text= section.capitalize(), open=True, tag="header")
             for binding in self.getBindings()[section]:
                 bd = self.getBindings()[section][binding]
-                self.__listeItemTreeview.append(self.__treeB.insert(section, END,iid=section+binding, text=binding.capitalize(), value=(bd["description"], bd["bindings"])))
+                self.__listeItemTreeview.append(self.__treeB.insert(section, END,iid=section+binding, text=binding.capitalize(), value=(bd["description"], "; ".join(bd["bindings"]))))
 
 
         self.__treeB.tag_configure("header", font="arial 10 bold") # à voir si on garde une stylisation comme ça
@@ -79,13 +79,13 @@ class PageClavier(AbstractPage):
         """
         Fonction qui va chercher des info sur la ligne du treeview qu'on lui donne
         @param item      : <item (ligne Treeview)>
-        @return section  : <str> nom de la section du bind
-        @return nom      : <str> nom du binding virtuel
-        @return binding  : <str> chaine de caractère du bind
+        @return section  : <str>  nom de la section du bind
+        @return nom      : <str>  nom du binding virtuel
+        @return binding  : <list> chaine de caractère du bind
         """
         nom = self.__treeB.item(item, "text").lower()
         section = item[0:len(item)-len(nom)] # retourne un str avec la section
-        binding = self.__treeB.item(item, "value")[1] # Les Raccourcis
+        binding = self.__treeB.item(item, "value")[1].split('; ') # Les Raccourcis
         return section, nom, binding
 
     def __save(self):
@@ -141,7 +141,7 @@ class PageClavier(AbstractPage):
 
     def __focusOut(self):
         """
-        Fonction qui va réécrir les lignes du treeview
+        Fonction qui va réécrir les lignes du treeview, dès que le focus du Entry est perdu
         """
         if self.__lineSelectedTreeview in self.__listeItemTreeview:
             self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])

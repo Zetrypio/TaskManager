@@ -61,7 +61,6 @@ class BindingManager:
                 self.__donneeUtil[key] = self.__donneePref[key]
 
         self.__donnee = self.__donneeUtil
-        print("Donnee :",self.__donnee)
 
     def save(self, dico):
         """
