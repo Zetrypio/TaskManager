@@ -16,6 +16,7 @@ class PageClavier(AbstractPage):
         # Note : self.master renvoie a ParametrageZone
         super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
 
+        self.__lineSelectedTreeview = None
         ## Treeview
         self.__treeB = Treeview(self._mFrame, columns = ("2", "3"))
         self.__treeB.bind("<<TreeviewSelect>>", self.__selected)
@@ -30,15 +31,17 @@ class PageClavier(AbstractPage):
         self.__treeB.configure(yscrollcommand = self.__scrollbar.set)
 
 
-        # Frame du bas
+        ## Frame du bas
         self.__frameBas = Frame(self._mFrame)
         self.__btnSave = Button(self.__frameBas, text = "Sauvegarder", command = self.__save)
         self.__lbListConflit = Label(self.__frameBas, text = "Liste des conflits :")
         self.__listConflit = Listbox(self.__frameBas)
         self.__lbChampBind = Label(self.__frameBas, text="Combinaison de touches :")
-        self.__varEntry = StringVar()
-        self.__champBind = Entry(self.__frameBas, textvariable = self.__varEntry)
         self.__btnReset = Button(self.__frameBas, text = "Reset", command = self.__reset)
+        # Le champ d'entrée
+        self.__varEntry = StringVar()
+        okCommand = self._mFrame.register(self.__focusOut)
+        self.__champBind = Entry(self.__frameBas, textvariable = self.__varEntry, validatecommand=okCommand, validate="focusout", state  ="#A83FC5")
 
         # Affichage
         self.__frameBas.pack(side = BOTTOM, fill = BOTH)
@@ -117,10 +120,11 @@ class PageClavier(AbstractPage):
             path = "Ressources/prefs/"
         # On applique le changement
         self.__varEntry.set(self.getBindingManager().getBind(path, s, n))
+        self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
 
 
     def __selected(self, e):
-        elem = self.__treeB.focus()
+        elem = self.__lineSelectedTreeview = self.__treeB.focus()
         if elem in self.__listeItemTreeview:
             self.stateFrameBas("normal")
         else:
@@ -134,6 +138,15 @@ class PageClavier(AbstractPage):
         self.__btnReset.config(state = mode)
         self.__champBind.config(state = mode)
         self.__listConflit.config(state = mode)
+
+    def __focusOut(self):
+        """
+        Fonction qui va réécrir les lignes du treeview
+        """
+        if self.__lineSelectedTreeview in self.__listeItemTreeview:
+            self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])
+
+        return True
 
     def getBindings(self):
         """
