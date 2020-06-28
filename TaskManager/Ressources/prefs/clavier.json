@@ -1,0 +1,13 @@
+{
+    "affichage-gantt": {
+        "deselect-all": {
+            "description": "Déselectionner Tout",
+            "bindings": ["Escape"]
+            },
+        "delete-selected": {
+            "description": "Supprimer l'élément sélectionné",
+            "bindings": ["Delete", "Backspace"]
+            }
+        },
+    "General": {}
+}
