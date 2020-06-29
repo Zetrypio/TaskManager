@@ -108,7 +108,7 @@ class PageClavier(AbstractPage):
         """
         Fonction qui réattribut un ancien binding choisi par askResetBind
         """
-        binding = askResetBind() # renvoie "custom", "defaut" ou None
+        binding = askResetBind() # renvoie "custom", "defaut", "vide" ou None
         if binding is None:
             return
         else: # Sinon on va chercher quelle ligne on doit changer
@@ -119,15 +119,25 @@ class PageClavier(AbstractPage):
             path = self.getProfilFolder()
         elif binding == "defaut":
             path = "Ressources/prefs/"
+        elif binding == "vide":
+            self.__varEntry.set("")
+            self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
+            return
         # On applique le changement
         self.__varEntry.set(self.getBindingManager().getBind(path, s, n))
         self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
 
 
     def __selected(self, e):
+        """
+        Fonction qui réagit lorsqu'une ligne du treeview est sélectionné
+        Ça gère si on doit faire qqch avec le frame du bas
+        + Si c'est une ligne de binding on l'Entry s'auto set avec le binding
+        """
         elem = self.__lineSelectedTreeview = self.__treeB.focus()
         if elem in self.__listeItemTreeview:
             self.__stateFrameBas("normal")
+            self.__varEntry.set(self.__treeB.item(elem, 'value')[1])
         else:
             self.__stateFrameBas("disabled")
 
@@ -163,8 +173,6 @@ class PageClavier(AbstractPage):
         # On parcours les bindings pour trouver correspondances
         for line in self.__listeItemTreeview:
             if line != item:
-                print("oui")
-                print(set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem))
                 if set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem) != set():
                     sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
                     # On ajoute le nom du Binding virtuel à la liste
