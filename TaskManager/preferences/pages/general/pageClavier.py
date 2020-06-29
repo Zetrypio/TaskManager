@@ -58,7 +58,7 @@ class PageClavier(AbstractPage):
 
         # Final
         self.fillTreeView()
-        self.stateFrameBas("disabled")
+        self.__stateFrameBas("disabled")
 
     def fillTreeView(self):
         """
@@ -126,11 +126,11 @@ class PageClavier(AbstractPage):
     def __selected(self, e):
         elem = self.__lineSelectedTreeview = self.__treeB.focus()
         if elem in self.__listeItemTreeview:
-            self.stateFrameBas("normal")
+            self.__stateFrameBas("normal")
         else:
-            self.stateFrameBas("disabled")
+            self.__stateFrameBas("disabled")
 
-    def stateFrameBas(self, mode):
+    def __stateFrameBas(self, mode):
         """
         Fonction qui s'occupe de able ou disable les option du frame du bas
         @param mode : <str> "normal" ou "disabled", else error
