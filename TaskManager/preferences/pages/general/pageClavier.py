@@ -35,7 +35,8 @@ class PageClavier(AbstractPage):
         self.__frameBas = Frame(self._mFrame)
         self.__btnSave = Button(self.__frameBas, text = "Sauvegarder", command = self.__save)
         self.__lbListConflit = Label(self.__frameBas, text = "Liste des conflits :")
-        self.__listConflit = Listbox(self.__frameBas)
+        self.__varListConflit = StringVar()
+        self.__listConflit = Listbox(self.__frameBas, listvariable = self.__varListConflit)
         self.__lbChampBind = Label(self.__frameBas, text="Combinaison de touches :")
         self.__btnReset = Button(self.__frameBas, text = "Reset", command = self.__reset)
         # Le champ d'entrée
@@ -46,7 +47,7 @@ class PageClavier(AbstractPage):
         # Affichage
         self.__frameBas.pack(side = BOTTOM, fill = BOTH)
         self.__lbListConflit.pack(side = TOP, anchor = "e", padx=28)
-        self.__listConflit.pack(side = RIGHT, fill = Y, padx=3)
+        self.__listConflit.pack(side = RIGHT, fill = BOTH,expand = YES, padx=3)
         self.__lbChampBind.pack(side = TOP, fill = Y, anchor = "w")
         self.__champBind.pack(side = TOP, fill = X)
         self.__btnSave.pack(side = RIGHT)
@@ -144,9 +145,36 @@ class PageClavier(AbstractPage):
         Fonction qui va réécrir les lignes du treeview, dès que le focus du Entry est perdu
         """
         if self.__lineSelectedTreeview in self.__listeItemTreeview:
-            self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])
-
+            if self.__varEntry.get() != "":
+                # on set la value de l'item selectionné en [sa description, le texte de l'entry]
+                self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])
+                # on check les conflits
+                self.__checkConflit(self.__lineSelectedTreeview)
         return True
+
+    def __checkConflit(self, item):
+        """
+        Fonction qui cherche si le binding actuelle est en conflit avec d'autres bindings
+        @param item : <item (ligne de Treeview)> celui qui vient d'être changé
+        """
+        # On fait une liste pour aller dans le Listbox
+        l = []
+        sectionItem, nomItem, bindingItem = self.__valueLineTV(item)
+        # On parcours les bindings pour trouver correspondances
+        for line in self.__listeItemTreeview:
+            if line != item:
+                print("oui")
+                print(set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem))
+                if set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem) != set():
+                    sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
+                    # On ajoute le nom du Binding virtuel à la liste
+                    l.append(sectionConflit + " - " + nomConflit)
+
+        # S'il y a qqch dans la liste on rajoute celui qu'on fait pour une meilleur lisibilité
+        if l:
+            l.append(sectionItem + " - " + nomItem)
+        # On connecte notre liste à la listbox
+        self.__varListConflit.set(l)
 
     def getBindings(self):
         """
