@@ -168,8 +168,9 @@ class PageClavier(AbstractPage):
         Fonction qui cherche si le binding actuelle est en conflit avec d'autres bindings
         @param item : <item (ligne de Treeview)> celui qui vient d'être changé
         """
+        # On retire le tag "conflit" à tout le monde
         for line in self.__listeItemTreeview:
-            if self.__treeB.tag_has("conflict",line):
+            if self.__treeB.tag_has("conflict", line):
                 nouvTags = list(self.__treeB.item(line, "tags")).remove("conflict")
                 if nouvTags is None:
                     nouvTags = []
@@ -179,16 +180,23 @@ class PageClavier(AbstractPage):
         sectionItem, nomItem, bindingItem = self.__valueLineTV(item)
         # On parcours les bindings pour trouver correspondances
         for line in self.__listeItemTreeview:
-                if set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem) != set():
+            bindingConflictuel = set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem)
+            if bindingConflictuel != set() and bindingConflictuel != set(""):
                     if line != item:
                         sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
                         # On ajoute le nom du Binding virtuel à la liste
                         l.append(sectionConflit + " - " + nomConflit)
-                    self.__treeB.item(line, tag="conflict")
-                    self.__treeB.tag_configure("conflict", foreground="red")
+                        # On ajoute le tag "conflit à la liste
+                        t = list(self.__treeB.item(line, "tags"))
+                        t.append("conflict")
+                        self.__treeB.item(line, tag=t)
+                        self.__treeB.tag_configure("conflict", foreground="red")
 
         # S'il y a qqch dans la liste on rajoute celui qu'on fait pour une meilleur lisibilité
         if l:
+            t = list(self.__treeB.item(item, "tags"))
+            t.append("conflict")
+            self.__treeB.item(item, tag=t)
             l.append(sectionItem + " - " + nomItem)
         # On connecte notre liste à la listbox
         self.__varListConflit.set(l)
