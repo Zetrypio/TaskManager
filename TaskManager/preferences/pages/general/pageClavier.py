@@ -137,6 +137,7 @@ class PageClavier(AbstractPage):
         elem = self.__lineSelectedTreeview = self.__treeB.focus()
         if elem in self.__listeItemTreeview:
             self.__stateFrameBas("normal")
+            self.__checkConflit(elem)
             self.__varEntry.set(self.__treeB.item(elem, 'value')[1])
         else:
             self.__stateFrameBas("disabled")
@@ -167,16 +168,24 @@ class PageClavier(AbstractPage):
         Fonction qui cherche si le binding actuelle est en conflit avec d'autres bindings
         @param item : <item (ligne de Treeview)> celui qui vient d'être changé
         """
+        for line in self.__listeItemTreeview:
+            if self.__treeB.tag_has("conflict",line):
+                nouvTags = list(self.__treeB.item(line, "tags")).remove("conflict")
+                if nouvTags is None:
+                    nouvTags = []
+                self.__treeB.item(line, tags=nouvTags)
         # On fait une liste pour aller dans le Listbox
         l = []
         sectionItem, nomItem, bindingItem = self.__valueLineTV(item)
         # On parcours les bindings pour trouver correspondances
         for line in self.__listeItemTreeview:
-            if line != item:
                 if set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem) != set():
-                    sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
-                    # On ajoute le nom du Binding virtuel à la liste
-                    l.append(sectionConflit + " - " + nomConflit)
+                    if line != item:
+                        sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
+                        # On ajoute le nom du Binding virtuel à la liste
+                        l.append(sectionConflit + " - " + nomConflit)
+                    self.__treeB.item(line, tag="conflict")
+                    self.__treeB.tag_configure("conflict", foreground="red")
 
         # S'il y a qqch dans la liste on rajoute celui qu'on fait pour une meilleur lisibilité
         if l:

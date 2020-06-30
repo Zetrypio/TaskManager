@@ -1,5 +1,5 @@
 {
-    "affichage-gantt": {
+    "Affichage-gantt": {
         "deselect-all": {
             "description": "Déselectionner Tout",
             "bindings": ["Escape"]
@@ -9,5 +9,10 @@
             "bindings": ["Delete", "Backspace"]
             }
         },
-    "General": {}
+    "General": {
+	"selectionner-jour": {
+	    "description": "Permert de sélectionner un jour entier avec toutes ces taches",
+	    "bindings": []
+	    }
+	}
 }
