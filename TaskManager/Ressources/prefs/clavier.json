@@ -13,6 +13,16 @@
 	"selectionner-jour": {
 	    "description": "Permert de sélectionner un jour entier avec toutes ces taches",
 	    "bindings": []
-	    }
-	}
+            },
+        "selectionner-groupe": {
+            "description": "Permet de sélectionner un groupe entier",
+            "bindings": []
+            }
+        },
+    "Affichage-classique": {
+        "deselect-all": {
+            "description": "Déselectionner Tout",
+            "bindings": ["Escape"]
+            }
+        }
 }

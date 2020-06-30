@@ -55,10 +55,18 @@ class BindingManager:
                 with open("Ressources/prefs/" + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
                     self.__donneePref = load(f)
 
-
-        for key in self.__donneePref:
-            if not key in self.__donneeUtil:
-                self.__donneeUtil[key] = self.__donneePref[key]
+        ## Fusion des 2 dicts
+        # Pour les section manquante
+        for section in self.__donneePref:
+            # Si elle n'y est pas, on la rajoute entièrement et c'est fini
+            if not section in self.__donneeUtil:
+                self.__donneeUtil[section] = self.__donneePref[section]
+                break
+            # Pour les binds manquants :
+            for bind in self.__donneePref[section]:
+                if not bind in self.__donneeUtil[section]:
+                    # On les rajoute un à un
+                    self.__donneeUtil[section][bind] = self.__donneePref[section][bind]
 
         self.__donnee = self.__donneeUtil
 
