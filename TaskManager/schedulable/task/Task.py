@@ -446,6 +446,9 @@ class Task(AbstractSchedulableObject):
                 listeGroupe.append(groupe)
         return listeGroupes
 
-#    def reverseStateValide(self):
-#        self.__statutValideManuel = not self.__statutValideManuel
-#        self.updateStatut()
+    def setDone(self, value):
+        """
+        Setter pour dire si la tâche est validée.
+        """
+        self.__done = value
+        self.updateStatut()

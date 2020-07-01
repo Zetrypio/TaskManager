@@ -331,29 +331,32 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        for tache in self.getDonneeCalendrier().getSchedulable():
+        for tache in self.getDonneeCalendrier().listeTask:#.getSchedulable():
             if tache.isSelected():
                 tache.setDone(True)
         self.getApplication().getTaskEditor().redessiner()
 
     def avancementJourFini(self):
         """
-        Doc ?
+        Valide toutes les tâches qui sont terminées aujourd'hui.
         """
-        maintenantJour = datetime.datetime.combine(datetime.date.today(), datetime.time(23,59,59))
-        self.getPeriodeActive().setDateStatut(maintenantJour)
+        now = datetime.date.today()
         for tache in self.getDonneeCalendrier().listeTask:
+            if tache.getFin().date() == now:
+                tache.setDone(True)
             tache.updateStatut()
-
+        self.getApplication().getTaskEditor().redessiner()
 
     def avancementNormal(self):
         """
-        Doc ?
+        Valide TOUTES les tâches qui sont avant maintenant.
         """
-        maintenant = datetime.datetime.now()
-        self.getPeriodeActive().setDateStatut(maintenant)
-        for tache in self.getDonneeCalendrier().listeTask:
-            tache.updateStatut()
+        now = datetime.datetime.now()
+        for schedulable in self.getDonneeCalendrier().listeTask:
+            if schedulable.getFin() <= now:
+                schedulable.setDone(True)
+            schedulable.updateStatut()
+        self.getApplication().getTaskEditor().redessiner()
 
     "" # Pour le repli de code je rappelle
 
