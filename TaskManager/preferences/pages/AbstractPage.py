@@ -12,6 +12,7 @@ class AbstractPage(Frame):
         self.iidParent = iid_parent
         self.iid = self.getParent()+"-"+self.getNom()
 
+        self._listData = [] # C'est une liste qui contient toutes les variables de controles à enregistrer + les key pour le dico [variable, text]
 
         self._mFrame = Frame(self)
         self.__lbTitre = Label(self, text=self.nom)
@@ -55,6 +56,30 @@ class AbstractPage(Frame):
                 self.getData().read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
         elif lireDef and not lireCfg:
             self.getData().read("Ressources/prefs/"+nom+".def")
+
+    def _makeDictAndSave(self, nomFichier):
+        """
+        Fonction qui fabrique un dictionnaire à partir des values de _listData
+        @param nomFichier : <str> nom de la superPage pour en faire le nom du fichier
+        @param section    : <str> nom de la page courante
+        """
+        section = self.getNom()
+        print("profil FOlder", self.getParent())
+        pathFile = self.getProfilFolder() + nomFichier + ".cfg"
+        # On cherche s'il y a des info dedans avant de tout overrider
+        if os.path.exists(pathFile):
+            self.getData().read(pathFile)
+        else:
+            self.getData().clear()
+
+        # On créer le dico
+        dict = {}
+        # On compile tout
+        for donnee in self._listData:
+            dict[donnee[1]] = donnee[0].get()
+        # Et on enregistre
+        self.getData()[section] = dict
+        self.getData().sauv(pathFile)
 
     def appliqueEffet(self, application):
         raise NotImplementedError

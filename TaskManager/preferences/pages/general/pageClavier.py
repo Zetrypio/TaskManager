@@ -210,4 +210,5 @@ class PageClavier(AbstractPage):
     def getBindingManager(self):
         return self.getApplication().getBindingManager()
 
-    def appliqueEffet(self, application):pass
+    def appliqueEffet(self, application):
+        self.__save()

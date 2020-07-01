@@ -31,7 +31,7 @@ class Data(ConfigParser):
     def sauv(self, fichier):
         """
         Ecrit dans le fichier puis
-        @param fichier : <str> contient le nom + extension du fichier dans lequel Data doit écrire
+        @param fichier : <str> contient le path + nom + extension du fichier dans lequel Data doit écrire
         # Note : une lecture de ce fichier est conseillé avant afin de ne pas supprimer tout le contenu inutilement
         """
         with open(fichier, "w", encoding="utf-8") as tfile:

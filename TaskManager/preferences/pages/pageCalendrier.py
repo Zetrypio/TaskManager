@@ -20,6 +20,7 @@ class PageCalendrier(AbstractPage):
         self.__mode = None
         ## Widget
         self.__varBtnAncienneConfig = BooleanVar()
+        self._listData.append([self.__varBtnAncienneConfig, "recharger duree precedente"])
         # TODO : changer le texte en un truc plus mieux
         self.__btnAncienneConfig = Checkbutton(self._mFrame, text = "Recharger la durée d'affichage du dernier lancement", variable = self.__varBtnAncienneConfig)
 
@@ -164,4 +165,5 @@ class PageCalendrier(AbstractPage):
             jour(str(val))
 
     def appliqueEffet(self, application):
-        pass
+        print(self.getNom())
+        self._makeDictAndSave(self.getNom())
