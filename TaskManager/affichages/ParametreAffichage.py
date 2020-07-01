@@ -56,7 +56,7 @@ class ParametreAffichage(Frame):
         """
         Permet de mettre des choix en fonction du nombre de jour dans le combobox
         """
-        periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
+        periode = self.getZoneAffichage().getDonneeCalendrier().getData().getPeriodeActive()
         nbJour = periode.getDuree().days
         listeValue = []
         if nbJour >= 1:

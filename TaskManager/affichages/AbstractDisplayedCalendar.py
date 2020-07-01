@@ -6,6 +6,7 @@ from tkinter import Label, Frame
 import datetime
 
 from .items.DatetimeItemPart import *
+from .CalendarData import *
 
 from util.widgets.Dialog import *
 
@@ -20,7 +21,7 @@ class AbstractDisplayedCalendar(Frame):
     ces affichages de calendrier qui hérite aussi de cette classe
     (je parle ici de DonneeCalendrier).
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, info = None, **kwargs):
         """
         Constructeur d'un calendrier quelconque.
         Classe abstraite, donc veuillez utiliser une
@@ -33,16 +34,13 @@ class AbstractDisplayedCalendar(Frame):
         super().__init__(master, **kwargs)
         # Note : self.master est référence vers DonneeCalendrier.
 
-        # infos des heures :
-        self.heureDebut = datetime.time(8, 0, 0)
-        self.heureFin = datetime.time(17, 59, 0)
+        self.__info = info or CalendarData(self.getApplication())
 
-        # infos des jours :
-        self.jourDebut = self.getDebutPeriode()
-        self.jourFin   = self.getFinPeriode()
-
-        # liste des tâches :
-        self.listeTask = []
+    def getData(self):
+        """
+        Getter pour les informations des calendriers.
+        """
+        return self.__info
 
     def clicSurObjet(self, objet):
         """
@@ -153,125 +151,125 @@ class AbstractDisplayedCalendar(Frame):
         """
         return self.getDonneeCalendrier().getApplication()
 
-    def getPeriodeActive(self):
-        """
-        Getter pour la période active.
-        Nécessaire pour savoir quelle période afficher.
-        @return la période active.
-        """
-        return self.getApplication().getPeriodManager().getActivePeriode()
-    def getLongueurPeriode(self):
-        """
-        Permet d'obtenir la longueur de la période.
-        @return un datetime.timedelta, de la longueur de la période
-        (seulement les jours comptent). Le début autant que la fin sont pris en compte (Est-ce une bonne idée ?)
-        @return datetime.timedelta(0) si la période active n'existe pas.
-        """
-        return (self.getFinPeriode() - self.getDebutPeriode() + datetime.timedelta(days=1)) if self.getPeriodeActive() is not None else datetime.timedelta()
-    def getDebutPeriode(self):
-        """
-        Permet d'obtenir le jour du début de la période active si elle existe.
-        @return datetime.date() correspondant au début de la période active si elle existe.
-        @return None si elle n'existe pas.
-        """
-        return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
-    def getFinPeriode(self):
-        """
-        Permet d'obtenir le jour de fin de la période active si elle existe.
-        @return datetime.date() correspondant à la fin de la période active si elle existe.
-        @return None si elle n'existe pas.
-        """
-        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
-        
-    def getHeureDebut(self):
-        """
-        Getter pour l'heure du début de l'affichage.
-        @return datetime.time() de l'heure du début de l'affichage.
-        """
-        return self.heureDebut
-    def setHeureDebut(self, valeur):
-        """
-        Setter pour l'heure du début de l'affichage.
-        Ne concerne pas tout les calendriers (à voir ?).
-        @param valeur: datetime.time() de l'heure du début de l'affichage.
-        """
-        self.heureDebut = valeur
-        self.updateAffichage()
-        
-    def getNbheure(self):
-        """
-        Permet de savoir le nombre d'heures affichés dans ce calendrier.
-        @return un nombre entier correspondant au nombre d'heures affichées.
-        """
-        return self.getHeureFin().hour - self.getHeureFin().hour
-
-    def getHeureFin(self):
-        """
-        Getter pour l'heure de fin de l'affichage.
-        @return datetime.time() de l'heure de fin de l'affichage.
-        """
-        return self.heureFin
-    def setHeureFin(self, valeur):
-        """
-        Setter pour l'heure de fin de l'affichage.
-        Ne concerne pas tout les calendriers (à voir ?).
-        @param valeur: datetime.time() de l'heure de fin de l'affichage.
-        """
-        self.heureFin = valeur
-        self.updateAffichage()
-
-    def getJourDebut(self):
-        """
-        Permet d'avoir le jour du début de l'affichage.
-        @return datetime.date() du début de l'affichage.
-        """
-        return self.jourDebut
-    def setJourDebut(self, valeur):
-        """
-        Permet de modifier le jour de début de l'affichage.
-        @param valeur: Le datetime.time() à mettre 
-        """
-        self.jourDebut = valeur + datetime.timedelta()
-        self.updateAffichage()
-
-    def getNbJour(self):
-        """
-        Permet d'obtenir le nombre de jours affichés dans le calendrier.
-        @return un int correspondant au nombre de jours affichés.
-        """
-        return self.getDureeJour().days
-    def getDureeJour(self):
-        """
-        Permet d'obtenir un timedelta correspondant au nombre de jours affichés dans le calendrier.
-        @return un datetime.timedelta() correspondant au nombre de jours affichés.
-        """
-        return (self.jourFin - self.jourDebut + datetime.timedelta(days=1)) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
-    def setNbJour(self, valeur):
-        """
-        Setter pour le nombre de jours affichés, via un nombre entier.
-        Change la position du jour de fin afin d'y parvenir.
-        @param valeur : int correspondant au nombre de jours à afficher.
-        """
-        # TODO : Rajouter le check de dépassement de fin de période -> nouvelle méthode.
-        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
-        self.updateAffichage()
-
-    def setDureeJour(self, valeur):
-        """
-        Setter pour le nombre de jours affichés, via un timedelta.
-        Change la position de la fin de la période pour y arriver.
-        @param valeur: datetime.timedelta() correspondant au nombre de
-        jours à afficher.
-        """
-        # XXX : Pourquoi faire "valeur - datetime.timedelta(days=1)" ?
-        # Ne serait-ce pas en dehors de la fonction de faire cette vérification ?
-        self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
-        
-        # TODO : À revoir. -> utiliser une nouvelle méthode.
-        if self.getJourFin() > self.getFinPeriode():
-            self.setJourFin(self.getFinPeriode())
-
-        self.updateAffichage()
+#    def getPeriodeActive(self):
+#        """
+#        Getter pour la période active.
+#        Nécessaire pour savoir quelle période afficher.
+#        @return la période active.
+#        """
+#        return self.getApplication().getPeriodManager().getActivePeriode()
+#    def getLongueurPeriode(self):
+#        """
+#        Permet d'obtenir la longueur de la période.
+#        @return un datetime.timedelta, de la longueur de la période
+#        (seulement les jours comptent). Le début autant que la fin sont pris en compte (Est-ce une bonne idée ?)
+#        @return datetime.timedelta(0) si la période active n'existe pas.
+#        """
+#        return (self.getFinPeriode() - self.getDebutPeriode() + datetime.timedelta(days=1)) if self.getPeriodeActive() is not None else datetime.timedelta()
+#    def getDebutPeriode(self):
+#        """
+#        Permet d'obtenir le jour du début de la période active si elle existe.
+#        @return datetime.date() correspondant au début de la période active si elle existe.
+#        @return None si elle n'existe pas.
+#        """
+#        return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
+#    def getFinPeriode(self):
+#        """
+#        Permet d'obtenir le jour de fin de la période active si elle existe.
+#        @return datetime.date() correspondant à la fin de la période active si elle existe.
+#        @return None si elle n'existe pas.
+#        """
+#        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
+#        
+#    def getHeureDebut(self):
+#        """
+#        Getter pour l'heure du début de l'affichage.
+#        @return datetime.time() de l'heure du début de l'affichage.
+#        """
+#        return self.heureDebut
+#    def setHeureDebut(self, valeur):
+#        """
+#        Setter pour l'heure du début de l'affichage.
+#        Ne concerne pas tout les calendriers (à voir ?).
+#        @param valeur: datetime.time() de l'heure du début de l'affichage.
+#        """
+#        self.heureDebut = valeur
+#        self.updateAffichage()
+#        
+#    def getNbheure(self):
+#        """
+#        Permet de savoir le nombre d'heures affichés dans ce calendrier.
+#        @return un nombre entier correspondant au nombre d'heures affichées.
+#        """
+#        return self.getHeureFin().hour - self.getHeureFin().hour
+#
+#    def getHeureFin(self):
+#        """
+#        Getter pour l'heure de fin de l'affichage.
+#        @return datetime.time() de l'heure de fin de l'affichage.
+#        """
+#        return self.heureFin
+#    def setHeureFin(self, valeur):
+#        """
+#        Setter pour l'heure de fin de l'affichage.
+#        Ne concerne pas tout les calendriers (à voir ?).
+#        @param valeur: datetime.time() de l'heure de fin de l'affichage.
+#        """
+#        self.heureFin = valeur
+#        self.updateAffichage()
+#
+#    def getJourDebut(self):
+#        """
+#        Permet d'avoir le jour du début de l'affichage.
+#        @return datetime.date() du début de l'affichage.
+#        """
+#        return self.jourDebut
+#    def setJourDebut(self, valeur):
+#        """
+#        Permet de modifier le jour de début de l'affichage.
+#        @param valeur: Le datetime.time() à mettre 
+#        """
+#        self.jourDebut = valeur + datetime.timedelta()
+#        self.updateAffichage()
+#
+#    def getNbJour(self):
+#        """
+#        Permet d'obtenir le nombre de jours affichés dans le calendrier.
+#        @return un int correspondant au nombre de jours affichés.
+#        """
+#        return self.getDureeJour().days
+#    def getDureeJour(self):
+#        """
+#        Permet d'obtenir un timedelta correspondant au nombre de jours affichés dans le calendrier.
+#        @return un datetime.timedelta() correspondant au nombre de jours affichés.
+#        """
+#        return (self.jourFin - self.jourDebut + datetime.timedelta(days=1)) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
+#    def setNbJour(self, valeur):
+#        """
+#        Setter pour le nombre de jours affichés, via un nombre entier.
+#        Change la position du jour de fin afin d'y parvenir.
+#        @param valeur : int correspondant au nombre de jours à afficher.
+#        """
+#        # TODO : Rajouter le check de dépassement de fin de période -> nouvelle méthode.
+#        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
+#        self.updateAffichage()
+#
+#    def setDureeJour(self, valeur):
+#        """
+#        Setter pour le nombre de jours affichés, via un timedelta.
+#        Change la position de la fin de la période pour y arriver.
+#        @param valeur: datetime.timedelta() correspondant au nombre de
+#        jours à afficher.
+#        """
+#        # XXX : Pourquoi faire "valeur - datetime.timedelta(days=1)" ?
+#        # Ne serait-ce pas en dehors de la fonction de faire cette vérification ?
+#        self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
+#        
+#        # TODO : À revoir. -> utiliser une nouvelle méthode.
+#        if self.getJourFin() > self.getFinPeriode():
+#            self.setJourFin(self.getFinPeriode())
+#
+#        self.updateAffichage()
 
     def getVisiblePart(self, part):
         """
@@ -328,19 +326,19 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def getJourFin(self):
-        """
-        Getter pour le jour de fin de l'affichage.
-        @return le datetime.date() correspondant au jour de fin
-        de l'affichage.
-        """
-        return self.jourFin
-    def setJourFin(self, valeur):
-        """
-        Setter pour le jour de fin de l'affichage.
-        @param valeur: le datetime.date() du jour de fin de l'affichage.
-        """
-        self.jourFin = valeur
+#    def getJourFin(self):
+#        """
+#        Getter pour le jour de fin de l'affichage.
+#        @return le datetime.date() correspondant au jour de fin
+#        de l'affichage.
+#        """
+#        return self.jourFin
+#    def setJourFin(self, valeur):
+#        """
+#        Setter pour le jour de fin de l'affichage.
+#        @param valeur: le datetime.date() du jour de fin de l'affichage.
+#        """
+#        self.jourFin = valeur
     
     def rangeDate(self, jourA, jourB, last = True):
         """

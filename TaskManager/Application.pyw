@@ -53,7 +53,8 @@ class Application(Frame):
         self.periodManager = PeriodManager(self)
         self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
-        self.calendar = CalendarZone(self, self.periodManager)
+        self.__calendarData = CalendarData(self)
+        self.calendar = CalendarZone(self, self.periodManager, self.__calendarData)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
     def nouveau(self):pass # TODO
 
@@ -100,6 +101,8 @@ class Application(Frame):
         """
         return self.taskEditor
 
+    def getCalendarData(self):
+        return self.__calendarData
 
 
 def main():

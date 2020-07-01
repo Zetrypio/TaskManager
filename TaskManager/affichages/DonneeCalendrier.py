@@ -11,13 +11,13 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     Classe contenant le panneau à onglets avec tout les
     affichages des calendriers.
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, calendarData = None, **kwargs):
         """
         Constructeur de DonneeCalendrier.
         @param master: master du tkinter.Frame que cet objet est.
         @param **kwargs: configurations de l'affichage du tkinter.Frame que cet objet est.
         """
-        super().__init__(master, **kwargs)
+        super().__init__(master, info=calendarData, **kwargs)
         # Note : self.master est référence vers ZoneAffichage.
 
         # Ceci est un panneau à onglet.
@@ -25,9 +25,9 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         # Création du contenu des différents onglets.
         self.listPanneau = []
-        self.listPanneau.append(AffichageCalendrier(self.panneau)) # Liste de tout les panneaux pour appliquer un changement à tous
-        self.listPanneau.append(AffichageGantt(self.panneau))
-        self.listPanneau.append(AffichageCalendrierPeriode(self.panneau))
+        self.listPanneau.append(AffichageCalendrier(self.panneau, calendarData)) # Liste de tout les panneaux pour appliquer un changement à tous
+        self.listPanneau.append(AffichageGantt(self.panneau, calendarData))
+        self.listPanneau.append(AffichageCalendrierPeriode(self.panneau, calendarData))
 
         # Ajout des onglets au panneau
         self.panneau.add(self.listPanneau[0], text="Calendrier", padding=1) # padding optionnel
@@ -145,59 +145,59 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.listPanneau:
             panneau.escapePressed(event)
     
-    def setHeureDebut(self, heure):
-        """
-        Setter pour l'heure du début.
-        @param heure: datetime.time() de l'heure du début.
-        """
-        for panneau in self.listPanneau:
-            panneau.setHeureDebut(heure)
-        super().setHeureDebut(heure)
-
-    def setHeureFin(self, heure):
-        """
-        Setter pour l'heure de la fin.
-        @param heure: datetime.time() de l'heure de la fin.
-        """
-        for panneau in self.listPanneau:
-            panneau.setHeureFin(heure)
-        super().setHeureFin(heure)
-
-    def setJourDebut(self, jour):
-        """
-        Setter pour le jour du début de l'affichage.
-        @param jour: datetime.date() du jour du début.
-        """
-        for panneau in self.listPanneau:
-            panneau.setJourDebut(jour)
-        super().setJourDebut(jour)
-
-    def setJourFin(self, jour):
-        """
-        Setter pour le jour de fin de l'affichage.
-        @param jour: datetime.date() du jour de fin.
-        """
-        for panneau in self.listPanneau:
-            panneau.setJourFin(jour)
-        super().setJourFin(jour)
-
-    def setDureeJour(self, jour):
-        """
-        Setter pour le nombre de jour via datetime.timedelta().
-        @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
-        """
-        for panneau in self.listPanneau:
-            panneau.setDureeJour(jour)
-        super().setDureeJour(jour)
-
-    def setNbJour(self, jour):
-        """
-        Setter pour le nombre de jour via nombre entier.
-        @param jour: int correspondant au nombre de jours à afficher.
-        """
-        for panneau in self.listPanneau:
-            panneau.setNbJour(jour)
-        super().setNbJour(jour)
+#    def setHeureDebut(self, heure):
+#        """
+#        Setter pour l'heure du début.
+#        @param heure: datetime.time() de l'heure du début.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.setHeureDebut(heure)
+#        super().setHeureDebut(heure)
+#
+#    def setHeureFin(self, heure):
+#        """
+#        Setter pour l'heure de la fin.
+#        @param heure: datetime.time() de l'heure de la fin.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.setHeureFin(heure)
+#        super().setHeureFin(heure)
+#
+#    def setJourDebut(self, jour):
+#        """
+#        Setter pour le jour du début de l'affichage.
+#        @param jour: datetime.date() du jour du début.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.getData().setJourDebut(jour)
+#        super().setJourDebut(jour)
+#
+#    def setJourFin(self, jour):
+#        """
+#        Setter pour le jour de fin de l'affichage.
+#        @param jour: datetime.date() du jour de fin.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.setJourFin(jour)
+#        super().setJourFin(jour)
+#
+#    def setDureeJour(self, jour):
+#        """
+#        Setter pour le nombre de jour via datetime.timedelta().
+#        @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.setDureeJour(jour)
+#        super().setDureeJour(jour)
+#
+#    def setNbJour(self, jour):
+#        """
+#        Setter pour le nombre de jour via nombre entier.
+#        @param jour: int correspondant au nombre de jours à afficher.
+#        """
+#        for panneau in self.listPanneau:
+#            panneau.setNbJour(jour)
+#        super().setNbJour(jour)
 
     def setPeriodeActiveDebut(self, jour):
         """
@@ -253,21 +253,21 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.listPanneau:
             panneau.updateAffichage(force)
         
-        if self.getJourDebut() == self.getDebutPeriode():
+        if self.getData().getJourDebut() == self.getData().getDebutPeriode():
             self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)
             self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période
         else:
             self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
             self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
 
-        if self.getFinPeriode() is None or self.getJourFin() is None:
+        if self.getData().getFinPeriode() is None or self.getData().getJourFin() is None:
             self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
-        elif self.getJourFin() > self.getFinPeriode():
+        elif self.getData().getJourFin() > self.getData().getFinPeriode():
             duree = self.getDureeJour()
-            self.setJourFin(self.getFinPeriode())
-            self.setJourDebut(self.getFinPeriode() - duree)
-        elif self.getJourFin()== self.getFinPeriode():
+            self.getData().setJourFin(self.getFinPeriode())
+            self.getData().setJourDebut(self.getFinPeriode() - duree)
+        elif self.getData().getJourFin()== self.getData().getFinPeriode():
             self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)            
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
         else:

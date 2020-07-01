@@ -16,7 +16,7 @@ class CalendarZone(Frame):
     """
     Classe contenant la barre d'outil et la zone d'affichage.
     """
-    def __init__(self, master = None, periodeManager = None, **kwargs):
+    def __init__(self, master = None, periodeManager = None, calendarData = None, **kwargs):
         """
         Constructeur de CalendarZone.
         @param master: master du tkinter.Frame() que cet objet est.
@@ -35,7 +35,7 @@ class CalendarZone(Frame):
         self.outilBarPeriode = PeriodToolBar(self, periodeManager) # frame avec tous les boutons outils
         
         # Zone calendrier
-        self.zoneDynamicCalendarFrame = ZoneAffichage(self) # frame avec la zone d'affichage des paramètre et la zone avec les données
+        self.zoneDynamicCalendarFrame = ZoneAffichage(self, calendarData) # frame avec la zone d'affichage des paramètre et la zone avec les données
         self.zoneDynamicCalendarFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
     def getApplication(self):

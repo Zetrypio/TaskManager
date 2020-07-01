@@ -98,8 +98,8 @@ class PeriodManager:
         if not isinstance(periode, (Periode, None.__class__)):
             raise ValueError("La période ne peut pas être %s")
         self.activePeriode = periode
-        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
-        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
+        self.app.getCalendarData().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
+        self.app.getCalendarData().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
 
         # Configuration du combobox en fonction de la durée de la période
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()

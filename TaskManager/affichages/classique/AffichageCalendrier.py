@@ -14,13 +14,13 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     Affichage de calendrier classique.
     Si deux objets sont en même temps, ils sont affichés dans des colonnes séparées.
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, calendarData = None, **kwargs):
         """
         Affichage par défaut du calendrier et de ses tâches.
         @param master: NoteBook du DonneeCalendrier, master du tkinter.Frame() que cet objet est.
         @param **kwargs: Options de configuration du tkinter.Frame() que cet objet est.
         """
-        super().__init__(master, bg="violet")
+        super().__init__(master, info = calendarData, bg="violet")
         # Note : self.master est référence vers Notebook.
  
         self.__listeLabelHeure = []       # \
@@ -188,10 +188,10 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(displayable.getRepartition())
-        jour = self.getJourDebut()
+        jour = self.getData().getJourDebut()
         self.__nbColonneParJour = 1
         self.__partsParColonnes = []
-        for compteur in range(self.getNbJour()):
+        for compteur in range(self.getData().getNbJour()):
             self.__partsParColonnes.append(self.__computePartsParColonnesDuJour(jour))
             self.__nbColonneParJour = ppcm(self.__nbColonneParJour, self.__getNbColonnePourJour(jour))
             jour += datetime.timedelta(days = 1)
@@ -253,13 +253,13 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__listeLabelHeure = []
 
         # et on les recrées :
-        for heure in range(self.getHeureDebut().hour, self.getHeureFin().hour+1): # le +1 pour compter Début ET Fin.
+        for heure in range(self.getData().getHeureDebut().hour, self.getData().getHeureFin().hour+1): # le +1 pour compter Début ET Fin.
             self.__listeLabelHeure.append(Label(self.__frame, text=heure, bd = 1, relief = SOLID))
             # Note : Un détail à la minute près va être fait,
             # donc on compte 60 lignes pour une heure.
             # La ligne 0 étant la ligne des labels des jours,
             # On compte à partir de 1, c'est-à-dire en ajoutant 1.
-            self.__listeLabelHeure[-1].grid(row=(heure-self.getHeureDebut().hour)*60+1, # le *60 pour faire un détail à la minute près
+            self.__listeLabelHeure[-1].grid(row=(heure-self.getData().getHeureDebut().hour)*60+1, # le *60 pour faire un détail à la minute près
                                           column=0,      # Les labels des heures sont réservés à la colonne de gauche.
                                           rowspan=60,    # Mais ils prennent 60 minutes et lignes.
                                           sticky="NSWE") # Permet de centrer le label et d'en remplir les bords par la couleur du fond.
@@ -274,8 +274,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__listeSeparateurJour = []
         
         # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
-        jour = self.getJourDebut()
-        for compteur in range(self.getNbJour()):
+        jour = self.getData().getJourDebut()
+        for compteur in range(self.getData().getNbJour()):
 
             self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "light grey"))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectTaskJour(jour))
@@ -305,7 +305,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         sinon ce qui serais rajouté après n'aurait pas forcément eu cet étirage des cases.
         """
         # à mettre À LA FIN ! ! ! (pour les expands)
-        for column in range(self.getNbJour()*(self.__nbColonneParJour+1)):
+        for column in range(self.getData().getNbJour()*(self.__nbColonneParJour+1)):
             if column % (self.__nbColonneParJour+1) ==0:
                 self.__frame.columnconfigure(column,weight=0)
             else:

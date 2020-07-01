@@ -27,14 +27,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
     TAILLE_LIGNE = HAUTEUR_TACHE + ESPACEMENT
     TAILLE_BANDEAU_JOUR = 20
 
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, calendarData = None, **kwargs):
         """
         Constructeur de l'affichage gantt.
 
         @param master: Notebook de DonneeCalendrier, master du tkinter.Frame() que cet objet est.
         @param **kwargs: Configuration du tkinter.Frame() que cet objet est.
         """
-        super().__init__(master, **kwargs)
+        super().__init__(master, info = calendarData, **kwargs)
         # Note : self.master est référence vers Notebook.
         
         # Listes des tâches, groupes et liens :
@@ -300,8 +300,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @return le maximum de #getNbTacheJour() pour tout les jours qui sont actuellement visibles.
         """
         nbLigne = 1
-        for jour in self.rangeDate(self.getJourDebut(), self.getJourFin()):
-            nbLigne = max(nbLigne, self.getNbTacheJour(jour))
+        for jour in self.rangeDate(self.getData().getJourDebut(), self.getData().getJourFin()):
+            nbLigne = max(nbLigne, self.getData().getNbTacheJour(jour))
         return nbLigne
     
     def getYScrolling(self):
@@ -468,15 +468,15 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'afficher les noms des jours en haut de l'affichage, en fonction du début et de al fin de l'affichage.
         """
         # Largeur :
-        if self.getNbJour() == 0:
+        if self.getData().getNbJour() == 0:
             return
-        self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
+        self.tailleColonne = w = self.can.winfo_width()/self.getData().getNbJour()
         
         # création de bandeau pour les jours
         self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
         
         # Pour chaques jours :
-        for jour in range(self.getNbJour()):
+        for jour in range(self.getData().getNbJour()):
             
             # Position X :
             x = int(jour * w)
@@ -488,7 +488,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             # Texte des jours :
             self.can.create_text(x + w/2, AffichageGantt.TAILLE_BANDEAU_JOUR//2,
                                  width = w,
-                                 text=JOUR[(jour+self.getJourDebut().weekday())%7])
+                                 text=JOUR[(jour+self.getData().getJourDebut().weekday())%7])
 
     def __afficherLesTaches(self, force = False):
         """

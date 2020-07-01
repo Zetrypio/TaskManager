@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import datetime
 
 class CalendarData:
     """
@@ -12,11 +13,12 @@ class CalendarData:
     sera de facto une modification de partout, car tout les
     affichages auront ces données dans la m�me instance de cette classe.
     """
-    def __init__(self):
+    def __init__(self, app):
         """
         Constructeur de CalendarData.
         Voir CalendarData.__doc__ pour la raison de cette classe.
         """
+        self.__app = app
 
         # infos des heures :
         self.heureDebut = datetime.time(8, 0, 0)
@@ -28,6 +30,16 @@ class CalendarData:
 
         # liste des objets planifiables :
         self.schedulables = []
+
+    def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'application.
+        """
+        return self.__app
+
+    def updateAffichage(self):
+        self.getApplication().getDonneeCalendrier().updateAffichage()
 
     ""
     ########################################

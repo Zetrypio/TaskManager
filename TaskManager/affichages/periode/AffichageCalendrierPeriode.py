@@ -14,14 +14,14 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
     """
     Classe permettant la vision des périodes dans un mois.
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, calendarData = None, **kwargs):
         """
         Constructeur de l'affichage en calendrier des périodes.
         @param master: NoteBook de DonneeCalendrier, master du tkinter.Frame() que cet objet est.
         @param **kwargs: Options de configuration du tkinter.Frame() que cet objet est.
         """
         # Constructeur parent :
-        super().__init__(master, **kwargs)
+        super().__init__(master, info = calendarData, **kwargs)
         # Note : self.master est une référence vers le NoteBook à l'intérieur de DonneeCalendrier.
 
         # Information du temps de l'affichage.

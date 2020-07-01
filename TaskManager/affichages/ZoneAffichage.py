@@ -11,7 +11,7 @@ class ZoneAffichage(Frame):
     """
     Classe qui contient les paramètres et les données.
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master = None, calendarData = None, **kwargs):
         """
         Constructeur de ZoneAffichage.
         @param master: master du tkinter.Frame() que cet objet est.
@@ -25,7 +25,7 @@ class ZoneAffichage(Frame):
         self.zoneParametre.pack(side=TOP, fill=X)
 
         # Affichage des données
-        self.donneeCalendrierFrame = DonneeCalendrier(self)
+        self.donneeCalendrierFrame = DonneeCalendrier(self, calendarData)
         self.donneeCalendrierFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
         self.donneeCalendrierFrame.updateAffichage()
