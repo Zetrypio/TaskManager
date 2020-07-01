@@ -14,4 +14,6 @@ class PageGantt(AbstractPage):
         self.btn = Button(self._mFrame, text="clickme")
         self.btn.grid(column = 0, row = 2, sticky = "NSEW")
 
-    def appliqueEffet(self, application):pass
+    def appliqueEffet(self, application):
+        pass
+        #self._makeDictAndSave(self.getParent()[1:]) Quand il y aura des choses ici

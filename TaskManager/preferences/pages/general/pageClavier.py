@@ -96,10 +96,8 @@ class PageClavier(AbstractPage):
         # On commence par faire un dico
         dict = self.getBindings()
         # Ensuite on le change avec les nouvelles options
-        print(dict)
         for item in self.__listeItemTreeview:
             s, n, b = self.__valueLineTV(item)
-            print("section :", s, "\nnom :", n, "\nbinding :", b)
             dict[s][n]["bindings"] = b
 
         self.getBindingManager().save(dict)

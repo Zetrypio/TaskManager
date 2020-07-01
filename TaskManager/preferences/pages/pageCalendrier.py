@@ -165,5 +165,4 @@ class PageCalendrier(AbstractPage):
             jour(str(val))
 
     def appliqueEffet(self, application):
-        print(self.getNom())
         self._makeDictAndSave(self.getNom())

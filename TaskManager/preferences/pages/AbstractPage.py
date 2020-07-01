@@ -64,7 +64,6 @@ class AbstractPage(Frame):
         @param section    : <str> nom de la page courante
         """
         section = self.getNom()
-        print("profil FOlder", self.getParent())
         pathFile = self.getProfilFolder() + nomFichier + ".cfg"
         # On cherche s'il y a des info dedans avant de tout overrider
         if os.path.exists(pathFile):

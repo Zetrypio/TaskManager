@@ -11,12 +11,17 @@ class PagePeriode(AbstractPage):
         super().__init__(master,nom = "Période", iid_parent ="-Calendrier", **kwargs)
 
         # Choix du premier jour de la semaine pour le calendrier
-        self.labelComboSemaine = Label(self._mFrame, text="Premier jour de la semaine :")
-        self.comboJourSemaine = Combobox(self._mFrame, value=["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], state="readonly")
-        self.comboJourSemaine.set("Lundi")
+        self.__labelComboSemaine = Label(self._mFrame, text="Premier jour de la semaine :")
+        self.__varJour = StringVar()
+        self._listData.append([self.__varJour, "Jour de début de semaine"])
+        self.__comboJourSemaine = Combobox(self._mFrame, value=["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], state="readonly")
 
         # Affichage
-        self.labelComboSemaine.grid(column = 0, row = 0)
-        self.comboJourSemaine.grid(column = 1, row = 0, sticky = "NSEW")
+        self.__labelComboSemaine.grid(column = 0, row = 0)
+        self.__comboJourSemaine.grid(column = 1, row = 0, sticky = "NSEW")
 
-    def appliqueEffet(self, application):pass
+        # Initialisation
+        self.__comboJourSemaine.set("Lundi")
+
+    def appliqueEffet(self, application):
+        self._makeDictAndSave(self.getParent()[1:])

@@ -17,6 +17,7 @@ class PageGeneral(AbstractPage):
         self.__horlogeLabelFrame = LabelFrame(self._mFrame, text="Horloge")
         # widgets
         self.__varCaseTypeHorloge = BooleanVar()
+        self._listData.append([self.__varCaseTypeHorloge, "Afficher les heures sur l'horloge"])
         self.__caseTypeHorloge = Checkbutton(self.__horlogeLabelFrame, text = "Afficher les heures sur l'horloge lors de la sélection de la date d'une tache", variable=self.__varCaseTypeHorloge)
 
 
@@ -25,7 +26,7 @@ class PageGeneral(AbstractPage):
         self.__caseTypeHorloge.pack(side = TOP, expand = NO, fill = X)
 
     def appliqueEffet(self, application):
-        self.getData().setAffichageNombreHorloge(self.__varCaseTypeHorloge.get())
+        self._makeDictAndSave(self.getNom())
 
 
 

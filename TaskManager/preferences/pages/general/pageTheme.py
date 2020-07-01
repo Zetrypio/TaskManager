@@ -50,13 +50,16 @@ class PageTheme(AbstractPage):
 
 
         self.__varAdapteTexteTache = BooleanVar()
+        self._listData.append([self.__varAdapteTexteTache, "Couleur adaptative"])
         self.__caseAdaptTexteTache = Checkbutton(self._mFrame, text="Changer la couleur du texte d'une tache (noir/blanc) en fonction de la couleur de fond de la tache", variable=self.__varAdapteTexteTache)
 
         ## Frame choix thème
         self.__frameChoixTheme = Frame(self._mFrame)
         # Widget
         self.__lbCombo = Label(self.__frameChoixTheme, text = "Sélectionnez un thème")
-        self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly")
+        self.__varTheme = StringVar()
+        self._listData.append([self.__varTheme, "Theme choisi"])
+        self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly", textvariable = self.__varTheme)
         self.__comboThemeExistant.bind("<<ComboboxSelected>>", self.loadTheme)
         self.__btnSuppr = Button(self.__frameChoixTheme, text="Supprimer", command = self.supprimerTheme)
 
@@ -226,16 +229,16 @@ class PageTheme(AbstractPage):
             self.__varLb4.set(color)
 
     def getNomCombobox(self):
-        return self.__comboThemeExistant.get()
+        return self.__varTheme.get()
 
     def setNomCombobox(self, nom):
-        self.__comboThemeExistant.set(nom)
+        self.__varTheme.set(nom)
         self.__stateSaveBtn()
 
     def __stateSaveBtn(self):
         # Fonction qui gere l'état du bouton d'enregistrememnt
         self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
-        if  self.__comboThemeExistant.get().upper() not in self.getData().sections():
+        if  self.getNomCombobox().upper() not in self.getData().sections():
             self.__btnEnregistrement.config(state = "disabled")
             self.__btnSuppr.config(state = "disabled")
         else:
@@ -318,7 +321,7 @@ class PageTheme(AbstractPage):
         # Bonus de enregistrer sous
         self.getApplication().getData().setCurrentThemeName(name)
         self.configCombobox()
-        self.__comboThemeExistant.set(name)
+        self.__varTheme.set(name)
         self.loadTheme()
 
     def supprimerTheme(self):
@@ -326,7 +329,7 @@ class PageTheme(AbstractPage):
         Fonction qui supprime le thème sélectionné dans le combobox
         """
 
-        if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.__comboThemeExistant.get()):
+        if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.getNomCombobox()):
             self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
             self.getData().remove_section(self.get.upper())
             self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
@@ -340,7 +343,7 @@ class PageTheme(AbstractPage):
         + gérer la disponibilité de enregistrer
         """
         self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
-        theme = self.getData()[self.__comboThemeExistant.get().upper()]
+        theme = self.getData()[self.getNomCombobox().upper()]
 
 
         # Permet de charger les options pour les sauvegarder
@@ -425,10 +428,5 @@ class PageTheme(AbstractPage):
         except:pass
 
     def appliqueEffet(self, application):
-        nomTheme = self.__comboThemeExistant.get()
-        adaptCouleur = self.__varAdapteTexteTache.get()
-
-        # Enregistrements
-        self.getData().setCurrentThemeName(nomTheme)
-        self.getData().setAdaptColorTask(adaptCouleur)
+        self._makeDictAndSave(self.getParent()[1:])
 
