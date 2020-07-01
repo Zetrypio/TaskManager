@@ -16,7 +16,7 @@ from affichages.items.content.DisplayableTask import *
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
-                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None):
+                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False):
         """
         @param nom : nom de la tâche.
         @param periode: Période de la tâche, peut être None.
@@ -31,15 +31,18 @@ class Task(AbstractSchedulableObject):
         super().__init__(nom, periode, desc, color)
         
         # Informations temporelles :
-        self.__debut = (debut + datetime.timedelta()) if debut is not None else None # Faire une copie
+        self.__debut = (debut + datetime.timedelta()) if debut is not None else None # Faire une copie et check nonNull
         self.__duree = (duree + datetime.timedelta()) if duree is not None else None
         
         # Informations des répétitions :
         self.__rep   = rep    # répétition
         self.__nbrep = nbrep  # nombre de répétitions
         
-        # Parent : Garde-t-on cela ?
+        # Parent : L'utilise-t-on pour les groupes aussi ?
         self.__parent = parent
+
+        # Est-ce que la tâche est faite ?
+        self.__done = done or False
 
         # Liste des dépendances pour les liens
         self.__dependances = []
@@ -163,19 +166,12 @@ class Task(AbstractSchedulableObject):
         """
         Permet de mettre à jour le statut de la tâche.
         """
-        if self.getDebut() == None:
-            self._statut = "Inconnu"
-        
-        # XXX : What's this ?
-#        elif (self.getPeriode().getDateStatut() is not None and self.getDebut() < self.getPeriode().getDateStatut()):
-#                self._statut = "Fait"
-        else:
-            self._statut = "À faire"
-
-        if self.__nbrep != 0:
-            self._statut = "Répétition"
-
-        #self._statut = "Inconnu" if self.getDebut() == None else "À faire" if self.__nbrep == 0 else "Répétition"
+        self._statut = "Inconnu" if self.getDebut() == None\
+                  else "Répétition" if self.__nbrep != 0\
+                  else "Fait" if self.__done\
+                  else "Retard" if self.getFin() < datetime.datetime.now()\
+                  else "En cours" if self.getDebut() < datetime.datetime.now()\
+                  else "À faire"
 
     def createDisplayableInstance(self, frame, part):
         """

@@ -329,11 +329,12 @@ class CalendarZone(Frame):
 
     def avancementMannuel(self):
         """
-        Doc ?
+        Permet de valider les tâches sélectionnées.
         """
-        # XXX : Je comprend pas pourquoi !
-        for tache in self.getDonneeCalendrier().getSelectedTask():
-            tache.reverseStateValide()
+        for tache in self.getDonneeCalendrier().getSchedulable():
+            if tache.isSelected():
+                tache.setDone(True)
+        self.getApplication().getTaskEditor().redessiner()
 
     def avancementJourFini(self):
         """
