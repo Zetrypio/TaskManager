@@ -91,6 +91,28 @@ class ProfilManager:
         self.__write()
         return True
 
+    def deleteProfil(self, profil):
+        """
+        Fonction qui supprime un profil du fichier json
+        @param profil : <str> contient le nom du profil
+        """
+
+        # On supprime le profil de l'utilisateur
+        del self.getListeProfilsUser()[self.getListeProfilsUser().index(profil)]
+
+        # On cherche s'il existe pour d'autres utilisateurs
+        autreUser = False
+        for listProfil in self.__donnee["user"].values():
+            if profil in listProfil:
+                autreUser = True
+        # Si personne d'autre utilise le profil
+        if not autreUser:
+            # On supprime le path
+            del self.getAllNomProfil()[profil]
+
+        # On finit par écrire
+        self.__write()
+
     def saveNewPath(self, path, profil):
         """
         Fonction qui va juste changer le path du profil courrant

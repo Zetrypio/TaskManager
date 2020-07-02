@@ -2,11 +2,12 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
-from shutil import move
+from shutil import move, rmtree
 import os
 
 from ..AbstractPage import *
 from preferences.dialog.askProfil import *
+from util.widgets.Dialog import askyesnowarning
 
 
 
@@ -23,6 +24,7 @@ class PageProfil(AbstractPage):
        self.__cbProfil = Combobox(self.__frameChoixProfil, state="readonly")
        self.__cbProfil.bind("<<ComboboxSelected>>", lambda e :self.__varEntryPath.set(self.getProfilManager().getProfilFolder(self.__cbProfil.get())))
        self.__btnAjouter = Button(self.__frameChoixProfil, text="Ajouter", command=self.__ajouter)
+       self.__btnSupprimer = Button(self.__frameChoixProfil, text="Supprimer", command=self.__supprimer)
        # Folder location
        self.__lbPathCustomFile = Label(self._mFrame, text = "Chemin d'enregistrement de vos fichiers de préférences")
        self.__varEntryPath = StringVar()
@@ -35,6 +37,7 @@ class PageProfil(AbstractPage):
        self.__lbProfil.grid(column = 0, row = 0, sticky = "w")
        self.__cbProfil.grid(column = 1, row = 0, sticky="we")
        self.__btnAjouter.grid(column=2, row=0, sticky="e")
+       self.__btnSupprimer.grid(column=3, row=0, sticky="e")
        self.__lbPathCustomFile.grid(column = 0, row = 1, sticky = "w")
        self.__entryPathCustomFile.grid(column = 0, row = 2, sticky = "we")
        self.__btnParcourir.grid(column = 1, row = 2, sticky = "w")
@@ -45,7 +48,7 @@ class PageProfil(AbstractPage):
 
     def __parcourir(self):
        """
-       fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
+       Fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
        """
        path = askFolder(vide=True)
 
@@ -64,6 +67,17 @@ class PageProfil(AbstractPage):
         """
         if self.getProfilManager().createProfil(False):
             self.__chargeProfil(self.getProfilManager().getListeProfilsUser()[-1])
+
+    def __supprimer(self):
+        """
+        Fonction qui supprimer un profil
+        """
+        # On pose la question
+        if not askyesnowarning(title = "Supprimer un thème", message = "Voulez-vous vraiment supprimer \"%s\" de vos profils ?\nCela supprimera le dossier ainsi que tout ce qui s'y trouve"%self.__cbProfil.get()):
+            return
+
+        self.getProfilManager().deleteProfil(self.__cbProfil.get())
+
 
     def __chargeProfil(self, profil):
         """
