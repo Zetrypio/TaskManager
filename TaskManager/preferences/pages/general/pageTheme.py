@@ -37,7 +37,7 @@ NOMFICHIER = os.sep + "theme"
 class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
-         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
@@ -52,7 +52,7 @@ class PageTheme(AbstractPage):
 
 
         self.__varAdapteTexteTache = BooleanVar()
-        self._listData.append([self.__varAdapteTexteTache, "Couleur adaptative"])
+        self._listData.append([self.__varAdapteTexteTache, "Couleur adaptative", False])
         self.__caseAdaptTexteTache = Checkbutton(self._mFrame, text="Changer la couleur du texte d'une tache (noir/blanc) en fonction de la couleur de fond de la tache", variable=self.__varAdapteTexteTache)
 
         ## Frame choix thème
@@ -60,7 +60,7 @@ class PageTheme(AbstractPage):
         # Widget
         self.__lbCombo = Label(self.__frameChoixTheme, text = "Sélectionnez un thème")
         self.__varTheme = StringVar()
-        self._listData.append([self.__varTheme, "Theme choisi"])
+        self._listData.append([self.__varTheme, "Theme choisi", "Classique"])
         self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly", textvariable = self.__varTheme)
         self.__comboThemeExistant.bind("<<ComboboxSelected>>", self.loadTheme)
         self.__btnSuppr = Button(self.__frameChoixTheme, text="Supprimer", command = self.supprimerTheme)
@@ -208,8 +208,9 @@ class PageTheme(AbstractPage):
 
 
         # Final
+        self._loadDataFile() # Pour les prefs standards
         self.__listeVarTheme.append(StringVar()) # Pour la gestion d'une clé supplémentaire quand on passe par Data pour lire
-        self.configCombobox()
+        self.configCombobox() # Pour les prefs des thèmes
 
     def __askcolor(self, value):
         color = askcolor()[1]

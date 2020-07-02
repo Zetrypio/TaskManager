@@ -14,7 +14,7 @@ class PageClavier(AbstractPage):
         Classe qui s'occupe d'afficher les bindings
         """
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
 

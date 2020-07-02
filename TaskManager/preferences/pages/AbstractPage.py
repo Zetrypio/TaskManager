@@ -7,12 +7,12 @@ import os
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master, **kwargs)
         self.nom = nom
         self.iidParent = iid_parent
-        self.iid = self.getParent()+"-"+self.getNom()
+        self.iid = self.getIidParent()+"-"+self.getNom()
 
         self._listData = [] # C'est une liste qui contient toutes les variables de controles à enregistrer + les key pour le dico [variable, text]
 
@@ -28,7 +28,11 @@ class AbstractPage(Frame):
     def getNom(self):
         return self.nom
 
-    def getParent(self):
+    def getPagePrincipale(self):
+        """ Retourne le nom de la page principale du treeview """
+        return self.getNom() if len(self.getIidParent().split("-")) <= 1 else self.getIidParent().split("-")[1]
+
+    def getIidParent(self):
         """ Retourne la page parente du treeview """
         return self.iidParent
 
@@ -61,16 +65,29 @@ class AbstractPage(Frame):
 
     def _loadDataFile(self):
         """
-        Fonction qui va chercher la variable demandé
+        Fonction qui va lire le fichier demandé + charger les variables
         """
-        pass
+        pathFile = self.getProfilFolder() + self.getPagePrincipale() + ".cfg"
+        if os.path.exists(pathFile):
+            self.getData().read(pathFile)
+        else:
+            # Sinon on évite les soucis
+            self.getData().clear()
+
+        # Affectation des valeurs
+        for donnee in self._listData:
+            # <Bool> : si la section existe et que la clé existe
+            condition = self.getNom() in self.getData().sections() and donnee[1] in self.getData()[self.getNom()]
+            # Alors on chope la value sinon on affecte la valeur par défaut
+            value = self.getData().get(self.getNom(), donnee[1]) if condition else donnee[2]
+            donnee[0].set(value)
 
     def _makeDictAndSave(self):
         """
         Fonction qui fabrique un dictionnaire à partir des values de _listData
         """
         # nomFichier : <str> nom de la superPage pour en faire le nom du fichier
-        nomFichier = self.getNom() if len(self.getParent().split("-")) <= 1 else self.getParent().split("-")[1]
+        nomFichier = self.getPagePrincipale()
         # section    : <str> nom de la page courante
         section = self.getNom()
         pathFile = self.getProfilFolder() + nomFichier + ".cfg"
@@ -97,7 +114,7 @@ class AbstractPage(Frame):
         Fonction qui permet l'affichage de la page dans le treeview
         @param treeview : <tkinter.treeview> le treeview sur lequelle on doit s'afficher
         """
-        treeview.insert(self.getParent(), END, text=self.getNom(), iid=self.getIid())
+        treeview.insert(self.getIidParent(), END, text=self.getNom(), iid=self.getIid())
 
     def getParametrageZone(self):
         return self.master

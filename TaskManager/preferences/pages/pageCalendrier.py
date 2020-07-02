@@ -12,7 +12,7 @@ class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "Calendrier", **kwargs)
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
 
         def changeMode(v): # Fonction d'assignement qu'un certain lambda sait pas faire
@@ -22,7 +22,7 @@ class PageCalendrier(AbstractPage):
         self.__mode = None
         ## Widget
         self.__varBtnAncienneConfig = BooleanVar()
-        self._listData.append([self.__varBtnAncienneConfig, "recharger duree precedente"])
+        self._listData.append([self.__varBtnAncienneConfig, "recharger duree precedente", False])
         # TODO : changer le texte en un truc plus mieux
         self.__btnAncienneConfig = Checkbutton(self._mFrame, text = "Recharger la durée d'affichage du dernier lancement", variable = self.__varBtnAncienneConfig)
 
@@ -48,7 +48,8 @@ class PageCalendrier(AbstractPage):
         self.__btnSupprimer.grid(column = 2, row = 2, sticky = "n", pady = 2)
 
         # Fonctions
-        self.__chargerListBox()
+        self._loadDataFile() # Pour les prefs standards
+        self.__chargerListBox() # Pour les prefs durees
 
     def __convSbStrToInt(self, value):
         """
