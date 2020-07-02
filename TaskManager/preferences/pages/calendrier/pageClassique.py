@@ -8,6 +8,8 @@ from ..AbstractPage import *
 class PageClassique(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.__master renvoie a ParametrageZone
+         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
         super().__init__(master,nom = "Classique", iid_parent ="-Calendrier", **kwargs)
 
         # Heure début + fin
@@ -47,4 +49,4 @@ class PageClassique(AbstractPage):
         self.__sbHeureFin.config(from_=int(self.__varHeureDebut.get().split(":")[0]))
 
     def appliqueEffet(self, application):
-        self._makeDictAndSave(self.getParent()[1:])
+        self._makeDictAndSave()

@@ -13,6 +13,8 @@ from preferences.dialog.askProfil import *
 class PageProfil(AbstractPage):
     def __init__(self, master, **kwargs):
         # Note : self.master renvoie a ParametrageZone
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
        super().__init__(master, nom = "Profil", iid_parent ="-General", **kwargs)
 
        ## Widgets

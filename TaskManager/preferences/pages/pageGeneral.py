@@ -12,6 +12,7 @@ class PageGeneral(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "General", **kwargs)
         # Note : self.master renvoie a ParametrageZone
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
 
         ## LabelFrame Horloge
         self.__horlogeLabelFrame = LabelFrame(self._mFrame, text="Horloge")
@@ -26,7 +27,7 @@ class PageGeneral(AbstractPage):
         self.__caseTypeHorloge.pack(side = TOP, expand = NO, fill = X)
 
     def appliqueEffet(self, application):
-        self._makeDictAndSave(self.getNom())
+        self._makeDictAndSave()
 
 
 

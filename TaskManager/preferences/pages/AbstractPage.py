@@ -7,6 +7,8 @@ import os
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
         super().__init__(master, **kwargs)
         self.nom = nom
         self.iidParent = iid_parent
@@ -57,12 +59,19 @@ class AbstractPage(Frame):
         elif lireDef and not lireCfg:
             self.getData().read("Ressources/prefs/"+nom+".def")
 
-    def _makeDictAndSave(self, nomFichier):
+    def _loadDataFile(self):
+        """
+        Fonction qui va chercher la variable demandé
+        """
+        pass
+
+    def _makeDictAndSave(self):
         """
         Fonction qui fabrique un dictionnaire à partir des values de _listData
-        @param nomFichier : <str> nom de la superPage pour en faire le nom du fichier
-        @param section    : <str> nom de la page courante
         """
+        # nomFichier : <str> nom de la superPage pour en faire le nom du fichier
+        nomFichier = self.getNom() if len(self.getParent().split("-")) <= 1 else self.getParent().split("-")[1]
+        # section    : <str> nom de la page courante
         section = self.getNom()
         pathFile = self.getProfilFolder() + nomFichier + ".cfg"
         # On cherche s'il y a des info dedans avant de tout overrider

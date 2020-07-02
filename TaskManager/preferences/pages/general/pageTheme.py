@@ -37,6 +37,8 @@ NOMFICHIER = os.sep + "theme"
 class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
+         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
         # Traitement du fichier .ini
@@ -428,5 +430,5 @@ class PageTheme(AbstractPage):
         except:pass
 
     def appliqueEffet(self, application):
-        self._makeDictAndSave(self.getParent()[1:])
+        self._makeDictAndSave()
 

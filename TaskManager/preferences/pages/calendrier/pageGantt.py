@@ -8,6 +8,8 @@ from ..AbstractPage import *
 class PageGantt(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
+         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
         super().__init__(master,nom = "Gantt", iid_parent ="-Calendrier", **kwargs)
 
 

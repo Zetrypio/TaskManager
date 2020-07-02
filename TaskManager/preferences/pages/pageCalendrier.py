@@ -12,6 +12,8 @@ class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "Calendrier", **kwargs)
         # Note : self.master renvoie a ParametrageZone
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif"])
+
 
         def changeMode(v): # Fonction d'assignement qu'un certain lambda sait pas faire
             self.__mode = v
@@ -165,4 +167,4 @@ class PageCalendrier(AbstractPage):
             jour(str(val))
 
     def appliqueEffet(self, application):
-        self._makeDictAndSave(self.getNom())
+        self._makeDictAndSave()
