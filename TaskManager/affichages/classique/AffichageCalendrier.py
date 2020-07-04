@@ -278,8 +278,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for compteur in range(self.getNbJour()):
 
             self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "light grey"))
-            self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectTaskJour(jour))
-            self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectTaskJour(jour, control=True))
+            self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
+            self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))
             self.__listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")
             if jour < self.getJourFin():
                 self.__listeSeparateurJour.append(Separator(self.__frame, orient=VERTICAL))

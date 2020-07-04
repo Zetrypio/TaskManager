@@ -120,24 +120,24 @@ class AbstractDisplayedCalendar(Frame):
 #        dans le futur. Changera alors de nom.
 #        """
 #        return [task for task in self.listeTask if task.isSelected()]
-#
-#    def selectTaskJour(self, jour, control=False):
-#        """
-#        Permet de sélectionner toutes les tâches d'un jour.
-#        @param jour: le jour dont on sélectionne les tâches.
-#        @param control: False si on déselectionne d'abord, True si on ajoute.
-#        @deprecated: Permettra de gérer plus que de simple tâches. Changera alors de nom.
-#        """
-#        if not control:
-#            self.deselect()
-#
+
+    def selectJour(self, jour, control=False):
+        """
+        Permet de sélectionner toutes les objets d'un jour en sélectionnant le jour.
+        @param jour: le jour à sélectionner.
+        @param control: False si on désélectionne d'abord, True si on ajoute.
+        """
+        if not control:
+            self.deselectEverything()
+
+        # TODO
 #        self.getDonneeCalendrier().addJourSelectionnes(jour)
-#
-#        for task in self.listeTask:
-#            # Si on commence avant ou on est sur le jour et qu'on fini après ou sur le jour
-#            if task.getDebut().date() <= jour and task.getFin().date() >= jour:
-#                task.setSelected(True)
-#        self.updateTaskColor()
+
+        for schedulable in self.listeTask: # On pourrait pas renommer la liste ?
+            # Si l'objet est partiellement sur le jour :
+            if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
+                schedulable.setSelected(True)
+        self.updateColor()
 
     def getDonneeCalendrier(self):
         """

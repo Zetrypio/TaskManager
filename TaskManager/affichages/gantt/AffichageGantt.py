@@ -83,11 +83,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
 #        self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         
         # Définition des events virtuels :
-        self.can.bind_all("<<deselect-all>>",    lambda e: self.__onClicSurCanvas(), add=1)
+        self.can.bind_all("<<deselect-all>>",    self.__onClicSurCanvas, add=1)
         self.can.bind_all("<<delete-selected>>", lambda e: self.__deleteSelected() , add=1)
 
         # Définition des bindings inchangeables (souris):
-        self.can.bind("<Button-1>", lambda e: self.__onClicSurCanvas())
+        self.can.bind("<Button-1>", self.__onClicSurCanvas)
         self.can.bind("<Motion>", self.__updateLinkingLine)
 
         # Infobulle toujours vraie :
@@ -221,7 +221,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             objGantt.getSchedulable().setSelected(True)
             self.getDonneeCalendrier().updateColor()
 
-    def __onClicSurCanvas(self):
+    def __onClicSurCanvas(self, pos):
         """
         Méthode exécutée quand on appuie sur échappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
@@ -229,6 +229,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
                 self.__endLinkingLine()
+            elif pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
             else:
                 self.deselectEverything()
         self.__highlightLinks(None)
