@@ -69,7 +69,22 @@ class Groupe(AbstractSchedulableObject):
         @return datetime.datetime() du début de ce groupe.
         """
         return min(self.__listTasks, key=lambda  t:t.getDebut()).getDebut()
-    
+
+    def getFin(self):
+        """
+        La fin de ce groupe, à savoir la fin de la tâche qui termine le plus tard.
+        @return datetime.datetime() de la fin de ce groupe.
+        """
+        return max(self.__listTasks, key=lambda  t:t.getFin()).getFin()
+
+    def setDone(self, value):
+        """
+        Permet de valider le groupe, en validant toutes les tâches contenues dans le groupe.
+        @param value: True si il faut valider le groupe, False sinon, selon Task#setDone().
+        """
+        for t in self.__listTasks:
+            t.setDone(value)
+
 #    def getFilterStateWith(self):
 #        """
 #        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
