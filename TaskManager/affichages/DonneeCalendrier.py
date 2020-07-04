@@ -48,12 +48,20 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         self.jourSelectionnes.clear()
 
-    def addJourSelectionnes(self, jour):
+    def selectJour(self, jour):
         """
         Permet d'ajouter un jour à la liste de ceux sélectionnés.
-        @param jour: le datetime.date()? à sélectionner.
+        @param jour: le datetime.date() à sélectionner.
         """
         self.jourSelectionnes.add(jour)
+        self.updateColor()
+
+    def deselectJours(self):
+        """
+        Permet de désélectionner tout les jours sélectionnés.
+        """
+        self.jourSelectionnes.clear()
+        self.updateColor()
 
     def intervertir(self):
         """
@@ -227,6 +235,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         # Si le nouveau jour de fin de la période est avant, il faut changer le nouveau jour de fin
         if jour < self.getJourFin():
             self.setJourFin(jour)
+
     def getPanneauActif(self):
         """
         Getter pour le panneau actif.
@@ -277,7 +286,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     def updateColor(self):
         """
         Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
-        @deprecated: sera sûrement grandement modifiée dans le futur.
         """
         for p in self.getToutLesPanneaux():
             p.updateColor()
