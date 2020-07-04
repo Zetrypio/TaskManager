@@ -32,7 +32,7 @@ def askProfil(obligatoire, app, listeProfil):
 
         if bouton == "Ok" :
             # Ne cherche que dans les "keys" qui sont les noms des profils ☺
-            if nom in listeNom:
+            if nom in listeProfil:
                 showerror(title="Erreur", message="Ce nom est déjà pris pour un autre profil")
                 return
             elif folder in listeFolder:
@@ -43,8 +43,10 @@ def askProfil(obligatoire, app, listeProfil):
         else:
             if obligatoire:
                 if not askyesnowarning(title = "Erreur", message="Vous n'avez pas encore de profil, vous devez un créer un pour commencer.\nCliquez sur \"non\" pour fermer l'application"):
+                    print("j'ai dit non")
                     # Si vraiment il est concient et qu'il veut quitter...
-                    app.after(10,app.quit)
+                    app.after(1000,app.quit())
+                    print("j'ai quit")
                 return
             else:
                 nom = folder = None
