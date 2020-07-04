@@ -54,12 +54,12 @@ class DependanceLink(AbstractLink):
         else:
             super().highlight(None)
 
-    def redraw(self, canvas):
+    def redraw(self, canvas, force = False):
         """
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
         """
-        super().redraw(canvas)
+        super().redraw(canvas, force)
 
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))

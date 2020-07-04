@@ -221,7 +221,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             objGantt.getSchedulable().setSelected(True)
             self.getDonneeCalendrier().updateColor()
 
-    def __onClicSurCanvas(self, pos):
+    def __onClicSurCanvas(self, pos=None):
         """
         Méthode exécutée quand on appuie sur échappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
@@ -229,7 +229,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
                 self.__endLinkingLine()
-            elif pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+            elif pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
                 self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
             else:
                 self.deselectEverything()

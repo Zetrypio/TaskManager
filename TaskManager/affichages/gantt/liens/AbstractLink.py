@@ -119,7 +119,7 @@ class AbstractLink(IDisplayableItem):
         """
         return self.__affichageGantt
 
-    def redraw(self, canvas):
+    def redraw(self, canvas, force = False):
         """
         Méthode pour dessiner la flèche.
         @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
