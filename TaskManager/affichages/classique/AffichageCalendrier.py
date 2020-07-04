@@ -91,6 +91,20 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         for displayable in self.listeDisplayableItem:
             displayable.updateColor(self.__frame)
+        
+        # Ci-dessous, une petite customisation, qui permet de faire que les labels des jours soient en bleu quand le jour en question est sélecionné.
+        
+        # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
+        jour = self.getJourDebut()
+        for compteur in range(self.getNbJour()):
+            
+            # Est-ce que le jour est sélectionné ?
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
+
+            self.__listeLabelJour[compteur].config(bg = "#91C9F7" if jourSelectionne else "light grey")
+            
+            # On incrémente le jour, car on a pas rangeDate, comme indiqué plus haut.
+            jour += datetime.timedelta(days = 1)
 
     def getPartRectangle(self, part):
         """
@@ -276,8 +290,11 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
         jour = self.getJourDebut()
         for compteur in range(self.getNbJour()):
-
-            self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "light grey"))
+            
+            # Est-ce que le jour est sélectionné ?
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
+            
+            self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "#91C9F7" if jourSelectionne else "light grey"))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
             self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))
             self.__listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")

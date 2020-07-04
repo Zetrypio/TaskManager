@@ -63,6 +63,13 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         self.jourSelectionnes.clear()
         self.updateColor()
 
+    def isJourSelected(self, jour):
+        """
+        Permet de savoir si un jour est sélectionné.
+        @return True si le jour est sélectionné, False sinon.
+        """
+        return jour in self.jourSelectionnes
+
     def intervertir(self):
         """
         Permet d'intervertir les 2 jours exactement sélectionnés, affiche une erreur à l'utilisateur sinon.
