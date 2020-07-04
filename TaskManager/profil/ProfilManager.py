@@ -83,7 +83,7 @@ class ProfilManager:
         @param obligatoire : <bool> True  = création d'un profil, pour un user si il en a 0
                                     False = création d'un profil, facultatif
         """
-        nom, folderProfil = askProfil(obligatoire, self.__app)
+        nom, folderProfil = askProfil(obligatoire, self.__app, self.getAllNomProfil())
         if nom is None:
             return False
         self.__donnee["user"][os.getlogin()].append(nom)

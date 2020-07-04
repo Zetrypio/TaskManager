@@ -11,28 +11,31 @@ import os
 from util.widgets.Dialog import *
 from .askFolder import *
 
-def askProfil(obligatoire, app):
+def askProfil(obligatoire, app, listeProfil):
     """
     Dialogue qui demande a créer un profil
     @param obligatoire : <bool> True  = création d'un profil, pour un user si il en a 0
                                 False = création d'un profil, facultatif
     @param app         : <Application> pour quitter en cas de Bool True et croix
+    @param listeProfil : <dict> de tout les profils avec leurs paths, on dois la passer car la premiere fois on peut pas passer par l'app car le profil manager n'est pas encore crée
     """
+    listeFolder = listeProfil.values() # <dict_values> contient tous les paths des profils
     nom    = None
     folder = None
 
     def onClose(bouton):
         # Permet de modifier les valeurs des variables
         nonlocal nom, folder
-        # récup les valeurs
+        # Récupération des valeurs
         nom = entryNom.get()
         folder = varEntryPath.get()
 
         if bouton == "Ok" :
-            if nom in app.getProfilManager().getAllNomProfil():
+            # Ne cherche que dans les "keys" qui sont les noms des profils ☺
+            if nom in listeNom:
                 showerror(title="Erreur", message="Ce nom est déjà pris pour un autre profil")
                 return
-            elif folder in app.getProfilManager().getAllFolder():
+            elif folder in listeFolder:
                 showerror(title="Erreur", message="Ce dossier est déjà pris pour un autre profil")
                 return
 

@@ -7,7 +7,6 @@ from shutil import move
 import os
 
 from ..AbstractPage import *
-from preferences.dialog.askProfil import *
 from util.widgets.Dialog import askyesnowarning
 
 
@@ -72,7 +71,6 @@ class PageProfil(AbstractPage):
         """
         Fonction qui supprimer un profil
         """
-        print(self.__cbProfil.cget("value"), self.__cbProfil.cget("value")[0])
         # S'il n'y a qu'un seul profil
         if len(self.__cbProfil.cget("value")) == 1:
             showerror(title = "Suppression impossible", message = "Vous ne pouvez pas supprimer votre seul profil")

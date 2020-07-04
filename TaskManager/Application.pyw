@@ -58,7 +58,9 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
+        print("Avant profil Manager")
         self.__profilManager  = ProfilManager(self)
+        print("Apres profil Manager")
         self.__BindingManager = BindingManager(self)
         self.prefFen = FenetrePreferences(self)
 
