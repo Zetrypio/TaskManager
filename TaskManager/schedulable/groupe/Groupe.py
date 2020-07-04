@@ -104,7 +104,10 @@ class Groupe(AbstractSchedulableObject):
         Permet de mettre à jour le statut de ce groupe.
         TODO
         """
-        pass # TODO
+        self._statut = "Fait" if not any(not t.isDone() for t in self.__listTasks)\
+                  else "En cours" if any(t.isDone() for t in self.__listTasks)\
+                  else "En retard" if any(t.getStatut()=="En retard" for t in self.__listTasks)\
+                  else "À Faire"
 
     def createDisplayableInstance(self, frame, part):
         """

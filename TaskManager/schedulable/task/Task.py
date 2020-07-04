@@ -169,7 +169,7 @@ class Task(AbstractSchedulableObject):
         self._statut = "Inconnu" if self.getDebut() == None\
                   else "Répétition" if self.__nbrep != 0\
                   else "Fait" if self.__done\
-                  else "Retard" if self.getFin() < datetime.datetime.now()\
+                  else "En retard" if self.getFin() < datetime.datetime.now()\
                   else "En cours" if self.getDebut() < datetime.datetime.now()\
                   else "À faire"
 
@@ -446,9 +446,17 @@ class Task(AbstractSchedulableObject):
                 listeGroupe.append(groupe)
         return listeGroupes
 
+    def isDone(self):
+        """
+        Getter pour savoir si la tâche est validée.
+        @return True si la tâche est validé, False sinon.
+        """
+        return self.__done
+
     def setDone(self, value):
         """
         Setter pour dire si la tâche est validée.
+        @param value: True si la tâche est validée, False sinon.
         """
         self.__done = value
         self.updateStatut()
