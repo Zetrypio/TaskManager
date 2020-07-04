@@ -90,6 +90,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.can.bind_all("<<delete-selected>>", lambda e: self.__deleteSelected() , add=1)
 
         # Définition des bindings inchangeables (souris):
+        self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas)
         self.can.bind("<Button-1>", self.__onClicSurCanvas)
         self.can.bind("<Motion>", self.__updateLinkingLine)
 
@@ -159,7 +160,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.__y1_LinkingLine = None
         self.__mode_LinkingLine = None
         self.__activeGanttObject = None
-        
 
     def clicSurObjet(self, objGantt):
         """
@@ -228,6 +228,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         Méthode exécutée quand on appuie sur échappe ou qu'on appuie
         dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
+        @param pos: Event avec la position de la souris par rapport au Canvas(). 
         """
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
@@ -237,6 +238,17 @@ class AffichageGantt(AbstractDisplayedCalendar):
             else:
                 self.deselectEverything()
         self.__highlightLinks(None)
+        self.__eventCanceled = False
+        self.can.focus_set()
+
+    def __onControlClicSurCanvas(self, pos=None):
+        """
+        Méthode exécutée quand on appuie sur Control-Clic.
+        @param pos: Event avec la position de la souris par rapport au Canvas(). 
+        """
+        if not self.__eventCanceled:
+            if pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
         self.__eventCanceled = False
         self.can.focus_set()
 
@@ -360,6 +372,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         for displayable in self.listeDisplayableItem:
             displayable.updateColor(self.can)
+        
+        # Mise à jour des rectangles qui font la couleur de sélection des labels des jours.
         for jour in self.__rectangleSelection:
             # Est-ce que le jour est sélectionné ?
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
