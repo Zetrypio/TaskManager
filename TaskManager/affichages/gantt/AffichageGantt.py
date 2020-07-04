@@ -52,6 +52,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         # La taille de la colonne dépend de la taille du Canvas :
         self.tailleColonne = 0
+
+        # Dictionnaire des rectangles de sélection selon les jours :
+        self.__rectangleSelection = {}
         
         # Pourcentage de la taille d'une colonne pour une tâche ou un groupe :
         # (l'autre partie sert pour afficher les liens).
@@ -357,6 +360,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         for displayable in self.listeDisplayableItem:
             displayable.updateColor(self.can)
+        for jour in self.__rectangleSelection:
+            # Est-ce que le jour est sélectionné ?
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
+            self.can.itemconfig(self.__rectangleSelection[jour], fill="#91C9F7" if jourSelectionne else "light grey")
 
     def getPartPosition(self, part):
         """
@@ -475,14 +482,23 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
         
         # création de bandeau pour les jours
-        self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
-        
+#        self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
+
+        self.__rectangleSelection = {}
+
         # Pour chaques jours :
         for jour in range(self.getNbJour()):
             
             # Position X :
             x = int(jour * w)
             
+            # Est-ce que le jour est sélectionné ?
+            leJour = self.getJourDebut()+datetime.timedelta(days=jour)
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
+
+            # Fond coloré si c'est sélectionné :
+            self.__rectangleSelection[leJour] = self.can.create_rectangle(x, 0, x+w, AffichageGantt.TAILLE_BANDEAU_JOUR, width=0, fill="#91C9F7" if jourSelectionne else "light grey")
+
             # Séparateurs :
             if jour !=0:
                 self.can.create_line(x, 0, x, self.getScrollableHeight())
