@@ -55,7 +55,6 @@ class PageProfil(AbstractPage):
        if path is not None:
            self.__varEntryPath.set(path)
            for file in os.listdir(self.getProfilFolder()):
-               print(self.getProfilFolder()+os.sep+file)
                move(self.getProfilFolder()+os.sep+file, path)
 
            self.getProfilManager().saveNewPath(path, self.__cbProfil.get())

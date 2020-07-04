@@ -31,6 +31,8 @@ def askProfil(obligatoire, app, listeProfil):
         folder = varEntryPath.get()
 
         if bouton == "Ok" :
+            # On regarde si le dossier est vide
+            testVide(folder)
             # Ne cherche que dans les "keys" qui sont les noms des profils ☺
             if nom in listeProfil:
                 showerror(title="Erreur", message="Ce nom est déjà pris pour un autre profil")
