@@ -1,6 +1,7 @@
 # *-* coding:utf-8 *-*
 from json import *
 import os
+from shutil import rmtree
 
 from preferences.dialog.askProfil import *
 
@@ -107,6 +108,9 @@ class ProfilManager:
                 autreUser = True
         # Si personne d'autre utilise le profil
         if not autreUser:
+            path = self.getAllNomProfil()[profil]
+            # On supprime ce qu'il y a dedans
+            rmtree(path)
             # On supprime le path
             del self.getAllNomProfil()[profil]
 

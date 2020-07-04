@@ -2,7 +2,8 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
-from shutil import move, rmtree
+from tkinter.messagebox import showerror
+from shutil import move
 import os
 
 from ..AbstractPage import *
@@ -44,7 +45,6 @@ class PageProfil(AbstractPage):
 
        # Fonction de parametrage
        self.__chargeProfil(self.getProfilManager().getProfilActif())
-       self.__cbProfil.set(self.getProfilManager().getProfilActif())
 
     def __parcourir(self):
        """
@@ -72,19 +72,32 @@ class PageProfil(AbstractPage):
         """
         Fonction qui supprimer un profil
         """
+        print(self.__cbProfil.cget("value"), self.__cbProfil.cget("value")[0])
+        # S'il n'y a qu'un seul profil
+        if len(self.__cbProfil.cget("value")) == 1:
+            showerror(title = "Suppression impossible", message = "Vous ne pouvez pas supprimer votre seul profil")
+            return
+
         # On pose la question
-        if not askyesnowarning(title = "Supprimer un thème", message = "Voulez-vous vraiment supprimer \"%s\" de vos profils ?\nCela supprimera le dossier ainsi que tout ce qui s'y trouve"%self.__cbProfil.get()):
+        if not askyesnowarning(title = "Supprimer un thème", message = "Voulez-vous vraiment supprimer \"%s\" de vos profils ?\nSi vous êtes le seul utilisateur, cela supprimera le dossier ainsi que tout ce qui s'y trouve"%self.__cbProfil.get()):
             return
 
         self.getProfilManager().deleteProfil(self.__cbProfil.get())
-
+        # On remet un nouveau profil
+        self.__chargeProfil(None)
 
     def __chargeProfil(self, profil):
         """
         Fonction qui va chercher les infos via le ProfilManager
+        @param profil : <str> nom du profil a charger
+                        if None : profil = 1er profil de la liste
         """
-        self.__varEntryPath.set(self.getProfilFolder(profil))
         self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
+
+        # On prend le premier profil si c'est None en parametre
+        profil = self.__cbProfil.cget("value")[0] if profil is None else profil
+
+        self.__varEntryPath.set(self.getProfilFolder(profil))
         self.__cbProfil.set(profil)
 
     def appliqueEffet(self, application):
