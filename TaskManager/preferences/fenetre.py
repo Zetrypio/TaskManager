@@ -94,6 +94,7 @@ class FenetrePreferences(Dialog):
                 page.appliqueEffet(self.getApplication())
 
     def getApplication(self):
+        """ return self.app """
         return self.app
 
     def getPageActive(self):
