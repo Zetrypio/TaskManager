@@ -68,6 +68,10 @@ class FenetrePreferences(Dialog):
         self.updateTreeview()
 
     def setPageActive(self, iidPage):
+        """
+        @param iidPage : <str> cnotient l'iid de la page à mettre en permier plan
+            construction de l'iid : "-" + nomDeLaPageParent   | + "-" + nomDeLaPageParent |*nb de page au dessus
+        """
         def pageByIdd(iid):
             """Retrouve la page lié à l'iid du Treeview"""
             return [page for page in self.listePage if page.getIid() == iidPage][0]
