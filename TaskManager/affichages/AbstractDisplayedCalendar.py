@@ -293,23 +293,6 @@ class AbstractDisplayedCalendar(Frame):
         @param valeur: le datetime.date() du jour de fin de l'affichage.
         """
         self.jourFin = valeur
-    
-    def rangeDate(self, jourA, jourB, last = True):
-        """
-        Permet de faire un générateur renvoyant des jours
-        d'un début vers une fin.
-        @bug: Il semblerait que cela ne fonctionne pas correctement.
-        @param jourA: début du générateur, sera yield.
-        @param jourB: fin du générateur, sera yield si et
-        seulement si last est sur True (défaut).
-        @param last = True: True si on doit inclure le jour de fin.
-        """
-        if jourA is not None and jourB is not None:
-            jour = jourA + datetime.timedelta()
-            while jour <= jourB:
-                if jour == jourB and not last: break
-                yield jour
-                jour += datetime.timedelta(days = 1)
 
     def identify_region(self, x, y):
         """

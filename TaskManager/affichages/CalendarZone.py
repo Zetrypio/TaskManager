@@ -129,12 +129,20 @@ class CalendarZone(Frame):
         """
         Méthode pour sélectionner les jours correspondants aux tâches sélectionnées.
         """
-        pass # TODO
+        self.getDonneeCalendrier().deselectJours()
+        jours = set()
+        for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
+            for jour in rangeDate(schedulable.getDebut().date(), schedulable.getFin().date()):
+                jours.add(jour)
+        for jour in jours:
+            self.getDonneeCalendrier().selectJour(jour)
+
     def afficherMasquerJour(self):
         """
         Permet d'afficher ou masquer un jour... TODO
         """
         pass # TODO
+
     def deplacerIntervertir(self):
         """
         Permet d'intervertir 2 jours exactement.

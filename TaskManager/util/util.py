@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import math
+import datetime
 
 def mymap(n, a, b, x, y): # Fonction map classique
     """
@@ -15,7 +16,7 @@ def mymap(n, a, b, x, y): # Fonction map classique
 
 def posY(t, x1, y1, x2, y2):
     """
-    Permet d'obtenir la position Y d'un sinus allant de X1 Y1 à X2 Y2.
+    Permet d'obtenir la position Y d'une interpolation sinusoïdale horizontale allant de X1 Y1 à X2 Y2.
     @param t: entre X1 et X2.
     @param x1: Position X de départ de la courbe.
     @param y1: Position Y de départ de la courbe.
@@ -32,3 +33,21 @@ def err(e):
 def ppcm(a, b):
     """Renvoie le plus petit commun multiple (ppcm) des 2 nombres a et b."""
     return (a*b)//math.gcd(a,b)
+
+def rangeDate(jourA, jourB, last = True):
+    """
+    Permet de faire un générateur renvoyant des jours
+    d'un début vers une fin.
+    @bug: Essai de correction cependant (en test), mais : Il semblerait que cela ne fonctionne pas correctement.
+    @param jourA: début du générateur, sera yield.
+    @param jourB: fin du générateur, sera yield si et
+    seulement si last est sur True (défaut).
+    @param last = True: True si on doit inclure le jour de fin.
+    """
+    if jourA is not None and jourB is not None:
+        jour = jourA + datetime.timedelta()
+        while jour < jourB:
+            yield jour
+            jour += datetime.timedelta(days = 1)
+        if last:
+            yield jourB

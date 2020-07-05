@@ -317,7 +317,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @return le maximum de #getNbTacheJour() pour tout les jours qui sont actuellement visibles.
         """
         nbLigne = 1
-        for jour in self.rangeDate(self.getJourDebut(), self.getJourFin()):
+        for jour in rangeDate(self.getJourDebut(), self.getJourFin()):
             nbLigne = max(nbLigne, self.getNbTacheJour(jour))
         return nbLigne
     
