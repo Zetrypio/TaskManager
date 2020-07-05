@@ -16,9 +16,9 @@ from task.TaskEditor import *
 
 from MenuBar import *
 from preferences.fenetre import *
-from profil.data import *
-from profil.ProfilManager import *
-from profil.BindingManager import *
+from dataManager.data import *
+from dataManager.ProfilManager import *
+from dataManager.BindingManager import *
 
 
 # CECI est la CORRECTION d'un BUG :
