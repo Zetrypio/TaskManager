@@ -45,10 +45,9 @@ def askProfil(obligatoire, app, listeProfil):
         else:
             if obligatoire:
                 if not askyesnowarning(title = "Erreur", message="Vous n'avez pas encore de profil, vous devez un créer un pour commencer.\nCliquez sur \"non\" pour fermer l'application"):
-                    print("j'ai dit non")
                     # Si vraiment il est concient et qu'il veut quitter...
-                    app.after(1000,app.quit())
-                    print("j'ai quit")
+                    app.destroy()
+                    raise SystemExit(0) # Pour finir le programme sans soucis
                 return
             else:
                 nom = folder = None

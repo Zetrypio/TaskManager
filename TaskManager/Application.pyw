@@ -66,6 +66,15 @@ class Application(Frame):
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
 
+    def destroy(self):
+        """
+        Redéfinition de la méthode pour supprimer aussi la fenetre parente
+        """
+        super().destroy()
+        try:
+            self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
+        except:pass
+
     def nouveau(self):pass
     def setModeEditionPeriode(self, enEdition):
         self.calendar.setBarreOutilPeriode(enEdition)
