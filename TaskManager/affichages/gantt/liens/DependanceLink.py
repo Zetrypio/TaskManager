@@ -97,10 +97,12 @@ class DependanceLink(AbstractLink):
         """
         Permet de changer le sens de la flèche.
         """
-        if self.__objGantt_A.getSchedulable().getDebut() > self.__objGantt_B.getSchedulable().getDebut():
-            self.__objGantt_B.getSchedulable().removeDependance(self.__objGantt_A.getSchedulable())
-            self.__objGantt_A, self.__objGantt_B = self.__objGantt_B, self.__objGantt_A
-            self.__objGantt_B.getSchedulable().addDependance(self.__objGantt_A.getSchedulable())
+        # Attention, les attributs __objGanttA et __objGanttB sont pas des objetGantt mais des schedulables directement.
+        self.__objGantt_B.removeDependance(self.__objGantt_A)
+        self.__objGantt_A, self.__objGantt_B = self.__objGantt_B, self.__objGantt_A
+        self.__objGantt_B.addDependance(self.__objGantt_A)
+        # Update les parts aussi dans la superclasse
+        self._updateParts(self.__objGantt_A.getLastPart(self._getAffichageGantt()), self.__objGantt_B.getFirstPart(self._getAffichageGantt()))
 
 #    def cliqueSuppr(self):
 #        if self.tacheD.master.mode == "delDep":

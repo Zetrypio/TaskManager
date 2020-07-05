@@ -42,12 +42,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         self.jourSelectionnes = set()
 
-    def clearJourSelectionnes(self):
-        """
-        Permet de déselectionner tout les jours.
-        """
-        self.jourSelectionnes.clear()
-
     def selectJour(self, jour):
         """
         Permet d'ajouter un jour à la liste de ceux sélectionnés.
@@ -88,10 +82,10 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         tacheJour2 = set()
 
         # Seulement les tâches sélectionnés au cas où il y en a qu'on veux pas switch
-        for tache in self.getSelectedTask():
-            if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1:
+        for tache in self.getSelectedSchedulable():
+            if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1 and isinstance(tache, Task): # On ne peut déplacer ici que les tâches pour le moment...
                 tacheJour1.add(tache)
-            elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2:
+            elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2 and isinstance(tache, Task): # aussi
                 tacheJour2.add(tache)
 
         diff = datetime.datetime.combine(jour2, datetime.time()) - datetime.datetime.combine(jour1, datetime.time())
@@ -103,7 +97,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         for p in self.getToutLesPanneaux():
             p.onIntervertir()
-        self.updateAffichage()
+        self.updateAffichage(force=True)
 
     def getParametreAffichage(self):
         """

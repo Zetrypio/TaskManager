@@ -24,8 +24,8 @@ class MultiFrameItemInnerLink(AbstractLink):
         # Constructeur parent :
         super().__init__(affichageGantt, partA, partB)
 
-        if partA.getSchedulable() != partB.getSchedulable():
-            raise RuntimeError("Le lien doit commencer et terminer sur le même objet planifiable.")
+#        if partA.getSchedulable() != partB.getSchedulable():    # Pas dans le cas des groupes en fait...
+#            raise RuntimeError("Le lien doit commencer et terminer sur le même objet planifiable.")
 
         # TODO : tester lien déjà existant ?
 

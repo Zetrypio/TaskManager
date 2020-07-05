@@ -88,6 +88,9 @@ class AbstractDisplayedCalendar(Frame):
 
         self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.
 
+    def getSelectedSchedulable(self):
+        return (schedulable for schedulable in self.listeTask if schedulable.isSelected())
+
     def getDonneeCalendrier(self):
         """
         Getter pour le DonneeCalendrier.

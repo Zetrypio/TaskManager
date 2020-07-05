@@ -421,8 +421,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         S'occupe de rétablir les liens dans le bon sens.
         @deprecated: TODO : Il faut revoir cette méthode ou alors en/la changer.
         """
-        for lien in self.listeLien:
-            if lien.tacheD.task.getDebut() > lien.tacheF.task.getDebut():
+        for lien in self.listeDisplayableItem:
+            if isinstance(lien, DependanceLink) and lien.getPartA().getSchedulable().getDebut() > lien.getPartB().getSchedulable().getDebut():
                 lien.inverserLaDependances()
 
     def identify_region(self, x, y):

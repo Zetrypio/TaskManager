@@ -50,6 +50,15 @@ class AbstractLink(IDisplayableItem):
         """
         return self.__partB
 
+    def _updateParts(self, partA, partB):
+        """
+        Setter protected pour mettre à jour les 2 parts de ce lien.
+        @param partA: la nouvelle partie A (début du lien).
+        @param partB: la nouvelle partie B (fin du lien).
+        """
+        self.__partA = self.__affichageGantt.getVisiblePart(partA)
+        self.__partB = self.__affichageGantt.getVisiblePart(partB)
+
     def updateColor(self, canvas):
         """
         Permet de mettre à jour la couleur du lien.
