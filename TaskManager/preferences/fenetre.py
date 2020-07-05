@@ -85,6 +85,9 @@ class FenetrePreferences(Dialog):
         self.getNavigationZone().updateTreeview()
 
     def valider(self, txtBtn):
+        """
+        Permet de sauvegarder tout ce qui doit etre sauvegarder sur chaque page
+        """
         if txtBtn == "Appliquer" or txtBtn == "Ok":
             for page in self.getListePage():
                 page.appliqueEffet(self.getApplication())
