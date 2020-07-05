@@ -72,7 +72,7 @@ def askDecalJour(debut, fin, totBloque, tarBloque):
     frameParametre = Frame(fen)
     varRadioParam = StringVar()
     rP1 = Radiobutton(frameParametre, text = "Garder la même durée entre chaque tache", variable = varRadioParam, value = "duree", command = adapteSpinbox)
-    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre le %s/%s et le %s/%s"%(debut.day, debut.month, fin.day, fin.month), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
+    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre le %02i/%02i et le %02i/%02i"%(debut.day, debut.month, fin.day, fin.month), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
     rP1.grid(row=0, sticky="w")
     rP2.grid(row=1, sticky="w")
 

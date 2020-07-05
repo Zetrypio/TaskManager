@@ -73,7 +73,7 @@ def askDecalHeure(heureRetirerMax, heureAjoutMax, debut, fin, totBloque, tarBloq
     frameParametre = Frame(fen)
     varRadioParam = StringVar()
     rP1 = Radiobutton(frameParametre, text = "Garder la même durée entre chaque tache", variable = varRadioParam, value = "duree", command = adapteSpinbox)
-    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre %s h %s et %s h %s"%(debut.hour, debut.minute, fin.hour, fin.minute), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
+    rP2 = Radiobutton(frameParametre, text = "Garder les tâches entre %s:%02i et %s:%02i"%(debut.hour, debut.minute, fin.hour, fin.minute), variable =varRadioParam, value = "bloquer", command = adapteSpinbox)
     rP1.grid(row=0, sticky="w")
     rP2.grid(row=1, sticky="w")
 
