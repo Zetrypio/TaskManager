@@ -57,7 +57,7 @@ class FenetrePreferences(Dialog):
                 self.listePage.append(self.listePage.pop(self.listePage.index(page)))
 
         # Initialisation de la page de garde
-        self.setPageActive("-General")
+        self.setPageActive("-Calendrier")
 
     def __ajouterPage(self, Page):
         """
