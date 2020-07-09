@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-from util.widgets.Dialog import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from tkinter.messagebox import showerror
 import datetime
+
+from schedulable.groupe.Groupe import *
+
+from util.widgets.Dialog import *
+from util.widgets.ColorButton import *
 
 def askGroup(periode):
     """
@@ -19,13 +24,12 @@ def askGroup(periode):
     # Callback :
     def onClose(button):
         nonlocal groupe, nom, desc, color
+        nom   = nomWidget.get()
+        desc  = descWidget.get("0.0", END)
+        color = colorWidget.get()
         if button == "Ok":
             if not nom:
                 showerror("Nom incorrect", "Vous devez nommer le groupe.")
-            elif not desc:
-                desc = ""
-            elif not color:
-                color = "#EFEFEF"
             else:
                 groupe = Groupe(nom, periode, desc, color)
                 fen.destroy()
@@ -33,11 +37,23 @@ def askGroup(periode):
     # Dialogue :
     fen = Dialog(title = "Ajouter un groupe",
                  buttons = ("Ok", "Annuler"),
-                 exitButton = ("Annuler",),
+                 exitButton = ("Annuler", "WM_DELETE_WINDOW"),
                  command = onClose)
     
     # Widgets :
+    nomGroupe   = LabelFrame(fen, text = "Nom")
+    descGroupe  = LabelFrame(fen, text = "Description")
+    nomWidget   = Entry(nomGroupe)
+    colorWidget = ColorButton(nomGroupe)
+    descWidget  = Text(descGroupe, wrap="word")
     
+    # Placements :
+    descGroupe.pack(side = BOTTOM, expand = YES, fill = BOTH)
+    nomGroupe.pack(side = TOP, expand = YES, fill = X)
+    
+    nomWidget.pack(side = LEFT, fill = X, expand = YES)
+    colorWidget.pack(side = RIGHT)
+    descWidget.pack(expand = YES, fill = BOTH)
     
     # Activation :
     fen.activateandwait()
