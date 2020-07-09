@@ -295,7 +295,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         Permet d'ajouter une tâche.
         @param tache: la Task à mettre -> à changer en Schedulable.
-        @parma region: correspond au début de la tâche si celle-ci n'en a pas.
+        @param region: correspond au début de la tâche si celle-ci n'en a pas.
         @deprecated: task va devenir un schedulable et le nom de la fonction va alors changer.
         """
         tache = super().addTask(tache, region) # region est géré dans la variante parent : on ne s'en occupe plus ici.

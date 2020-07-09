@@ -329,6 +329,35 @@ class CalendarZone(Frame):
         """
         Permet de grouper les tâches.
         """
+        periode = self.getDonneeCalendrier().getPeriodeActive()
+        groupeManager = periode.getGroupeManager()
+        schedulables = self.getDonneeCalendrier().getSelectedSchedulable()
+        # Petite vérification :
+        if len(list(schedulables)) < 2:
+            return showerror("Sélection invalide", "Vous devez avoir au moins 2 éléments sélectionner pour pouvoir les grouper.")
+        groupe = None
+        taches = []
+        for obj in schedulables:
+            if isinstance(obj, Group):
+                if groupe is None:
+                    groupe = obj
+                else:
+                    return showerror("Sélection invalide", "Vous ne pouvez pas grouper des tâches dans plusieurs groupes.")
+            elif not isinstance(obj, Task):
+                return showerror("Sélection invalide", "Vous ne pouvez grouper que des tâches.")
+            else:
+                taches.append(obj)
+        
+        # Création du groupe :
+        groupe = groupe or askGroup(periode)
+        
+        for t in taches:
+            groupe.addTask(t)
+        
+        # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
+        for t in taches:
+            self.getDonneeCalendrier().removeTask(t) # TODO
+
         pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
 
     def degrouper(self):
