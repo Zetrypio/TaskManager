@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+from schedulable.groupe.dialog.groupDialog import *
+
 from toolbar.ToolBar import *
 from toolbar.PeriodToolBar import *
 from toolbar.dialog.decalageHeureDialog import *
@@ -350,15 +352,20 @@ class CalendarZone(Frame):
         
         # Création du groupe :
         groupe = groupe or askGroup(periode)
+        if groupe is None:
+            return
         
         for t in taches:
             groupe.addTask(t)
         
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
-            self.getDonneeCalendrier().removeTask(t) # TODO
+            self.getDonneeCalendrier().removeTask(t) # TODO removeTask(t) (removeSchedulable() ?))
 
-        pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
+        pass # TODO (c'est pas fini faut implémenter certaines
+             # des fonctions comme removeTask de DonneeCalendrier extends AbstractDisplayedCalendar). 
+        
+        groupeManager.ajouter(groupe)
 
     def degrouper(self):
         """
