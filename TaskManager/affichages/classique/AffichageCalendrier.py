@@ -252,11 +252,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         for jour in range(len(self.__partsParColonnes)):
             colonne = 0
+            colPerColumn = self.__nbColonneParJour / max(1, len(self.__partsParColonnes[jour]))
             for st in self.__partsParColonnes[jour]:
                 for p in st:
                     if p == part:
                         return colonne
-                colonne +=1
+                colonne +=colPerColumn
         return 0
 
     def __afficherLesHeures(self):
