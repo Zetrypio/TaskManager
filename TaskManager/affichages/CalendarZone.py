@@ -360,10 +360,10 @@ class CalendarZone(Frame):
         
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
-            self.getDonneeCalendrier().removeTask(t) # TODO removeTask(t) (removeSchedulable() ?))
+            self.getDonneeCalendrier().removeSchedulable(t) # TODO removeSchedulable(t)
 
         pass # TODO (c'est pas fini faut implémenter certaines
-             # des fonctions comme removeTask de DonneeCalendrier extends AbstractDisplayedCalendar). 
+             # des fonctions comme removeSchedulable de DonneeCalendrier extends AbstractDisplayedCalendar). 
         
         groupeManager.ajouter(groupe)
 

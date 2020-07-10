@@ -308,3 +308,13 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         return tache # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
 
+    def removeSchedulable(self, obj):
+        """
+        Permet d'enlever un objet du calendrier.
+        @param obj: L'objet à enlever.
+        """
+        super().removeSchedulable(obj)
+        
+        for panneau in self.listPanneau:
+            panneau.removeSchedulable(obj)
+

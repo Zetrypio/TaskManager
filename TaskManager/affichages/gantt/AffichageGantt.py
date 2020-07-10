@@ -486,6 +486,24 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.updateAffichage()
         return schedulable
 
+    def removeSchedulable(self, obj):
+        super().removeSchedulable(obj)
+        
+        for item in reversed(self.listeDisplayableItem):
+            if isinstance(item, ObjetGantt):
+                if item.getSchedulable() == obj:
+                    self.listeDisplayableItem.remove(item)
+            elif isinstance(item, AbstractLink):
+                if item.getPartA().getSchedulable() == obj or item.getPartB().getSchedulable() == obj:
+                    if isinstance(item, DependanceLink):
+                        item.getPartB().getSchedulable().removeDepedance(item.getPartA().getSchedulable())
+                    self.listeDisplayableItem.remove(item)
+            elif isinstance(item, ItemButtonPlus):
+                if item.getSchedulable() == obj:
+                    self.listeDisplayableItem.remove(item)
+
+        self.updateAffichage(True)
+
     def __afficherLesJours(self):
         """
         Permet d'afficher les noms des jours en haut de l'affichage, en fonction du début et de al fin de l'affichage.

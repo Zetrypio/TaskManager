@@ -164,6 +164,16 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         return schedulable # on renvoie le schedulable avec éventuellement son début et sa durée. TRÈS IMPORTANT.
 
+    def removeSchedulable(self, obj):
+        super().removeSchedulable(obj)
+        
+        for item in reversed(self.listeDisplayableItem):
+            if isinstance(item, ObjetClassique):
+                if item.getSchedulable() == obj:
+                    self.listeDisplayableItem.remove(item)
+        
+        self.updateAffichage(True)
+
     def identify_region(self, x, y):
         """
         Renvoie la région à la position X et Y.

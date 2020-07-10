@@ -313,7 +313,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def addTask(self, schedulable, region = None):
+    def addTask(self, schedulable, region = None): # TODO : renommer en addSchedulable
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
@@ -369,6 +369,10 @@ class AbstractDisplayedCalendar(Frame):
                 return None
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
         return schedulable
+
+    def removeSchedulable(self, obj):
+        self.listeTask.remove(obj)
+        self.updateAffichage(force = True)
 
     def askDureeTache(self):
         """

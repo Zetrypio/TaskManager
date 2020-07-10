@@ -36,7 +36,10 @@ class ObjetGantt(AbstractMultiFrameItem):
         Destructeur de cet objet : S'assure que tout les cadres disparaissent avec...
         """
         for p in self.__parts:
-            p[1].destroy()
+            try:
+                p[1].destroy()
+            except:
+                pass
         self.__parts = []
 
     def redraw(self, canvas, force = False):

@@ -74,6 +74,9 @@ class ItemButtonPlus(IDisplayableItem):
         """
         pass
 
+    def getSchedulable(self):
+        return self.__ganttObj.getSchedulable()
+
     def getX(self):
         """
         Getter pour le centre X du plus.
