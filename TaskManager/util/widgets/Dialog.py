@@ -70,11 +70,12 @@ class Dialog(Frame):
         """
         self.__bouton_appuyer = None
         self.parent.winfo_toplevel().attributes("-disabled", True)
+        self.dialog.wm_deiconify()
         self.dialog.focus_set()
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
         self.centerscreenalways()
-        self.dialog.state("normal")
+#        self.dialog.state("normal")
 
     def activateandwait(self):
         """
@@ -84,6 +85,7 @@ class Dialog(Frame):
         self.__mainloop = True
         self.activate()
         while self.__bouton_appuyer is None and not self.__destroyed:
+            print(self.geometry())
             self.mainloop()
         self.__mainloop = False
         return self.__bouton_appuyer
