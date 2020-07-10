@@ -8,6 +8,8 @@ from tkinter.messagebox import showerror
 from tkinter.colorchooser import askcolor
 import datetime
 
+from util.widgets.ColorButton import *
+
 class PeriodAdder(Frame):
     """
     Classe permettant d'ajouter des périodes
@@ -45,7 +47,7 @@ class PeriodAdder(Frame):
         
         # Autres :
         self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
-        self.boutonColor        = TkButton(self, command = self.askcolor, width = 4, relief = GROOVE, bg = "white", activebackground = "white")
+        self.boutonColor        = ColorButton(self)
         # Valider
         self.boutonValider      =   Button(self, command = self.valider, text = "Ajouter")
 
@@ -61,13 +63,6 @@ class PeriodAdder(Frame):
         
         # Ligne 2 :
         self.champDescription .grid(row = 2, column = 0, columnspan = 8, sticky ="ew")
-        
-    def askcolor(self):
-        """
-        Permet de demander à l'utilisateur une couleur pour la période, par l'intermédaire d'une boîte de dialogue usuelle.
-        """
-        self.color = askcolor()[1]
-        self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
         """
@@ -125,7 +120,7 @@ class PeriodAdder(Frame):
         debut = self.debut + datetime.timedelta() # Faire une copie de la date
         fin   = self.fin  +  datetime.timedelta() # Ici aussi
         desc  = self.champDescription.get("0.0", END) # Du début jusqu'à la fin !
-        color = self.boutonColor.cget("bg")
+        color = self.boutonColor.get()
         
         # Création de la période :
         periode = Periode(self.periodManager, nom, debut, fin, desc, color)

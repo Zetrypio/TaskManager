@@ -7,6 +7,8 @@ import datetime
 import time
 
 from affichages.periode.Periode import *
+from util.widgets.ColorButton import *
+
 from .dialog.datetimeDialog import *
 from .Task import *
 
@@ -64,7 +66,7 @@ class TaskAdder(Frame):
         self.updatePossiblePeriods()
         # Autres :
         self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
-        self.boutonColor        = TkButton(self, command = self.askcolor, width = 4, relief = GROOVE, bg = "white", activebackground = "white")
+        self.boutonColor        = ColorButton(self)
         # Valider
         self.boutonValider      =   Button(self, command = self.valider, text = "Ajouter")
 
@@ -87,13 +89,6 @@ class TaskAdder(Frame):
         self.champPeriode     .grid(row = 3, column = 2, columnspan = 6, sticky = "ew")
         # Ligne 4 :
         self.champDescription .grid(row = 4, column = 0, columnspan = 8, sticky ="ew")
-
-    def askcolor(self):
-        """
-        Permet de demander une couleur à l'utilisateur via boîte de dialogue usuelle.
-        """
-        self.color = askcolor()[1]
-        self.boutonColor.config(bg = self.color, activebackground = self.color)
 
     def askDateDebut(self):
         """
@@ -196,7 +191,7 @@ class TaskAdder(Frame):
         rep   = self.getRepetitionTime()
         nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
-        color = self.boutonColor.cget("bg")
+        color = self.boutonColor.get()
         periode = None
         for p in self.getApplication().getPeriodManager().getPeriodes():
             if p.nom == self.champPeriode.get():
