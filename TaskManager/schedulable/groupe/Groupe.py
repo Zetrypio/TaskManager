@@ -232,21 +232,21 @@ class Groupe(AbstractSchedulableObject):
         Getter des tâches du groupe.
         @return une copie de la liste des tâches de ce groupe.
         """
-        return self.listTasks[:]
+        return self.__listTasks[:]
 
     def addTask(self, task):
         """
         Permet d'ajouter une tâche à la liste du groupe.
         @param task: la tâche à ajouter à la liste.
         """
-        self.listTasks.add(task)
+        self.__listTasks.add(task)
 
     def removeTask(self, task):
         """
         Permet de retirer une tâche de la liste du groupe.
         @param task: la tâche à enlever de la liste.
         """
-        self.listTasks.remove(task)
+        self.__listTasks.remove(task)
 
 # L'import est à la fin pour éviter les soucis circulaires d'imports (un vrai cauchemar).
 from affichages.items.content.DisplayableGroup import *

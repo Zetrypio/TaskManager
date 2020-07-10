@@ -333,14 +333,14 @@ class CalendarZone(Frame):
         """
         periode = self.getDonneeCalendrier().getPeriodeActive()
         groupeManager = periode.getGroupeManager()
-        schedulables = self.getDonneeCalendrier().getSelectedSchedulable()
+        schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
         # Petite vérification :
-        if len(list(schedulables)) < 2:
+        if len(schedulables) < 2:
             return showerror("Sélection invalide", "Vous devez avoir au moins 2 éléments sélectionner pour pouvoir les grouper.")
         groupe = None
         taches = []
         for obj in schedulables:
-            if isinstance(obj, Group):
+            if isinstance(obj, Groupe):
                 if groupe is None:
                     groupe = obj
                 else:
@@ -351,7 +351,7 @@ class CalendarZone(Frame):
                 taches.append(obj)
         
         # Création du groupe :
-        groupe = groupe or askGroup(periode)
+        groupe = groupe or askGroup(periode) # Bug de période dans l'autre branche (à merge)
         if groupe is None:
             return
         
