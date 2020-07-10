@@ -160,8 +160,7 @@ class Dialog(Frame):
         sy = self.winfo_screenheight()
         npx = sx/2 - x/2
         npy = sy/2 - y/2
-#        self.geometry("+%s+%s"%(int(npx), int(npy)))
-        self.geometry("200x200+1+1")
+        self.geometry("+%s+%s"%(int(npx), int(npy)))
         self.update()
 
 
