@@ -232,7 +232,7 @@ class Groupe(AbstractSchedulableObject):
         Getter des tâches du groupe.
         @return une copie de la liste des tâches de ce groupe.
         """
-        return self.__listTasks[:]
+        return self.__listTasks.copy()
 
     def addTask(self, task):
         """

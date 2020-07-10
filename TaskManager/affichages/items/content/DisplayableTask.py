@@ -43,6 +43,12 @@ class DisplayableTask(AbstractItemContent):
         # Autre attributs :
         self.__part = part
 
+    def configSize(self, width, height):
+        """
+        Permet de contrôler la taille de l'objet pour les groupes.
+        """
+        self.__texte.config(width = width, height = height)
+
     def __getDisplayColor(self):
         """
         Getter pour savoir la véritable couleur d'affichage,

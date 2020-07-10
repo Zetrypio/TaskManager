@@ -21,10 +21,12 @@ class DisplayableGroup(AbstractItemContent):
         if not isinstance(schedulable, Groupe):
             raise TypeError("Expected Group, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
 
-        super().__init__(master, schedulable, **kwargs)
+        super().__init__(master, schedulable, bg = schedulable.getColor(), **kwargs)
         
         # Création des widgets :
         self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
+        self.__scrollbar = Scrollbar(self, orient = VERTICAL, command = self.__texte.yview)
+        self.__texte.configure(yscrollcommand = self.__scrollbar.set)
 
         # Config des Tags :
         self.__texte.tag_config("titre", font="Arial 12 bold") 
@@ -34,19 +36,29 @@ class DisplayableGroup(AbstractItemContent):
         self.__texte.insert(INSERT, self._schedulable.getNom())
         self.__texte.insert(INSERT, "\n")
         self.__texte.insert(INSERT, self._schedulable.getDescription())
+
+        # Ajout des tâches à l'intérieur :
+        for t in self._schedulable.getListTasks() :
+            self.__texte.insert(INSERT, "\n")
+            f = Frame(self.__texte)
+            tache = t.createDisplayableInstance(f, part)
+            tache.pack_propagate(True)
+            tache.pack(expand = YES, fill = BOTH)
+            tache.configSize(width = 10, height = 2)
+            self.__texte.window_create(INSERT, window = f)#, stretch = 1)
+        # TODO : filtrer selon la part.
         
         # Ajout des tags
         self.__texte.tag_add("titre", "0.0", "1.0")#%int(len(task.getNom())))
         self.__texte.tag_add("corps", "1.0", END)#, %int(len(task.getDescription())))
 
-        # Finalisation et placements :
+        # Finalisation :
         self.__texte.config(state = "disabled") # Pour ne pas changer le texte dedans
-        self.__texte.pack(fill=BOTH, expand=YES)# On l'affiche une fois qu'il est tout beau.
-        self.pack_propagate(False)
         
-        # Ajout des tâches à l'intérieur :
-        # TODO
-        # Et filtrer selon la part.
+        # Placement :
+        self.__texte.pack(fill=BOTH, expand = YES, side = LEFT)# On l'affiche une fois qu'il est tout beau.
+        self.__scrollbar.pack(fill = Y, side = RIGHT)
+        self.pack_propagate(False)
 
 #        # La selection des tâches
 #        self.__texte.bind("<Button-1>", self._clique)

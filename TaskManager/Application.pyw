@@ -159,9 +159,9 @@ def main():
                              color = "#7FFF7F")
     app.getPeriodManager().ajouter(periodeSemaine)
 
-    # Création de tâches  préfaites
-    app.getTaskEditor().ajouter(Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 5,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2)))
+    # Création de tâches préfaites
+    tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
+    tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 5,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
     app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 5,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
     app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 5,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
     app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 5, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
@@ -173,7 +173,11 @@ def main():
 
     # Création d'un groupe préfait
     # Les 2 première tâches sont dans le groupe.
-    periodeSemaine.getGroupeManager().ajouter(Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF", *app.getTaskEditor().taches[1:3]))
+    group = Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF")
+    group.addTask(tacheA1)
+    group.addTask(tacheA2)
+    periodeSemaine.getGroupeManager().ajouter(group)
+    
     
     app.mainloop()
     try:
