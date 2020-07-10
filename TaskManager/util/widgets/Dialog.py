@@ -34,7 +34,6 @@ class Dialog(Frame):
         self.dialog.transient(self.dialog.master)
         self.dialog.title(title)
         self.dialog.protocol("WM_DELETE_WINDOW", lambda : self.execute("WM_DELETE_WINDOW"))
-        self.dialog.withdraw()
 
         self.parent = self.dialog.master
 
@@ -59,6 +58,12 @@ class Dialog(Frame):
             self.__buttons[-1].pack(side = LEFT, padx = 4, pady = 4)
             if i == defaultbutton:
                 self.__buttons[-1].config(default = ACTIVE)
+        
+        # Correction de l'apparition qui buggait parfois...
+        self.dialog.wm_deiconify()
+        self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
+        self.update()
+        self.dialog.withdraw()
 
 
     def activate(self):
@@ -69,8 +74,8 @@ class Dialog(Frame):
         Utilisez Dialog#activateandwait() à la place.
         """
         self.__bouton_appuyer = None
-        self.parent.winfo_toplevel().attributes("-disabled", True)
         self.dialog.wm_deiconify()
+        self.parent.winfo_toplevel().attributes("-disabled", True)
         self.dialog.focus_set()
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
@@ -155,7 +160,8 @@ class Dialog(Frame):
         sy = self.winfo_screenheight()
         npx = sx/2 - x/2
         npy = sy/2 - y/2
-        self.geometry("+%s+%s"%(int(npx), int(npy)))
+#        self.geometry("+%s+%s"%(int(npx), int(npy)))
+        self.geometry("200x200+1+1")
         self.update()
 
 
