@@ -5,6 +5,7 @@ from util.importPIL import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+import os
 
 from affichages.CalendarZone import *
 from affichages.periode.Periode import *
@@ -14,6 +15,10 @@ from schedulable.groupe.GroupeManager import *
 from schedulable.task.TaskEditor import *
 
 from MenuBar import *
+from preferences.fenetre import *
+from dataManager.data import *
+from dataManager.ProfilManager import *
+from dataManager.BindingManager import *
 
 
 # CECI est la CORRECTION d'un BUG :
@@ -48,6 +53,10 @@ class Application(Frame):
         @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
+        os.makedirs(os.path.expanduser("~/.taskManager/"), exist_ok = True)
+
+        self.__data = Data()
+
         self.winfo_toplevel().title("Gestionnaire de calendrier")
         self.menu = MenuBar(self.winfo_toplevel(), self)
         self.periodManager = PeriodManager(self)
@@ -55,7 +64,23 @@ class Application(Frame):
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
-    def nouveau(self):pass # TODO
+
+        self.__profilManager  = ProfilManager(self)
+        self.__BindingManager = BindingManager(self)
+        self.prefFen = FenetrePreferences(self)
+
+        self.bind_all("<Control-,>", lambda e=None:self.preferences())
+
+    def destroy(self):
+        """
+        Redéfinition de la méthode pour supprimer aussi la fenetre parente
+        """
+        super().destroy()
+        try:
+            self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
+        except:pass
+
+    def nouveau(self):pass
 
     def setModeEditionPeriode(self, enEdition):
         """
@@ -71,6 +96,11 @@ class Application(Frame):
             self.taskEditor.filter(type = ("Tâche", "Tâche indépendante"))
             self.taskEditor.setEditionPeriode(False)
             pass
+
+    def preferences(self):
+        print(" non lancé")
+        self.prefFen.activateandwait()
+        print("lancé")
 
     def getPeriodManager(self):
         """
@@ -99,6 +129,17 @@ class Application(Frame):
         @return le TaskEditor.
         """
         return self.taskEditor
+
+    def getData(self):
+        """ Retourne le Gestionnaire des données """
+        return self.__data
+
+    def getProfilManager(self):
+        """ Retourne le Profil Manager """
+        return self.__profilManager
+    def getBindingManager(self):
+        """ Retourne le Profil Manager """
+        return self.__BindingManager
 
 
 

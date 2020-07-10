@@ -1,7 +1,9 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+
+from preferences.fenetre import *
 
 class MenuBar(Menu):
     """
@@ -25,13 +27,13 @@ class MenuBar(Menu):
         self.add_cascade(label = "Affichage", menu=self.menuAffichage)
 
         # Menu Fichier :
-        self.menuFichier.add_command(label = "Nouveau", accelerator="Ctrl-N", command = master.nouveau)
-        self.menuFichier.add_command(label = "Ouvrir", accelerator="Ctrl-O", command = master.nouveau)
+        self.menuFichier.add_command(label = "Nouveau", accelerator="Ctrl+N", command = master.nouveau)
+        self.menuFichier.add_command(label = "Ouvrir", accelerator="Ctrl+O", command = master.nouveau)
         self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Enregistrer", accelerator="Ctrl-S", command = master.nouveau)
-        self.menuFichier.add_command(label = "Enregistrer sous", accelerator="Ctrl-Maj-S", command = master.nouveau)
+        self.menuFichier.add_command(label = "Enregistrer", accelerator="Ctrl+S", command = master.nouveau)
+        self.menuFichier.add_command(label = "Enregistrer sous", accelerator="Ctrl+Maj+S", command = master.nouveau)
         self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl-Q", command = master.nouveau)
+        self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl+Q", command = master.nouveau)
 
         # Menu Affichage/Style Horloge :
         self.variableHorlogeStyle = StringVar(value="nombre")
@@ -41,4 +43,6 @@ class MenuBar(Menu):
 
         # Menu Affichage :
         self.menuAffichage.add_cascade(label = "Style d'horloge", menu = self.menuHorlogeStyle)
+
+        self.menuAffichage.add_cascade(label = "Préférences", accelerator="Ctrl+,", command=master.preferences)
 

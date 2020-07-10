@@ -49,6 +49,8 @@ class Dialog(Frame):
         self.__separator = Separator(self.dialog, orient = HORIZONTAL)
         self.__separator.pack(side = BOTTOM, fill = X)
         self.__bouton_appuyer = None
+        self.__destroyed = False
+        self.__mainloop = False
         self.pack(side = TOP, expand = YES, fill = BOTH)
 
         self.__buttons = []
@@ -66,21 +68,24 @@ class Dialog(Frame):
         principale en sortant de la mainloop de tkinter.
         Utilisez Dialog#activateandwait() à la place.
         """
+        self.__bouton_appuyer = None
         self.parent.winfo_toplevel().attributes("-disabled", True)
         self.dialog.focus_set()
-        self.dialog.state("normal")
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
         self.centerscreenalways()
+        self.dialog.state("normal")
 
     def activateandwait(self):
         """
         Permet d'activer le dialogue et d'attendre sa sortie.
         @return le bouton appuyé.
         """
+        self.__mainloop = True
         self.activate()
-        while self.__bouton_appuyer is None:
+        while self.__bouton_appuyer is None and not self.__destroyed:
             self.mainloop()
+        self.__mainloop = False
         return self.__bouton_appuyer
 
     def deactivate(self):
@@ -88,6 +93,8 @@ class Dialog(Frame):
         Permet de fermer le dialogue sans le détruire.
         Il est réactivable par la suite.
         """
+        if self.__mainloop:
+            self.quit()
         self.parent.winfo_toplevel().attributes("-disabled", False)
         try:
             self.dialog.withdraw()
@@ -101,6 +108,7 @@ class Dialog(Frame):
         il n'est plus réactivable par la suite.
         """
         self.deactivate()
+        self.__destroyed = True
         Frame.destroy(self)
         self.dialog.destroy()
 
@@ -149,7 +157,7 @@ class Dialog(Frame):
         self.update()
 
 
-def askString(master, nom, question):
+def askstring(master, nom, question):
     """
     Pose une question à l'utilisateur dans un dialogue,
     il doit répondre dans un champ d'entrée.
