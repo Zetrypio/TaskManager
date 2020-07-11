@@ -82,9 +82,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Binding d'events virtuels : ?
         self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
         self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
-#        self.master.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
-#        self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
-        
+        #self.master.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+        #self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+
         # Définition des events virtuels :
         self.can.bind_all("<<deselect-all>>",    self.__onClicSurCanvas, add=1)
         self.can.bind_all("<<delete-selected>>", lambda e: self.__deleteSelected() , add=1)
@@ -286,14 +286,15 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
 
-#    def __trouverItems(self, pos):
-#        """
-#        Trouver les items à la position donnée
-#        @param pos : objet avec un attribut x et un attribut y, correspondant à la position souhaitée.
-#        """
-#        return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
-#    def __getBtnChangeJour(self):
-#        return self.getParametreAffichage().getBoutonsChangementJours()
+    #def __trouverItems(self, pos):
+        #"""
+        #Trouver les items à la position donnée
+        #@param pos : objet avec un attribut x et un attribut y, correspondant à la position souhaitée.
+        #"""
+        #return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
+
+    #def __getBtnChangeJour(self):
+        #return self.getParametreAffichage().getBoutonsChangementJours()
 
     def getParametreAffichage(self):
         """
@@ -514,8 +515,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
         
         # création de bandeau pour les jours
-#        self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
-
+        #self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
         self.__rectangleSelection = {}
 
         # Pour chaques jours :
@@ -546,7 +546,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
         """
         # Va changer :
-#        self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
+        #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)

@@ -60,16 +60,17 @@ class AbstractDisplayedCalendar(Frame):
             s.setSelected(False)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
 
-    def onIntervertir(self):pass # Juste pour qu'elle existe # Sera considérablement changé
+    def onIntervertir(self):
+        pass # Juste pour qu'elle existe # Sera considérablement changé
 
-#    def getSelectedTask(self):
-#        """
-#        Permet d'obtenir la liste des tâches sélectionnées.
-#        @return: la liste des tâches sélectionnées.
-#        @deprecated: permettra de renvoyer plus que des tâches,
-#        dans le futur. Changera alors de nom.
-#        """
-#        return [task for task in self.listeTask if task.isSelected()]
+    #def getSelectedTask(self):
+        #"""
+        #Permet d'obtenir la liste des tâches sélectionnées.
+        #@return: la liste des tâches sélectionnées.
+        #@deprecated: permettra de renvoyer plus que des tâches,
+        #dans le futur. Changera alors de nom.
+        #"""
+        #return [task for task in self.listeTask if task.isSelected()]
 
     def selectJour(self, jour, control=False):
         """
@@ -234,7 +235,7 @@ class AbstractDisplayedCalendar(Frame):
         @return None si l'objet n'est pas visible du tout.
         """
         # Test du jour :
-        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin():
+        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin()  + datetime.timedelta(days=1):
             return None
         
         # Test de l'intégrité :
