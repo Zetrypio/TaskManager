@@ -146,6 +146,10 @@ class Application(Frame):
 def main():
     """Fonction main, principale du programme."""
     app = Application()
+    try:
+        app.winfo_toplevel().state("zoomed")
+    except:
+        pass
     app.pack(expand = YES, fill = BOTH)
     
 
