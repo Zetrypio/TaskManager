@@ -343,7 +343,7 @@ class CalendarZone(Frame):
             if isinstance(obj, Groupe):
                 if groupe is None:
                     groupe = obj
-                else:
+                elif groupe != obj:
                     return showerror("Sélection invalide", "Vous ne pouvez pas grouper des tâches dans plusieurs groupes.")
             elif not isinstance(obj, Task):
                 return showerror("Sélection invalide", "Vous ne pouvez grouper que des tâches.")
@@ -351,7 +351,10 @@ class CalendarZone(Frame):
                 taches.append(obj)
         
         # Création du groupe :
-        groupe = groupe or askGroup(periode) # Bug de période dans l'autre branche (à merge)
+        ajout = True
+        if groupe:
+            ajout = False
+        groupe = groupe or askGroup(periode)
         if groupe is None:
             return
         
@@ -360,24 +363,38 @@ class CalendarZone(Frame):
         
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
-            self.getDonneeCalendrier().removeSchedulable(t) # TODO removeSchedulable(t)
+            self.getApplication().getTaskEditor().supprimer(t)
+            self.getDonneeCalendrier().removeSchedulable(t)
 
-        pass # TODO (c'est pas fini faut implémenter certaines
-             # des fonctions comme removeSchedulable de DonneeCalendrier extends AbstractDisplayedCalendar). 
-        
-        groupeManager.ajouter(groupe)
+        if ajout:
+            groupeManager.ajouter(groupe)
 
     def degrouper(self):
         """
         Permet de dégrouper un groupe.
         """
-        pass # TODO, et encore plus pour le Refactoring que je suis en train de faire.
+        periode = self.getDonneeCalendrier().getPeriodeActive()
+        groupeManager = periode.getGroupeManager()
+        schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
+        # Petite vérification :
+        if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
+            return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
+        
+        # Pour chaque groupes sélectionnés :
+        for groupe in set(schedulables):
+            # Ré-ajout des tâches qui étaient dans le groupe :
+            for t in groupe.getListTasks():
+                self.getApplication().getTaskEditor().ajouter(t)
+#                self.getDonneeCalendrier().addTask(t)
+            
+            # Suppression du groupe :
+            groupeManager.supprimer(groupe)
 
     def avancementMannuel(self):
         """
         Permet de valider les tâches sélectionnées.
         """
-        for tache in self.getDonneeCalendrier().listeTask:#.getSchedulable():
+        for tache in self.getDonneeCalendrier().listeTask:#.getSchedulables():
             if tache.isSelected():
                 tache.setDone(True)
         self.getApplication().getTaskEditor().redessiner()

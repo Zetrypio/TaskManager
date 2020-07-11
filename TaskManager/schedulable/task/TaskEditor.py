@@ -110,7 +110,6 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-#        print(schedulable)
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
@@ -124,8 +123,8 @@ class TaskEditor(Frame):
         """
         self.taches.remove(schedulable)
         self.redessiner()
-        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            self.master.getDonneeCalendrier()#.removeTask(schedulable) # TODO
+#        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
+#            self.master.getDonneeCalendrier().removeSchedulable(schedulable) # XXX ça casse pas tout j'espère ?
         self.frameInput.updatePossiblePeriods()
 
     def redessiner(self):
