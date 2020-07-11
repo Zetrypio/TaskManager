@@ -297,10 +297,11 @@ class TaskEditor(Frame):
             region += datetime.timedelta(minutes = minute2 - minute1)
             region = askHeureExacte(self, region) # Définie dans le dialogue askHeureExacteDialog.py
             if region is not None:
-                sousTache = panneau.addTask(tache, region = region)
-                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
-                    if p != panneau:
-                        p.addTask(sousTache, region)
+#                sousTache = panneau.addTask(tache, region = region)
+#                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
+#                    if p != panneau:
+#                        p.addTask(sousTache, region)
+                sousTache = self.getApplication().getDonneeCalendrier().addTask(tache, region = region)
                 sousTache.updateStatut()
                 tache.addSubTask(sousTache)
                 self.redessiner()

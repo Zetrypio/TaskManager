@@ -141,13 +141,17 @@ class Task(AbstractSchedulableObject):
         Permet de supprimer définitivement cette tâche.
         @param app: Application(), nécessaire pour la suppression d'une tâche.
         """
-        # TODO : Suppression des calendriers.
-        if self.parent is None:
+        if self.__parent is None and not self.isContainer():
             app.getTaskEditor().supprimer(self)
+            app.getDonneeCalendrier().removeSchedulable(self)
+        elif self.isContainer():
+            app.getTaskEditor().supprimer(self)
+            for t in self.getSubTasks():
+                app.getDonneeCalendrier().removeSchedulable(t)
         else:
-            self.parent.removeSubTask(self)
-            
+            self.__parent.removeSubTask(self)
             app.getTaskEditor().redessiner()
+            app.getDonneeCalendrier().removeSchedulable(self)
 
     def copy(self):
         """
