@@ -21,7 +21,7 @@ def askPeriode(periodManager, taskEditor, from_ = None, duplicate = False):
 #        taskEditor.ajouter(*a)
 
     def configurer():
-        periodManager.supprimerPeriode()
+        periodManager.supprimerPeriodes()
         valider()
     
     fen = Dialog(command = onClose,
