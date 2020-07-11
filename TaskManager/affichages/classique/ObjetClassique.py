@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+from util.widgets.RMenu import *
+
 from ..items.AbstractMultiFrameItem import *
 
 class ObjetClassique(AbstractMultiFrameItem):
@@ -19,6 +21,7 @@ class ObjetClassique(AbstractMultiFrameItem):
         super().__init__(master, schedulable)
         self.__listeCadre = []
         self.__widget = []
+        self.__rmenu = {}
 
     def redraw(self, frame):
         # On se supprime :
@@ -39,6 +42,10 @@ class ObjetClassique(AbstractMultiFrameItem):
                 widget.bindTo("<Button-1>", lambda e: self.__onSelect())
                 widget.bindTo("<Control-Button-1>", lambda e: self.__onMultiSelect())
 
+                # RMenu :
+                rmenu = RMenu(widget, False)
+                rmenu.add_command(label = "Supprimer %s"%self._schedulable, command = lambda : self._schedulable.delete(self.master.getApplication()))
+
                 # On le place :
                 rect = self.master.getPartRectangle(part)
                 ligne       = int(rect.getY1())
@@ -51,6 +58,7 @@ class ObjetClassique(AbstractMultiFrameItem):
                 # On le mémorise :
                 self.__listeCadre.append(f)
                 self.__widget.append(widget)
+                self.__rmenu[widget] = rmenu
 
     def __onSelect(self):
         """
@@ -78,3 +86,9 @@ class ObjetClassique(AbstractMultiFrameItem):
                 pass
         self.__listeCadre = []
         self.__widget = []
+        for widget in self.__rmenu:
+            try:
+                self.__rmenu[widget].destroy()
+            except:
+                pass
+        self.__rmenu = {}

@@ -115,7 +115,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                             rmenu.add_command(label = "Supprimer un lien", command = lambda : self.beginLinkingLine(rect.getCenterPoint(), mode = "-"))
 
                         rmenu.add_separator()
-                    rmenu.add_command(label = "Supprimer %s"%self._schedulable)
+                    rmenu.add_command(label = "Supprimer %s"%self._schedulable, command = lambda : self._schedulable.delete(self.master.getApplication()))
                 except:
                     pass
 
