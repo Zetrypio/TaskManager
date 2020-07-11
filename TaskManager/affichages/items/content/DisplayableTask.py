@@ -61,7 +61,7 @@ class DisplayableTask(AbstractItemContent):
         self.__texte.bind(binding, command, add)
 
     def needButtonPlus(self, affichageGantt):
-        if self._schedulable.getLastPart(affichageGantt) == self.__part and len(self._schedulable.getDependantes()) == 0:
+        if affichageGantt.getVisiblePart(self._schedulable.getLastPart(affichageGantt)) == self.__part and len(self._schedulable.getDependantes()) == 0:
             return True
         return False
 
