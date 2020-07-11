@@ -466,7 +466,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         self.getApplication().setModeEditionPeriode(False)
         paramAffichage.setStateListe(NORMAL)
-        if self.getNbJour() == self.getLongueurPeriode():
+        if self.getDureeJour() == self.getLongueurPeriode():
             paramAffichage.setModeListe("Période")
         elif self.getNbJour() == 7:
             paramAffichage.setModeListe("1 semaine")
