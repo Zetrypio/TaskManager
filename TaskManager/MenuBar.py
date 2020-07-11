@@ -23,23 +23,22 @@ class MenuBar(Menu):
         self.menuAffichage = Menu(self, tearoff=0)
         
         self.add_cascade(label = "Fichier", menu=self.menuFichier)
-        self.add_cascade(label = "Edition", menu=self.menuEdition)
+#        self.add_cascade(label = "Edition", menu=self.menuEdition)
         self.add_cascade(label = "Affichage", menu=self.menuAffichage)
 
         # Menu Fichier :
-        self.menuFichier.add_command(label = "Nouveau", accelerator="Ctrl+N", command = master.nouveau)
-        self.menuFichier.add_command(label = "Ouvrir", accelerator="Ctrl+O", command = master.nouveau)
+        #self.menuFichier.add_command(label = "Changer d'utilisateur", accelerator="Ctrl+N", command = master.changeUser) # À faire dans un autre menu je pense...
+        #self.menuFichier.add_separator()
+        self.menuFichier.add_command(label = "Enregistrer", accelerator="Ctrl+S", command = master.save)
         self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Enregistrer", accelerator="Ctrl+S", command = master.nouveau)
-        self.menuFichier.add_command(label = "Enregistrer sous", accelerator="Ctrl+Maj+S", command = master.nouveau)
-        self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl+Q", command = master.nouveau)
+        self.menuFichier.add_command(label = "Restart", accelerator="Ctrl+R", command = master.restart)
+        self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl+Q", command = master.quit)
 
         # Menu Affichage/Style Horloge :
         self.variableHorlogeStyle = StringVar(value="nombre")
         self.menuHorlogeStyle = Menu(self.menuAffichage, tearoff=0)
-        self.menuHorlogeStyle.add_radiobutton(label = "Normal", command = master.nouveau, variable=self.variableHorlogeStyle, value = "normal")
-        self.menuHorlogeStyle.add_radiobutton(label = "Nombre", command = master.nouveau, variable=self.variableHorlogeStyle, value = "nombre")
+        self.menuHorlogeStyle.add_radiobutton(label = "Normal", variable=self.variableHorlogeStyle, value = "normal")
+        self.menuHorlogeStyle.add_radiobutton(label = "Nombre", variable=self.variableHorlogeStyle, value = "nombre")
 
         # Menu Affichage :
         self.menuAffichage.add_cascade(label = "Style d'horloge", menu = self.menuHorlogeStyle)

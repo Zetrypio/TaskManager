@@ -73,14 +73,16 @@ class Application(Frame):
 
     def destroy(self):
         """
-        Redéfinition de la méthode pour supprimer aussi la fenetre parente
+        Redéfinition de la méthode pour supprimer aussi la fenêtre parente
         """
         super().destroy()
         try:
             self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
         except:pass
 
-    def nouveau(self):pass
+    def save(self):pass
+
+    def restart(self):pass
 
     def setModeEditionPeriode(self, enEdition):
         """
@@ -138,7 +140,7 @@ class Application(Frame):
         """ Retourne le Profil Manager """
         return self.__profilManager
     def getBindingManager(self):
-        """ Retourne le Profil Manager """
+        """ Retourne le Binding Manager """
         return self.__BindingManager
 
 
@@ -186,8 +188,20 @@ def main():
     periodeSemaine.getGroupeManager().ajouter(group)
     
     
-    app.mainloop()
     try:
-        app.destroy()
-    except:
-        pass
+        app.mainloop()
+        try:
+            app.destroy()
+        except:
+            pass
+    except SystemExit:
+        raise
+    except BaseException as e:
+        Frame().winfo_toplevel().withdraw()
+        showerror("Erreur Fatale", "Erreur Fatale de l'application.\nL'application va essayer d'enregistrer.\n%s : %s"%(e.__class__.__name__, e))
+    finally:
+        try:
+            app.save()
+        except BaseException as e:
+            Frame().winfo_toplevel().withdraw()
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
