@@ -1,7 +1,7 @@
 {
     "Affichage-gantt": {
         "deselect-all": {
-            "description": "Déselectionner Tout",
+            "description": "Désélectionner Tout",
             "bindings": ["Escape"]
             },
         "delete-selected": {
@@ -11,7 +11,7 @@
         },
     "General": {
 	"selectionner-jour": {
-	    "description": "Permert de sélectionner un jour entier avec toutes ces taches",
+	    "description": "Permet de sélectionner un jour entier avec toutes ses taches",
 	    "bindings": []
             },
         "selectionner-groupe": {
@@ -21,7 +21,7 @@
         },
     "Affichage-classique": {
         "deselect-all": {
-            "description": "Déselectionner Tout",
+            "description": "Désélectionner Tout",
             "bindings": ["Escape"]
             }
         }
