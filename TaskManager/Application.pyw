@@ -146,6 +146,10 @@ class Application(Frame):
 def main():
     """Fonction main, principale du programme."""
     app = Application()
+    w = app.winfo_toplevel().winfo_screenwidth()
+    h = app.winfo_toplevel().winfo_screenheight()
+    app.winfo_toplevel().geometry("%sx%s+%s+%s"%(int(0.9*w), int(0.8*h), int(0.05*w), int(0.05*h)))
+    app.update()
     try:
         app.winfo_toplevel().state("zoomed")
     except:
