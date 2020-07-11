@@ -251,7 +251,10 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         @param jour: datetime.date() correspondant au jour dont cherche le nombre de colonne d'items superposés.
         @return le nombre de colonne qu'il y a dans le jour demandé.
         """
-        return max(1, len(self.__partsParColonnes[(jour - self.getJourDebut()).days]))
+        try:
+            return max(1, len(self.__partsParColonnes[(jour - self.getJourDebut()).days]))
+        except:
+            return 1
 
     def __getNoColonnePourPart(self, part):
         """

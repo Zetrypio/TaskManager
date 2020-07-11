@@ -104,17 +104,15 @@ class DependanceLink(AbstractLink):
         # Update les parts aussi dans la superclasse
         self._updateParts(self.__objGantt_A.getLastPart(self._getAffichageGantt()), self.__objGantt_B.getFirstPart(self._getAffichageGantt()))
 
-#    def cliqueSuppr(self):
-#        if self.tacheD.master.mode == "delDep":
-#            if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
-#                self.tacheD.master.updateAffichage()
-#                return
-#            if chercheur != self.tacheD and chercheur != self.tacheF:
-#                return
-#            chercheur.jeCherche = False
-#            self.suppression()
-#
-#    def changeSelect(self):
-#        self.select = not self.select
-#        self.tacheD.master.updateAffichage()
+    #def cliqueSuppr(self):
+        #if self.tacheD.master.mode == "delDep":
+            #if (chercheur := self.tacheD.master.getQuiCherche()) == None: # Objet TacheEnGantt qui a la variable jeCherche = True
+                #self.tacheD.master.updateAffichage()
+                #return
+            #if chercheur != self.tacheD and chercheur != self.tacheF:
+                #return
+            #chercheur.jeCherche = False
+            #self.suppression()
 
+    #def changeSelect(self):
+        #self.tacheD.master.updateAffichage()
