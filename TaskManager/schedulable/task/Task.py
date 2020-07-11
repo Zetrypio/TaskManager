@@ -429,16 +429,16 @@ class Task(AbstractSchedulableObject):
         # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
         taskEditor.ajouter(newTask)
 
-    #def getFilterStateWith(self, filter):
-        # Si non autorisé par le filtre :
-        #if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
-        #or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
-            #return -1
-        # Filtre prioritaire ?
-        #if "name" in filter and self.nom.lower().startswith(filter["name"].lower()):
-            #return 1
-        # Sinon : autorisé par le filtre, mais pas prioritaire.
-       #return 0
+#    def getFilterStateWith(self, filter):
+#         Si non autorisé par le filtre :
+#        if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
+#        or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
+#            return -1
+#         Filtre prioritaire ?
+#        if "name" in filter and self.nom.lower().startswith(filter["name"].lower()):
+#            return 1
+#         Sinon : autorisé par le filtre, mais pas prioritaire.
+#       return 0
 
     def getGroupes(self):
         """
