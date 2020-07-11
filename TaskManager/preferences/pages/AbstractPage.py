@@ -80,6 +80,7 @@ class AbstractPage(Frame):
             condition = self.getNom() in self.getData().sections() and donnee[1] in self.getData()[self.getNom()]
             # Alors on chope la value sinon on affecte la valeur par défaut
             value = self.getData().get(self.getNom(), donnee[1]) if condition else donnee[2]
+            value = " " if value == "" and donnee[1] == "Lien" else value # Pour corriger le fait que le ConfigParser ne peut pas enregistrer des espaces...
             donnee[0].set(value)
 
     def _makeDictAndSave(self):

@@ -166,28 +166,31 @@ class PageCalendrier(AbstractPage):
 
         numJour     = str(toudai.day)
         numMois     = str(toudai.month)
+        numJour2C   = "%02i"%toudai.day
+        numMois2C   = "%02i"%toudai.month
         numAnnee    = str(toudai.year)
         jourSemaine = str(jour[toudai.weekday()])
         mois        = str(mois[toudai.month])
 
         listAffichage = [] # liste des affichages disponible
-        listAffichage.append(jourSemaine + lien + numJour + lien + mois)                          # Lundi 1 Janvier
-        listAffichage.append(jourSemaine + lien + numJour + lien + mois + lien + numAnnee)        # Lundi 1 Janvier 2020
-        listAffichage.append(jourSemaine + lien + numJour + lien + mois[:3])                      # Lundi 1 Jan
-        listAffichage.append(jourSemaine + lien + numJour + lien + mois[:3] + lien + numAnnee)    # Lundi 1 Jan 2020
+        listAffichage.append( lien.join([jourSemaine, numJour, mois]))                  # Lundi 1 Janvier
+        listAffichage.append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
+        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
+        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
 
-        listAffichage.append(jourSemaine[0] + lien + numJour + lien + mois)                       # L 1 Janvier
-        listAffichage.append(jourSemaine[0] + lien + numJour + lien + mois + lien + numAnnee)     # L 1 Janvier 2020
-        listAffichage.append(jourSemaine[0] + lien + numJour + lien + mois[:3])                   # L 1 Jan
-        listAffichage.append(jourSemaine[0] + lien + numJour + lien + mois[:3] + lien + numAnnee) # L 1 Jan 2020
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois]))               # L 1 Janvier
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
 
-        listAffichage.append(numJour + lien + mois)                                               # 1 Janvier
-        listAffichage.append(numJour + lien + mois + lien + numAnnee)                             # 1 Janvier 2020
-        listAffichage.append(numJour + lien + mois[:3])                                           # 1 Jan
-        listAffichage.append(numJour + lien + mois[:3] + lien + numAnnee)                         # 1 Jan 2020
+        listAffichage.append( lien.join([numJour, mois]))                               # 1 Janvier
+        listAffichage.append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
+        listAffichage.append( lien.join([numJour, mois[:3]]))                           # 1 Jan
+        listAffichage.append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
 
-        listAffichage.append(numJour + lien + numMois)                                            # 1 1
-        listAffichage.append(numJour + lien + numMois + lien + numAnnee)                          # 1 1 2020
+        listAffichage.append( lien.join([numJour2C, numMois2C]))                           # 01 01
+        listAffichage.append( lien.join([numJour2C, numMois2C, numAnnee]))                 # 01 01 2020
+        listAffichage.append( lien.join([numAnnee,  numMois2C, numJour2C]))                  # 2020 01 01
 
 
         self.__comboStyleFinal.config(value = listAffichage)
