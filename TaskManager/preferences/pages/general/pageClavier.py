@@ -14,7 +14,7 @@ class PageClavier(AbstractPage):
         Classe qui s'occupe d'afficher les bindings
         """
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master,nom = "Clavier", iid_parent ="-General", **kwargs)
 
@@ -153,7 +153,7 @@ class PageClavier(AbstractPage):
 
     def __focusOut(self):
         """
-        Fonction qui va réécrir les lignes du treeview, dès que le focus du Entry est perdu
+        Fonction qui va réécrire les lignes du treeview, dès que le focus du Entry est perdu
         """
         if self.__lineSelectedTreeview in self.__listeItemTreeview:
             if self.__varEntry.get() != "":

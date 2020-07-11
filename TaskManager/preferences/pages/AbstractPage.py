@@ -7,14 +7,14 @@ import os
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master, **kwargs)
         self.nom = nom
         self.iidParent = iid_parent
         self.iid = self.getIidParent()+"-"+self.getNom()
 
-        self._listData = [] # C'est une liste qui contient toutes les variables de controles à enregistrer + les key pour le dico [variable, text]
+        self._listData = [] # C'est une liste qui contient toutes les variables de contrôles à enregistrer + les key pour le dico [variable, text]
 
         self._mFrame = Frame(self)
         self.__lbTitre = Label(self, text=self.nom)
@@ -112,7 +112,7 @@ class AbstractPage(Frame):
     def ajouteToiTreeview(self, treeview):
         """
         Fonction qui permet l'affichage de la page dans le treeview
-        @param treeview : <tkinter.treeview> le treeview sur lequelle on doit s'afficher
+        @param treeview : <tkinter.treeview> le treeview sur lequel on doit s'afficher
         """
         treeview.insert(self.getIidParent(), END, text=self.getNom(), iid=self.getIid())
 

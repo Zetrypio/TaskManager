@@ -84,7 +84,7 @@ class PageCalendrier(AbstractPage):
 
         # Fonctions
         self._loadDataFile() # Pour les prefs standards
-        self.__chargerListBox() # Pour les prefs durees
+        self.__chargerListBox() # Pour les prefs durées
         self.__chargerStyle()
         self.__activeSemaineWidget() # gérer l'état des widgets de la semaine
 
@@ -160,7 +160,7 @@ class PageCalendrier(AbstractPage):
         """
         # Constantes
         jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-        mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"]
+        mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
         lien        = self.__varLienStyle.get()
         toudai      = datetime.datetime.today() # Pour la blague je le laisse, permet d'avoir un affichage joli
 
@@ -254,7 +254,7 @@ class PageCalendrier(AbstractPage):
                 isValOk = False
                 if self.getData()[section]["Duree en jour"] == str(val):
                     val = changeVal(val)
-                    break # pour ne pas metre en True, il faut retester toutes les sections
+                    break # pour ne pas mettre en True, il faut retester toutes les sections
                 isValOk = True
 
         if val % 7 == 0:

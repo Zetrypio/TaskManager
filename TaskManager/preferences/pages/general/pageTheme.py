@@ -37,7 +37,7 @@ NOMFICHIER = os.sep + "theme"
 class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
-         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
@@ -194,7 +194,7 @@ class PageTheme(AbstractPage):
 
         self.__frameZoneSelection.grid(column = 0, row = 5, sticky="NSEW")
         self.__tree.pack(side = LEFT, fill = BOTH, expand = NO)
-        self.__frameZoneBasSelection.pack(side=BOTTOM, fill=BOTH) # ici pour le plaçage sinon il concerne btnEnregistrement/Sous et caseTtkButton
+        self.__frameZoneBasSelection.pack(side=BOTTOM, fill=BOTH) # ici pour le placement sinon il concerne btnEnregistrement/Sous et caseTtkButton
         self.__scrollbar.pack(expand = NO, fill = BOTH, side = LEFT)
         # Pack la solution de prévisualisation en side=TOP
         self.__comboCouleur.pack(side = LEFT)
@@ -239,7 +239,9 @@ class PageTheme(AbstractPage):
         self.__stateSaveBtn()
 
     def __stateSaveBtn(self):
-        # Fonction qui gere l'état du bouton d'enregistrememnt
+        """
+        Fonction qui gère l'état du bouton d'enregistrememnt.
+        """
         self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
         if  self.getNomCombobox().upper() not in self.getData().sections():
             self.__btnEnregistrement.config(state = "disabled")
@@ -271,7 +273,7 @@ class PageTheme(AbstractPage):
         self.recupCouleur()
         dict = {}
         for indice, cle in enumerate(self.getData()[self.getData().getCurrentThemeName().upper()]):
-            if indice == 0: # Pour le nom c'est un srting tout court
+            if indice == 0: # Pour le nom c'est un string tout court
                 print(indice, cle, self.__listeVarTheme[indice])
                 dict[cle] = nomTheme
             else:
@@ -301,12 +303,12 @@ class PageTheme(AbstractPage):
         On demande le nom du nouveau thème pour ensuite le créer
         """
         self.readFile(NOMFICHIER)
-        name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
+        name = askstring(self, "Choisissez un nom", "Quelle est le nom de ce nouveau theme ?")
         if name is None:
             return
         while name.upper() in self.getData().sections():
             messagebox.showwarning("Nom incorrect", "Vous ne pouvez pas utiliser \"%s\" comme nom car c'est déjà le nom d'un autre thème.\n La casse n'est pas pris en compte."%name)
-            name = askstring(self, "Choississez un nom", "Quelle est le nom de ce nouveau theme ?")
+            name = askstring(self, "Choisissez un nom", "Quelle est le nom de ce nouveau theme ?")
             # Quand on clique sur annuler
             if name is None:
                 return
@@ -345,7 +347,7 @@ class PageTheme(AbstractPage):
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
         + gérer la disponibilité de enregistrer
         """
-        self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sureté
+        self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sûreté
         theme = self.getData()[self.getNomCombobox().upper()]
 
 
@@ -421,7 +423,7 @@ class PageTheme(AbstractPage):
         """
         self.readFile(NOMFICHIER)
 
-        self.recupCouleur() # Enregistrement de la valer de l'ancienne case
+        self.recupCouleur() # Enregistrement de la valeur de l'ancienne case
         iidElementSelectionne = self.__tree.focus()
 
         # Si on est dans une catégorie c'est pas une clé donc pas de valeur

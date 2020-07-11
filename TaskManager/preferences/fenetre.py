@@ -7,7 +7,6 @@ from util.widgets.Dialog import *
 from .navigation.navigationZone import *
 from .parametrage.parametrageZone import *
 
-
 # Pages
 from .pages.pageGeneral import *
 from .pages.general.pageClavier import *
@@ -26,14 +25,14 @@ class FenetrePreferences(Dialog):
 
         self.app = application
 
-        # Initiallisation des frames et tout et tout
+        # Initialisation des frames et tout et tout
         self.navigationZone = NavigationZone(master = self)
         self.navigationZone.pack( side = LEFT, expand = NO, fill = BOTH, padx=2, pady=2)
 
         self.parametrageZone = ParametrageZone(master = self)
         self.parametrageZone.pack(side = LEFT, expand = YES, fill = BOTH, padx=2, pady=2)
 
-        ## Gestion des pages
+        # Gestion des pages
         self.listePage = []
         self.pageActive = None
 
@@ -69,7 +68,7 @@ class FenetrePreferences(Dialog):
 
     def setPageActive(self, iidPage):
         """
-        @param iidPage : <str> cnotient l'iid de la page à mettre en permier plan
+        @param iidPage : <str> contient l'iid de la page à mettre en premier plan
             construction de l'iid : "-" + nomDeLaPageParent   | + "-" + nomDeLaPageParent |*nb de page au dessus
         """
         def pageByIdd(iid):
@@ -90,7 +89,7 @@ class FenetrePreferences(Dialog):
 
     def valider(self, txtBtn):
         """
-        Permet de sauvegarder tout ce qui doit etre sauvegarder sur chaque page
+        Permet de sauvegarder tout ce qui doit être sauvegarder sur chaque page
         """
         if txtBtn == "Appliquer" or txtBtn == "Ok":
             for page in self.getListePage():
