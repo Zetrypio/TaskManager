@@ -12,7 +12,7 @@ class PageGeneral(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "General", **kwargs)
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
         ## LabelFrame Horloge
         self.__horlogeLabelFrame = LabelFrame(self._mFrame, text="Horloge")

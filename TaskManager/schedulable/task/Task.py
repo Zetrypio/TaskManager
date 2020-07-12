@@ -141,13 +141,17 @@ class Task(AbstractSchedulableObject):
         Permet de supprimer définitivement cette tâche.
         @param app: Application(), nécessaire pour la suppression d'une tâche.
         """
-        # TODO : Suppression des calendriers.
-        if self.parent is None:
+        if self.__parent is None and not self.isContainer():
             app.getTaskEditor().supprimer(self)
+            app.getDonneeCalendrier().removeSchedulable(self)
+        elif self.isContainer():
+            app.getTaskEditor().supprimer(self)
+            for t in self.getSubTasks():
+                app.getDonneeCalendrier().removeSchedulable(t)
         else:
-            self.parent.removeSubTask(self)
-            
+            self.__parent.removeSubTask(self)
             app.getTaskEditor().redessiner()
+            app.getDonneeCalendrier().removeSchedulable(self)
 
     def copy(self):
         """
@@ -425,16 +429,16 @@ class Task(AbstractSchedulableObject):
         # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
         taskEditor.ajouter(newTask)
 
-    #def getFilterStateWith(self, filter):
-        # Si non autorisé par le filtre :
-        #if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
-        #or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
-            #return -1
-        # Filtre prioritaire ?
-        #if "name" in filter and self.nom.lower().startswith(filter["name"].lower()):
-            #return 1
-        # Sinon : autorisé par le filtre, mais pas prioritaire.
-       #return 0
+#    def getFilterStateWith(self, filter):
+#         Si non autorisé par le filtre :
+#        if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
+#        or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
+#            return -1
+#         Filtre prioritaire ?
+#        if "name" in filter and self.nom.lower().startswith(filter["name"].lower()):
+#            return 1
+#         Sinon : autorisé par le filtre, mais pas prioritaire.
+#       return 0
 
     def getGroupes(self):
         """

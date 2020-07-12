@@ -73,14 +73,16 @@ class Application(Frame):
 
     def destroy(self):
         """
-        Redéfinition de la méthode pour supprimer aussi la fenetre parente
+        Redéfinition de la méthode pour supprimer aussi la fenêtre parente
         """
         super().destroy()
         try:
             self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
         except:pass
 
-    def nouveau(self):pass
+    def save(self):pass
+
+    def restart(self):pass
 
     def setModeEditionPeriode(self, enEdition):
         """
@@ -138,7 +140,7 @@ class Application(Frame):
         """ Retourne le Profil Manager """
         return self.__profilManager
     def getBindingManager(self):
-        """ Retourne le Profil Manager """
+        """ Retourne le Binding Manager """
         return self.__BindingManager
 
 
@@ -146,30 +148,37 @@ class Application(Frame):
 def main():
     """Fonction main, principale du programme."""
     app = Application()
+    w = app.winfo_toplevel().winfo_screenwidth()
+    h = app.winfo_toplevel().winfo_screenheight()
+    app.winfo_toplevel().geometry("%sx%s+%s+%s"%(int(0.9*w), int(0.8*h), int(0.05*w), int(0.05*h)))
+    app.update()
+    try:
+        app.winfo_toplevel().state("zoomed")
+    except:
+        pass
     app.pack(expand = YES, fill = BOTH)
     
 
     # Création d'une période préfaite
-
     periodeSemaine = Periode(app.getPeriodManager(),
                              "semaine",
-                             datetime.date(2020, 5, 4),
-                             datetime.date(2020, 5, 27),
+                             datetime.date(2020, 7, 4),
+                             datetime.date(2020, 7, 27),
                              "semaine pour faciliter les calculs",
                              color = "#7FFF7F")
     app.getPeriodManager().ajouter(periodeSemaine)
 
-    # Création de tâches préfaites
-    tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 5,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
-    tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 5,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
-    app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 5,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 5,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 5, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 5, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 5,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    # Création de tâches préfaites (c'est du lore)
+    tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 7,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
+    tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 7,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
+    app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
+    app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
     app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
-                                "Gateau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
-                                datetime.datetime(2020, 5, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
+                                "Gâteau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
+                                datetime.datetime(2020, 7, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
 
     # Création d'un groupe préfait
     # Les 2 première tâches sont dans le groupe.
@@ -179,8 +188,20 @@ def main():
     periodeSemaine.getGroupeManager().ajouter(group)
     
     
-    app.mainloop()
     try:
-        app.destroy()
-    except:
-        pass
+        app.mainloop()
+        try:
+            app.destroy()
+        except:
+            pass
+    except SystemExit:
+        raise
+    except BaseException as e:
+        Frame().winfo_toplevel().withdraw()
+        showerror("Erreur Fatale", "Erreur Fatale de l'application.\nL'application va essayer d'enregistrer.\n%s : %s"%(e.__class__.__name__, e))
+    finally:
+        try:
+            app.save()
+        except BaseException as e:
+            Frame().winfo_toplevel().withdraw()
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))

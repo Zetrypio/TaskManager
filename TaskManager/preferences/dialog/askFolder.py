@@ -24,7 +24,7 @@ def testVide(path):
     Fonction qui regarde si c'est vide
     @param path : <str> chemin du dossier
     """
-    # condition "if not" car il détect desktop.ini parfois ...
+    # condition "if not" car il détecte desktop.ini parfois ...
     while len([i for i in listdir(path) if not i == "desktop.ini"])!=0:
         showerror(title="Chemin invalide", message="Le dossier que vous avez choisi n'est pas valide.\nLe dossier de destination doit être vide.")
         path = askdirectory()

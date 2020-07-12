@@ -22,8 +22,18 @@ class GroupeManager():
         @param groupe: le groupe à ajouter.
         """
         self.__groupes.add(groupe)
-        self.__app.getDonneeCalendrier().getPanneauActif().updateAffichage()
+        self.__app.getDonneeCalendrier().updateAffichage()
         self.__app.getTaskEditor().ajouter(groupe)
+
+    def supprimer(self, groupe):
+        """
+        Permet de supprimer un groupe de la liste des groupes.
+        @param groupe: le groupe à supprimer.
+        """
+        self.__groupes.remove(groupe)
+        self.__app.getTaskEditor().supprimer(groupe)
+        self.__app.getDonneeCalendrier().removeSchedulable(groupe)
+        self.__app.getDonneeCalendrier().updateAffichage()
 
     def getPeriode(self):
         """

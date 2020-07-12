@@ -110,7 +110,6 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-        #print(schedulable)
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
@@ -124,8 +123,8 @@ class TaskEditor(Frame):
         """
         self.taches.remove(schedulable)
         self.redessiner()
-        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            self.master.getDonneeCalendrier()#.removeTask(schedulable) # TODO
+        #if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
+            #self.master.getDonneeCalendrier().removeSchedulable(schedulable) # XXX ça casse pas tout j'espère ?
         self.frameInput.updatePossiblePeriods()
 
     def redessiner(self):
@@ -297,10 +296,11 @@ class TaskEditor(Frame):
             region += datetime.timedelta(minutes = minute2 - minute1)
             region = askHeureExacte(self, region) # Définie dans le dialogue askHeureExacteDialog.py
             if region is not None:
-                sousTache = panneau.addTask(tache, region = region)
-                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
-                    if p != panneau:
-                        p.addTask(sousTache, region)
+                #sousTache = panneau.addTask(tache, region = region)
+                #for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
+                    #if p != panneau:
+                        #p.addTask(sousTache, region)
+                sousTache = self.getApplication().getDonneeCalendrier().addTask(tache, region = region)
                 sousTache.updateStatut()
                 tache.addSubTask(sousTache)
                 self.redessiner()

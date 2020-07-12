@@ -356,8 +356,6 @@ class AbstractDisplayedCalendar(Frame):
         """
         if self.__class__ == AbstractDisplayedCalendar:
             raise NotImplementedError
-        if schedulable is None : return
-        self.listeTask.append(schedulable)
         if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
@@ -368,6 +366,8 @@ class AbstractDisplayedCalendar(Frame):
             schedulable.setDuree(self.askDureeTache())
             if not schedulable.getDuree():
                 return None
+        if schedulable is None : return
+        self.listeTask.append(schedulable)
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
         return schedulable
 
@@ -466,7 +466,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         self.getApplication().setModeEditionPeriode(False)
         paramAffichage.setStateListe(NORMAL)
-        if self.getNbJour() == self.getLongueurPeriode():
+        if self.getDureeJour() == self.getLongueurPeriode():
             paramAffichage.setModeListe("Période")
         elif self.getNbJour() == 7:
             paramAffichage.setModeListe("1 semaine")

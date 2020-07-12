@@ -115,6 +115,8 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         
         NEW_TAG_ID = 0
         for p in self.getApplication().getPeriodManager().getPeriodes():
+            if p.getDebut().month != self.getJourDebut().month or p.getDebut().year != self.getJourDebut().year:
+                continue
             jour = p.getDebut()
             semaine = self.getSemaineOf(jour)
             jourDebutSemaine = jour

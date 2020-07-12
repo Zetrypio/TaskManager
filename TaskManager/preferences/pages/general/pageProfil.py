@@ -14,7 +14,7 @@ from util.widgets.Dialog import askyesnowarning
 class PageProfil(AbstractPage):
     def __init__(self, master, **kwargs):
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
 
        super().__init__(master, nom = "Profil", iid_parent ="-General", **kwargs)
 
@@ -42,7 +42,7 @@ class PageProfil(AbstractPage):
        self.__entryPathCustomFile.grid(column = 0, row = 2, sticky = "we")
        self.__btnParcourir.grid(column = 1, row = 2, sticky = "w")
 
-       # Fonction de parametrage
+       # Fonction de paramétrage
        self.__chargeProfil(self.getProfilManager().getProfilActif())
 
     def __parcourir(self):
@@ -91,7 +91,7 @@ class PageProfil(AbstractPage):
         """
         self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
 
-        # On prend le premier profil si c'est None en parametre
+        # On prend le premier profil si c'est None en paramètre
         profil = self.__cbProfil.cget("value")[0] if profil is None else profil
 
         self.__varEntryPath.set(self.getProfilFolder(profil))
