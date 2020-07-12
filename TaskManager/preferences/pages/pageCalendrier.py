@@ -218,7 +218,8 @@ class PageCalendrier(AbstractPage):
         """
         def changeVal(val):
             if self.__mode == "Retirer":
-                return val - 1
+                # Si on tombe sur 0, il faut remettre la valeur d'origine, c'est à dire l'ancienne + celui qu'on vient de retirer
+                return val - 1 if val - 1 > 0 else self.__lastValSbNbJour + 1
             elif self.__mode == "Ajouter":
                 return val + 1
         def semaine(v, nb):
@@ -243,7 +244,7 @@ class PageCalendrier(AbstractPage):
             elif self.__mode == "Retirer":
                 val = self.__lastValSbNbJour - 1
         else:
-            val = int(self.__sbNbJour.get())*1
+            val = int(self.__sbNbJour.get()) * 1
 
         # On set le nouveau __lastValSbNbJour
         self.__lastValSbNbJour = val
@@ -252,7 +253,6 @@ class PageCalendrier(AbstractPage):
         isValOk = False
         while not isValOk: # Je pense qu'on peut refactor ça # TODO
             for section in self.getData().sections():
-                print(self.getData()[section], self.getData()[section]["Duree en jour"], val)
                 isValOk = False
                 if self.getData()[section]["Duree en jour"] == str(val):
                     val = changeVal(val)
