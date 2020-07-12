@@ -23,7 +23,9 @@ class MenuBar(Menu):
         self.menuAffichage = Menu(self, tearoff=0)
         
         self.add_cascade(label = "Fichier", menu=self.menuFichier)
-#        self.add_cascade(label = "Edition", menu=self.menuEdition)
+        # Il y a juste à décommenter cette ligne pour remettre le menu édition,
+        # mais tant qu'il n'y a rien dedans, on s'en fiche...
+        #self.add_cascade(label = "Edition", menu=self.menuEdition)
         self.add_cascade(label = "Affichage", menu=self.menuAffichage)
 
         # Menu Fichier :
@@ -35,6 +37,7 @@ class MenuBar(Menu):
         self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl+Q", command = master.quit)
 
         # Menu Affichage/Style Horloge :
+        # TODO : Le style de l'horloge est à remplacer avec celui des préférences.
         self.variableHorlogeStyle = StringVar(value="nombre")
         self.menuHorlogeStyle = Menu(self.menuAffichage, tearoff=0)
         self.menuHorlogeStyle.add_radiobutton(label = "Normal", variable=self.variableHorlogeStyle, value = "normal")

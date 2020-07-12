@@ -10,7 +10,24 @@ class ColorButton(TkButton):
     La couleur est récupérable avec la méthode get().
     """
     def __init__(self, master = None, **kwargs):
-        super().__init__(master, command = self.askcolor, width = 4, relief = GROOVE, bg = "white", activebackground = "white", **kwargs)
+        """
+        Constructeur du ColorButton.
+        @param master: master du tkinter.Button() que ce widget est.
+        @param **kwargs: Options possibles :
+            STANDARD OPTIONS :
+            activeforeground, anchor, bitmap, cursor,
+            disabledforeground, font, foreground
+            highlightbackground, highlightcolor,
+            highlightthickness, image, justify,
+            padx, pady, repeatdelay,
+            repeatinterval, takefocus, text,
+            textvariable, underline, wraplength.
+            
+            BUTTON-SPECIFIC OPTIONS :
+            compound, default,
+            overrelief, state.
+        """
+        super().__init__(master, command = self.askcolor, width = 4, height = 1, relief = GROOVE, bd = 2, bg = "white", activebackground = "white", **kwargs)
     
     def askcolor(self):
         """
