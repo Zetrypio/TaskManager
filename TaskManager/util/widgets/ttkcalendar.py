@@ -223,7 +223,7 @@ def test():
 
     if 'win' not in sys.platform:
         style = ttk.Style()
-#        style.theme_use('clam')
+        #style.theme_use('clam')
 
     root.mainloop()
 

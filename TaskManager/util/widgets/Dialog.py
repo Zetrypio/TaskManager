@@ -80,7 +80,7 @@ class Dialog(Frame):
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
         self.centerscreenalways()
-#        self.dialog.state("normal")
+        #self.dialog.state("normal")
 
     def activateandwait(self):
         """

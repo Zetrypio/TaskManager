@@ -14,7 +14,7 @@ class ParametreAffichage(Frame):
         @param master: master du tkinter.Frame() que cet objet est.
         @param **kwargs: configurations d'affichage du tkinter.Frame() que cet objet est.
         """
-#        kwargs["bg"] = "yellow" # on en a pas besoin en vrai
+        #kwargs["bg"] = "yellow" # on en a pas besoin en vrai
         super().__init__(master, **kwargs)
         # Note : self.master est référence vers ZoneAffichage.
 

@@ -60,10 +60,10 @@ class DisplayableGroup(AbstractItemContent):
         self.__scrollbar.pack(fill = Y, side = RIGHT)
         self.pack_propagate(False)
 
-#        # La selection des tâches
-#        self.__texte.bind("<Button-1>", self._clique)
-#        self.__texte.bind("<Control-Button-1>", self.multiSelection)
-    
+        # La selection des tâches
+        #self.__texte.bind("<Button-1>", self._clique)
+        #self.__texte.bind("<Control-Button-1>", self.multiSelection)
+
     def __getDisplayColor(self):
         """
         Getter pour savoir la véritable couleur d'affichage,

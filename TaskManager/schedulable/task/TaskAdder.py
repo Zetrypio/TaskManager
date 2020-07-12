@@ -164,7 +164,7 @@ class TaskAdder(Frame):
         Méthode à appeler dès que les périodes possibles changent.
         """
         periodes = self.getApplication().getPeriodManager().getPeriodes()
-#        print(periodes)
+        #print(periodes)
         # Trouver les périodes présentes dans la plage sélectionnée :
         if self.debut is not None and self.fin is not None:
             pp = Periode(self.getApplication().getPeriodManager(), "", self.getDebut().date(), self.getFin().date(), "")

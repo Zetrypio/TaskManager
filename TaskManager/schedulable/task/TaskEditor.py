@@ -110,7 +110,7 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-#        print(schedulable)
+        #print(schedulable)
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
