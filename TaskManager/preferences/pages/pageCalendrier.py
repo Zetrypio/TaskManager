@@ -111,7 +111,7 @@ class PageCalendrier(AbstractPage):
         """
         self.readFile(NOMFICHIER, lireDef=False)
         nom = self.__sbNbJour.get()
-        duree = self.__sbNbJour.get()
+        duree = self.__convSbStrToInt(self.__sbNbJour.get()) # On prend que le nombre
         self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour" : duree}
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
@@ -248,9 +248,11 @@ class PageCalendrier(AbstractPage):
         # On set le nouveau __lastValSbNbJour
         self.__lastValSbNbJour = val
 
+        # Vérifie si c'est déjà existant en nombre de jours
         isValOk = False
         while not isValOk: # Je pense qu'on peut refactor ça # TODO
             for section in self.getData().sections():
+                print(self.getData()[section], self.getData()[section]["Duree en jour"], val)
                 isValOk = False
                 if self.getData()[section]["Duree en jour"] == str(val):
                     val = changeVal(val)
