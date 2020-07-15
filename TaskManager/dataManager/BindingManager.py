@@ -68,7 +68,13 @@ class BindingManager:
                     # On les rajoute un à un
                     self.__donneeUtil[section][bind] = self.__donneePref[section][bind]
 
-        self.__donnee = self.__donneeUtil
+
+        # Trie alphabétique
+        temp = dict(sorted(self.__donneeUtil.items(), key=lambda t:t[0]))
+        for dicti in temp:
+            temp[dicti] = dict(sorted(temp[dicti].items(), key=lambda t:t[0]))
+
+        self.__donnee = temp
 
     def save(self, dico):
         """
