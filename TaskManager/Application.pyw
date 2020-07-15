@@ -74,7 +74,21 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
-        self.bind_all("<Control-,>", lambda e=None:self.preferences())
+
+        ## Bindings
+        self.bind_all("<<preferences>>", lambda e=None:self.preferences())
+        self.bind_all("<<save-file>>", lambda e=None:self.save())
+        self.bind_all("<<restart>>", lambda e=None:self.restart())
+        self.bind_all("<<open-file>>", lambda e=None:self.open())
+        self.bind_all("<<quit>>", lambda e=None:self.quitter())
+
+        # Set des bindings méchanique en lien avec le bindingManager
+        """
+        for binding in self.getBindingIn("Application"):
+            for key in self.getBindingIn("Application")[binding]["bindings"]:
+                print(binding, key)
+                self.bind_all(key, lambda e : self.event_generate("<<" + binding + ">>"))
+        """
 
     def destroy(self):
         """
@@ -85,9 +99,12 @@ class Application(Frame):
             self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
         except:pass
 
-    def save(self):pass
+    def save(self):
+        pass
 
     def restart(self):pass
+
+
 
     def setModeEditionPeriode(self, enEdition):
         """
@@ -145,6 +162,15 @@ class Application(Frame):
     def getBindingManager(self):
         """ Retourne le Binding Manager """
         return self.__BindingManager
+
+    def getBindingIn(self, categorie):
+        """
+        Permet d'obtenir les combinaisons
+        @param categorie : <str> nom de la catégorie dont on veux les bindings
+                          exemple : "Application"
+        @return <dict> contenant tous les bindings
+        """
+        return self.getBindingManager().getBindings()[categorie]
 
 
 

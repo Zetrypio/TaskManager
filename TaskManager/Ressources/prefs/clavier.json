@@ -12,23 +12,23 @@
     "Application": {
         "open-file": {
             "description": "Ouvre l'explorateur de fichier ou en ouvrir un",
-            "bindings" : ["<Control+o>"]
+            "bindings" : ["<Control-o>"]
         },
         "quit": {
             "description": "Ferme le logiciel",
-            "bindings" : ["<Control+q>"]
+            "bindings" : ["<Control-q>"]
         },
         "restart": {
             "description": "Redémarre le logiciel",
-            "bindings" : ["<Control+r>"]
+            "bindings" : ["<Control-r>"]
         },
         "save-file": {
             "description": "Sauvegarde le fichier en cours",
-            "bindings" : ["<Control+s>"]
+            "bindings" : ["<Control-s>"]
         },
         "preferences": {
             "description": "Ouvre la fenêtre des préférences",
-            "bindings" : ["<Control+,>"]
+            "bindings" : ["<Control-,>"]
         }
     },
     "General": {
