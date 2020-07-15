@@ -18,8 +18,8 @@ class MenuBar(Menu):
         Menu.__init__(self, master)
         root.configure(menu = self)
         # Menus Principaux :
-        self.menuFichier = Menu(self, tearoff=0)
-        self.menuEdition = Menu(self, tearoff=0)
+        self.menuFichier   = Menu(self, tearoff=0)
+        self.menuEdition   = Menu(self, tearoff=0)
         self.menuAffichage = Menu(self, tearoff=0)
         
         self.add_cascade(label = "Fichier", menu=self.menuFichier)
@@ -29,22 +29,19 @@ class MenuBar(Menu):
         self.add_cascade(label = "Affichage", menu=self.menuAffichage)
 
         # Menu Fichier :
-        #self.menuFichier.add_command(label = "Changer d'utilisateur", accelerator="Ctrl+N", command = master.changeUser) # À faire dans un autre menu je pense...
-        #self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Enregistrer", accelerator="Ctrl+S", command = master.save)
+        self.menuFichier.add_command(label = "Enregistrer", accelerator=self.__getBindingOf("save-file"), command = master.save)
         self.menuFichier.add_separator()
-        self.menuFichier.add_command(label = "Restart", accelerator="Ctrl+R", command = master.restart)
-        self.menuFichier.add_command(label = "Quitter", accelerator="Ctrl+Q", command = master.quit)
-
-        # Menu Affichage/Style Horloge :
-        # TODO : Le style de l'horloge est à remplacer avec celui des préférences.
-        self.variableHorlogeStyle = StringVar(value="nombre")
-        self.menuHorlogeStyle = Menu(self.menuAffichage, tearoff=0)
-        self.menuHorlogeStyle.add_radiobutton(label = "Normal", variable=self.variableHorlogeStyle, value = "normal")
-        self.menuHorlogeStyle.add_radiobutton(label = "Nombre", variable=self.variableHorlogeStyle, value = "nombre")
+        self.menuFichier.add_command(label = "Restart",     accelerator=self.__getBindingOf("restart"),   command = master.restart)
+        self.menuFichier.add_command(label = "Quitter",     accelerator=self.__getBindingOf("quit"),      command = master.quit)
 
         # Menu Affichage :
-        self.menuAffichage.add_cascade(label = "Style d'horloge", menu = self.menuHorlogeStyle)
+        self.menuAffichage.add_command(label = "Préférences", accelerator=self.__getBindingOf("preferences"), command = master.preferences)
 
-        self.menuAffichage.add_cascade(label = "Préférences", accelerator="Ctrl+,", command=master.preferences)
+    def __getBindingOf(self, bindingVirtuel):
+        """
+        @param bindingVirtuel : <str> nom du bindings dont on cherche la combinaison
+        @return                 <str> les combinaisons séparées par une virgule
+        """
+        return ",".join(self.master.getBindingManager().getBindings()["Application"][bindingVirtuel]["bindings"])
+
 

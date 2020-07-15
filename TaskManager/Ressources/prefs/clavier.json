@@ -9,6 +9,28 @@
             "bindings": ["Delete", "Backspace"]
             }
         },
+    "Application": {
+        "open-file": {
+            "description": "Ouvre l'explorateur de fichier ou en ouvrir un",
+            "bindings" : ["<Control+o>"]
+        },
+        "quit": {
+            "description": "Ferme le logiciel",
+            "bindings" : ["<Control+q>"]
+        },
+        "restart": {
+            "description": "Redémarre le logiciel",
+            "bindings" : ["<Control+r>"]
+        },
+        "save-file": {
+            "description": "Sauvegarde le fichier en cours",
+            "bindings" : ["<Control+s>"]
+        },
+        "preferences": {
+            "description": "Ouvre la fenêtre des préférences",
+            "bindings" : ["<Control+,>"]
+        }
+    },
     "General": {
 	"selectionner-jour": {
 	    "description": "Permet de sélectionner un jour entier avec toutes ses taches",

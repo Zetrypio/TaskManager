@@ -57,17 +57,22 @@ class Application(Frame):
 
         self.__data = Data()
 
+        # Début de l'instanciation
         self.winfo_toplevel().title("Gestionnaire de calendrier")
-        self.menu = MenuBar(self.winfo_toplevel(), self)
         self.periodManager = PeriodManager(self)
+
+        ## Preferences
+        # A mettre près la création de la fenetre car le ProfilManagera besoin de la fenetre pour en changer le titre
+        self.__profilManager  = ProfilManager(self)
+        self.__BindingManager = BindingManager(self) # À mettre après le ProfilManager car il faut savoir quel fichier de binding charger
+        self.menu = MenuBar(self.winfo_toplevel(), self) # Il faut le mettre après le BindingManagerpour les accelerator
+        self.prefFen = FenetrePreferences(self)
+
+        # Continuation de l'instanciation
         self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
-
-        self.__profilManager  = ProfilManager(self)
-        self.__BindingManager = BindingManager(self)
-        self.prefFen = FenetrePreferences(self)
 
         self.bind_all("<Control-,>", lambda e=None:self.preferences())
 
