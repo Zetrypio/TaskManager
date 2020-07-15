@@ -72,8 +72,15 @@ class FenetrePreferences(Dialog):
             construction de l'iid : "-" + nomDeLaPageParent   | + "-" + nomDeLaPageParent |*nb de page au dessus
         """
         def pageByIdd(iid):
-            """Retrouve la page lié à l'iid du Treeview"""
-            return [page for page in self.listePage if page.getIid() == iidPage][0]
+            """
+            Retrouve la page lié à l'iid du Treeview
+            + si erreur on retourne la page sur laquelle on est
+            """
+            for page in self.listePage:
+                if page.getIid() == iidPage:
+                    return page
+            else:
+                return self.getPageActive()
 
         # On supprime ce qu'il y a actuellement
         for page in self.listePage:
