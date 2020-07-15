@@ -74,21 +74,21 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
-
         ## Bindings
         self.bind_all("<<preferences>>", lambda e=None:self.preferences())
-        self.bind_all("<<save-file>>", lambda e=None:self.save())
-        self.bind_all("<<restart>>", lambda e=None:self.restart())
-        self.bind_all("<<open-file>>", lambda e=None:self.open())
-        self.bind_all("<<quit>>", lambda e=None:self.quitter())
+        self.bind_all("<<save-file>>"  , lambda e=None:self.save())
+        self.bind_all("<<restart>>"    , lambda e=None:self.restart())
+        self.bind_all("<<open-file>>"  , lambda e=None:self.open())
+        self.bind_all("<<quit>>"       , lambda e=None:self.quitter())
 
         # Set des bindings méchanique en lien avec le bindingManager
-        """
+
+        #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
+
         for binding in self.getBindingIn("Application"):
             for key in self.getBindingIn("Application")[binding]["bindings"]:
-                print(binding, key)
-                self.bind_all(key, lambda e : self.event_generate("<<" + binding + ">>"))
-        """
+                self.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
+
 
     def destroy(self):
         """
@@ -100,11 +100,10 @@ class Application(Frame):
         except:pass
 
     def save(self):
-        pass
+        print("s")
 
-    def restart(self):pass
-
-
+    def restart(self):
+        print("r")
 
     def setModeEditionPeriode(self, enEdition):
         """
