@@ -15,7 +15,7 @@ from schedulable.groupe.GroupeManager import *
 from schedulable.task.TaskEditor import *
 
 from MenuBar import *
-from preferences.fenetre import *
+from preferences.fenetrePreferences import *
 from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
@@ -100,9 +100,7 @@ class Application(Frame):
             pass
 
     def preferences(self):
-        print(" non lancé")
         self.prefFen.activateandwait()
-        print("lancé")
 
     def getPeriodManager(self):
         """

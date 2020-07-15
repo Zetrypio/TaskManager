@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 
-from preferences.fenetre import *
+from preferences.fenetrePreferences import *
 
 class MenuBar(Menu):
     """
