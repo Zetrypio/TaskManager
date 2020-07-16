@@ -5,7 +5,7 @@ from shutil import rmtree
 
 from preferences.dialog.askProfil import *
 
-NOMFICHIER = "Ressources/prefs/profils.json"
+NOMFICHIER = "Ressources/prefs/profils.json".replace("/", os.sep)
 
 class ProfilManager:
     def __init__(self, app):
