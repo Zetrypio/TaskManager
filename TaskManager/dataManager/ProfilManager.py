@@ -21,33 +21,51 @@ class ProfilManager:
 
         self.__loadUserProfil()
 
+    "" # Marque pour repli de code
+    ################
+    # Utilitaire : #
+    ################
+
+    def __read(self):
+        # On lit le fichier
+        with open(NOMFICHIER,"r", encoding="utf-8") as f:
+            self.__donnee = load(f)
+
+    def __write(self):
+        # On écrit dessus
+        with open(NOMFICHIER, "w", encoding="utf-8") as f:
+            f.write(dumps(self.__donnee, indent=4))
+
+    #############
+    # Getters : #
+    #############
+
+    def getAllFolder(self):
+        l = []
+        for profil in self.__donnee["profil"]:
+            l.append(self.__donnee["profil"][profil])
+        return l
+
+    def getAllNomProfil(self):
+        return self.__donnee["profil"]
+
     def getApplication(self):
         """
         @return self.__app : <Application>
         """
         return self.__app
 
-    def getProfilActif(self):
-        """
-        @return self.__profilActif
-        """
-        return self.__profilActif
-
-    def setProfilActif(self, profil):
-        """
-        Permet aussi de changer le nom de la fenetre
-        @param profil : <str> nom du profil (doit être dans la liste)
-        """
-        if profil in self.getAllNomProfil():
-            self.__profilActif = profil
-            self.__app.winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
-
-
     def getListeProfilsUser(self):
         """
         @return self.__listeProfilsUser
         """
         return self.__donnee["user"][os.getlogin()]
+
+    def getProfilActif(self):
+        """
+        @return self.__profilActif
+        """
+        return self.__profilActif
 
     def getProfilFolder(self, profil = None):
         """
@@ -58,28 +76,64 @@ class ProfilManager:
             profil = self.getProfilActif()
         return self.__donnee["profil"][profil]
 
-    def getAllNomProfil(self):
-        return self.__donnee["profil"]
+    ""
+    #############
+    # Setters : #
+    #############
 
-    def getAllFolder(self):
-        l = []
-        for profil in self.__donnee["profil"]:
-            l.append(self.__donnee["profil"][profil])
-        return l
-
-    def switchProfil(self, nouvProfil):
+    def saveNewPath(self, path, profil):
         """
-        Permet de changer de profil
-        @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
+        Fonction qui va juste changer le path du profil courrant
+        @param path   : <str> contient le chemin du folder
+        @param profil : <str> contient le nom du profil
         """
-        self.setProfilActif(nouvProfil)
-
-        ## Changement de l'ordre des profils
-        # Variable pour que la ligne d'après soit plus lisible
-        listProfil = self.__donnee["user"][os.getlogin()]
-        listProfil.insert(0,listProfil.pop(listProfil.index(nouvProfil)))
-        self.__donnee["user"][os.getlogin()] = listProfil
+        self.__read()
+        self.__donnee["profil"][profil] = path
         self.__write()
+
+    def setProfilActif(self, profil):
+        """
+        Permet aussi de changer le nom de la fenetre
+        @param profil : <str> nom du profil (doit être dans la liste)
+        """
+        if profil in self.getAllNomProfil():
+            self.__profilActif = profil
+            self.__app.winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
+            return
+        else:
+            raise NotImplemtedError
+
+    ""
+    #########################
+    # Gestion des profils : #
+    #########################
+
+    def __loadProfil(self):
+        """
+        Permet de charger les préférences du profil actif
+        """
+        self.getApplication().getData().setProfilFolder(self.getProfilFolder()) # On set le nouveau Profilfolder dans Data
+        print(self.__profilActif, self.getProfilFolder())
+
+    def __loadUserProfil(self):
+        """
+        Permet de charger les profils de l'utilisateur
+        """
+        ## Lecture
+        # On test si le fichier existe, sinon on le crée
+        if not os.path.exists(NOMFICHIER):
+            with open(NOMFICHIER, "w", encoding="utf-8") as f:
+                f.write(dumps({"user":{}, "profil":{}}, indent=4))
+
+        self.__read()
+
+        # Si l'utilisateur n'est pas présent, on le crée + on créer un profil
+        if os.getlogin() not in self.__donnee["user"]:
+            self.__donnee["user"][os.getlogin()] = []
+            if not self.createProfil(True):
+                return
+
+        self.setProfilActif(self.getListeProfilsUser()[0])
 
         self.__loadProfil()
 
@@ -123,53 +177,18 @@ class ProfilManager:
         # On finit par écrire
         self.__write()
 
-    def saveNewPath(self, path, profil):
+    def switchProfil(self, nouvProfil):
         """
-        Fonction qui va juste changer le path du profil courrant
-        @param path   : <str> contient le chemin du folder
-        @param profil : <str> contient le nom du profil
+        Permet de changer de profil
+        @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
         """
-        self.__read()
-        self.__donnee["profil"][profil] = path
+        self.setProfilActif(nouvProfil)
+
+        ## Changement de l'ordre des profils
+        # Variable pour que la ligne d'après soit plus lisible
+        listProfil = self.__donnee["user"][os.getlogin()]
+        listProfil.insert(0,listProfil.pop(listProfil.index(nouvProfil)))
+        self.__donnee["user"][os.getlogin()] = listProfil
         self.__write()
 
-    def __loadUserProfil(self):
-        """
-        Permet de charger les profils de l'utilisateur
-        """
-        ## Lecture
-        # On test si le fichier existe, sinon on le crée
-        if not os.path.exists(NOMFICHIER):
-            with open(NOMFICHIER, "w", encoding="utf-8") as f:
-                f.write(dumps({"user":{}, "profil":{}}, indent=4))
-
-        self.__read()
-
-        # Si l'utilisateur n'est pas présent, on le crée + on créer un profil
-        if os.getlogin() not in self.__donnee["user"]:
-            self.__donnee["user"][os.getlogin()] = []
-            if not self.createProfil(True):
-                return
-
-        self.setProfilActif(self.getListeProfilsUser()[0])
-
         self.__loadProfil()
-
-    def __loadProfil(self):
-        """
-        Permet de charger les préférences du profil actif
-        """
-        self.getApplication().getData().setProfilFolder(self.getProfilFolder()) # On set le nouveau Profilfolder dans Data
-        print(self.__profilActif, self.getProfilFolder())
-
-
-    def __read(self):
-        # On lit le fichier
-        with open(NOMFICHIER,"r", encoding="utf-8") as f:
-            self.__donnee = load(f)
-
-    def __write(self):
-        # On écrit dessus
-        with open(NOMFICHIER, "w", encoding="utf-8") as f:
-            f.write(dumps(self.__donnee, indent=4))
-
