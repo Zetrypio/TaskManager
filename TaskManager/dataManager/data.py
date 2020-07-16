@@ -1,13 +1,23 @@
 # *-* coding:utf-8 *-*
 from configparser import *
+import os
 
 class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
         # Création des attributs
-        self.__affichageNombreHorloge = True
         self.__currentThemeName = "Classique"
-        self.__adaptColorTask = False
+        self.__profilFolder = None
+
+    def testBool(self, value):
+       """ Test pour savoir si value est un Booléen """
+       if not isinstance(value, bool):
+           raise TypeError("Exptected a boolean")
+
+    def testString(self, value):
+       """ Test pour savoir si value est un String """
+       if not isinstance(value, str):
+           raise TypeError("Exptected a string")
 
     def read(self, fichier, add = False):
         """
@@ -17,17 +27,6 @@ class Data(ConfigParser):
         if not add:
             self.clear()
         super().read(fichier, encoding="utf-8")
-
-    def testBool(self, value):
-        """ Test pour savoir si value est un Booléen """
-        if not isinstance(value, bool):
-            raise TypeError("Exptected a boolean")
-
-    def testSrting(self, value):
-        """ Test pour savoir si value est un String """
-        if not isinstance(value, str):
-            raise TypeError("Exptected a string")
-
     def sauv(self, fichier):
         """
         Ecrit dans le fichier puis
@@ -36,41 +35,51 @@ class Data(ConfigParser):
         """
         with open(fichier, "w", encoding="utf-8") as tfile:
             self.write(tfile)
-
-    def getAffichageNombreHorloge(self):
-        """ getter de l'affichage lié aux nombre sur les bords de l'horloge """
-        return self.__affichageNombreHorloge
-
-    def setAffichageNombreHorloge(self, value):
+    def readFile(self, nom, lireDef = True, lireCfg = True):
         """
-        Setter de l'affichage lié aux nombre sur les bords de l'horloge
-        @param value : <Bool> True = nombre, False = pas de nombre
+        Fonction qui va lire les fichiers de préférences avec Data
+        @param nom : <str> nom du fichier à lire (sans l'extension)
         """
-        self.testBool(value)
-        self.__affichageNombreHorloge = value
+        self.clear()
+        if lireDef and lireCfg:
+            self.read("Ressources/prefs/"+nom+".def")
+            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
+                self.read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
 
+        # On ne met pas le add sinon
+        elif not lireDef and lireCfg:
+            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
+                self.read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
+        elif lireDef and not lireCfg:
+            self.read("Ressources/prefs/"+nom+".def")
+
+    ""
+    ###########
+    # Getters #
+    ###########
+    def getProfilFolder(self):
+        return self.__profilFolder
     def getCurrentThemeName(self):
-        """ getter du nom du thème actuel """
         return self.__currentThemeName
 
+    ""
+    ###########
+    # Setters #
+    ###########
     def setCurrentThemeName(self, value):
         """
-        Setter du nom du thème en place
-        + changement du thème TODO
-        @param value : <String> contient le nom, "test thème" = thème en cours de création et non enregistrée
+        Setter du theme en cours
+        @param value : <str> contient le nom du theme en cours
         """
-        self.testSrting(value)
+        self.testString(value)
         self.__currentThemeName = value
+        return
 
-    def getAdaptColorTask(self):
-        return self.__adaptColorTask
-
-    def setAdaptColorTask(self, value):
+    def setProfilFolder(self, value):
         """
-        Setter du mode si oui ou non on adapte la couleur du texte d'une tache en fonction de la couleur de fond
-        @param value : <Bool> True = on adapt, False = on laisse comme ça
+        Setter du path du profil en cours
+        @param value : <str> contient le path
         """
-        self.testBool(value)
-        self.__adaptColorTask = value
-
-
+        self.testString(value)
+        self.__profilFolder = value
+        return

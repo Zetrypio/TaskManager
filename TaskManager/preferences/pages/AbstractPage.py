@@ -47,14 +47,15 @@ class AbstractPage(Frame):
 
     def readFile(self, nom, lireDef = True, lireCfg = True):
         """
-        Fonction qui va lire les fichiers de préférences
+        Fonction qui va lire les fichiers de préférences avec Data
         @param nom : <str> nom du fichier à lire (sans l'extension)
         """
-        self.getData().clear()
+        self.getData().readFile(nom, lireDef = True, lireCfg = True)
+        """
         if lireDef and lireCfg:
-            self.getData().read("Ressources/prefs/"+nom+".def")
+            self.read("Ressources/prefs/"+nom+".def")
             if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-                self.getData().read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
+                self.read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
 
         # On ne met pas le add sinon
         elif not lireDef and lireCfg:
@@ -62,6 +63,7 @@ class AbstractPage(Frame):
                 self.getData().read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
         elif lireDef and not lireCfg:
             self.getData().read("Ressources/prefs/"+nom+".def")
+            """
 
     def _loadDataFile(self):
         """

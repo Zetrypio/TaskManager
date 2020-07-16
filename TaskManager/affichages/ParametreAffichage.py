@@ -59,6 +59,7 @@ class ParametreAffichage(Frame):
         periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
         nbJour = periode.getDuree().days
         listeValue = []
+        print("DATA :", self.getApplication().getData().sections())
         if nbJour >= 1:
             listeValue.append('1 jour')
         if nbJour >= 2:
@@ -103,5 +104,12 @@ class ParametreAffichage(Frame):
         @return ZoneAffichage.
         """
         return self.master
+
+    def getApplication(self):
+        """
+        Permet d'obtenir l'Application.
+        @return Application.
+        """
+        return self.getZoneAffichage().getApplication()
 
     

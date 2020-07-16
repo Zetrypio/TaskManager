@@ -21,6 +21,12 @@ class ProfilManager:
 
         self.__loadUserProfil()
 
+    def getApplication(self):
+        """
+        @return self.__app : <Application>
+        """
+        return self.__app
+
     def getProfilActif(self):
         """
         @return self.__profilActif
@@ -153,6 +159,7 @@ class ProfilManager:
         """
         Permet de charger les préférences du profil actif
         """
+        self.getApplication().getData().setProfilFolder(self.getProfilFolder()) # On set le nouveau Profilfolder dans Data
         print(self.__profilActif, self.getProfilFolder())
 
 
