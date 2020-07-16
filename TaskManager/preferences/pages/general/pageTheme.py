@@ -315,16 +315,8 @@ class PageTheme(AbstractPage):
 
         # Enregistrement
         self.enregistrer(name)
-        """
-        self.readFile(NOMFICHIER) # Lire les clés qui existent
-        dict = self.dictTheme(name)
-        self.readFile(NOMFICHIER, lireDef=False)
-        self.getData()[name.upper()] = dict
 
-        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
-        """
         # Bonus de enregistrer sous
-        self.getApplication().getData().setCurrentThemeName(name)
         self.configCombobox()
         self.__varTheme.set(name)
         self.loadTheme()
