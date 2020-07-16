@@ -95,9 +95,16 @@ class AbstractDisplayedCalendar(Frame):
     def getDonneeCalendrier(self):
         """
         Getter pour le DonneeCalendrier.
-        @return: le DonneeCalendrier.
+        @return : le DonneeCalendrier.
         """
         return self.master.master # Skip le NoteBook : pas le choix, désolé l'OO :/
+
+    def getZoneAffichage(self):
+        """
+        Getter pour la ZoneAffichage
+        @return : la ZoneAffichage
+        """
+        return self.getDonneeCalendrier().getZoneAffichage()
 
     def getApplication(self):
         """
@@ -464,14 +471,18 @@ class AbstractDisplayedCalendar(Frame):
         
         Par défaut, fait un reset normal de cette barre.
         """
-        print(self.__class__)
         self.getApplication().setModeEditionPeriode(False)
         paramAffichage.setStateListe(NORMAL)
-        for duree in self.getDonneeCalendrier().getListeDuree():
+        for duree in self.getZoneAffichage().getListeDuree():
             if self.getNbJour() == int(duree[1]):
                 paramAffichage.setModeListe(duree[0])
+                break # Car on a trouvé et on veux pas faire le else
         else:
-            paramAffichage.setModeListe("%s jours"%self.getNbJour())
+            # Pour le tout début comme self.getDureeJour() (et self.getNbJour()) renvoient 0, on préfèrera "Période"
+            if self.getDureeJour() == self.getLongueurPeriode():
+                paramAffichage.setModeListe("Période")
+            else:
+                paramAffichage.setModeListe("%s jours"%self.getNbJour())
 
     def _setBinding(self, nomCalendrier, aBinder):
         """

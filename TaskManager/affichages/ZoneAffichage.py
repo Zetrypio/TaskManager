@@ -34,9 +34,10 @@ class ZoneAffichage(Frame):
         self.getData().readFile("duree")
         self.__listeValue = []
         for duree in self.getData().sections():
-            self.__listeValue.append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
+            self.getListeDuree().append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
 
-        self.__listeValue.remove(['Période', '-1'])
+        # On retire la période pour car sinon il essate d'afficher -1 jour, et il a un peu de mal
+        self.getListeDuree().remove(['Période', '-1'])
 
 
 
@@ -74,6 +75,12 @@ class ZoneAffichage(Frame):
         @return le ParametreAffichage.
         """
         return self.zoneParametre
+
+    def getListeDuree(self):
+        """
+        Permet d'obtenir la liste des durée avec [[nom][nombre de jour]]
+        """
+        return self.__listeValue
         
     def envoyerChangementNbJour(self, event):
         """
@@ -81,8 +88,7 @@ class ZoneAffichage(Frame):
         @param event: l'événement, doit contenir le combobox dans l'attritbut widget.
         """
         valeur = event.widget.get()
-        for duree in self.__listeValue:
-            print(valeur, duree[0], valeur == duree[0])
+        for duree in self.getListeDuree():
             if valeur == duree[0]:
                 self.getDonneeCalendrier().setNbJour(int(duree[1]))
                 break # Important sinon on essaye les autre et on affiche la periode parce que la condition n'est pas vérifié
