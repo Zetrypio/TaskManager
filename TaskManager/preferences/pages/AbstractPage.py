@@ -51,19 +51,6 @@ class AbstractPage(Frame):
         @param nom : <str> nom du fichier à lire (sans l'extension)
         """
         self.getData().readFile(nom, lireDef = True, lireCfg = True)
-        """
-        if lireDef and lireCfg:
-            self.read("Ressources/prefs/"+nom+".def")
-            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-                self.read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
-
-        # On ne met pas le add sinon
-        elif not lireDef and lireCfg:
-            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-                self.getData().read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
-        elif lireDef and not lireCfg:
-            self.getData().read("Ressources/prefs/"+nom+".def")
-            """
 
     def _loadDataFile(self):
         """

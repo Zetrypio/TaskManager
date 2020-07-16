@@ -56,6 +56,12 @@ class ParametreAffichage(Frame):
         """
         Permet de mettre des choix en fonction du nombre de jour dans le combobox
         """
+        def dureeEnJour(nom): # Fonction qui retourne le nombre de jour
+            if nom == "Période":
+                return 42
+            else:
+                return int(self.getData()[nom.upper()]["Duree en jour"])
+
         periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
         nbJour = periode.getDuree().days
 
@@ -64,17 +70,11 @@ class ParametreAffichage(Frame):
         self.getData().readFile("duree")
         for duree in self.getData().sections():
             # Mais on ne rajoute pas la période tout de suite ("and")
-            if nbJour >= int(self.getData()[duree]["Duree en jour"]) and int(self.getData()[duree]["Duree en jour"]) > 0:
-                listeValue.append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
+            if nbJour >= int(self.getData()[duree]["Duree en jour"]):
+                listeValue.append(self.getData()[duree]["nom"])
 
 
-        listeValue.sort(key = lambda v:int(v[1]))
-        # on garde plus que les noms
-        for val in listeValue:
-            listeValue[listeValue.index(val)] = val[0]
-
-        # On n'oublie pas la période et l'affectation
-        listeValue.append("Période")
+        listeValue.sort(key = lambda v : dureeEnJour(v))
 
         self.listeMode.config(value = listeValue)
 

@@ -464,14 +464,12 @@ class AbstractDisplayedCalendar(Frame):
         
         Par défaut, fait un reset normal de cette barre.
         """
+        print(self.__class__)
         self.getApplication().setModeEditionPeriode(False)
         paramAffichage.setStateListe(NORMAL)
-        if self.getDureeJour() == self.getLongueurPeriode():
-            paramAffichage.setModeListe("Période")
-        elif self.getNbJour() == 7:
-            paramAffichage.setModeListe("1 semaine")
-        elif self.getNbJour() == 1:
-            paramAffichage.setModeListe("1 jour")
+        for duree in self.getDonneeCalendrier().getListeDuree():
+            if self.getNbJour() == int(duree[1]):
+                paramAffichage.setModeListe(duree[0])
         else:
             paramAffichage.setModeListe("%s jours"%self.getNbJour())
 

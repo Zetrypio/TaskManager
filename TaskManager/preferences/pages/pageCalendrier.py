@@ -139,7 +139,6 @@ class PageCalendrier(AbstractPage):
         """
         self.readFile(NOMFICHIER)
 
-
         # On supprime toutes options
         self.__listebDureeCree.delete(0,END)
 
