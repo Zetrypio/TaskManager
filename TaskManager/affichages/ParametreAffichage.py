@@ -58,20 +58,25 @@ class ParametreAffichage(Frame):
         """
         periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
         nbJour = periode.getDuree().days
-        listeValue = []
-        print("DATA :", self.getApplication().getData().sections())
-        if nbJour >= 1:
-            listeValue.append('1 jour')
-        if nbJour >= 2:
-            listeValue.append('2 jours')
-        if nbJour >= 5:
-            listeValue.append('5 jours')
-        if nbJour >= 7:
-            listeValue.append('1 semaine')
 
+        listeValue = [] # liste des strings
+        # On va chercher dans data les valeurs
+        self.getData().readFile("duree")
+        for duree in self.getData().sections():
+            # Mais on ne rajoute pas la période tout de suite ("and")
+            if nbJour >= int(self.getData()[duree]["Duree en jour"]) and int(self.getData()[duree]["Duree en jour"]) > 0:
+                listeValue.append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
+
+
+        listeValue.sort(key = lambda v:int(v[1]))
+        # on garde plus que les noms
+        for val in listeValue:
+            listeValue[listeValue.index(val)] = val[0]
+
+        # On n'oublie pas la période et l'affectation
         listeValue.append("Période")
 
-        self.listeMode.config(value= listeValue)
+        self.listeMode.config(value = listeValue)
 
     def updateCombobox(self):
         """
@@ -111,5 +116,12 @@ class ParametreAffichage(Frame):
         @return Application.
         """
         return self.getZoneAffichage().getApplication()
+
+    def getData(self):
+        """
+        Permet d'obtenir Data
+        @return Data
+        """
+        return self.getApplication().getData()
 
     
