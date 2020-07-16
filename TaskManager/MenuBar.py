@@ -42,6 +42,6 @@ class MenuBar(Menu):
         @param bindingVirtuel : <str> nom du bindings dont on cherche la combinaison
         @return                 <str> les combinaisons séparées par une virgule
         """
-        return ",".join(self.master.getBindingManager().getBindings()["Application"][bindingVirtuel]["bindings"])
+        return ",".join(self.master.getBindingIn("Application")[bindingVirtuel]["bindings"])
 
 

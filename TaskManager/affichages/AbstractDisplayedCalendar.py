@@ -474,3 +474,14 @@ class AbstractDisplayedCalendar(Frame):
             paramAffichage.setModeListe("1 jour")
         else:
             paramAffichage.setModeListe("%s jours"%self.getNbJour())
+
+    def _setBinding(self, nomCalendrier, aBinder):
+        """
+        Fonction qui va charger tous les bind a mettre
+        @param nomCalendrier : <str> nom du calendrier pour connaire le dictionnaire à aller chercher (!) avec majuscule (!)
+        @param aBinder       : <objet> a bind, un canevas ou self tout simplement
+        """
+        dictionnaire = self.getApplication().getBindingIn("Affichage-" + nomCalendrier)
+        for binding in dictionnaire:
+            for key in dictionnaire[binding]["bindings"]:
+                aBinder.bind(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)

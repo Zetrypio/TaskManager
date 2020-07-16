@@ -92,5 +92,7 @@ class BindingManager:
         return self.__app
 
     def getBindings(self):
-        print("getBindings", self.__donnee)
+        """
+        @return self.__donnee : <dict> qui contient tous les binds de l'application
+        """
         return self.__donnee

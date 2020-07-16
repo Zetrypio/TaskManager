@@ -69,19 +69,15 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.can.config(yscrollcommand = self.scrollbar.set) # 2e reliage de la scrollbar
 
         # Bindings du Canvas :
-        #
-        # TODO : Utiliser des events virtuels,
-        # et un gestionnaire de clavier.
-        # En attente des préférences du clavier
-        #
+        self._setBinding("Gantt", self.can)
 
         # Pour savoir si un événement à été annulé.
         # Seul événement annulable : clic sur le canvas.
         self.__eventCanceled = False
 
         # Binding d'events virtuels : ?
-        self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
-        self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
+        #self.can.bind("<Escape>", lambda e: self.can.event_generate("<<deselect-all>>")   , add=1)
+        #self.can.bind("<Delete>", lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         #self.master.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
         #self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
 

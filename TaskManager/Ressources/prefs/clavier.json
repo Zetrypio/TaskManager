@@ -2,11 +2,11 @@
     "Affichage-Gantt": {
         "deselect-all": {
             "description": "Désélectionner Tout",
-            "bindings": ["Escape"]
+            "bindings": ["<Escape>"]
             },
         "delete-selected": {
             "description": "Supprimer l'élément sélectionné",
-            "bindings": ["Delete", "Backspace"]
+            "bindings": ["<Delete>", "<BackSpace>"]
             }
         },
     "Application": {
@@ -44,7 +44,7 @@
     "Affichage-Classique": {
         "deselect-all": {
             "description": "Désélectionner Tout",
-            "bindings": ["Escape"]
+            "bindings": ["<Escape>"]
             }
         }
 }
