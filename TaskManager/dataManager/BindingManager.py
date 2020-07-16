@@ -2,21 +2,6 @@
 from json import *
 import os
 
-"""
-{
-    "affichage-gantt": {
-        "deselect-all": {
-            "description": "Déselectionner Tout",
-            "bindings": ["Escape"]
-            },
-        "delete-selected": {
-            "description": "Supprimer l'élément sélectionné",
-            "bindings": ["Delete", "Backspace"]
-            }
-        },
-    "General": {}
-}
-"""
 NOMFICHIER = "clavier"
 
 class BindingManager:
@@ -61,13 +46,12 @@ class BindingManager:
             # Si elle n'y est pas, on la rajoute entièrement et c'est fini
             if not section in self.__donneeUtil:
                 self.__donneeUtil[section] = self.__donneePref[section]
-                break
+                continue
             # Pour les binds manquants :
             for bind in self.__donneePref[section]:
                 if not bind in self.__donneeUtil[section]:
                     # On les rajoute un à un
                     self.__donneeUtil[section][bind] = self.__donneePref[section][bind]
-
 
         # Trie alphabétique
         temp = dict(sorted(self.__donneeUtil.items(), key=lambda t:t[0]))
@@ -108,4 +92,5 @@ class BindingManager:
         return self.__app
 
     def getBindings(self):
+        print("getBindings", self.__donnee)
         return self.__donnee

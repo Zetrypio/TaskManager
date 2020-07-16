@@ -1,5 +1,5 @@
 {
-    "Affichage-gantt": {
+    "Affichage-Gantt": {
         "deselect-all": {
             "description": "Désélectionner Tout",
             "bindings": ["Escape"]
@@ -41,7 +41,7 @@
             "bindings": []
             }
         },
-    "Affichage-classique": {
+    "Affichage-Classique": {
         "deselect-all": {
             "description": "Désélectionner Tout",
             "bindings": ["Escape"]
