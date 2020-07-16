@@ -17,11 +17,48 @@ class BindingManager:
 
         self.__load()
 
-    def __load(self, lireCfg = True, lireDef = True):
+    "" # Marque pour le repli
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        return self.__app
+
+    def getBind(self, path, section, bindingVirtuel):
+        """
+        Fonction qui va lire une ligne précise du fichier indiqué par path
+
+        @param path : <str> chemin ver le fichier
+        @param section : <str> nom du dictionnaire à consulter
+        @param bindingVirtuel : <str> nom du binding virtuel à consulter
+
+        @return bind : <str> contient le bind
+        """
+        with open(path + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
+            donnee = load(f)
+
+        return donnee[section][bindingVirtuel]["bindings"]
+
+    def getBindings(self):
+        """
+        @return self.__donnee : <dict> qui contient tous les binds de l'application
+        """
+        return self.__donnee
+
+    def getProfilFolder(self):
+        return self.getApplication().getProfilManager().getProfilFolder(None)
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def __load(self, lireCfg = True, liredef = True):
         """
         Permet de lire les fichiers
         @param lireCfg = <bool> lit ou pas le json de l'utilisateur
-        @param lireDef = <bool> lit ou pas le json par défaut
+        @param liredef = <bool> lit ou pas le json par défaut
         """
         if lireCfg:
             if os.path.exists(self.getProfilFolder() + NOMFICHIER + ".json"):
@@ -60,6 +97,9 @@ class BindingManager:
 
         self.__donnee = temp
 
+    ""
+    ## Setter lié au fichier
+    ""
     def save(self, dico):
         """
         Fonction qui va écrire le json de l'utilisateur
@@ -70,29 +110,3 @@ class BindingManager:
 
         self.__load()
 
-    def getBind(self, path, section, bindingVirtuel):
-        """
-        Fonction qui va lire une ligne précise du fichier indiqué par path
-
-        @param path : <str> chemin ver le fichier
-        @param section : <str> nom du dictionnaire à consulter
-        @param bindingVirtuel : <str> nom du binding virtuel à consulter
-
-        @return bind : <str> contient le bind
-        """
-        with open(path + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
-            donnee = load(f)
-
-        return donnee[section][bindingVirtuel]["bindings"]
-
-    def getProfilFolder(self):
-        return self.getApplication().getProfilManager().getProfilFolder(None)
-
-    def getApplication(self):
-        return self.__app
-
-    def getBindings(self):
-        """
-        @return self.__donnee : <dict> qui contient tous les binds de l'application
-        """
-        return self.__donnee
