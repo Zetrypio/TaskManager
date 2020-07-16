@@ -30,12 +30,29 @@ class ZoneAffichage(Frame):
 
         self.donneeCalendrierFrame.updateAffichage()
 
+        # Création de la liste qui contient les durées
+        self.getData().readFile("duree")
+        self.__listeValue = []
+        for duree in self.getData().sections():
+            self.__listeValue.append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
+
+        self.__listeValue.remove(['Période', '-1'])
+
+
+
     def getApplication(self):
         """
         Getter pour l'application.
         @return l'Application.
         """
         return self.master.getApplication()
+
+    def getData(self):
+        """
+        Getter pour data.
+        @return Data.
+        """
+        return self.getApplication().getData()
 
     def getPanneauActif(self):
         """
@@ -64,14 +81,11 @@ class ZoneAffichage(Frame):
         @param event: l'événement, doit contenir le combobox dans l'attritbut widget.
         """
         valeur = event.widget.get()
-        if valeur == '1 jour':
-            self.getDonneeCalendrier().setNbJour(1)
-        elif valeur == '2 jours':
-            self.getDonneeCalendrier().setNbJour(2)
-        elif valeur == '5 jours':
-            self.getDonneeCalendrier().setNbJour(5)
-        elif valeur == '1 semaine':
-            self.getDonneeCalendrier().setNbJour(7)
+        for duree in self.__listeValue:
+            print(valeur, duree[0], valeur == duree[0])
+            if valeur == duree[0]:
+                self.getDonneeCalendrier().setNbJour(int(duree[1]))
+                break # Important sinon on essaye les autre et on affiche la periode parce que la condition n'est pas vérifié
         else: # Si c'est une période
             self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
