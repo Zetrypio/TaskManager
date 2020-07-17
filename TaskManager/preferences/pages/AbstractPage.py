@@ -71,6 +71,16 @@ class AbstractPage(Frame):
             value = self.getData().get(self.getNom(), donnee[1]) if condition else donnee[2]
             value = " " if value == "" and donnee[1] == "Lien" else value # Pour corriger le fait que le ConfigParser ne peut pas enregistrer des espaces...
             donnee[0].set(value)
+    def _loadOneDataFromFile(self, key):
+        """
+        Fonction qui retourne la donnée voulu
+        @param key : <str> contient le nom de la clé dont dont cherche la value
+        @return v  : <str> contient la value associé à la clé
+        """
+        pathFile = self.getProfilFolder() + self.getPagePrincipale() + ".cfg"
+        if os.path.exists(pathFile):
+            self.getData().read(pathFile)
+            return self.getData()[self.getNom()][key]
 
     def _makeDictAndSave(self):
         """

@@ -54,7 +54,7 @@ class BindingManager:
     # Setters : #
     #############
     ""
-    def __load(self, lireCfg = True, liredef = True):
+    def __load(self, lireCfg = True, lireDef = True):
         """
         Permet de lire les fichiers
         @param lireCfg = <bool> lit ou pas le json de l'utilisateur

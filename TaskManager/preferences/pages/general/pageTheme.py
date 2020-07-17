@@ -211,6 +211,8 @@ class PageTheme(AbstractPage):
         self._loadDataFile() # Pour les prefs standards
         self.__listeVarTheme.append(StringVar()) # Pour la gestion d'une clé supplémentaire quand on passe par Data pour lire
         self.configCombobox() # Pour les prefs des thèmes
+        # On fini par charger le theme
+        self.loadTheme()
 
     def __askcolor(self, value):
         color = askcolor()[1]
@@ -262,8 +264,10 @@ class PageTheme(AbstractPage):
             self.__listValueComboTheme.append(self.getData()[section]["Name"])
 
         self.__comboThemeExistant.config(value=self.__listValueComboTheme)
-        # A voir comment on fait, si on garde etc
-        self.setNomCombobox(self.getApplication().getData().getCurrentThemeName())
+        # On set la valeur du combo a celle enregistré dans les prefs
+        # Relecture du bon fichier
+        t = self._loadOneDataFromFile("Theme choisi")
+        self.setNomCombobox(t)
 
     def dictTheme(self, nomTheme):
         """
@@ -272,15 +276,13 @@ class PageTheme(AbstractPage):
         # Pour récupérer ce qu'on a commencé
         self.recupCouleur()
         dict = {}
-        for indice, cle in enumerate(self.getData()[self.getData().getCurrentThemeName().upper()]):
+        # J'ai prit classique car on est sur qu'il y a tout dedans
+        for indice, cle in enumerate(self.getData()["Classique".upper()]):
             if indice == 0: # Pour le nom c'est un string tout court
-                print(indice, cle, self.__listeVarTheme[indice])
                 dict[cle] = nomTheme
             else:
-                print(indice, cle, self.__listeVarTheme[indice].get())
                 # Ici c'est des StringVar() donc il faut un ".get()"
                 dict[cle] = self.__listeVarTheme[indice].get()
-        print("dict final :", dict)
         return dict
 
     def enregistrer(self, nom):
