@@ -50,7 +50,7 @@ class AbstractPage(Frame):
         Fonction qui va lire les fichiers de préférences avec Data
         @param nom : <str> nom du fichier à lire (sans l'extension)
         """
-        self.getData().readFile(nom, lireDef = True, lireCfg = True)
+        self.getData().readFile(nom, lireDef, lireCfg)
 
     def _loadDataFile(self):
         """

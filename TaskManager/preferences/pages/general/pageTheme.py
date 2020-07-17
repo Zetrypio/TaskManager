@@ -62,7 +62,7 @@ class PageTheme(AbstractPage):
         self.__varTheme = StringVar()
         self._listData.append([self.__varTheme, "Theme choisi", "Classique"])
         self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly", textvariable = self.__varTheme)
-        self.__comboThemeExistant.bind("<<ComboboxSelected>>", self.loadTheme)
+        self.__comboThemeExistant.bind("<<ComboboxSelected>>", lambda e=None : self.__comboSelected())
         self.__btnSuppr = Button(self.__frameChoixTheme, text="Supprimer", command = self.supprimerTheme)
 
 
@@ -212,7 +212,7 @@ class PageTheme(AbstractPage):
         self.__listeVarTheme.append(StringVar()) # Pour la gestion d'une clé supplémentaire quand on passe par Data pour lire
         self.configCombobox() # Pour les prefs des thèmes
         # On fini par charger le theme
-        self.loadTheme()
+        self.loadTheme(self.getNomCombobox())
 
     def __askcolor(self, value):
         color = askcolor()[1]
@@ -264,10 +264,7 @@ class PageTheme(AbstractPage):
             self.__listValueComboTheme.append(self.getData()[section]["Name"])
 
         self.__comboThemeExistant.config(value=self.__listValueComboTheme)
-        # On set la valeur du combo a celle enregistré dans les prefs
-        # Relecture du bon fichier
-        t = self._loadOneDataFromFile("Theme choisi")
-        self.setNomCombobox(t)
+
 
     def dictTheme(self, nomTheme):
         """
@@ -290,7 +287,6 @@ class PageTheme(AbstractPage):
         Enregistre les modifications
         @param nom : <str> nom du thème
         """
-        print("nom : ",nom)
         # On doit lire le fichier en entier pour avoir les clés existantes
         self.readFile(NOMFICHIER)
         dict = self.dictTheme(nom)
@@ -330,35 +326,38 @@ class PageTheme(AbstractPage):
 
         if askyesnowarning(title = "Supprimer ce thème", message="Êtes-vous sur de vouloir supprimer %s définitivement ?"%self.getNomCombobox()):
             self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
-            self.getData().remove_section(self.get.upper())
+            self.getData().remove_section(self.getNomCombobox().upper())
             self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
 
             self.configCombobox()
-            self.loadTheme()
+            self.loadTheme("Classique") # On revient toujours sur lui
 
-    def loadTheme(self, event=None):
+    def loadTheme(self, theme):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
         + gérer la disponibilité de enregistrer
+        @param theme : <str> contient le nom du theme a charger
         """
         self.readFile(NOMFICHIER) # Si on change de page, il faut rappeler qui on est + sûreté
-        theme = self.getData()[self.getNomCombobox().upper()]
+        dataTheme = self.getData()[theme.upper()]
 
 
         # Permet de charger les options pour les sauvegarder
-        for indice, cle in enumerate(theme):
+        for indice, cle in enumerate(dataTheme):
             if indice == 0:
-                self.__listeVarTheme[indice] = theme.get(cle)
+                self.__listeVarTheme[indice] = dataTheme.get(cle)
             else:
-                self.__listeVarTheme[indice].set(theme.get(cle))
+                self.__listeVarTheme[indice].set(dataTheme.get(cle))
 
-        self.__boutonColor1.config(bg=theme["Couleur principale"], activebackground=theme["Couleur principale"])
-        self.__boutonColor2.config(bg=theme["Couleur secondaire"], activebackground=theme["Couleur secondaire"])
-        self.__boutonColor3.config(bg=theme["Couleur tertiaire"], activebackground=theme["Couleur tertiaire"])
+        self.__boutonColor1.config(bg=dataTheme["Couleur principale"], activebackground=dataTheme["Couleur principale"])
+        self.__boutonColor2.config(bg=dataTheme["Couleur secondaire"], activebackground=dataTheme["Couleur secondaire"])
+        self.__boutonColor3.config(bg=dataTheme["Couleur tertiaire"], activebackground=dataTheme["Couleur tertiaire"])
 
         if self.__currentElem is not None:
-            self.__comboCouleur.set(theme[self.__currentElem])
+            self.__comboCouleur.set(dataTheme[self.__currentElem])
 
+        # On set la valeur du combo a celle enregistré dans les prefs
+        self.setNomCombobox(theme)
         self.__stateSaveBtn()
 
     def chercheComboValeur(self, val):
@@ -425,6 +424,13 @@ class PageTheme(AbstractPage):
             self.__comboCouleur.set(self.chercheComboValeur(iidElementSelectionne).get())
             self.__currentElem = iidElementSelectionne
         except:pass
+
+    def __comboSelected(self):
+        """
+        Fonction qui dit de loader le theme selectionné
+        """
+        self.loadTheme(self.__varTheme.get())
+        return
 
     def appliqueEffet(self, application):
         self._makeDictAndSave()
