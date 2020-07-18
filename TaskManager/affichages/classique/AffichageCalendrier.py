@@ -49,6 +49,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__nbColonneParJour = 1
         self.__partsParColonnes = []
 
+        ## Binding
+        #self.bind("<Delete>", lambda e = None : self.event_generate("<<delete-selected>>"))
         # self.bind("<Configure>", lambda e : self.updateAffichage())
 
     def clicSurObjet(self, objClassique):
@@ -75,7 +77,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__frame = Frame(self)
         self.__frame.pack(expand = YES, fill = BOTH)
         self.__frame.bind("<Button-1>", lambda e: self.__onClicSurFrame(), add = True)
-        #self.__frame.bind("<Escape>",  self.escapePressed)
 
         # On précalcule :
         self.__precalculer()

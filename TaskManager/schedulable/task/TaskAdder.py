@@ -97,8 +97,8 @@ class TaskAdder(Frame):
         # Pour un obscure raison, il faut appeler cette méthode :
         self.master.redessiner()
 
-        # demande de la date
-        date = askdatetime(self.menu.variableHorlogeStyle.get())
+        ## demande de la date
+        date = askdatetime(self.getStyleHorloge())
         self.debut = date
         self.champDebut.config(text = date if date is not None else "")
         self.autoSetDuree()
@@ -112,7 +112,7 @@ class TaskAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdatetime(self.menu.variableHorlogeStyle.get())
+        date = askdatetime(self.getStyleHorloge())
         if date is not None:
             self.fin = date
         self.champFin.config(text = date if date is not None else "")
@@ -197,6 +197,18 @@ class TaskAdder(Frame):
             if p.nom == self.champPeriode.get():
                 periode = p
         self.master.ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
+
+    def getStyleHorloge(self):
+        """
+        Permet de savoir si on affiche les heures sur le cadran
+        @return <bool> , par défaut c'est False qui est retourné
+        """
+        # On va chercher le style avec data
+        if self.getApplication().getData().testDataExist("General", "General", "afficher les heures sur l'horloge"):
+            return self.getApplication().getData().getOneValue("General", "General", "afficher les heures sur l'horloge")
+        else:
+            return False
+
 
     def getApplication(self):
         """

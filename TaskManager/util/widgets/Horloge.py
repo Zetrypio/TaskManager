@@ -45,7 +45,7 @@ class Horloge(Canvas):
             y1 = 100 + 80*cos(angle*2*pi/360)
             if angle%5==0:
                 #line:
-                if self.number:
+                if self.number is True:
                     x2 = 100 + 80*sin(angle*2*pi/360)
                     y2 = 100 - 80*cos(angle*2*pi/360)
                     self.create_text(x2, y2, text=str(int((angle if angle!= 0 else 360)/30)))

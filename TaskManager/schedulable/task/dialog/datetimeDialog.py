@@ -8,7 +8,7 @@ from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
 from util.widgets.Horloge import *
 
-def askdatetime(style="nombre"):
+def askdatetime(style):
     # Callback quand on ferme la fenêtre par l'un des boutons :
     date = ""
     heure = ""
@@ -107,7 +107,7 @@ def askdatetime(style="nombre"):
     cadre.pack(side = RIGHT)
     # création des widgets :
     cal = Calendar(fen, firstweekday=calendar.MONDAY)
-    hor = Horloge(cadre, style=="nombre")
+    hor = Horloge(cadre, number = style)
     # placement des widgets :
     cal.pack(side = LEFT, expand=1, fill='both')
     hor.pack(side = TOP)

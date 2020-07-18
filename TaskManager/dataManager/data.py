@@ -60,6 +60,17 @@ class Data(ConfigParser):
        if not isinstance(value, bool):
            raise TypeError("Exptected a boolean")
 
+    def testDataExist(self, nomFichier, nomSection, nomCle):
+        """
+        Méthode qui True si la valeur existe dans le fichier et la section indiqué
+        @param nomFichier : <str> contient le nom du fichier dans lequel se trouve notre valeur
+        @param nomSection : <str> contient le nom de la section dans laquelle se trouve notre valeur
+        @param nomCle     : <str> contient le nom de la clé pour ainsi obtenir la valeur
+        @return : True = la clé exsite, False = la clé, la section ou le fichier n'existe pas
+        """
+        self.readFile(nomFichier)
+        return True if nomSection in self.sections() and nomCle in self[nomSection] else False
+
     def testString(self, value):
        """ Test pour savoir si value est un String """
        if not isinstance(value, str):
@@ -70,6 +81,17 @@ class Data(ConfigParser):
     # Getters #
     ###########
     ""
+    def getOneValue(self, nomFichier, nomSection, nomCle):
+        """
+        Méthode qui renvoie une valeur précise
+        @param nomFichier : <str> contient le nom du fichier dans lequel se trouve notre valeur
+        @param nomSection : <str> contient le nom de la section dans laquelle se trouve notre valeur
+        @param nomCle     : <str> contient le nom de la clé pour ainsi obtenir la valeur
+        @return : la value
+        """
+        if not self.testDataExist(nomFichier, nomSection, nomCle):
+            raise ValueError("%s n'existe pas dans %s du fichier %s.\n utiliser la méthode data.testDataExist() pour éviter l'erreur"%(nomCle, nomSection, nomFichier))
+        return self[nomSection][nomCle]
     def getProfilFolder(self):
         return self.__profilFolder
 
