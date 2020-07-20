@@ -336,7 +336,6 @@ class AbstractDisplayedCalendar(Frame):
       - Et le plus important : la méthode doit renvoyer le schedulable avec sa durée prédéfinie.
 
       - Dans les sous-classes, ça donne :
-
         def addTask(self, schedulable, region = None):
             '''Permet d'ajouter une schedulable, region correspond au début de la tâche si celle-ci n'en a pas.'''
             if (schedulable := SuperCalendrier.addTask(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.

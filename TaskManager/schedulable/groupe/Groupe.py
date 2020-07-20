@@ -248,5 +248,18 @@ class Groupe(AbstractSchedulableObject):
         """
         self.__listTasks.remove(task)
 
+    def saveByDict(self):
+        """
+        Méthode qui sauvegarde les attributs présent dans la classe "Groupe" (ici)
+
+        @save listTasks : <list Task> contient les taches du groupe
+
+        @return dico <dict> contient les couples clé-valeur ci-dessus
+        """
+        dico = super().saveByDict(self)
+        dico["listTasks"] = [task for task in self.getListTasks().saveByDict()]
+
+        return dico
+
 # L'import est à la fin pour éviter les soucis circulaires d'imports (un vrai cauchemar).
 from affichages.items.content.DisplayableGroup import *

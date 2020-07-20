@@ -100,7 +100,11 @@ class Application(Frame):
         except:pass
 
     def save(self):
-        print("s")
+        d = {}
+        for periode in self.getPeriodManager().getPeriodes():
+            d[periode.getNom()] = periode.saveByDict()
+
+        print(d)
 
     def restart(self):
         print("r")

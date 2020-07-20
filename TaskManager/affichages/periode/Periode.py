@@ -218,3 +218,21 @@ class Periode(ITaskEditorDisplayableObject):
             return 1
         # Sinon : autorisé par le filtre, mais pas prioritaire.
         return 0
+
+    def saveByDict(self):
+        """
+        Méthode qui enrrgistre ce qu'elle peut de la période
+
+        @save nom : <str> contient le nom de la période
+        @save debut : <date> du début de la période
+        @save fin : <date> fin de la période
+        @save desc : <str> contient la description de la période
+        @save color : <str> contient la couleur de la période
+        """
+        return {
+            "nom"   : self.getNom(),
+            "debut" : self.getDebut(),
+            "fin"   : self.getFin(),
+            "desc"  : self.desc,
+            "color" : self.getColor()
+            }

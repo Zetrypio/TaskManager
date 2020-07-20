@@ -280,5 +280,21 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def saveByDict(self):
+        """
+        Méthode qui sauvegarde les attributs présent dans la super classe (ici)
+        A redéfinir dans les sous-classe pour les nouveaux attributs
 
+        @save nom     : <str> contient le nom de la tache
+        @save periode : <str> contient le nom de la période
+        @save desc    : <str> contient le texte de la description
+        @save color   : <str> contient la couleur de la tache
 
+        @return dico <dict> contient les couples clé-valeur ci-dessus
+        """
+        return {
+            "nom"     : self.getNom(),
+            "periode" : self.getPeriode().getNom(),
+            "desc"    : self.getDescription(),
+            "color"   : self.getColor()
+        }

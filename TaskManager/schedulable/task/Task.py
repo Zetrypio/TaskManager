@@ -464,3 +464,37 @@ class Task(AbstractSchedulableObject):
         """
         self.__done = value
         self.updateStatut()
+
+    def SaveByDict(self):
+        """
+        Méthode qui sauvegarde les attributs présent (ici)
+
+        @save debut      : <datetime>  ou None
+        @save duree      : <timedelta> ou None
+        @save rep        : <?> répétition
+        @save nbrep      : <int> nombre de répérition
+        @save parent     : <str> nom du conteneur
+        @save done       : <?>
+        @save depencance : <list str> liste des noms des taches
+        @save dependante : <list str> liste des noms des taches
+
+        @return dico : <dict> contient les couples clé-valeur ci-dessus
+        """
+        # On va chercher les attributs de la superclasse
+        dico = super().SaveByDict()
+        dico["debut"] = self.getDebut()
+        dico["duree"] = self.getDuree()
+
+        dico["rep"] = self.__rep
+        dico["nbrep"] = self.__nbrep
+
+        dico["parent"] = self.getParent().getNom()
+        dico["done"] = self.__done
+
+        dico["dependance"] = []
+        for dep in self.getDependances():
+            dico["dependance"].append(dep.getNom())
+
+        dico["dependante"] = []
+        for dep in self.getDependantes():
+            dico["dependante"].append(dep.getNom())
