@@ -3,6 +3,7 @@ import datetime
 
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
+from schedulable.task.Task import *
 
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
@@ -29,6 +30,7 @@ class Periode(ITaskEditorDisplayableObject):
         self.desc = desc
         self.color = color
         self.selected = False
+        self.listTasks = []
 
         # datetime avant lequel tout est fait
         self.dateStatut = None
@@ -219,6 +221,60 @@ class Periode(ITaskEditorDisplayableObject):
         # Sinon : autorisé par le filtre, mais pas prioritaire.
         return 0
 
+    def addTask(self, schedulable, region = None): # TODO : renommer en addSchedulable
+        """
+      - Permet d'ajouter un schedulable sur le panneau d'affichage.
+
+      - Méthode à redéfinir dans les sous-classes, en appelant
+        la variante parent (celle de SuperCalendrier), car celle-ci
+        s'occuppe de mettre le schedulable dans la liste et de demander la durée
+        à l'utilisateur quand celle-ci n'est pas définie (càd: elle est de 0).
+
+      - Cependant, la suite doit être redéfinie dans les sous-classes pour gérer
+        l'affichage de la tâche.
+
+      - Et le plus important : la méthode doit renvoyer le schedulable avec sa durée prédéfinie.
+
+      - Dans les sous-classes, ça donne :
+        def addTask(self, schedulable, region = None):
+            '''Permet d'ajouter une schedulable, region correspond au début de la tâche si celle-ci n'en a pas.'''
+            if (schedulable := SuperCalendrier.addTask(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
+                return
+
+            ####################
+            # Ajout graphique. #
+            ####################
+            ... # Note : on utilisera très probablement une liste, non ?
+            ... # et peut-être une classe particulière, défini dans le même fichier ?
+            ... # Quand je dis une liste, c'est une liste différente de self.listeTask,
+                # car celle-ci existe déjà, mais qui contiendrait les cadres/panneaux des classes
+                # que l'on va créer pour cette représentation. Cependant, on pourrais dire, si
+                # c'est possible, que cette classe pourrait être utilisée pour plusieurs dispositions
+                # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
+                # d'affichage d'une tâche custom.
+
+            return schedulable # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
+
+        @param schedulable: le schedulable à rajouter
+        @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
+        @return le schedulable, potentiellement changé.
+        @deprecated: va être renommé en addSchedulable()
+        """
+        if region and schedulable.getDebut() is None:
+            # Important pour ne pas altérer l'originelle :
+            # Cela permet de pouvoir Drag&Drop une même tâche
+            # plusieurs fois.
+            schedulable = schedulable.copy()
+            schedulable.setDebut(region)
+        if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
+            schedulable.setDuree(self.askDureeTache())
+            if not schedulable.getDuree():
+                return None
+        if schedulable is None : return
+        self.listTasks.append(schedulable)
+        # SUITE À FAIRE DANS LES SOUS-CLASSES.
+        return schedulable
+
     def saveByDict(self):
         """
         Méthode qui enrrgistre ce qu'elle peut de la période
@@ -238,5 +294,6 @@ class Periode(ITaskEditorDisplayableObject):
             "fin"   : self.getFin(),
             "desc"  : self.desc,
             "color" : self.getColor(),
-            "group" : [groupe.saveByDict() for groupe in self.getGroupeManager().getGroupes()]
+            "group" : [groupe.saveByDict() for groupe in self.getGroupeManager().getGroupes()],
+            "task"  : [task.saveByDict() for task in self.listTasks]
             }

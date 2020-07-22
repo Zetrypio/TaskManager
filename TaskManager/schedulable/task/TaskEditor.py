@@ -113,7 +113,8 @@ class TaskEditor(Frame):
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            self.master.getDonneeCalendrier().addTask(schedulable)
+            self.getApplication().getDonneeCalendrier().addTask(schedulable)
+            self.getPeriodManager().getActivePeriode().addTask(schedulable)
         self.frameInput.updatePossiblePeriods()
 
     def supprimer(self, schedulable):
@@ -311,6 +312,13 @@ class TaskEditor(Frame):
         @return l'Application.
         """
         return self.master
+
+    def getPeriodManager(self):
+        """
+        Getter pour le periode manager
+        @return le PeriodManager
+        """
+        return self.getApplication().getPeriodManager()
 
     def tri_alphabetique(self):
         """
