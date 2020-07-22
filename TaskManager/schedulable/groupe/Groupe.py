@@ -256,8 +256,9 @@ class Groupe(AbstractSchedulableObject):
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
-        dico = super().saveByDict(self)
-        dico["listTasks"] = [task for task in self.getListTasks().saveByDict()]
+        dico = {}
+        dico = super().saveByDict()
+        dico["listTasks"] = [task.saveByDict() for task in self.getListTasks()]
 
         return dico
 

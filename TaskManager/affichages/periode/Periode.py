@@ -223,16 +223,20 @@ class Periode(ITaskEditorDisplayableObject):
         """
         Méthode qui enrrgistre ce qu'elle peut de la période
 
-        @save nom : <str> contient le nom de la période
+        @save nom   : <str> contient le nom de la période
         @save debut : <date> du début de la période
-        @save fin : <date> fin de la période
-        @save desc : <str> contient la description de la période
+        @save fin   : <date> fin de la période
+        @save desc  : <str> contient la description de la période
         @save color : <str> contient la couleur de la période
+        @save group : <task> contient les tack du groupe
+
+        @return dico <dict> contient les couples clé-valeur ci-dessus
         """
         return {
             "nom"   : self.getNom(),
             "debut" : self.getDebut(),
             "fin"   : self.getFin(),
             "desc"  : self.desc,
-            "color" : self.getColor()
+            "color" : self.getColor(),
+            "group" : [groupe.saveByDict() for groupe in self.getGroupeManager().getGroupes()]
             }
