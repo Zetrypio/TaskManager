@@ -58,7 +58,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Méthode exécutée lors d'un clic sur un objet.
         @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
         """
-        for s in self.getActivePeriode().getListSchedulables():
+        for s in self.getPeriodeActive().getListSchedulables():
             s.setSelected(False)
         objClassique.getSchedulable().setSelected(True)
         self.getDonneeCalendrier().updateColor()
@@ -148,7 +148,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         return (part for part in self.__parts if part.getJour() == day)
 
-    def addTask(self, schedulable, region = None):
+    def addSchedulable(self, schedulable, region = None):
         """
         Permet d'ajouter un objet planifiable à l'affichage dans le calendrier.
         @param schedulable: l'objet à rajouter pour l'affichage.
@@ -166,8 +166,10 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         return schedulable # on renvoie le schedulable avec éventuellement son début et sa durée. TRÈS IMPORTANT.
 
     def removeSchedulable(self, obj):
-        super().removeSchedulable(obj)
-        
+        """
+        Retire un schedulable de la liste
+        @param obj : <schedulable> celui qu'il faut retirer
+        """
         for item in reversed(self.listeDisplayableItem):
             if isinstance(item, ObjetClassique):
                 if item.getSchedulable() == obj:

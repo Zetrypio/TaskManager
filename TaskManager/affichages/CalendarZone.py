@@ -364,7 +364,7 @@ class CalendarZone(Frame):
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
             self.getApplication().getTaskEditor().supprimer(t)
-            self.getDonneeCalendrier().removeSchedulable(t)
+            self.getPeriodeActive().removeSchedulable(t)
 
         if ajout:
             groupeManager.ajouter(groupe)

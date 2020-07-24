@@ -265,7 +265,6 @@ class Periode(ITaskEditorDisplayableObject):
         @return le schedulable, potentiellement changé.
         @deprecated: va être renommé en addSchedulable()
         """
-        print("TYPE OF SCHEDULABLE :", type(schedulable))
         ## Traitement du schedulable
         if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
@@ -284,6 +283,14 @@ class Periode(ITaskEditorDisplayableObject):
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+
+    def removeSchedulable(self, schedulable):
+        """
+        Permet d'enlever un objet du calendrier.
+        @param obj: L'objet à enlever.
+        """
+        self.listSchedulables.remove(schedulable)
+        self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)
 
     def getApplication(self):
         """

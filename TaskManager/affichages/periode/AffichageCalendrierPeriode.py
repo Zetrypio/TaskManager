@@ -193,4 +193,16 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         paramAffichage.setModeListe("1 Mois")
         self.getApplication().setModeEditionPeriode(True)
 
+    def addSchedulable(self, schedulable, region = None):
+        """
+        Fonction qui rajoute une task/groupe, ne sert à rien ici donc "pass"
+        """
+        pass
+
+    def removeSchedulable(self, schedulable):
+        """
+        Fonction qui retire une task/groupe, ne sert à rien ici donc "pass"
+        """
+        pass
+
 

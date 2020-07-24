@@ -41,9 +41,6 @@ class AbstractDisplayedCalendar(Frame):
         self.jourDebut = self.getDebutPeriode()
         self.jourFin   = self.getFinPeriode()
 
-        # liste des tâches :
-        self.listeTask = []
-
     def clicSurObjet(self, objet):
         """
         Méthode à exécuter quand on clic sur l'un des objets.
@@ -56,7 +53,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
         """
-        for s in self.listeTask: # Getter ?
+        for s in self.getPeriodeActive().getListSchedulables():
             s.setSelected(False)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
 
@@ -81,7 +78,7 @@ class AbstractDisplayedCalendar(Frame):
         if not control:
             self.deselectEverything()
 
-        for schedulable in self.listeTask: # On pourrait pas renommer la liste ?
+        for schedulable in self.getPeriodeActive().getListSchedulables(): # On pourrait pas renommer la liste ?
             # Si l'objet est partiellement sur le jour :
             if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
                 schedulable.setSelected(True)
@@ -90,7 +87,7 @@ class AbstractDisplayedCalendar(Frame):
         self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.
 
     def getSelectedSchedulable(self):
-        return (schedulable for schedulable in self.listeTask if schedulable.isSelected())
+        return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
 
     def getDonneeCalendrier(self):
         """
@@ -321,7 +318,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def addTask(self, schedulable, region = None): # TODO : renommer en addSchedulable
+    def addSchedulable(self, schedulable, region = None): # TODO : renommer en addSchedulable
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
@@ -360,7 +357,6 @@ class AbstractDisplayedCalendar(Frame):
         @return le schedulable, potentiellement changé.
         @deprecated: va être renommé en addSchedulable()
         """
-        pass
         """
         self.getPeriodeActive()
         if self.__class__ == AbstractDisplayedCalendar:
@@ -379,11 +375,14 @@ class AbstractDisplayedCalendar(Frame):
         self.listeTask.append(schedulable) # TODO : C'est une task/groupe bref pas ce qu'un calendrier doit contenir
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
         return schedulable"""
+        raise NotImplementedError
 
     def removeSchedulable(self, obj):
-        #self.listeTask.remove(obj)
-        #self.updateAffichage(force = True)
-        pass
+        """
+        Retire un schedulable
+        à redefinir dans chaque sous classe
+        """
+        raise NotImplementedError
 
     def askDureeTache(self):
         """

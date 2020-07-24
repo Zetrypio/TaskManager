@@ -470,7 +470,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         date = datetime.datetime.combine(jour, heure)
         return date
 
-    def addTask(self, schedulable, region = None):
+    def addSchedulable(self, schedulable, region = None):
         """
         Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
         @deprecated: Va être renommé en addSchedulable().
@@ -484,8 +484,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         return schedulable # Inutile
 
     def removeSchedulable(self, obj):
-        super().removeSchedulable(obj)
-        
+        """
+        Retire un schedulable de la liste
+        @param obj : <schedulable> celui qu'il faut retirer
+        """
         for item in reversed(self.listeDisplayableItem):
             if isinstance(item, ObjetGantt):
                 if item.getSchedulable() == obj:

@@ -143,15 +143,15 @@ class Task(AbstractSchedulableObject):
         """
         if self.__parent is None and not self.isContainer():
             app.getTaskEditor().supprimer(self)
-            app.getDonneeCalendrier().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
         elif self.isContainer():
             app.getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                app.getDonneeCalendrier().removeSchedulable(t)
+                app.getPeriodManager().getActivePeriode().removeSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
             app.getTaskEditor().redessiner()
-            app.getDonneeCalendrier().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
 
     def copy(self):
         """

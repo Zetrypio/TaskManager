@@ -304,7 +304,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         # Ajout graphique. #
         ####################
         for panneau in self.listPanneau:
-            panneau.addTask(schedulable, region)
+            panneau.addSchedulable(schedulable, region)
 
         #return tache # Pas important
     def removeSchedulable(self, obj):
@@ -312,7 +312,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Permet d'enlever un objet du calendrier.
         @param obj: L'objet à enlever.
         """
-        super().removeSchedulable(obj)
+        #super().removeSchedulable(obj)
         
         for panneau in self.listPanneau:
             panneau.removeSchedulable(obj)
