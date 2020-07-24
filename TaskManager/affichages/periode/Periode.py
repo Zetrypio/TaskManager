@@ -30,7 +30,7 @@ class Periode(ITaskEditorDisplayableObject):
         self.desc = desc
         self.color = color
         self.selected = False
-        self.listTasks = []
+        self.listSchedulables = []
 
         # datetime avant lequel tout est fait
         self.dateStatut = None
@@ -82,6 +82,13 @@ class Periode(ITaskEditorDisplayableObject):
         @return datetime.date() correspondant à la fin de la période.
         """
         return self.fin + datetime.timedelta() # Faire une copie de la date
+
+    def getListSchedulables(self):
+        """
+        Getter pour la liste des tasks
+        @return un copy de self.listSchedulables
+        """
+        return self.listSchedulables[:]
 
     def setDebut(self, debut, change = "duree"):
         """
@@ -221,7 +228,7 @@ class Periode(ITaskEditorDisplayableObject):
         # Sinon : autorisé par le filtre, mais pas prioritaire.
         return 0
 
-    def addTask(self, schedulable, region = None): # TODO : renommer en addSchedulable
+    def addSchedulable(self, schedulable, region = None): # TODO : renommer en addSchedulable
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
@@ -253,13 +260,13 @@ class Periode(ITaskEditorDisplayableObject):
                 # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
-            return schedulable # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
-
         @param schedulable: le schedulable à rajouter
         @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
         @return le schedulable, potentiellement changé.
         @deprecated: va être renommé en addSchedulable()
         """
+        print("TYPE OF SCHEDULABLE :", type(schedulable))
+        ## Traitement du schedulable
         if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
@@ -271,9 +278,19 @@ class Periode(ITaskEditorDisplayableObject):
             if not schedulable.getDuree():
                 return None
         if schedulable is None : return
-        self.listTasks.append(schedulable)
-        # SUITE À FAIRE DANS LES SOUS-CLASSES.
-        return schedulable
+
+        ## On le rentre dans la liste
+        self.listSchedulables.append(schedulable)
+        # On l'ajoute à tous le monde
+        # Important pour les calendriers, car enfaite c'est un (schedulable OK)
+        self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+
+    def getApplication(self):
+        """
+        Getter pour l'Application
+        @return l'application
+        """
+        return self.getGroupeManager().getApplication()
 
     def saveByDict(self):
         """
@@ -295,5 +312,5 @@ class Periode(ITaskEditorDisplayableObject):
             "desc"  : self.desc,
             "color" : self.getColor(),
             "group" : [groupe.saveByDict() for groupe in self.getGroupeManager().getGroupes()],
-            "task"  : [task.saveByDict() for task in self.listTasks]
+            "task"  : [task.saveByDict() for task in self.getListSchedulables()]
             }

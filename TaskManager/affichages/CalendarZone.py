@@ -385,8 +385,7 @@ class CalendarZone(Frame):
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
                 self.getApplication().getTaskEditor().ajouter(t)
-#                self.getDonneeCalendrier().addTask(t)
-            
+                #self.getDonneeCalendrier().addTask(t)
             # Suppression du groupe :
             groupeManager.supprimer(groupe)
 
@@ -394,7 +393,7 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        for tache in self.getDonneeCalendrier().listeTask:#.getSchedulables():
+        for tache in self.getPeriodeActive().getListSchedulables():#.getSchedulables():
             if tache.isSelected():
                 tache.setDone(True)
         self.getApplication().getTaskEditor().redessiner()

@@ -113,8 +113,8 @@ class TaskEditor(Frame):
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            self.getApplication().getDonneeCalendrier().addTask(schedulable)
-            self.getPeriodManager().getActivePeriode().addTask(schedulable)
+            #self.getApplication().getDonneeCalendrier().addTask(schedulable) # TODO : a refactor
+            self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
         self.frameInput.updatePossiblePeriods()
 
     def supprimer(self, schedulable):
@@ -179,7 +179,6 @@ class TaskEditor(Frame):
         """
         # Si la tâche n'est pas filtrée
         if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
-
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
             displayable.id = parentNew

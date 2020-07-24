@@ -291,23 +291,22 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for p in self.getToutLesPanneaux():
             p.updateColor()
 
-    def addTask(self, tache, region = None):
+    def addSchedulable(self, schedulable, region = None):
         """
         Permet d'ajouter une tâche.
         @param tache: la Task à mettre -> à changer en Schedulable.
         @param region: correspond au début de la tâche si celle-ci n'en a pas.
         @deprecated: task va devenir un schedulable et le nom de la fonction va alors changer.
         """
-        tache = super().addTask(tache, region) # region est géré dans la variante parent : on ne s'en occupe plus ici.
+        #tache = super().addTask(tache, region) # region est géré dans la variante parent : on ne s'en occupe plus ici.
 
         ####################
         # Ajout graphique. #
         ####################
         for panneau in self.listPanneau:
-            tache = panneau.addTask(tache, region)
+            panneau.addTask(schedulable, region)
 
-        return tache # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
-
+        #return tache # Pas important
     def removeSchedulable(self, obj):
         """
         Permet d'enlever un objet du calendrier.

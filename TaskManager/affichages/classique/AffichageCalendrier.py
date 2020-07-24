@@ -58,7 +58,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Méthode exécutée lors d'un clic sur un objet.
         @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
         """
-        for s in self.listeTask: # Getter ?
+        for s in self.getActivePeriode().getListSchedulables():
             s.setSelected(False)
         objClassique.getSchedulable().setSelected(True)
         self.getDonneeCalendrier().updateColor()
@@ -156,9 +156,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         @return la tâche qui à peut-être été changé pour des raisons d'affichage.
         """
         # :=  on attribut la variable en plus de tester la condition
-        if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici. 
-            return
-        
+        #if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
+        #    return
+
         self.listeDisplayableItem.append(ObjetClassique(self, schedulable))
 
         self.updateAffichage()

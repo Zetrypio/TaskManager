@@ -360,6 +360,9 @@ class AbstractDisplayedCalendar(Frame):
         @return le schedulable, potentiellement changé.
         @deprecated: va être renommé en addSchedulable()
         """
+        pass
+        """
+        self.getPeriodeActive()
         if self.__class__ == AbstractDisplayedCalendar:
             raise NotImplementedError
         if region and schedulable.getDebut() is None:
@@ -373,13 +376,14 @@ class AbstractDisplayedCalendar(Frame):
             if not schedulable.getDuree():
                 return None
         if schedulable is None : return
-        self.listeTask.append(schedulable)
+        self.listeTask.append(schedulable) # TODO : C'est une task/groupe bref pas ce qu'un calendrier doit contenir
         # SUITE À FAIRE DANS LES SOUS-CLASSES.
-        return schedulable
+        return schedulable"""
 
     def removeSchedulable(self, obj):
-        self.listeTask.remove(obj)
-        self.updateAffichage(force = True)
+        #self.listeTask.remove(obj)
+        #self.updateAffichage(force = True)
+        pass
 
     def askDureeTache(self):
         """
