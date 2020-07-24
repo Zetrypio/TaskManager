@@ -6,6 +6,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
 import os
+import json
 
 from affichages.CalendarZone import *
 from affichages.periode.Periode import *
@@ -104,7 +105,8 @@ class Application(Frame):
         for periode in self.getPeriodManager().getPeriodes():
             d[periode.getNom()] = periode.saveByDict()
 
-        print(d)
+        with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
+            f.write(json.dumps(d, indent=4))
 
     def restart(self):
         print("r")

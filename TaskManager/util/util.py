@@ -51,3 +51,24 @@ def rangeDate(jourA, jourB, last = True):
             jour += datetime.timedelta(days = 1)
         if last:
             yield jourB
+
+def datetimeToStr(d):
+    """
+    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
+    @param d : <datetime.datetime> celui qu'on doit tranformer
+    """
+    return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)])
+
+def timedeltaToStr(d):
+    """
+    Permet de tranformer un datetime en str selon le format suivant : DD-SS
+    @param d : <datetime.timedelta> celui qu'on doit tranformer
+    """
+    return "-".join([str(d.days), str(d.seconds)])
+
+def dateToStr(d):
+    """
+    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
+    @param d : <datetime.date> celui qu'on doit tranformer
+    """
+    return "-".join([str(d.year), str(d.month), str(d.day)])

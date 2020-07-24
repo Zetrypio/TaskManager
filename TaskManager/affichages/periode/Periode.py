@@ -4,6 +4,7 @@ import datetime
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
+from util.util import dateToStr
 
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
@@ -313,11 +314,10 @@ class Periode(ITaskEditorDisplayableObject):
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
         return {
-            "nom"   : self.getNom(),
-            "debut" : self.getDebut(),
-            "fin"   : self.getFin(),
-            "desc"  : self.desc,
-            "color" : self.getColor(),
-            "group" : [groupe.saveByDict() for groupe in self.getGroupeManager().getGroupes()],
-            "task"  : [task.saveByDict() for task in self.getListSchedulables()]
+            "nom"           : self.getNom(),
+            "debut"         : dateToStr(self.getDebut()),
+            "fin"           : dateToStr(self.getFin()),
+            "desc"          : self.desc,
+            "color"         : self.getColor(),
+            "schedulables"  : [schedulable.saveByDict() for schedulable in self.getListSchedulables()]
             }

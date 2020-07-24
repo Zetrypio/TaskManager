@@ -7,6 +7,7 @@ import datetime
 
 from ..AbstractSchedulableObject import *
 
+from util.util import datetimeToStr, timedeltaToStr
 from .dialog.datetimeDialog import *
 from .TaskInDnd import *
 
@@ -465,7 +466,7 @@ class Task(AbstractSchedulableObject):
         self.__done = value
         self.updateStatut()
 
-    def SaveByDict(self):
+    def saveByDict(self):
         """
         Méthode qui sauvegarde les attributs présent (ici)
 
@@ -481,14 +482,14 @@ class Task(AbstractSchedulableObject):
         @return dico : <dict> contient les couples clé-valeur ci-dessus
         """
         # On va chercher les attributs de la superclasse
-        dico = super().SaveByDict()
-        dico["debut"] = self.getDebut()
-        dico["duree"] = self.getDuree()
+        dico = super().saveByDict()
+        dico["debut"] = datetimeToStr(self.getDebut())
+        dico["duree"] = timedeltaToStr(self.getDuree())
 
         dico["rep"] = self.__rep
         dico["nbrep"] = self.__nbrep
 
-        dico["parent"] = self.getParent().getNom()
+        dico["parent"] = self.getParent().getNom() if self.getParent() else None
         dico["done"] = self.__done
 
         dico["dependance"] = []
@@ -498,3 +499,5 @@ class Task(AbstractSchedulableObject):
         dico["dependante"] = []
         for dep in self.getDependantes():
             dico["dependante"].append(dep.getNom())
+
+        return dico
