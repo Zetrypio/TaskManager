@@ -15,12 +15,15 @@ from schedulable.groupe.Groupe import *
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.TaskEditor import *
 
+from util.util import *
+
 from MenuBar import *
 from preferences.fenetrePreferences import *
 from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
 
+CHARGERPRECONFIG = False
 
 # CECI est la CORRECTION d'un BUG :
 
@@ -89,6 +92,8 @@ class Application(Frame):
         for binding in self.getBindingIn("Application"):
             for key in self.getBindingIn("Application")[binding]["bindings"]:
                 self.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
+        if not CHARGERPRECONFIG:
+            self.__load()
 
 
     def destroy(self):
@@ -101,12 +106,76 @@ class Application(Frame):
         except:pass
 
     def save(self):
+        """
+        Fonction qui va enregister toutes les données
+        """
         d = {}
+        d["periodes"] = {}
         for periode in self.getPeriodManager().getPeriodes():
-            d[periode.getNom()] = periode.saveByDict()
+            d["periodes"][periode.getNom()] = periode.saveByDict()
 
         with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
             f.write(json.dumps(d, indent=4))
+
+    def __load(self):
+        """
+        Permet de charger les périodes enregistrées dans periode.json
+        """
+        def creeTache(d, p):
+            """
+            Fonction embarqué qui crée une tache avvec son dico
+            @param d : <dict> celui qu'a crée la tache
+            @param p : <periode> celle qui contient la tache
+            @return <task>
+            """
+            return Task(d["nom"],
+                        p,
+                        d["desc"],
+                        d["color"],
+                        strToDatetime(d["debut"]),
+                        strToTimedelta(d["duree"])
+                        )
+        # Si le fichier n'existe pas, on ne fait rien
+        if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
+            return
+
+        # Chargeons ce fameux fichier
+        with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
+            data = load(f)
+        # Créons les périodes
+        for periode in data["periodes"]:
+            myPeriode = data["periodes"][periode]
+            # On crée la période
+            p = Periode(self.getPeriodManager(),
+                        myPeriode["nom"],
+                        strToDate(myPeriode["debut"]),
+                        strToDate(myPeriode["fin"]),
+                        myPeriode["desc"],
+                        myPeriode["color"]
+                        )
+            # On l'ajoute
+            self.getPeriodManager().ajouter(p)
+            # On crée ses schedulables
+            for schedulable in myPeriode["schedulables"]:
+                print(schedulable["nom"])
+                # Si c'est un groupe :
+                if "listTasks" in schedulable:
+                    g = Groupe(
+                            schedulable["nom"],
+                            p,
+                            schedulable["desc"],
+                            schedulable["color"],
+                            )
+                    # On crée les taches du groupe et on le lui les rajoute
+                    for t in schedulable["listTasks"]:
+                        g.addTask(creeTache(t, p))
+
+                    # On ajoute le groupe à la periode
+                    p.getGroupeManager().ajouter(g)
+
+                # Si c'est une tache standard :
+                else :
+                    self.getTaskEditor().ajouter(creeTache(schedulable, p))
 
     def restart(self):
         print("r")
@@ -192,34 +261,35 @@ def main():
         pass
     app.pack(expand = YES, fill = BOTH)
     
+    if CHARGERPRECONFIG:
+        # Création d'une période préfaite
+        periodeSemaine = Periode(app.getPeriodManager(),
+                                 "semaine",
+                                 datetime.date(2020, 7, 4),
+                                 datetime.date(2020, 7, 27),
+                                 "semaine pour faciliter les calculs",
+                                 color = "#7FFF7F")
+        app.getPeriodManager().ajouter(periodeSemaine)
 
-    # Création d'une période préfaite
-    periodeSemaine = Periode(app.getPeriodManager(),
-                             "semaine",
-                             datetime.date(2020, 7, 4),
-                             datetime.date(2020, 7, 27),
-                             "semaine pour faciliter les calculs",
-                             color = "#7FFF7F")
-    app.getPeriodManager().ajouter(periodeSemaine)
+        # Création de tâches préfaites (c'est du lore)
+        app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
+        app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
+                                    "Gâteau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
+                                    datetime.datetime(2020, 7, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
 
-    # Création de tâches préfaites (c'est du lore)
-    tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 7,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
-    tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 7,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
-    app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-    app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
-                                "Gâteau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
-                                datetime.datetime(2020, 7, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
+        # Création d'un groupe préfait
+        tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 7,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
+        tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 7,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
+        # Les 2 première tâches sont dans le groupe.
+        group = Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF")
+        group.addTask(tacheA1)
+        group.addTask(tacheA2)
+        periodeSemaine.getGroupeManager().ajouter(group)
 
-    # Création d'un groupe préfait
-    # Les 2 première tâches sont dans le groupe.
-    group = Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF")
-    group.addTask(tacheA1)
-    group.addTask(tacheA2)
-    periodeSemaine.getGroupeManager().ajouter(group)
     
     
     try:

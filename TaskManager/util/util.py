@@ -74,29 +74,29 @@ def timedeltaToStr(d):
     """
     return "-".join([str(d.days), str(d.seconds)])
 
-def strToDate(d):
+def strToDate(dt):
     """
     Permet de tranformer un str (convertie pas dateToStr()) en date
-    @param d : <str>
+    @param dt : <str>
     @return <datetime.date>
     """
-    y, m, d = d.split("-")
-    return datetime.datetime(y, m, d)
+    y, m, d = dt.split("-")
+    return datetime.date(int(y), int(m), int(d))
 
-def strToDatetime(d):
+def strToDatetime(dt):
     """
     Permet de tranformer un str (convertie pas datetimeToStr()) en datetime
-    @param d : <str>
+    @param dt : <str>
     @return <datetime.datetime>
     """
-    y, m, d, h, m, s = d.split("-")
-    return datetime.datetime(y, m, d, h, m, s)
+    y, m, d, h, mi, s = dt.split("-")
+    return datetime.datetime(int(y), int(m), int(d), int(h), int(mi), int(s))
 
-def strToTimedelta(d):
+def strToTimedelta(dt):
     """
     Permet de tranformer un str (convertie pas timedeltaToStr()) en timedelta
-    @param d : <str>
+    @param dt : <str>
     @return <datetime.timedelta>
     """
-    d, s = d.split("-")
-    return datetime.datetime(days = d, seconds = s)
+    d, s = dt.split("-")
+    return datetime.timedelta(days = int(d), seconds = int(s))
