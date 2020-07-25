@@ -378,6 +378,14 @@ class Task(AbstractSchedulableObject):
         """
         return self.__duree + datetime.timedelta() # Faire une copie
 
+    def setDuree(self, duree):
+        """
+        Setter de la duree de la tache
+        @param duree : <datetime.timedelta> celui qu'il faut mettre
+        """
+        self.__duree = duree
+        self.setDebut(self.getDebut(), change = "fin")
+
     def getFin(self):
         """
         Getter pour la fin de la tâche.

@@ -113,7 +113,6 @@ class TaskEditor(Frame):
         self.taches.append(schedulable)
         self.redessiner()
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            #self.getApplication().getDonneeCalendrier().addTask(schedulable) # TODO : a refactor
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
         self.frameInput.updatePossiblePeriods()
 
@@ -300,7 +299,7 @@ class TaskEditor(Frame):
                 #for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
                     #if p != panneau:
                         #p.addTask(sousTache, region)
-                sousTache = self.getApplication().getDonneeCalendrier().addTask(tache, region = region)
+                sousTache = self.getPeriodManager().getActivePeriode().addSchedulable(tache, region = region)
                 sousTache.updateStatut()
                 tache.addSubTask(sousTache)
                 self.redessiner()

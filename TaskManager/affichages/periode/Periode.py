@@ -6,6 +6,8 @@ from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
 from util.util import dateToStr
 
+from schedulable.task.dialog.askDureeTache import *
+
 from .dialog.periodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
@@ -229,7 +231,7 @@ class Periode(ITaskEditorDisplayableObject):
         # Sinon : autorisé par le filtre, mais pas prioritaire.
         return 0
 
-    def addSchedulable(self, schedulable, region = None): # TODO : renommer en addSchedulable
+    def addSchedulable(self, schedulable, region = None):
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
@@ -274,7 +276,7 @@ class Periode(ITaskEditorDisplayableObject):
             schedulable = schedulable.copy()
             schedulable.setDebut(region)
         if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
-            schedulable.setDuree(self.askDureeTache())
+            schedulable.setDuree(askDureeTache(self.getApplication(), self.getDuree() + datetime.timedelta(days = 1)))
             if not schedulable.getDuree():
                 return None
         if schedulable is None : return
@@ -284,6 +286,7 @@ class Periode(ITaskEditorDisplayableObject):
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+        return schedulable # Pour le dnd  "trouverPositionTache"
 
     def removeSchedulable(self, schedulable):
         """

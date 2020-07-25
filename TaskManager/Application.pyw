@@ -23,7 +23,7 @@ from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
 
-CHARGERPRECONFIG = False
+CHARGERPRECONFIG = True
 
 # CECI est la CORRECTION d'un BUG :
 
