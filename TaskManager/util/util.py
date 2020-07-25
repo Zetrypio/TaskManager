@@ -52,6 +52,14 @@ def rangeDate(jourA, jourB, last = True):
         if last:
             yield jourB
 
+## Conversion datetime et str
+def dateToStr(d):
+    """
+    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
+    @param d : <datetime.date> celui qu'on doit tranformer
+    """
+    return "-".join([str(d.year), str(d.month), str(d.day)])
+
 def datetimeToStr(d):
     """
     Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
@@ -66,9 +74,29 @@ def timedeltaToStr(d):
     """
     return "-".join([str(d.days), str(d.seconds)])
 
-def dateToStr(d):
+def strToDate(d):
     """
-    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
-    @param d : <datetime.date> celui qu'on doit tranformer
+    Permet de tranformer un str (convertie pas dateToStr()) en date
+    @param d : <str>
+    @return <datetime.date>
     """
-    return "-".join([str(d.year), str(d.month), str(d.day)])
+    y, m, d = d.split("-")
+    return datetime.datetime(y, m, d)
+
+def strToDatetime(d):
+    """
+    Permet de tranformer un str (convertie pas datetimeToStr()) en datetime
+    @param d : <str>
+    @return <datetime.datetime>
+    """
+    y, m, d, h, m, s = d.split("-")
+    return datetime.datetime(y, m, d, h, m, s)
+
+def strToTimedelta(d):
+    """
+    Permet de tranformer un str (convertie pas timedeltaToStr()) en timedelta
+    @param d : <str>
+    @return <datetime.timedelta>
+    """
+    d, s = d.split("-")
+    return datetime.datetime(days = d, seconds = s)
