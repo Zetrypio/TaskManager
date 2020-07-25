@@ -17,16 +17,18 @@ from affichages.items.content.DisplayableTask import *
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
-                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False):
+                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False, dependances = None, dependantes = None):
         """
-        @param nom : nom de la tâche.
-        @param periode: Période de la tâche, peut être None.
-        @param desc : description.
-        @param color: couleur avec un nom compatible avec les noms de couleurs tkinter.
-        @param debut : datetime. du début.
-        @param duree : datetime.
-        @param rep : répétition.
-        @param nbrep : nombre de répétitions.
+        @param nom         : nom de la tâche.
+        @param periode     : Période de la tâche, peut être None.
+        @param desc        : description.
+        @param color       : couleur avec un nom compatible avec les noms de couleurs tkinter.
+        @param debut       : datetime. du début.
+        @param duree       : datetime.
+        @param rep         : répétition.
+        @param nbrep       : nombre de répétitions.
+        @param dependances : <list Task>
+        @param dependantes : <list Task>
         """
         # Constructeur parent :
         super().__init__(nom, periode, desc, color)
@@ -46,8 +48,8 @@ class Task(AbstractSchedulableObject):
         self.__done = done or False
 
         # Liste des dépendances pour les liens
-        self.__dependances = []
-        self.__dependantes = []
+        self.__dependances = dependances if dependances else []
+        self.__dependantes = dependantes if dependantes else []
 
         self.updateStatut()
 

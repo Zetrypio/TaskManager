@@ -259,7 +259,6 @@ class Groupe(AbstractSchedulableObject):
         dico = {}
         dico = super().saveByDict()
         dico["listTasks"] = [task.saveByDict() for task in self.getListTasks()]
-
         return dico
 
 # L'import est à la fin pour éviter les soucis circulaires d'imports (un vrai cauchemar).
