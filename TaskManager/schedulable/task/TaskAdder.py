@@ -30,7 +30,7 @@ class TaskAdder(Frame):
 
         # Attributs normaux:
         date = time.localtime()
-        self.debut = None # datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
+        self.debut = datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
         self.fin = datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
         del date
 
@@ -144,6 +144,13 @@ class TaskAdder(Frame):
         else:
             return False
 
+    def getTaskEditor(self):
+        """
+        Getter du taskEditor
+        @return taskEditor
+        """
+        return self.master
+
     ""
     ##################################
     # Méthodes liées aux dialogues : #
@@ -229,4 +236,4 @@ class TaskAdder(Frame):
         for p in self.getApplication().getPeriodManager().getPeriodes():
             if p.nom == self.champPeriode.get():
                 periode = p
-        self.master.ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
+        self.getTaskEditor().ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))

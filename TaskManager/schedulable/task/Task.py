@@ -510,6 +510,9 @@ class Task(AbstractSchedulableObject):
         dico["parent"] = self.getParent().getNom() if self.getParent() else None
         dico["done"] = self.__done
 
+        if self.isContainer():
+            dico["subtasts"] = [st.getNom() for st in self.getSubTasks()]
+
         dico["dependance"] = []
         for dep in self.getDependances():
             dico["dependance"].append(dep.getNom())

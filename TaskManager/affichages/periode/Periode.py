@@ -34,6 +34,7 @@ class Periode(ITaskEditorDisplayableObject):
         self.color = color
         self.selected = False
         self.listSchedulables = []
+        self.listTaskUnplanified = []
 
         # datetime avant lequel tout est fait
         self.dateStatut = None
@@ -135,10 +136,17 @@ class Periode(ITaskEditorDisplayableObject):
 
     def getListSchedulables(self):
         """
-        Getter pour la liste des tasks
+        Getter pour la liste des schedulables
         @return un copy de self.listSchedulables
         """
         return self.listSchedulables[:]
+
+    def getListTaskUnplanified(self):
+        """
+        Getter pour la liste des taches qui sont encore dans le taskEditor mais pas dans le calendrier
+        @return un copy de self.listTaskUnplanified
+        """
+        return self.listTaskUnplanified[:]
 
     def getNom(self):
         """
@@ -283,6 +291,7 @@ class Periode(ITaskEditorDisplayableObject):
         """
         ## Traitement du schedulable
         if region and schedulable.getDebut() is None:
+            print("ici")
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
             # plusieurs fois.
@@ -290,9 +299,12 @@ class Periode(ITaskEditorDisplayableObject):
             schedulable.setDebut(region)
         if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
             schedulable.setDuree(askDureeTache(self.getApplication(), self.getDuree() + datetime.timedelta(days = 1)))
+            print("là")
             if not schedulable.getDuree():
+                print("relà")
                 return None
         if schedulable is None :
+            print("fini")
             return
 
         ## On le rentre dans la liste
@@ -300,7 +312,17 @@ class Periode(ITaskEditorDisplayableObject):
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+        print(schedulable.getNom(), type(schedulable))
         return schedulable # Pour le dnd  "trouverPositionTache"
+
+    def addTaskUnplanified(self, task):
+        """
+        Méthode qui ajoute la tache à une liste de tache qui ne sont pas encore mise sur le calendrier
+        C'est celles qui viennent tout juste d'être crée par le TaskAdder
+        @param task : <task>
+        """
+        self.listTaskUnplanified.append(task)
+
 
     def iterateDisplayContent(self):
         """
@@ -342,6 +364,8 @@ class Periode(ITaskEditorDisplayableObject):
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
+        print([s.__class__.__name__ for s in self.getListSchedulables()])
+        print([s.getNom() for s in self.getListSchedulables()])
         return {
             "nom"           : self.getNom(),
             "debut"         : dateToStr(self.getDebut()),

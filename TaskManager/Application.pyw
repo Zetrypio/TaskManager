@@ -291,7 +291,6 @@ def main():
         # Création de tâches préfaites (c'est du lore)
         app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
         app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-        app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
         app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
         app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
         app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
@@ -306,6 +305,7 @@ def main():
         group.addTask(tacheA1)
         group.addTask(tacheA2)
         periodeSemaine.getGroupeManager().ajouter(group)
+        app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
 
     
     

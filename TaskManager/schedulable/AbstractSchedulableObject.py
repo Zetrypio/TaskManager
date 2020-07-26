@@ -299,6 +299,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
+        print("TYPE :", self.__class__.__name__, self.getNom())
         return {
             "nom"     : self.getNom(),
             "periode" : self.getPeriode().getNom(),
