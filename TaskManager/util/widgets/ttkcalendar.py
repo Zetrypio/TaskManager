@@ -78,14 +78,27 @@ class Calendar(ttk.Frame):
             r = ttk.tclobjs_to_py({item: ttk.Frame.__getitem__(self, item)})
             return r[item]
 
-    def __setup_styles(self):
-        # custom ttk styles
-        style = ttk.Style(self.master)
-        arrow_layout = lambda dir: (
-            [('Button.focus', {'children': [('Button.%sarrow' % dir, None)]})]
-        )
-        style.layout('L.TButton', arrow_layout('left'))
-        style.layout('R.TButton', arrow_layout('right'))
+    "" # Marque pour le repli de code
+    ##############
+    # Méthodes : #
+    ##############
+    ""
+    def __config_calendar(self):
+        cols = self._cal.formatweekheader(3).split()
+        self._calendar['columns'] = cols
+        self._calendar.tag_configure('header', background='grey90')
+        self._calendar.insert('', 'end', values=cols, tag='header')
+        # adjust its columns width
+        font = tkFont.Font()
+        maxwidth = max(font.measure(col) for col in cols)
+        for col in cols:
+            self._calendar.column(col, width=maxwidth, minwidth=maxwidth,
+                anchor='e')
+
+    def __minsize(self, evt):
+        width, height = self._calendar.winfo_toplevel().geometry().split('x')
+        height = height[:height.index('+')]
+        #self._calendar.winfo_toplevel().minsize(width, height)
 
     def __place_widgets(self):
         # header frame and its widgets
@@ -103,18 +116,6 @@ class Calendar(ttk.Frame):
         rbtn.grid(column=2, row=0)
         self._calendar.pack(expand=1, fill='both', side='bottom')
 
-    def __config_calendar(self):
-        cols = self._cal.formatweekheader(3).split()
-        self._calendar['columns'] = cols
-        self._calendar.tag_configure('header', background='grey90')
-        self._calendar.insert('', 'end', values=cols, tag='header')
-        # adjust its columns width
-        font = tkFont.Font()
-        maxwidth = max(font.measure(col) for col in cols)
-        for col in cols:
-            self._calendar.column(col, width=maxwidth, minwidth=maxwidth,
-                anchor='e')
-
     def __setup_selection(self, sel_bg, sel_fg):
         self._font = tkFont.Font()
         self._canvas = canvas = Tkinter.Canvas(self._calendar,
@@ -125,10 +126,14 @@ class Calendar(ttk.Frame):
         self._calendar.bind('<Configure>', lambda evt: canvas.place_forget())
         self._calendar.bind('<ButtonPress-1>', self._pressed)
 
-    def __minsize(self, evt):
-        width, height = self._calendar.winfo_toplevel().geometry().split('x')
-        height = height[:height.index('+')]
-        #self._calendar.winfo_toplevel().minsize(width, height)
+    def __setup_styles(self):
+        # custom ttk styles
+        style = ttk.Style(self.master)
+        arrow_layout = lambda dir: (
+            [('Button.focus', {'children': [('Button.%sarrow' % dir, None)]})]
+        )
+        style.layout('L.TButton', arrow_layout('left'))
+        style.layout('R.TButton', arrow_layout('right'))
 
     def _build_calendar(self):
         year, month = self._date.year, self._date.month
@@ -156,7 +161,20 @@ class Calendar(ttk.Frame):
         canvas.itemconfigure(canvas.text, text=text)
         canvas.place(x=x, y=y)
 
-    # Callbacks
+    ""
+    ###############
+    # Callbacks : #
+    ###############
+    ""
+    def _next_month(self):
+        """Update calendar to show the next month."""
+        self._canvas.place_forget()
+
+        year, month = self._date.year, self._date.month
+        self._date = self._date + self.timedelta(
+            days=calendar.monthrange(year, month)[1] + 1)
+        self._date = self.datetime(self._date.year, self._date.month, 1)
+        self._build_calendar() # reconstruct calendar
 
     def _pressed(self, evt):
         """Clicked somewhere in the calendar."""
@@ -193,18 +211,11 @@ class Calendar(ttk.Frame):
         self._date = self.datetime(self._date.year, self._date.month, 1)
         self._build_calendar() # reconstruct calendar
 
-    def _next_month(self):
-        """Update calendar to show the next month."""
-        self._canvas.place_forget()
-
-        year, month = self._date.year, self._date.month
-        self._date = self._date + self.timedelta(
-            days=calendar.monthrange(year, month)[1] + 1)
-        self._date = self.datetime(self._date.year, self._date.month, 1)
-        self._build_calendar() # reconstruct calendar
-
-    # Properties
-
+    ""
+    ################
+    # Properties : #
+    ################
+    ""
     @property
     def selection(self):
         """Return a datetime representing the current selected date."""

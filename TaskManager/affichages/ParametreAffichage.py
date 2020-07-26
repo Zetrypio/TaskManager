@@ -35,23 +35,46 @@ class ParametreAffichage(Frame):
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         self.listeMode.pack(side=TOP, fill=Y)
-    
-    def setModeListe(self, mode = None):
+
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
         """
-        Permet de changer la valeur du combobox, sans altérer son état de lecture.
-        @param mode = None: None si on met sur le dernier élément de la liste, ou un autre
-        texte si on veut quelque chose en particulier.
+        Permet d'obtenir l'Application.
+        @return Application.
         """
-        etatActuel = self.listeMode.cget("state")
-        self.listeMode.config(state = NORMAL)
-        try:
-            if mode is None and self.listeMode.get() not in self.listeMode.cget("values"):
-                self.listeMode.set(self.listeMode.cget("values")[-1])
-            elif mode is not None:
-                self.listeMode.set(mode)
-        finally:
-            self.listeMode.config(state = etatActuel)
-    
+        return self.getZoneAffichage().getApplication()
+
+    def getBoutonsChangementJours(self):
+        """
+        Retourne une liste des boutons de changement de jours, dans l'ordre
+        <<, <, >, >>.
+        @return les boutons de changements de jours dans l'ordre indiqué ci-dessus.
+        """
+        return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
+
+    def getData(self):
+        """
+        Permet d'obtenir Data
+        @return Data
+        """
+        return self.getApplication().getData()
+
+    def getZoneAffichage(self):
+        """
+        Permet d'obtenir la ZoneAffichage.
+        @return ZoneAffichage.
+        """
+        return self.master
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def configPossibiliteListe(self):
         """
         Permet de mettre des choix en fonction du nombre de jour dans le combobox
@@ -78,13 +101,21 @@ class ParametreAffichage(Frame):
 
         self.listeMode.config(value = listeValue)
 
-    def updateCombobox(self):
+    def setModeListe(self, mode = None):
         """
-        Fonction qui met à jour les possibilités du combobox et
-        en plus remet l'affichage période s'il y était avant.
+        Permet de changer la valeur du combobox, sans altérer son état de lecture.
+        @param mode = None: None si on met sur le dernier élément de la liste, ou un autre
+        texte si on veut quelque chose en particulier.
         """
-        self.configPossibiliteListe()
-        self.listeMode.event_generate("<<ComboboxSelected>>")
+        etatActuel = self.listeMode.cget("state")
+        self.listeMode.config(state = NORMAL)
+        try:
+            if mode is None and self.listeMode.get() not in self.listeMode.cget("values"):
+                self.listeMode.set(self.listeMode.cget("values")[-1])
+            elif mode is not None:
+                self.listeMode.set(mode)
+        finally:
+            self.listeMode.config(state = etatActuel)
 
     def setStateListe(self, state):
         """
@@ -94,34 +125,11 @@ class ParametreAffichage(Frame):
         if state == NORMAL:
             state = "readonly"
         self.listeMode.config(state = state)
-        
-    def getBoutonsChangementJours(self):
-        """
-        Retourne une liste des boutons de changement de jours, dans l'ordre
-        <<, <, >, >>.
-        @return les boutons de changements de jours dans l'ordre indiqué ci-dessus.
-        """
-        return [self.boutonBienAvant, self.boutonAvant, self.boutonApres, self.boutonBienApres]
 
-    def getZoneAffichage(self):
+    def updateCombobox(self):
         """
-        Permet d'obtenir la ZoneAffichage.
-        @return ZoneAffichage.
+        Fonction qui met à jour les possibilités du combobox et
+        en plus remet l'affichage période s'il y était avant.
         """
-        return self.master
-
-    def getApplication(self):
-        """
-        Permet d'obtenir l'Application.
-        @return Application.
-        """
-        return self.getZoneAffichage().getApplication()
-
-    def getData(self):
-        """
-        Permet d'obtenir Data
-        @return Data
-        """
-        return self.getApplication().getData()
-
-    
+        self.configPossibiliteListe()
+        self.listeMode.event_generate("<<ComboboxSelected>>")

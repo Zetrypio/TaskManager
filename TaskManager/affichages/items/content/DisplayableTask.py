@@ -43,12 +43,11 @@ class DisplayableTask(AbstractItemContent):
         # Autre attributs :
         self.__part = part
 
-    def configSize(self, width, height):
-        """
-        Permet de contrôler la taille de l'objet pour les groupes.
-        """
-        self.__texte.config(width = width, height = height)
-
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def __getDisplayColor(self):
         """
         Getter pour savoir la véritable couleur d'affichage,
@@ -56,17 +55,33 @@ class DisplayableTask(AbstractItemContent):
         """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
 
-    def bindTo(self, binding, command, add=None):
-        self.bind(binding, command, add)
-        self.__texte.bind(binding, command, add)
-
     def needButtonPlus(self, affichageGantt):
         if affichageGantt.getVisiblePart(self._schedulable.getLastPart(affichageGantt)) == self.__part and len(self._schedulable.getDependantes()) == 0:
             return True
         return False
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def configSize(self, width, height):
+        """
+        Permet de contrôler la taille de l'objet pour les groupes.
+        """
+        self.__texte.config(width = width, height = height)
 
     def updateColor(self):
         """
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
         """
         self.__texte.config(bg=self.__getDisplayColor())
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def bindTo(self, binding, command, add=None):
+        self.bind(binding, command, add)
+        self.__texte.bind(binding, command, add)

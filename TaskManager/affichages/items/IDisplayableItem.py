@@ -1,4 +1,6 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
+
+
 
 # Interface
 class IDisplayableItem:
@@ -21,6 +23,18 @@ class IDisplayableItem:
         except:
             pass
 
+    "" # Marque pour que le repli de code fasse ce que je veux
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def delete(self):
+        """
+        Permet de supprimer cet objet de l'affichage.
+        Aussi appelée quand cet objet est supprimé.
+        """
+        raise NotImplementedError
+
     def redraw(self, frameOrCanvas):
         """
         Permet de mettre à jour l'affichage.
@@ -33,10 +47,3 @@ class IDisplayableItem:
         Permet de mettre à jour la couleur de l'objet.
         """
         raise NotImplementedError(self.__class__.__name__)
-    
-    def delete(self):
-        """
-        Permet de supprimer cet objet de l'affichage.
-        Aussi appelée quand cet objet est supprimé.
-        """
-        raise NotImplementedError

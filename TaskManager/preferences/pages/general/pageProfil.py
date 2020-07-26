@@ -45,20 +45,11 @@ class PageProfil(AbstractPage):
        # Fonction de paramétrage
        self.__chargeProfil(self.getProfilManager().getProfilActif())
 
-    def __parcourir(self):
-       """
-       Fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
-       """
-       path = askFolder(vide=True)
-
-       # on set le nouveau path
-       if path is not None:
-           self.__varEntryPath.set(path)
-           for file in os.listdir(self.getProfilFolder()):
-               move(self.getProfilFolder()+os.sep+file, path)
-
-           self.getProfilManager().saveNewPath(path, self.__cbProfil.get())
-
+    ""
+    #############################################
+    # Méthodes liées à la gestion des profils : #
+    #############################################
+    ""
     def __ajouter(self):
         """
         Fonction pour crée un nouveau profil
@@ -83,6 +74,11 @@ class PageProfil(AbstractPage):
         # On remet un nouveau profil
         self.__chargeProfil(None)
 
+    ""
+    ##############################
+    # Méthodes liées à la page : #
+    ##############################
+    ""
     def __chargeProfil(self, profil):
         """
         Fonction qui va chercher les infos via le ProfilManager
@@ -97,9 +93,26 @@ class PageProfil(AbstractPage):
         self.__varEntryPath.set(self.getProfilFolder(profil))
         self.__cbProfil.set(profil)
 
+    def __parcourir(self):
+       """
+       Fonction qui demande où stocker les fichier ET vérifie si le dossier est bien vide
+       """
+       path = askFolder(vide=True)
+
+       # on set le nouveau path
+       if path is not None:
+           self.__varEntryPath.set(path)
+           for file in os.listdir(self.getProfilFolder()):
+               move(self.getProfilFolder()+os.sep+file, path)
+
+           self.getProfilManager().saveNewPath(path, self.__cbProfil.get())
+
+    ""
+    ###################################
+    # Méthodes liées à la fermeture : #
+    ###################################
+    ""
     def appliqueEffet(self, application):
         # Si on change de profil
         if self.__cbProfil.get() != self.getProfilManager().getProfilActif():
            self.getProfilManager().switchProfil(self.__cbProfil.get())
-
-

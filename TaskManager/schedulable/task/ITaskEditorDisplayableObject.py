@@ -14,6 +14,26 @@ class ITaskEditorDisplayableObject:
         if self.__class__ == TaskEditorDisplayableObject:
             raise RuntimeError("Impossible d'instancier l'interface ITaskEditorDisplayableObject directement")
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getColor(self):
+        """
+        Getter pour la couleur de l'objet à mettre dans le treeview.
+        @return la couleur de l'objet à mettre dans le treeview.
+        """
+        raise NotImplementedError
+
+    def getFilterStateWith(self, filter):
+        """
+        @return  1 Si l'objet est acceptée par le filtre et qu'elle doit être prioritaire.
+        @return  0 Si l'objet est acceptée par le filtre sans être prioritaire.
+        @return -1 Si l'objet n'est pas accepté par le filtre.
+        """
+        raise NotImplementedError
+
     def getHeader(self):
         """
         @return un couple <nom, valeur> qui seront utilisés
@@ -21,6 +41,11 @@ class ITaskEditorDisplayableObject:
         """
         raise NotImplementedError
 
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def iterateDisplayContent(self):
         """
         @return l'un parmi itérateur, itérable (listes etc.) ou générateur
@@ -59,20 +84,5 @@ class ITaskEditorDisplayableObject:
         @param taskEditor : permet de faire des interactions avec le TaskEditor().
         @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
         @return True si le RMenu() existe, False sinon.
-        """
-        raise NotImplementedError
-
-    def getFilterStateWith(self, filter):
-        """
-        @return  1 Si l'objet est acceptée par le filtre et qu'elle doit être prioritaire.
-        @return  0 Si l'objet est acceptée par le filtre sans être prioritaire.
-        @return -1 Si l'objet n'est pas accepté par le filtre.
-        """
-        raise NotImplementedError
-
-    def getColor(self):
-        """
-        Getter pour la couleur de l'objet à mettre dans le treeview.
-        @return la couleur de l'objet à mettre dans le treeview.
         """
         raise NotImplementedError

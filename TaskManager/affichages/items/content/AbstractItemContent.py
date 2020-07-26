@@ -23,14 +23,11 @@ class AbstractItemContent(Frame):
         # Note : self.master est une référence vers un cadre contenu dans AbstractMultiFrameItem ou GroupeAffichable
         self._schedulable = schedulable
 
-    def bindTo(self, binding, command, add=None):
-        """
-        Permet de binder un binding sur tout les sous-widget de ce widget,
-        à redéfinir explicitement dans les sous-classes.
-        Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
-        """
-        raise NotImplementedError
-
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def needButtonPlus(self, affichageGantt):
         """
         Permet de savoir si cette part à besoin d'un bouton
@@ -39,8 +36,26 @@ class AbstractItemContent(Frame):
         """
         raise NotImplementedError
 
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
     def updateColor(self):
         """
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
+        """
+        raise NotImplementedError
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def bindTo(self, binding, command, add=None):
+        """
+        Permet de binder un binding sur tout les sous-widget de ce widget,
+        à redéfinir explicitement dans les sous-classes.
+        Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
         """
         raise NotImplementedError

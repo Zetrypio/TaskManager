@@ -63,6 +63,38 @@ class PageClavier(AbstractPage):
         self.fillTreeView()
         self.__stateFrameBas("disabled")
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getBindingManager(self):
+        return self.getApplication().getBindingManager()
+
+    def getBindings(self):
+        """
+        @return un dictionnaire des bindings
+        """
+        return self.getBindingManager().getBindings()
+
+    def __valueLineTV(self, item):
+        """
+        Fonction qui va chercher des info sur la ligne du treeview qu'on lui donne
+        @param item      : <item (ligne Treeview)>
+        @return section  : <str>  nom de la section du bind
+        @return nom      : <str>  nom du binding virtuel
+        @return binding  : <list> chaine de caractère du bind
+        """
+        nom = self.__treeB.item(item, "text").lower()
+        section = item[0:len(item)-len(nom)] # retourne un str avec la section
+        binding = self.__treeB.item(item, "value")[1].split('; ') # Les Raccourcis
+        return section, nom, binding
+
+    ""
+    #############################################
+    # Méthodes liées au Treeview des bindings : #
+    #############################################
+    ""
     def fillTreeView(self):
         """
         Fonction qui rajoute toutes lignes de bind du treeview
@@ -78,91 +110,11 @@ class PageClavier(AbstractPage):
 
         self.__treeB.tag_configure("header", font="arial 10 bold") # à voir si on garde une stylisation comme ça
 
-    def __valueLineTV(self, item):
-        """
-        Fonction qui va chercher des info sur la ligne du treeview qu'on lui donne
-        @param item      : <item (ligne Treeview)>
-        @return section  : <str>  nom de la section du bind
-        @return nom      : <str>  nom du binding virtuel
-        @return binding  : <list> chaine de caractère du bind
-        """
-        nom = self.__treeB.item(item, "text").lower()
-        section = item[0:len(item)-len(nom)] # retourne un str avec la section
-        binding = self.__treeB.item(item, "value")[1].split('; ') # Les Raccourcis
-        return section, nom, binding
-
-    def __save(self):
-        """
-        Fonction qui sauvegarde les préférences.
-        """
-        # On commence par faire un dico
-        dict = self.getBindings()
-        # Ensuite on le change avec les nouvelles options
-        for item in self.__listeItemTreeview:
-            s, n, b = self.__valueLineTV(item)
-            dict[s][n]["bindings"] = b
-
-        self.getBindingManager().save(dict)
-
-    def __reset(self):
-        """
-        Fonction qui réattribut un ancien binding choisi par askResetBind
-        """
-        binding = askResetBind() # renvoie "custom", "defaut", "vide" ou None
-        if binding is None:
-            return
-        else: # Sinon on va chercher quelle ligne on doit changer
-            cur = self.__treeB.focus()
-            s, n, b = self.__valueLineTV(cur)
-        # Quel fichier on cherche ?
-        if binding == "custom":
-            path = self.getProfilFolder()
-        elif binding == "defaut":
-            path = "Ressources/prefs/"
-        elif binding == "vide":
-            self.__varEntry.set("")
-            self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
-            return
-        # On applique le changement
-        self.__varEntry.set(self.getBindingManager().getBind(path, s, n))
-        self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
-
-
-    def __selected(self, e):
-        """
-        Fonction qui réagit lorsqu'une ligne du treeview est sélectionné
-        Ça gère si on doit faire qqch avec le frame du bas
-        + Si c'est une ligne de binding on l'Entry s'auto set avec le binding
-        """
-        elem = self.__lineSelectedTreeview = self.__treeB.focus()
-        if elem in self.__listeItemTreeview:
-            self.__stateFrameBas("normal")
-            self.__checkConflit(elem)
-            self.__varEntry.set(self.__treeB.item(elem, 'value')[1])
-        else:
-            self.__stateFrameBas("disabled")
-
-    def __stateFrameBas(self, mode):
-        """
-        Fonction qui s'occupe de able ou disable les option du frame du bas
-        @param mode : <str> "normal" ou "disabled", else error
-        """
-        self.__btnReset.config(state = mode)
-        self.__champBind.config(state = mode)
-        self.__listConflit.config(state = mode)
-
-    def __focusOut(self):
-        """
-        Fonction qui va réécrire les lignes du treeview, dès que le focus du Entry est perdu
-        """
-        if self.__lineSelectedTreeview in self.__listeItemTreeview:
-            if self.__varEntry.get() != "":
-                # on set la value de l'item selectionné en [sa description, le texte de l'entry]
-                self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])
-                # on check les conflits
-                self.__checkConflit(self.__lineSelectedTreeview)
-        return True
-
+    ""
+    #######################################################
+    # Méthodes liées à la création de nouveaux bindings : #
+    #######################################################
+    ""
     def __checkConflit(self, item):
         """
         Fonction qui cherche si le binding actuelle est en conflit avec d'autres bindings
@@ -201,14 +153,81 @@ class PageClavier(AbstractPage):
         # On connecte notre liste à la listbox
         self.__varListConflit.set(l)
 
-    def getBindings(self):
+    def __focusOut(self):
         """
-        @return un dictionnaire des bindings
+        Fonction qui va réécrire les lignes du treeview, dès que le focus du Entry est perdu
         """
-        return self.getBindingManager().getBindings()
+        if self.__lineSelectedTreeview in self.__listeItemTreeview:
+            if self.__varEntry.get() != "":
+                # on set la value de l'item selectionné en [sa description, le texte de l'entry]
+                self.__treeB.item(self.__lineSelectedTreeview, value=[self.__treeB.item(self.__lineSelectedTreeview, "value")[0], self.__varEntry.get()])
+                # on check les conflits
+                self.__checkConflit(self.__lineSelectedTreeview)
+        return True
 
-    def getBindingManager(self):
-        return self.getApplication().getBindingManager()
+    def __reset(self):
+        """
+        Fonction qui réattribut un ancien binding choisi par askResetBind
+        """
+        binding = askResetBind() # renvoie "custom", "defaut", "vide" ou None
+        if binding is None:
+            return
+        else: # Sinon on va chercher quelle ligne on doit changer
+            cur = self.__treeB.focus()
+            s, n, b = self.__valueLineTV(cur)
+        # Quel fichier on cherche ?
+        if binding == "custom":
+            path = self.getProfilFolder()
+        elif binding == "defaut":
+            path = "Ressources/prefs/"
+        elif binding == "vide":
+            self.__varEntry.set("")
+            self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
+            return
+        # On applique le changement
+        self.__varEntry.set(self.getBindingManager().getBind(path, s, n))
+        self.__treeB.item(cur, value=[self.__treeB.item(cur, "value")[0], self.__varEntry.get()])
+
+    def __selected(self, e):
+        """
+        Fonction qui réagit lorsqu'une ligne du treeview est sélectionné
+        Ça gère si on doit faire qqch avec le frame du bas
+        + Si c'est une ligne de binding on l'Entry s'auto set avec le binding
+        """
+        elem = self.__lineSelectedTreeview = self.__treeB.focus()
+        if elem in self.__listeItemTreeview:
+            self.__stateFrameBas("normal")
+            self.__checkConflit(elem)
+            self.__varEntry.set(self.__treeB.item(elem, 'value')[1])
+        else:
+            self.__stateFrameBas("disabled")
+
+    def __stateFrameBas(self, mode):
+        """
+        Fonction qui s'occupe de able ou disable les option du frame du bas
+        @param mode : <str> "normal" ou "disabled", else error
+        """
+        self.__btnReset.config(state = mode)
+        self.__champBind.config(state = mode)
+        self.__listConflit.config(state = mode)
+
+    ""
+    #######################################
+    # Méthodes liées à l'enregistrement : #
+    #######################################
+    ""
+    def __save(self):
+        """
+        Fonction qui sauvegarde les préférences.
+        """
+        # On commence par faire un dico
+        dict = self.getBindings()
+        # Ensuite on le change avec les nouvelles options
+        for item in self.__listeItemTreeview:
+            s, n, b = self.__valueLineTV(item)
+            dict[s][n]["bindings"] = b
+
+        self.getBindingManager().save(dict)
 
     def appliqueEffet(self, application):
         self.__save()

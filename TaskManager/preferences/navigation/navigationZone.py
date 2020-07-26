@@ -14,6 +14,11 @@ class NavigationZone(Frame):
         self.selectionParamatrage = SelectionParametrage(self)
         self.selectionParamatrage.pack(side = LEFT, expand = YES, fill = BOTH)
 
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def getApplication(self):
         return self.master.getApplication()
 
@@ -23,5 +28,10 @@ class NavigationZone(Frame):
     def getSelectionParamatrage(self):
         return self.selectionParamatrage
 
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def updateTreeview(self):
         self.getSelectionParamatrage().updateTreeview()

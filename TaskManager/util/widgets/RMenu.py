@@ -32,6 +32,11 @@ class RMenu(Menu):
         else:
             self.__binding = self.binder.tag_bind(bindWithId, "<Button-3>", self.right_menu_event)
 
+    "" # Marque pour le repli de code
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def __bind_inside_of(self, widget):
         """
         Permet de binder récursivement sur tout les widgets trouvés
@@ -46,16 +51,6 @@ class RMenu(Menu):
         for w in subwidget:
             self.__bind_inside_of(w)
 
-    def right_menu_event(self, event):
-        """
-        Méthode exécutée lors d'un clic-droit.
-        Sert à ouvrir le menu à la position de la
-        souris trouvée dans le
-        @param event: événement avec la position de la souris.
-        """
-        self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
-        self.tk_popup(event.x_root, event.y_root)
-    
     def destroy(self):
         """
         Méthode pour détruire le RMenu, et le débinder.
@@ -65,3 +60,13 @@ class RMenu(Menu):
         except:
             pass
         Menu.destroy(self)
+
+    def right_menu_event(self, event):
+        """
+        Méthode exécutée lors d'un clic-droit.
+        Sert à ouvrir le menu à la position de la
+        souris trouvée dans le
+        @param event: événement avec la position de la souris.
+        """
+        self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
+        self.tk_popup(event.x_root, event.y_root)

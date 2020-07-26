@@ -42,70 +42,11 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         self.jourSelectionnes = set()
 
-    def selectJour(self, jour):
-        """
-        Permet d'ajouter un jour à la liste de ceux sélectionnés.
-        @param jour: le datetime.date() à sélectionner.
-        """
-        self.jourSelectionnes.add(jour)
-        self.updateColor()
-
-    def deselectJours(self):
-        """
-        Permet de désélectionner tout les jours sélectionnés.
-        """
-        self.jourSelectionnes.clear()
-        self.updateColor()
-
-    def isJourSelected(self, jour):
-        """
-        Permet de savoir si un jour est sélectionné.
-        @return True si le jour est sélectionné, False sinon.
-        """
-        return jour in self.jourSelectionnes
-
-    def intervertir(self):
-        """
-        Permet d'intervertir les 2 jours exactement sélectionnés, affiche une erreur à l'utilisateur sinon.
-        """
-        if len(self.jourSelectionnes) != 2 :
-            showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
-            return
-
-        lesJours = list(self.jourSelectionnes)
-        jour1 = lesJours[0]
-        jour2 = lesJours[1]
-        if jour1 > jour2:
-            jour2, jour1 = jour1, jour2
-
-        tacheJour1 = set()
-        tacheJour2 = set()
-
-        # Seulement les tâches sélectionnés au cas où il y en a qu'on veux pas switch
-        for tache in self.getSelectedSchedulable():
-            if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1 and isinstance(tache, Task): # On ne peut déplacer ici que les tâches pour le moment...
-                tacheJour1.add(tache)
-            elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2 and isinstance(tache, Task): # aussi
-                tacheJour2.add(tache)
-
-        diff = datetime.datetime.combine(jour2, datetime.time()) - datetime.datetime.combine(jour1, datetime.time())
-        # On applique les changements
-        for tache in tacheJour1-tacheJour2:
-            tache.setDebut(tache.getDebut()+diff)
-        for tache in tacheJour2-tacheJour1:
-            tache.setDebut(tache.getDebut()-diff)
-
-        for p in self.getToutLesPanneaux():
-            p.onIntervertir()
-        self.updateAffichage(force=True)
-
-    def getParametreAffichage(self):
-        """
-        Getter pour le ParametreAffichage.
-        @return le ParametreAffichage.
-        """
-        return self.master.getParametreAffichage()
-
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def getApplication(self):
         """
         Getter pour l'application.
@@ -121,6 +62,30 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         return self
 
+    def getPanneauActif(self):
+        """
+        Getter pour le panneau actif.
+        @return le panneau actif.
+        """
+        # self.panneau.select() renvoie l'id du panneau actif
+        # self.panneau.index() renvoie l'index d'un panneau selon son id
+        # on peut donc utiliser notre liste avec cet index.
+        return self.listPanneau[self.panneau.index(self.panneau.select())]
+
+    def getParametreAffichage(self):
+        """
+        Getter pour le ParametreAffichage.
+        @return le ParametreAffichage.
+        """
+        return self.master.getParametreAffichage()
+
+    def getToutLesPanneaux(self):
+        """
+        Renvoie une copie de la liste de tout les panneaux.
+        @return une copie de la liste de tout les panneaux.
+        """
+        return self.listPanneau[:]
+
     def getZoneAffichage(self):
         """
         Getter pour la ZoneAffichage.
@@ -128,32 +93,27 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         return self.master
 
-    def panneauChange(self, e):
+    def isJourSelected(self, jour):
         """
-        Méthode effectuée lors de l'événement d'un panneau qui à changé,
-        pour faire la configuration des barres d'outils ou autre.
-        @param e: Événement non utilisé.
+        Permet de savoir si un jour est sélectionné.
+        @return True si le jour est sélectionné, False sinon.
         """
-        p = self.getPanneauActif()
-        p.doConfiguration(self.master.getParametreAffichage())
+        return jour in self.jourSelectionnes
 
-    def mouseClicked(self, event):
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def setDureeJour(self, jour):
         """
-        Méthode effectuée lors d'un clic.
-        Répercutée sur le panneau actif.
-        @param event: l'événement, envoyé au panneau actif.
-        """
-        self.getPanneauActif().mouseClicked(event)
-
-    def escapePressed(self, event):
-        """
-        Méthode appelée lors de l'appuie de la touche Échappe.
-        On annule ce qu'on fait sur tous les panneaux.
-        @param event: l'événement, possiblement utilisé par les panneaux.
+        Setter pour le nombre de jour via datetime.timedelta().
+        @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
         """
         for panneau in self.listPanneau:
-            panneau.escapePressed(event)
-    
+            panneau.setDureeJour(jour)
+        super().setDureeJour(jour)
+
     def setHeureDebut(self, heure):
         """
         Setter pour l'heure du début.
@@ -190,15 +150,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             panneau.setJourFin(jour)
         super().setJourFin(jour)
 
-    def setDureeJour(self, jour):
-        """
-        Setter pour le nombre de jour via datetime.timedelta().
-        @param jour: datetime.timedelta() correspondant au nombre de jours à afficher.
-        """
-        for panneau in self.listPanneau:
-            panneau.setDureeJour(jour)
-        super().setDureeJour(jour)
-
     def setNbJour(self, jour):
         """
         Setter pour le nombre de jour via nombre entier.
@@ -222,8 +173,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         duree = self.getJourFin() - jour + datetime.timedelta(days=1)
         self.setJourDebut(jour)
         self.setDureeJour(duree)
-
-
         self.getPeriodeActive().setDebut(jour)
 
     def setPeriodeActiveFin(self, jour):
@@ -237,60 +186,12 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         if jour < self.getJourFin():
             self.setJourFin(jour)
 
-    def getPanneauActif(self):
-        """
-        Getter pour le panneau actif.
-        @return le panneau actif.
-        """
-        # self.panneau.select() renvoie l'id du panneau actif
-        # self.panneau.index() renvoie l'index d'un panneau selon son id
-        # on peut donc utiliser notre liste avec cet index.
-        return self.listPanneau[self.panneau.index(self.panneau.select())]
-    
-    def getToutLesPanneaux(self):
-        """
-        Renvoie une copie de la liste de tout les panneaux.
-        @return une copie de la liste de tout les panneaux.
-        """
-        return self.listPanneau[:]
-
-    def updateAffichage(self, force = False):
-        """
-        Permet de mettre à jour l'affichage.
-        """
-        # Faire un parcours des panneaux pour pouvoir effectuer les changements
-        # sur TOUTES les disposition de calendriers (Gantt, calendrier classique etc)
-        for panneau in self.listPanneau:
-            panneau.updateAffichage(force)
-        
-        if self.getJourDebut() == self.getDebutPeriode():
-            self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)
-            self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période
-        else:
-            self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
-            self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
-
-        if self.getFinPeriode() is None or self.getJourFin() is None:
-            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
-            self.master.zoneParametre.boutonApres.configure(state=DISABLED)
-        elif self.getJourFin() > self.getFinPeriode():
-            duree = self.getDureeJour()
-            self.setJourFin(self.getFinPeriode())
-            self.setJourDebut(self.getFinPeriode() - duree)
-        elif self.getJourFin()== self.getFinPeriode():
-            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)            
-            self.master.zoneParametre.boutonApres.configure(state=DISABLED)
-        else:
-            self.master.zoneParametre.boutonBienApres.configure(state=NORMAL)
-            self.master.zoneParametre.boutonApres.configure(state=NORMAL)
-
-    def updateColor(self):
-        """
-        Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
-        """
-        for p in self.getToutLesPanneaux():
-            p.updateColor()
-
+    ""
+    ######################
+    # Méthodes liées aux #
+    #    schedulables    #
+    ######################
+    ""
     def addSchedulable(self, schedulable, region = None):
         """
         Permet d'ajouter une tâche.
@@ -306,14 +207,138 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.listPanneau:
             panneau.addSchedulable(schedulable, region)
 
-        #return tache # Pas important
+        #return tache # Pas important # To clear
+
+    def deselectJours(self):
+        """
+        Permet de désélectionner tout les jours sélectionnés.
+        """
+        self.jourSelectionnes.clear()
+        self.updateColor()
+
     def removeSchedulable(self, obj):
         """
         Permet d'enlever un objet du calendrier.
         @param obj: L'objet à enlever.
         """
         #super().removeSchedulable(obj)
-        
+
         for panneau in self.listPanneau:
             panneau.removeSchedulable(obj)
 
+    def selectJour(self, jour):
+        """
+        Permet d'ajouter un jour à la liste de ceux sélectionnés.
+        @param jour: le datetime.date() à sélectionner.
+        """
+        self.jourSelectionnes.add(jour)
+        self.updateColor()
+
+    ""
+    ####################
+    # Méthodes liées à #
+    #   l'affichage    #
+    ####################
+    ""
+    def panneauChange(self, e):
+        """
+        Méthode effectuée lors de l'événement d'un panneau qui à changé,
+        pour faire la configuration des barres d'outils ou autre.
+        @param e: Événement non utilisé.
+        """
+        p = self.getPanneauActif()
+        p.doConfiguration(self.master.getParametreAffichage())
+
+    def updateAffichage(self, force = False):
+        """
+        Permet de mettre à jour l'affichage.
+        """
+        # Faire un parcours des panneaux pour pouvoir effectuer les changements
+        # sur TOUTES les disposition de calendriers (Gantt, calendrier classique etc)
+        for panneau in self.listPanneau:
+            panneau.updateAffichage(force)
+
+        if self.getJourDebut() == self.getDebutPeriode():
+            self.master.zoneParametre.boutonBienAvant.configure(state=DISABLED)
+            self.master.zoneParametre.boutonAvant.configure(state=DISABLED) # Désactive le bouton quand on est au début de la période
+        else:
+            self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
+            self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
+
+        if self.getFinPeriode() is None or self.getJourFin() is None:
+            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
+            self.master.zoneParametre.boutonApres.configure(state=DISABLED)
+        elif self.getJourFin() > self.getFinPeriode():
+            duree = self.getDureeJour()
+            self.setJourFin(self.getFinPeriode())
+            self.setJourDebut(self.getFinPeriode() - duree)
+        elif self.getJourFin()== self.getFinPeriode():
+            self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
+            self.master.zoneParametre.boutonApres.configure(state=DISABLED)
+        else:
+            self.master.zoneParametre.boutonBienApres.configure(state=NORMAL)
+            self.master.zoneParametre.boutonApres.configure(state=NORMAL)
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de toutes les tâches de tout les panneaux.
+        """
+        for p in self.getToutLesPanneaux():
+            p.updateColor()
+
+    ""
+    ###################
+    # Autres methodes #
+    ###################
+    ""
+    def escapePressed(self, event):
+        """
+        Méthode appelée lors de l'appuie de la touche Échappe.
+        On annule ce qu'on fait sur tous les panneaux.
+        @param event: l'événement, possiblement utilisé par les panneaux.
+        """
+        for panneau in self.listPanneau:
+            panneau.escapePressed(event)
+
+    def intervertir(self):
+        """
+        Permet d'intervertir les 2 jours exactement sélectionnés, affiche une erreur à l'utilisateur sinon.
+        """
+        if len(self.jourSelectionnes) != 2 :
+            showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
+            return
+
+        lesJours = list(self.jourSelectionnes)
+        jour1 = lesJours[0]
+        jour2 = lesJours[1]
+        if jour1 > jour2:
+            jour2, jour1 = jour1, jour2
+
+        tacheJour1 = set()
+        tacheJour2 = set()
+
+        # Seulement les tâches sélectionnés au cas où il y en a qu'on veux pas switch
+        for tache in self.getSelectedSchedulable():
+            if   tache.getDebut().date() <= jour1 and tache.getFin().date() >= jour1 and isinstance(tache, Task): # On ne peut déplacer ici que les tâches pour le moment...
+                tacheJour1.add(tache)
+            elif tache.getDebut().date() <= jour2 and tache.getFin().date() >= jour2 and isinstance(tache, Task): # aussi
+                tacheJour2.add(tache)
+
+        diff = datetime.datetime.combine(jour2, datetime.time()) - datetime.datetime.combine(jour1, datetime.time())
+        # On applique les changements
+        for tache in tacheJour1-tacheJour2:
+            tache.setDebut(tache.getDebut()+diff)
+        for tache in tacheJour2-tacheJour1:
+            tache.setDebut(tache.getDebut()-diff)
+
+        for p in self.getToutLesPanneaux():
+            p.onIntervertir()
+        self.updateAffichage(force=True)
+
+    def mouseClicked(self, event):
+        """
+        Méthode effectuée lors d'un clic.
+        Répercutée sur le panneau actif.
+        @param event: l'événement, envoyé au panneau actif.
+        """
+        self.getPanneauActif().mouseClicked(event)

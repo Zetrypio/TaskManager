@@ -9,8 +9,13 @@ class ParametrageZone(Frame):
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers FenetrePreferences
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        return self.getFenetrePreferences().getApplication()
+
     def getFenetrePreferences(self):
         return self.master
-
-    def getApplication(self):
-        return self.master.getApplication()

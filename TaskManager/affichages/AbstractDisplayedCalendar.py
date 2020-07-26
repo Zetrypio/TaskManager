@@ -41,53 +41,32 @@ class AbstractDisplayedCalendar(Frame):
         self.jourDebut = self.getDebutPeriode()
         self.jourFin   = self.getFinPeriode()
 
-    def clicSurObjet(self, objet):
+    "" #Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
         """
-        Méthode à exécuter quand on clic sur l'un des objets.
-        Utile pour sélectionner une tâche par exemple.
-        @param objet: l'objet sur lequel on a cliqué.
+        Getter pour l'application.
+        @return l'application.
         """
-        raise NotImplementedError
+        return self.getDonneeCalendrier().getApplication()
 
-    def deselectEverything(self):
+    def getDebutPeriode(self):
         """
-        Méthode qui permet de désélectionner tout ce qui l'est actuellement.
+        Permet d'obtenir le jour du début de la période active si elle existe.
+        @return datetime.date() correspondant au début de la période active si elle existe.
+        @return None si elle n'existe pas.
         """
-        for s in self.getPeriodeActive().getListSchedulables():
-            s.setSelected(False)
-        self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
+        return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
 
-    def onIntervertir(self):
-        pass # Juste pour qu'elle existe # Sera considérablement changé
-
-    #def getSelectedTask(self):
-        #"""
-        #Permet d'obtenir la liste des tâches sélectionnées.
-        #@return: la liste des tâches sélectionnées.
-        #@deprecated: permettra de renvoyer plus que des tâches,
-        #dans le futur. Changera alors de nom.
-        #"""
-        #return [task for task in self.listeTask if task.isSelected()]
-
-    def selectJour(self, jour, control=False):
+    def getDureeJour(self):
         """
-        Permet de sélectionner toutes les objets d'un jour en sélectionnant le jour.
-        @param jour: le jour à sélectionner.
-        @param control: False si on désélectionne d'abord, True si on ajoute.
+        Permet d'obtenir un timedelta correspondant au nombre de jours affichés dans le calendrier.
+        @return un datetime.timedelta() correspondant au nombre de jours affichés.
         """
-        if not control:
-            self.deselectEverything()
-
-        for schedulable in self.getPeriodeActive().getListSchedulables(): # On pourrait pas renommer la liste ?
-            # Si l'objet est partiellement sur le jour :
-            if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
-                schedulable.setSelected(True)
-        self.updateColor()
-
-        self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.
-
-    def getSelectedSchedulable(self):
-        return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
+        return (self.jourFin - self.jourDebut + datetime.timedelta(days=1)) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
 
     def getDonneeCalendrier(self):
         """
@@ -96,27 +75,43 @@ class AbstractDisplayedCalendar(Frame):
         """
         return self.master.master # Skip le NoteBook : pas le choix, désolé l'OO :/
 
-    def getZoneAffichage(self):
+    def getFinPeriode(self):
         """
-        Getter pour la ZoneAffichage
-        @return : la ZoneAffichage
+        Permet d'obtenir le jour de fin de la période active si elle existe.
+        @return datetime.date() correspondant à la fin de la période active si elle existe.
+        @return None si elle n'existe pas.
         """
-        return self.getDonneeCalendrier().getZoneAffichage()
+        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
 
-    def getApplication(self):
+    def getHeureDebut(self):
         """
-        Getter pour l'application.
-        @return l'application.
+        Getter pour l'heure du début de l'affichage.
+        @return datetime.time() de l'heure du début de l'affichage.
         """
-        return self.getDonneeCalendrier().getApplication()
+        return self.heureDebut
 
-    def getPeriodeActive(self):
+    def getHeureFin(self):
         """
-        Getter pour la période active.
-        Nécessaire pour savoir quelle période afficher.
-        @return la période active.
+        Getter pour l'heure de fin de l'affichage.
+        @return datetime.time() de l'heure de fin de l'affichage.
         """
-        return self.getApplication().getPeriodManager().getActivePeriode()
+        return self.heureFin
+
+    def getJourDebut(self):
+        """
+        Permet d'avoir le jour du début de l'affichage.
+        @return datetime.date() du début de l'affichage.
+        """
+        return self.jourDebut
+
+    def getJourFin(self):
+        """
+        Getter pour le jour de fin de l'affichage.
+        @return le datetime.date() correspondant au jour de fin
+        de l'affichage.
+        """
+        return self.jourFin
+
     def getLongueurPeriode(self):
         """
         Permet d'obtenir la longueur de la période.
@@ -125,71 +120,13 @@ class AbstractDisplayedCalendar(Frame):
         @return datetime.timedelta(0) si la période active n'existe pas.
         """
         return (self.getFinPeriode() - self.getDebutPeriode() + datetime.timedelta(days=1)) if self.getPeriodeActive() is not None else datetime.timedelta()
-    def getDebutPeriode(self):
-        """
-        Permet d'obtenir le jour du début de la période active si elle existe.
-        @return datetime.date() correspondant au début de la période active si elle existe.
-        @return None si elle n'existe pas.
-        """
-        return self.getPeriodeActive().getDebut() if self.getPeriodeActive() is not None else None
-    def getFinPeriode(self):
-        """
-        Permet d'obtenir le jour de fin de la période active si elle existe.
-        @return datetime.date() correspondant à la fin de la période active si elle existe.
-        @return None si elle n'existe pas.
-        """
-        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
-        
-    def getHeureDebut(self):
-        """
-        Getter pour l'heure du début de l'affichage.
-        @return datetime.time() de l'heure du début de l'affichage.
-        """
-        return self.heureDebut
-    def setHeureDebut(self, valeur):
-        """
-        Setter pour l'heure du début de l'affichage.
-        Ne concerne pas tout les calendriers (à voir ?).
-        @param valeur: datetime.time() de l'heure du début de l'affichage.
-        """
-        self.heureDebut = valeur
-        self.updateAffichage()
-        
-    def getNbheure(self):
+
+    def getNbHeure(self):
         """
         Permet de savoir le nombre d'heures affichés dans ce calendrier.
         @return un nombre entier correspondant au nombre d'heures affichées.
         """
         return self.getHeureFin().hour - self.getHeureFin().hour
-
-    def getHeureFin(self):
-        """
-        Getter pour l'heure de fin de l'affichage.
-        @return datetime.time() de l'heure de fin de l'affichage.
-        """
-        return self.heureFin
-    def setHeureFin(self, valeur):
-        """
-        Setter pour l'heure de fin de l'affichage.
-        Ne concerne pas tout les calendriers (à voir ?).
-        @param valeur: datetime.time() de l'heure de fin de l'affichage.
-        """
-        self.heureFin = valeur
-        self.updateAffichage()
-
-    def getJourDebut(self):
-        """
-        Permet d'avoir le jour du début de l'affichage.
-        @return datetime.date() du début de l'affichage.
-        """
-        return self.jourDebut
-    def setJourDebut(self, valeur):
-        """
-        Permet de modifier le jour de début de l'affichage.
-        @param valeur: Le datetime.time() à mettre 
-        """
-        self.jourDebut = valeur + datetime.timedelta()
-        self.updateAffichage()
 
     def getNbJour(self):
         """
@@ -197,71 +134,18 @@ class AbstractDisplayedCalendar(Frame):
         @return un int correspondant au nombre de jours affichés.
         """
         return self.getDureeJour().days
-    def getDureeJour(self):
-        """
-        Permet d'obtenir un timedelta correspondant au nombre de jours affichés dans le calendrier.
-        @return un datetime.timedelta() correspondant au nombre de jours affichés.
-        """
-        return (self.jourFin - self.jourDebut + datetime.timedelta(days=1)) if self.jourDebut is not None and self.jourFin is not None else datetime.timedelta()
-    def setNbJour(self, valeur):
-        """
-        Setter pour le nombre de jours affichés, via un nombre entier.
-        Change la position du jour de fin afin d'y parvenir.
-        @param valeur : int correspondant au nombre de jours à afficher.
-        """
-        # TODO : Rajouter le check de dépassement de fin de période -> nouvelle méthode.
-        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
-        self.updateAffichage()
 
-    def setDureeJour(self, valeur):
+    def getPeriodeActive(self):
         """
-        Setter pour le nombre de jours affichés, via un timedelta.
-        Change la position de la fin de la période pour y arriver.
-        @param valeur: datetime.timedelta() correspondant au nombre de
-        jours à afficher.
+        Getter pour la période active.
+        Nécessaire pour savoir quelle période afficher.
+        @return la période active.
         """
-        # XXX : Pourquoi faire "valeur - datetime.timedelta(days=1)" ?
-        # Ne serait-ce pas en dehors de la fonction de faire cette vérification ?
-        self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
-        
-        # TODO : À revoir. -> utiliser une nouvelle méthode.
-        if self.getJourFin() > self.getFinPeriode():
-            self.setJourFin(self.getFinPeriode())
-
-        self.updateAffichage()
-
-    def getVisiblePart(self, part):
-        """
-        Permet d'obtenir la partie visible d'un DatetimeItemPart.
-        @return l'objet inchangé si celui-ci est complètement visible.
-        @return un nouveau DatetimeItemPart si celui-ci est partiellement visible,
-        ce nouvel objet sera normalement entièrement visible.
-        @return None si l'objet n'est pas visible du tout.
-        """
-        # Test du jour :
-        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin()  + datetime.timedelta(days=1):
-            return None
-        
-        # Test de l'intégrité :
-        if part.getHeureDebut() >= self.getHeureDebut() and part.getHeureFin() <= self.getHeureFin():
-            return part
-        
-        # Sinon : correction du début et de la fin :
-        debut = max(part.getHeureDebut(), self.getHeureDebut())
-        fin   = min(part.getHeureFin(),   self.getHeureFin())
-        
-        return DatetimeItemPart(part.getJour(), debut, fin, part.getSchedulable())
+        return self.getApplication().getPeriodManager().getActivePeriode()
 
     def getPartPosition(self, part):
         """
         Permet d'obtenir l'information de position de la partie à afficher.
-        @return diffère suivant les besoins dans les sous-classes.
-        """
-        raise NotImplementedError
-
-    def getPartSpan(self, part):
-        """
-        Permet d'obtenir l'information de répartition de la partie à afficher.
         @return diffère suivant les besoins dans les sous-classes.
         """
         raise NotImplementedError
@@ -275,7 +159,7 @@ class AbstractDisplayedCalendar(Frame):
         @return util.geom.Rectangle() correspondant à la zone de cette partition.
         """
         raise NotImplementedError
-    
+
     def getPartsOfDay(self, day):
         """
         @note: Peut-être que ce ne devrait pas être abstrait ?
@@ -285,13 +169,102 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def getJourFin(self):
+    def getPartSpan(self, part):
         """
-        Getter pour le jour de fin de l'affichage.
-        @return le datetime.date() correspondant au jour de fin
-        de l'affichage.
+        Permet d'obtenir l'information de répartition de la partie à afficher.
+        @return diffère suivant les besoins dans les sous-classes.
         """
-        return self.jourFin
+        raise NotImplementedError
+
+    #def getSelectedTask(self):
+        #"""
+        #Permet d'obtenir la liste des tâches sélectionnées.
+        #@return: la liste des tâches sélectionnées.
+        #@deprecated: permettra de renvoyer plus que des tâches,
+        #dans le futur. Changera alors de nom.
+        #"""
+        #return [task for task in self.listeTask if task.isSelected()]
+
+    def getSelectedSchedulable(self):
+        return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
+
+    def getVisiblePart(self, part):
+        """
+        Permet d'obtenir la partie visible d'un DatetimeItemPart.
+        @return l'objet inchangé si celui-ci est complètement visible.
+        @return un nouveau DatetimeItemPart si celui-ci est partiellement visible,
+        ce nouvel objet sera normalement entièrement visible.
+        @return None si l'objet n'est pas visible du tout.
+        """
+        # Test du jour :
+        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin()  + datetime.timedelta(days=1):
+            return None
+
+        # Test de l'intégrité :
+        if part.getHeureDebut() >= self.getHeureDebut() and part.getHeureFin() <= self.getHeureFin():
+            return part
+
+        # Sinon : correction du début et de la fin :
+        debut = max(part.getHeureDebut(), self.getHeureDebut())
+        fin   = min(part.getHeureFin(),   self.getHeureFin())
+
+        return DatetimeItemPart(part.getJour(), debut, fin, part.getSchedulable())
+
+    def getZoneAffichage(self):
+        """
+        Getter pour la ZoneAffichage
+        @return : la ZoneAffichage
+        """
+        return self.getDonneeCalendrier().getZoneAffichage()
+
+    ""
+    ##############
+    # Setters :  #
+    ##############
+    ""
+    def setDureeJour(self, valeur):
+        """
+        Setter pour le nombre de jours affichés, via un timedelta.
+        Change la position de la fin de la période pour y arriver.
+        @param valeur: datetime.timedelta() correspondant au nombre de
+        jours à afficher.
+        """
+        # XXX : Pourquoi faire "valeur - datetime.timedelta(days=1)" ?
+        # Ne serait-ce pas en dehors de la fonction de faire cette vérification ?
+        self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
+
+        # TODO : À revoir. -> utiliser une nouvelle méthode.
+        if self.getJourFin() > self.getFinPeriode():
+            self.setJourFin(self.getFinPeriode())
+
+        self.updateAffichage()
+
+    def setHeureDebut(self, valeur):
+        """
+        Setter pour l'heure du début de l'affichage.
+        Ne concerne pas tout les calendriers (à voir ?).
+        @param valeur: datetime.time() de l'heure du début de l'affichage.
+        """
+        self.heureDebut = valeur
+        self.updateAffichage()
+
+    def setHeureFin(self, valeur):
+        """
+        Setter pour l'heure de fin de l'affichage.
+        Ne concerne pas tout les calendriers (à voir ?).
+        @param valeur: datetime.time() de l'heure de fin de l'affichage.
+        """
+        self.heureFin = valeur
+        self.updateAffichage()
+
+    def setJourDebut(self, valeur):
+        """
+        Permet de modifier le jour de début de l'affichage.
+        @param valeur: Le datetime.time() à mettre
+        """
+        self.jourDebut = valeur + datetime.timedelta()
+        self.updateAffichage()
+
     def setJourFin(self, valeur):
         """
         Setter pour le jour de fin de l'affichage.
@@ -299,25 +272,22 @@ class AbstractDisplayedCalendar(Frame):
         """
         self.jourFin = valeur
 
-    def identify_region(self, x, y):
+    def setNbJour(self, valeur):
         """
-        Renvoie la région à la position X et Y.
-        X et Y sont relatifs à ce widget.
-
-        La région doit être quelque chose qui doit permettre de
-        savoir où ajouter une tâche si celle-ci n'a pas de début/période
-        prédéfinie. (voir #addTask(tache, REGION = ...))
-
-        Cela doit donc correspondre à un ensemble avec une date/heure
-        de début, on utilisera pour cela la classe datetime.datetime().
-
-        Méthode à redéfinir dans les sous-classes.
-        @param x: Position X relative à ce widget, sera bien souvent la position de la souris.
-        @param y: Position Y relative à ce widget, sera bien souvent la position de la souris.
-        @return datetime.datetime() indiquant la région trouvé aux coordonnées indiquées.
+        Setter pour le nombre de jours affichés, via un nombre entier.
+        Change la position du jour de fin afin d'y parvenir.
+        @param valeur : int correspondant au nombre de jours à afficher.
         """
-        raise NotImplementedError
+        # TODO : Rajouter le check de dépassement de fin de période -> nouvelle méthode.
+        self.jourFin = (self.jourDebut + datetime.timedelta(days=valeur-1)) if self.jourDebut is not None else None
+        self.updateAffichage()
 
+    ""
+    ######################
+    # Methodes liées aux #
+    #    schedulables    #
+    ######################
+    ""
     def addSchedulable(self, schedulable, region = None): # TODO : renommer en addSchedulable
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
@@ -351,7 +321,7 @@ class AbstractDisplayedCalendar(Frame):
                 # d'affichage d'une tâche custom.
 
             return schedulable # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
-        
+
         @param schedulable: le schedulable à rajouter
         @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
         @return le schedulable, potentiellement changé.
@@ -377,12 +347,93 @@ class AbstractDisplayedCalendar(Frame):
         return schedulable"""
         raise NotImplementedError
 
+    def clicSurObjet(self, objet):
+        """
+        Méthode à exécuter quand on clic sur l'un des objets.
+        Utile pour sélectionner une tâche par exemple.
+        @param objet: l'objet sur lequel on a cliqué.
+        """
+        raise NotImplementedError
+
+    def deselectEverything(self):
+        """
+        Méthode qui permet de désélectionner tout ce qui l'est actuellement.
+        """
+        for s in self.getPeriodeActive().getListSchedulables():
+            s.setSelected(False)
+        self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
+
+    def identify_region(self, x, y):
+        """
+        Renvoie la région à la position X et Y.
+        X et Y sont relatifs à ce widget.
+
+        La région doit être quelque chose qui doit permettre de
+        savoir où ajouter une tâche si celle-ci n'a pas de début/période
+        prédéfinie. (voir #addTask(tache, REGION = ...))
+
+        Cela doit donc correspondre à un ensemble avec une date/heure
+        de début, on utilisera pour cela la classe datetime.datetime().
+
+        Méthode à redéfinir dans les sous-classes.
+        @param x: Position X relative à ce widget, sera bien souvent la position de la souris.
+        @param y: Position Y relative à ce widget, sera bien souvent la position de la souris.
+        @return datetime.datetime() indiquant la région trouvé aux coordonnées indiquées.
+        """
+        raise NotImplementedError
+
+    def onIntervertir(self): # Todo ?
+        pass # Juste pour qu'elle existe # Sera considérablement changé
+
     def removeSchedulable(self, obj):
         """
         Retire un schedulable
         à redefinir dans chaque sous classe
         """
         raise NotImplementedError
+
+    def selectJour(self, jour, control=False):
+        """
+        Permet de sélectionner toutes les objets d'un jour en sélectionnant le jour.
+        @param jour: le jour à sélectionner.
+        @param control: False si on désélectionne d'abord, True si on ajoute.
+        """
+        if not control:
+            self.deselectEverything()
+
+        for schedulable in self.getPeriodeActive().getListSchedulables(): # On pourrait pas renommer la liste ?
+            # Si l'objet est partiellement sur le jour :
+            if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
+                schedulable.setSelected(True)
+        self.updateColor()
+
+        self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.
+
+    ""
+    ####################
+    # Méthodes liées à #
+    #   l'affichage    #
+    ####################
+    ""
+    def doConfiguration(self, paramAffichage):
+        """
+        Méthode pour éventuellement changer la barre d'outil
+        secondaire quand ce panneau est actif.
+
+        Par défaut, fait un reset normal de cette barre.
+        """
+        self.getApplication().setModeEditionPeriode(False)
+        paramAffichage.setStateListe(NORMAL)
+        for duree in self.getZoneAffichage().getListeDuree():
+            if self.getNbJour() == int(duree[1]):
+                paramAffichage.setModeListe(duree[0])
+                break # Car on a trouvé et on veux pas faire le else
+        else:
+            # Pour le tout début comme self.getDureeJour() (et self.getNbJour()) renvoient 0, on préfèrera "Période"
+            if self.getDureeJour() == self.getLongueurPeriode():
+                paramAffichage.setModeListe("Période")
+            else:
+                paramAffichage.setModeListe("%s jours"%self.getNbJour())
 
     def updateAffichage(self, force = False):
         """
@@ -401,26 +452,11 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def doConfiguration(self, paramAffichage):
-        """
-        Méthode pour éventuellement changer la barre d'outil
-        secondaire quand ce panneau est actif.
-        
-        Par défaut, fait un reset normal de cette barre.
-        """
-        self.getApplication().setModeEditionPeriode(False)
-        paramAffichage.setStateListe(NORMAL)
-        for duree in self.getZoneAffichage().getListeDuree():
-            if self.getNbJour() == int(duree[1]):
-                paramAffichage.setModeListe(duree[0])
-                break # Car on a trouvé et on veux pas faire le else
-        else:
-            # Pour le tout début comme self.getDureeJour() (et self.getNbJour()) renvoient 0, on préfèrera "Période"
-            if self.getDureeJour() == self.getLongueurPeriode():
-                paramAffichage.setModeListe("Période")
-            else:
-                paramAffichage.setModeListe("%s jours"%self.getNbJour())
-
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def _setBinding(self, nomCalendrier, aBinder):
         """
         Fonction qui va charger tous les bind a mettre

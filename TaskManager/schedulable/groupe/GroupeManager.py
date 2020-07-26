@@ -16,6 +16,37 @@ class GroupeManager():
         self.__periode = periode
         self.__groupes = set()
 
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        """
+        Getter de l'Application
+        @return l'Application
+        """
+        return self.__app
+
+    def getGroupes(self):
+        """
+        Permet d'obtenir les groupes gérés par ce gestionnaire de groupes.
+        @return: une copie de l'ensemble des groupes de ce gestionnaire de groupes.
+        """
+        return self.__groupes.copy()
+
+    def getPeriode(self):
+        """
+        Getter de la période.
+        @return la période de ce gestionnaire de groupes.
+        """
+        return self.__periode
+
+    ""
+    #############################################
+    # Méthodes liées à la gestion des groupes : #
+    #############################################
+    ""
     def ajouter(self, groupe):
         """
         Permet d'ajouter un groupe à la liste des groupes.
@@ -34,24 +65,3 @@ class GroupeManager():
         self.getApplication().getTaskEditor().supprimer(groupe)
         self.getApplication().getDonneeCalendrier().removeSchedulable(groupe)
         self.getApplication().getDonneeCalendrier().updateAffichage()
-
-    def getPeriode(self):
-        """
-        Getter de la période.
-        @return la période de ce gestionnaire de groupes.
-        """
-        return self.__periode
-
-    def getApplication(self):
-        """
-        Getter de l'Application
-        @return l'Application
-        """
-        return self.__app
-
-    def getGroupes(self):
-        """
-        Permet d'obtenir les groupes gérés par ce gestionnaire de groupes.
-        @return: une copie de l'ensemble des groupes de ce gestionnaire de groupes.
-        """
-        return self.__groupes.copy()

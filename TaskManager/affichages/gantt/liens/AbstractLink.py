@@ -38,6 +38,28 @@ class AbstractLink(IDisplayableItem):
         self.__binding1 = None
         self.__binding2 = None
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def _getAffichageGantt(self):
+        """
+        Getter pour l'affichage Gantt
+        @return l'affichage Gantt.
+        """
+        return self.__affichageGantt
+
+    def isSelected(self):
+        raise NotImplementedError
+
+    def getColor(self):
+        """
+        Getter pour la couleur.
+        @return la couleur.
+        """
+        return self.__color
+
     def getPartA(self):
         """
         Getter pour le DatetimeItemPart A du début de la flèche du lien.
@@ -49,64 +71,6 @@ class AbstractLink(IDisplayableItem):
         Getter pour le DatetimeItemPart B de la fin de la flèche du lien.
         """
         return self.__partB
-
-    def _updateParts(self, partA, partB):
-        """
-        Setter protected pour mettre à jour les 2 parts de ce lien.
-        @param partA: la nouvelle partie A (début du lien).
-        @param partB: la nouvelle partie B (fin du lien).
-        """
-        self.__partA = self.__affichageGantt.getVisiblePart(partA)
-        self.__partB = self.__affichageGantt.getVisiblePart(partB)
-
-    def updateColor(self, canvas):
-        """
-        Permet de mettre à jour la couleur du lien.
-        """
-        color = self.__highlight if self.__highlight else self.getColor()
-        sw = 3 if self.__highlight else self.getStrokeWeight()
-
-        canvas.itemconfigure(self.getTag(),        fill=color, width = sw)
-        canvas.itemconfigure(self.getTag()+"c", outline=color, width = sw)
-
-        # Update du tag :
-        if self.__highlight:
-            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line", "highlight"))
-            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line", "highlight"))
-        else:
-            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line"))
-            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line"))
-
-    def isSelected(self):
-        raise NotImplementedError
-
-    def setColor(self, color):
-        """
-        Setter pour la couleur.
-        @param color: String avec un nom de couleur compatible avec les noms de couleurs tkinter.
-        """
-        self.__color = color
-
-    def getColor(self):
-        """
-        Getter pour la couleur.
-        @return la couleur.
-        """
-        return self.__color
-
-    def highlight(self, color):
-        """
-        Permet de surligner ce lien d'une couleur donnée.
-        @param color: la couleur à mettre.
-        """
-        self.__highlight = color
-
-    def setStrokeWeight(self, strokeWeight):
-        """
-        Setter pour l'épaisseur du trait.
-        @param strokeWeight: int correspondant à l'épaisseur du trait, en pixel.
-        """
-        self.__strokeWeight = strokeWeight
 
     def getStrokeWeight(self):
         """
@@ -121,12 +85,58 @@ class AbstractLink(IDisplayableItem):
         """
         return "link%s"%id(self)
 
-    def _getAffichageGantt(self):
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def setColor(self, color):
         """
-        Getter pour l'affichage Gantt
-        @return l'affichage Gantt.
+        Setter pour la couleur.
+        @param color: String avec un nom de couleur compatible avec les noms de couleurs tkinter.
         """
-        return self.__affichageGantt
+        self.__color = color
+
+    def setStrokeWeight(self, strokeWeight):
+        """
+        Setter pour l'épaisseur du trait.
+        @param strokeWeight: int correspondant à l'épaisseur du trait, en pixel.
+        """
+        self.__strokeWeight = strokeWeight
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def __drawSinus(self, x1, y1, x2, y2):
+        """
+        Permet de mettre les points de la courbe suivant un (co)sinus commençant en x1, y1 et se terminant en x2, y2.
+        @param x1: Début en X de la courbe.
+        @param y1: Début en Y de la courbe.
+        @param x2: Fin en X de la courbe.
+        @param y2: Fin en Y de la courbe.
+        """
+        for x in range(int(x1), int(x2)):
+            y = posY(x, x1, y1, x2, y2) # Fait un sinus, est défini dans util.util
+            self.__points.append([x, y])
+        self.__points.append([x2, y2])
+
+    def _updateParts(self, partA, partB):
+        """
+        Setter protected pour mettre à jour les 2 parts de ce lien.
+        @param partA: la nouvelle partie A (début du lien).
+        @param partB: la nouvelle partie B (fin du lien).
+        """
+        self.__partA = self.__affichageGantt.getVisiblePart(partA)
+        self.__partB = self.__affichageGantt.getVisiblePart(partB)
+
+    def highlight(self, color):
+        """
+        Permet de surligner ce lien d'une couleur donnée.
+        @param color: la couleur à mettre.
+        """
+        self.__highlight = color
 
     def redraw(self, canvas, force = False):
         """
@@ -135,7 +145,7 @@ class AbstractLink(IDisplayableItem):
         """
         # On vide la liste des points de la courbe.
         self.__points = []
-        
+
         ################################################################################################################################
         # Il y a 3 possibilités pour dessiner une flèche :                                                                             #
         # - Ou bien les 2 parts sont le même jour au quel cas on fait une flèche en forme de S en miroir ;                             #
@@ -144,10 +154,10 @@ class AbstractLink(IDisplayableItem):
         ################################################################################################################################
         rectA = self.__affichageGantt.getPartRectangle(self.__partA)
         rectB = self.__affichageGantt.getPartRectangle(self.__partB)
-        
+
         # Le rectangle A prend la partie juste à droite de l'objet :
         rectA.setX1(rectA.getX1() + rectA.getWidth()*self.__affichageGantt.facteurW)
-        
+
         # Le rectangle B prend la partie juste à droite de la colonne juste à gauche de l'objet :
         width = rectB.getWidth()
         rectB.setX1(rectB.getX1() + rectB.getWidth()*self.__affichageGantt.facteurW)
@@ -238,6 +248,29 @@ class AbstractLink(IDisplayableItem):
             self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>", lambda e: self._onClic())
             self.__binding2 = canvas.tag_bind(self.getTag(), "<Control-Button-1>", lambda e: self._onControlClic())
 
+    def updateColor(self, canvas):
+        """
+        Permet de mettre à jour la couleur du lien.
+        """
+        color = self.__highlight if self.__highlight else self.getColor()
+        sw = 3 if self.__highlight else self.getStrokeWeight()
+
+        canvas.itemconfigure(self.getTag(),        fill=color, width = sw)
+        canvas.itemconfigure(self.getTag()+"c", outline=color, width = sw)
+
+        # Update du tag :
+        if self.__highlight:
+            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line", "highlight"))
+            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line", "highlight"))
+        else:
+            canvas.itemconfigure(self.getTag()+"c", tag = (self.getTag(), self.getTag()+"c", "line"))
+            canvas.itemconfigure(self.getTag()+"l", tag = (self.getTag(), self.getTag()+"l", "line"))
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def _onBinding(self):
         """
         Méthode appelée quand un clic est fait sur ce lien.
@@ -249,17 +282,3 @@ class AbstractLink(IDisplayableItem):
         Méthode appelée quand un contrôle+clic est fait sur ce lien.
         """
         raise NotImplementedError
-
-    def __drawSinus(self, x1, y1, x2, y2):
-        """
-        Permet de mettre les points de la courbe suivant un (co)sinus commençant en x1, y1 et se terminant en x2, y2.
-        @param x1: Début en X de la courbe.
-        @param y1: Début en Y de la courbe.
-        @param x2: Fin en X de la courbe.
-        @param y2: Fin en Y de la courbe.
-        """
-        for x in range(int(x1), int(x2)):
-            y = posY(x, x1, y1, x2, y2) # Fait un sinus, est défini dans util.util
-            self.__points.append([x, y])
-        self.__points.append([x2, y2])
-        

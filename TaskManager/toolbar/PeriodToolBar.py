@@ -16,6 +16,11 @@ class PeriodToolBar(ToolBar):
         self.periodeManager = periodeManager
         super().__init__(master, **kwargs)
 
+    ""
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def _ajouterCategoriesEtBoutons(self):
         """
         Appelée depuis le constructeur, surcharge de la version parente
@@ -41,5 +46,3 @@ class PeriodToolBar(ToolBar):
         self._creationCategorie("Vue des tâches indépendantes")
         # Création des bouton(s)
         self._creationBouton("Voir dans une autre vue", self.master.voirTacheDansVue,               getImage("Ressources/textures/periode/changer vue tache inde.png"),          textVisible=False)
-        
-

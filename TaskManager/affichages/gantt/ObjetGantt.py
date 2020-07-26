@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
@@ -41,6 +41,92 @@ class ObjetGantt(AbstractMultiFrameItem):
             except:
                 pass
         self.__parts = []
+
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def __getFrameForPart(self, part):
+        """
+        Permet d'obtenir le tkinter.Frame() qui contient le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le tkinter.Frame() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[1]
+
+    def __getPlusForPart(self, part):
+        """
+        Permet d'obtenir le ItemButtonPlus() qui correspond à la DatetimeItemPart() demandé, si il existe.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le ItemButtonPlus() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[4] if len(p) > 4 else None # On stop la boucle dans tout les cas car de toutes façon ca veut dire qu'on le trouvera pas.
+
+    def __getRMenuForPart(self, part):
+        """
+        Permet d'obtenir le RMenu() qui correspond à la DatetimeItemPart() demandé.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le RMenu() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[3]
+
+    def __getWidgetForPart(self, part):
+        """
+        Permet d'obtenir le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
+        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
+        @return le AbstractItemContent() trouvé, ou None dans le cas échéant.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return p[2]
+
+    def getXDebutLinkingLine(self):
+        """
+        Permet d'obtenir la coordonnée X du centre du plus actif.
+        @return le milieu en X du plus actif.
+        """
+        return self.__debutLinkingLine.x
+
+    def getYDebutLinkingLine(self):
+        """
+        Permet d'obtenir la coordonnée Y du centre du plus actif.
+        @return le milieu en Y du plus actif.
+        """
+        return self.__debutLinkingLine.y
+
+    def __isPartPresent(self, part):
+        """
+        Permet de savoir si la part est déjà parmi la liste de celles qui sont dessinées
+        (pour ne pas avoir à la redessiner, mais juste la mettre à jour - et aussi pour
+        ne pas en avoir 500000000 de part si jamais on oublie d'effacer les précédentes =) ).
+        @param part: la DatetimeItemPart() dont on veut savoir sa présence.
+        @return True si la part est présente, False sinon.
+        """
+        for p in self.__parts:
+            if p[0] == part:
+                return True
+        return False
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def beginLinkingLine(self, point, mode = "+"):
+        """
+        Permet de commencer la ligne verte,
+        et mémorise sur quel plus (+) on a cliqué.
+        @param plus: le plus sur lequel on a cliqué.
+        """
+        self.__debutLinkingLine = point
+        self.master.beginLinkingLine(self, mode)
 
     def redraw(self, canvas, force = False):
         """
@@ -138,22 +224,17 @@ class ObjetGantt(AbstractMultiFrameItem):
             l.redraw(canvas)
             self.__liens.append(l)
 
-    def beginLinkingLine(self, point, mode = "+"):
-        """
-        Permet de commencer la ligne verte,
-        et mémorise sur quel plus (+) on a cliqué.
-        @param plus: le plus sur lequel on a cliqué.
-        """
-        self.__debutLinkingLine = point
-        self.master.beginLinkingLine(self, mode)
+    def updateColor(self, canvas):
+        for p in self.__parts:
+            p[2].updateColor()
+        for l in self.__liens:
+            l.updateColor(canvas)
 
-    def __onSelect(self):
-        """
-        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
-        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
-        """
-        self.master.clicSurObjet(self)
-
+    ""
+    #####################
+    # Autres Méthodes : #
+    #####################
+    ""
     def __onMultiSelect(self):
         """
         Permet d'inverser l'état de sélection de l'objet schedulable.
@@ -161,78 +242,12 @@ class ObjetGantt(AbstractMultiFrameItem):
         self._schedulable.inverseSelection()
         self.master.getDonneeCalendrier().updateColor()
 
-    def updateColor(self, canvas):
-        for p in self.__parts:
-            p[2].updateColor()
-        for l in self.__liens:
-            l.updateColor(canvas)
-
-    def getXDebutLinkingLine(self):
+    def __onSelect(self):
         """
-        Permet d'obtenir la coordonnée X du centre du plus actif.
-        @return le milieu en X du plus actif.
+        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
+        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
         """
-        return self.__debutLinkingLine.x
-
-    def getYDebutLinkingLine(self):
-        """
-        Permet d'obtenir la coordonnée Y du centre du plus actif.
-        @return le milieu en Y du plus actif.
-        """
-        return self.__debutLinkingLine.y
-
-    def __isPartPresent(self, part):
-        """
-        Permet de savoir si la part est déjà parmi la liste de celles qui sont dessinées
-        (pour ne pas avoir à la redessiner, mais juste la mettre à jour - et aussi pour
-        ne pas en avoir 500000000 de part si jamais on oublie d'effacer les précédentes =) ).
-        @param part: la DatetimeItemPart() dont on veut savoir sa présence.
-        @return True si la part est présente, False sinon.
-        """
-        for p in self.__parts:
-            if p[0] == part:
-                return True
-        return False
-
-    def __getFrameForPart(self, part):
-        """
-        Permet d'obtenir le tkinter.Frame() qui contient le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
-        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
-        @return le tkinter.Frame() trouvé, ou None dans le cas échéant.
-        """
-        for p in self.__parts:
-            if p[0] == part:
-                return p[1]
-
-    def __getWidgetForPart(self, part):
-        """
-        Permet d'obtenir le AbstractItemContent() qui correspond à la DatetimeItemPart() demandé.
-        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
-        @return le AbstractItemContent() trouvé, ou None dans le cas échéant.
-        """
-        for p in self.__parts:
-            if p[0] == part:
-                return p[2]
-
-    def __getRMenuForPart(self, part):
-        """
-        Permet d'obtenir le RMenu() qui correspond à la DatetimeItemPart() demandé.
-        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
-        @return le RMenu() trouvé, ou None dans le cas échéant.
-        """
-        for p in self.__parts:
-            if p[0] == part:
-                return p[3]
-
-    def __getPlusForPart(self, part):
-        """
-        Permet d'obtenir le ItemButtonPlus() qui correspond à la DatetimeItemPart() demandé, si il existe.
-        @param part: la DatetimeItemPart() dont on veut trouver le tkinter.Frame()
-        @return le ItemButtonPlus() trouvé, ou None dans le cas échéant.
-        """
-        for p in self.__parts:
-            if p[0] == part:
-                return p[4] if len(p) > 4 else None # On stop la boucle dans tout les cas car de toutes façon ca veut dire qu'on le trouvera pas.
+        self.master.clicSurObjet(self)
 
     def delete(self):
         """

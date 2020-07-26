@@ -59,16 +59,12 @@ class __TaskInDnd(Toplevel):
         self.__fondudebut()
         self.after(10, self.__move)
         self.__dnd() # Résoudre les coordonnées d'affichages
-    def __fondudebut(self):
-        """
-        Méthode pour faire un petit fondu au début.
-        """
-        self.__alpha += 0.05
-        self.attributes("-alpha", self.__alpha)
-        if self.__alpha < 1: # si on a pas fini, on continue :
-            self.after(5, self.__fondudebut)
-        else: # sinon on indique qu'on a fini :
-            self.__commence = True
+
+    "" # Marque pour que le repli de code fasse ce que je veux
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def __dnd(self, event = None):
         """
         Méthode pour bouger l'ensemble.
@@ -76,7 +72,7 @@ class __TaskInDnd(Toplevel):
         if not self.__fin:
             try: # il peut y avoir des exceptions avec la fermeture etc.
                 # On extrait la géométrie actuelle
-                dim, x, y = self.geometry().split("+") 
+                dim, x, y = self.geometry().split("+")
                 x = int(x)
                 y = int(y)
 
@@ -88,12 +84,52 @@ class __TaskInDnd(Toplevel):
                 # On règle l'objectif :
                 self.__x = self.winfo_pointerx() - sx//2
                 self.__y = self.winfo_pointery() - sy//2
-                
+
                 # On bloque sur les bords de l'écran :
                 self.__x = max(0, min(self.__x, self.winfo_screenwidth()-sx))
                 self.__y = max(0, min(self.__y, self.winfo_screenheight()-sy))
+            except:pass
+
+    def __end(self, event = None):
+        """
+        Méthode pour terminer le drag&drop.
+        """
+        if self.__commence and self.__fin == False: # on ne peut disparaître seulement si on est complètement commencé (=apparu)
+            self.__fin = True
+            self.unbind_all(self.__b1)
+            self.unbind_all(self.__b2)
+            self.__fondufin()
+        else:
+            self.after(50, self.__end) # sinon on attend un peu.
+
+    def __fondudebut(self):
+        """
+        Méthode pour faire un petit fondu au début.
+        """
+        self.__alpha += 0.05
+        self.attributes("-alpha", self.__alpha)
+        if self.__alpha < 1: # si on a pas fini, on continue :
+            self.after(5, self.__fondudebut)
+        else: # sinon on indique qu'on a fini :
+            self.__commence = True
+
+    def __fondufin(self):
+        """
+        Méthode pour faire un fondu quand ça disparaît.
+        C'est le même qu'à l'apparition mais dans l'autre sens.
+        """
+        if self.__commence:
+            self.__alpha -= 0.05
+            try: # il peut ici aussi y avoir des exceptions, mais c'est pas grave.
+                self.attributes("-alpha", self.__alpha)
+                if self.__alpha > 0:
+                    self.after(5, self.__fondufin)
+                else:
+                    self.destroy()
+                    self.__vraieFin()
             except:
                 pass
+
     def __move(self):
         """
         Méthode pour bouger fluidement,
@@ -115,33 +151,6 @@ class __TaskInDnd(Toplevel):
         except:
             self._report_exception()
 
-    def __end(self, event = None):
-        """
-        Méthode pour terminer le drag&drop.
-        """
-        if self.__commence and self.__fin == False: # on ne peut disparaître seulement si on est complètement commencé (=apparu)
-            self.__fin = True
-            self.unbind_all(self.__b1)
-            self.unbind_all(self.__b2)
-            self.__fondufin()
-        else:
-            self.after(50, self.__end) # sinon on attend un peu.
-    def __fondufin(self):
-        """
-        Méthode pour faire un fondu quand ça disparaît.
-        C'est le même qu'à l'apparition mais dans l'autre sens.
-        """
-        if self.__commence:
-            self.__alpha -= 0.05
-            try: # il peut ici aussi y avoir des exceptions, mais c'est pas grave.
-                self.attributes("-alpha", self.__alpha)
-                if self.__alpha > 0:
-                    self.after(5, self.__fondufin)
-                else:
-                    self.destroy()
-                    self.__vraieFin()
-            except:
-                pass
     def __vraieFin(self):
         try:
             self.__command(self.__task, self.__x, self.__y)

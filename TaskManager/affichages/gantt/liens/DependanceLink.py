@@ -42,6 +42,35 @@ class DependanceLink(AbstractLink):
         # Création de la dépendance :
         partB.getSchedulable().addDependance(partA.getSchedulable())
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def isSelected(self):
+        """
+        Permet de savoir si le lien est sélectionné.
+        """
+        return self.__selected
+
+    #############
+    # Setters : #
+    #############
+    ""
+    def setSelected(self, value):
+        """
+        Permet de changer l'état de sélection du lien.
+        @param value: True si le lien doit être sélectionné, False sinon.
+        """
+        if not isinstance(value, bool):
+            raise TypeError("Expected a boolean but got %s"%value)
+        self.__selected = value
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
     def highlight(self, color):
         """
         Permet de surligner ce lien d'une couleur donnée.
@@ -54,45 +83,6 @@ class DependanceLink(AbstractLink):
         else:
             super().highlight(None)
 
-    def redraw(self, canvas, force = False):
-        """
-        Méthode pour dessiner la flèche.
-        @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
-        """
-        super().redraw(canvas, force)
-
-        # Ajouter infobulle :
-        ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))
-
-    def _onClic(self):
-        self._getAffichageGantt().cancelEvent()
-        self._getAffichageGantt().deselectEverything()
-        self.__selected = True
-        self._getAffichageGantt().getDonneeCalendrier().updateColor()
-
-    def _onControlClic(self):
-        self._getAffichageGantt().cancelEvent()
-        self.__selected = not self.__selected
-        self._getAffichageGantt().getDonneeCalendrier().updateColor()
-
-    def setSelected(self, value):
-        """
-        Permet de changer l'état de sélection du lien.
-        @param value: True si le lien doit être sélectionné, False sinon.
-        """
-        if not isinstance(value, bool):
-            raise TypeError("Expected a boolean but got %s"%value)
-        self.__selected = value
-
-    def isSelected(self):
-        """
-        Permet de savoir si le lien est sélectionné.
-        """
-        return self.__selected
-
-    def delete(self):
-        self.getPartB().getSchedulable().removeDependance(self.getPartA().getSchedulable())
-
     def inverserLaDependances(self):
         """
         Permet de changer le sens de la flèche.
@@ -103,6 +93,32 @@ class DependanceLink(AbstractLink):
         self.__objGantt_B.addDependance(self.__objGantt_A)
         # Update les parts aussi dans la superclasse
         self._updateParts(self.__objGantt_A.getLastPart(self._getAffichageGantt()), self.__objGantt_B.getFirstPart(self._getAffichageGantt()))
+
+    def redraw(self, canvas, force = False):
+        """
+        Méthode pour dessiner la flèche.
+        @param canvas: tkinter.Canvas() sur lequel dessiner la flèche du lien.
+        """
+        super().redraw(canvas, force)
+
+        # Ajouter infobulle :
+        ajouterInfoBulleTagCanvas(canvas, self.getTag(), "%s -> %s"%(self.getPartA().getSchedulable().getNom(), self.getPartB().getSchedulable().getNom()))
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def _onClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self._getAffichageGantt().deselectEverything()
+        self.__selected = True
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
+
+    def _onControlClic(self):
+        self._getAffichageGantt().cancelEvent()
+        self.__selected = not self.__selected
+        self._getAffichageGantt().getDonneeCalendrier().updateColor()
 
     #def cliqueSuppr(self):
         #if self.tacheD.master.mode == "delDep":
@@ -116,3 +132,6 @@ class DependanceLink(AbstractLink):
 
     #def changeSelect(self):
         #self.tacheD.master.updateAffichage()
+
+    def delete(self):
+        self.getPartB().getSchedulable().removeDependance(self.getPartA().getSchedulable())

@@ -90,6 +90,65 @@ class TaskAdder(Frame):
         # Ligne 4 :
         self.champDescription .grid(row = 4, column = 0, columnspan = 8, sticky ="ew")
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        """
+        Getter pour l'application.
+        @return l'Application.
+        """
+        return self.master.getApplication()
+
+    def getDebut(self):
+        """
+        Permet d'obtenir le début déjà choisi par l'utilisateur.
+        @return le début de la tâche à créer.
+        """
+        return (self.debut + datetime.timedelta()) if self.debut is not None else None
+
+    def getDuree(self):
+        """
+        Permet d'obtenir la durée calculée selon le début et la fin.
+        @return la durée de la tâche à créer.
+        """
+        ecart = self.fin - (self.debut if self.debut is not None else self.fin)
+        return ecart
+
+    def getFin(self):
+        """
+        Permet d'obtenir la fin déjà choisie par l'utilisateur.
+        @return la fin de la tâche à créer.
+        """
+        return (self.fin + datetime.timedelta()) if self.fin is not None else None
+
+    def getRepetitionTime(self):
+        """
+        Permet d'obtenir les informations de répétition.
+        @return val, unit : val est tout les combien d'unit on répète.
+        """
+        unit = self.champUniteeRepet.get()
+        val = int(self.champRepetition.get())
+        return val, unit
+
+    def getStyleHorloge(self):
+        """
+        Permet de savoir si on affiche les heures sur le cadran
+        @return <bool> , par défaut c'est False qui est retourné
+        """
+        # On va chercher le style avec data
+        if self.getApplication().getData().testDataExist("General", "General", "afficher les heures sur l'horloge"):
+            return self.getApplication().getData().getOneValue("General", "General", "afficher les heures sur l'horloge")
+        else:
+            return False
+
+    ""
+    ##################################
+    # Méthodes liées aux dialogues : #
+    ##################################
+    ""
     def askDateDebut(self):
         """
         Permet de demander le début de la tâche à l'utilisateur via boîte de dialogue usuelle.
@@ -119,28 +178,11 @@ class TaskAdder(Frame):
         self.autoSetDuree()
         self.updatePossiblePeriods()
 
-    def getDebut(self):
-        """
-        Permet d'obtenir le début déjà choisi par l'utilisateur.
-        @return le début de la tâche à créer.
-        """
-        return (self.debut + datetime.timedelta()) if self.debut is not None else None
-
-    def getDuree(self):
-        """
-        Permet d'obtenir la durée calculée selon le début et la fin.
-        @return la durée de la tâche à créer.
-        """
-        ecart = self.fin - (self.debut if self.debut is not None else self.fin)
-        return ecart
-
-    def getFin(self):
-        """
-        Permet d'obtenir la fin déjà choisie par l'utilisateur.
-        @return la fin de la tâche à créer.
-        """
-        return (self.fin + datetime.timedelta()) if self.fin is not None else None
-
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def autoSetDuree(self):
         """
         Permet de mettre à jour les widgets de durée de tâche.
@@ -149,15 +191,6 @@ class TaskAdder(Frame):
         self.champJour.set(ecart.days)
         self.champHeure.set(ecart.seconds//3600)
         self.champMinute.set(ecart.seconds//60%60)
-
-    def getRepetitionTime(self):
-        """
-        Permet d'obtenir les informations de répétition.
-        @return val, unit : val est tout les combien d'unit on répète.
-        """
-        unit = self.champUniteeRepet.get()
-        val = int(self.champRepetition.get())
-        return val, unit
 
     def updatePossiblePeriods(self):
         """
@@ -197,22 +230,3 @@ class TaskAdder(Frame):
             if p.nom == self.champPeriode.get():
                 periode = p
         self.master.ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
-
-    def getStyleHorloge(self):
-        """
-        Permet de savoir si on affiche les heures sur le cadran
-        @return <bool> , par défaut c'est False qui est retourné
-        """
-        # On va chercher le style avec data
-        if self.getApplication().getData().testDataExist("General", "General", "afficher les heures sur l'horloge"):
-            return self.getApplication().getData().getOneValue("General", "General", "afficher les heures sur l'horloge")
-        else:
-            return False
-
-
-    def getApplication(self):
-        """
-        Getter pour l'application.
-        @return l'Application.
-        """
-        return self.master.getApplication()

@@ -93,194 +93,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
 
-    def deselectEverything(self):
-        super().deselectEverything()
-        for item in self.listeDisplayableItem:
-            if isinstance(item, DependanceLink):
-                item.setSelected(False)
-                item.updateColor(self.can)
-
-    def __highlightLinks(self, mode):
-        for l in self.listeDisplayableItem:
-            if isinstance(l, DependanceLink):
-                if mode == "+" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
-                                 or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
-                    l.highlight("#FFAF00")
-                elif mode == "-" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
-                                   or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
-                    l.highlight("#FF3F3F")
-                else:
-                    l.highlight(None)
-        self.updateColor()
-        self.__ordonnerAffichage()
-
-    def beginLinkingLine(self, objGantt, mode="+"):
-        """
-        Permet de commencer une ligne verte pour un lien depuis un objetGantt.
-        @param objGantt: l'objetGantt depuis lequel commence le lien.
-        """
-        self.__onClicSurCanvas()
-        self.__activeGanttObject = objGantt
-        self.__highlightLinks(mode)
-        self.__x1_LinkingLine = self.__activeGanttObject.getXDebutLinkingLine()
-        self.__y1_LinkingLine = self.__activeGanttObject.getYDebutLinkingLine()
-        self.__mode_LinkingLine = mode
-        self.__id_LinkingLine = self.can.create_line(self.__x1_LinkingLine,
-                                                     self.__y1_LinkingLine,
-                                                     self.__x1_LinkingLine,
-                                                     self.__y1_LinkingLine,
-                                                     fill="#00CF00" if mode == "+" else "#CF0000",
-                                                     width = 2)
-
-    def __updateLinkingLine(self, event):
-        """
-        Permet de mettre à jour la ligne verte.
-        Appelée quand la souris bouge sur le Canvas() contenu dans cet objet.
-        @param event: informations sur l'événement contenant la position de la souris.
-        """
-        if self.__id_LinkingLine is not None:
-            pos = self.getScrolledPosition(event)
-            self.__x1_LinkingLine = pos.x
-            self.__y1_LinkingLine = pos.y
-            self.can.coords(self.__id_LinkingLine,
-                            pos.x, pos.y,
-                            self.__activeGanttObject.getXDebutLinkingLine(), self.__activeGanttObject.getYDebutLinkingLine())
-
-    def __endLinkingLine(self):
-        try:
-            self.can.delete(self.__id_LinkingLine)
-        except:
-            pass
-        self.__id_LinkingLine = None
-        self.__x1_LinkingLine = None
-        self.__y1_LinkingLine = None
-        self.__mode_LinkingLine = None
-        self.__activeGanttObject = None
-
-    def clicSurObjet(self, objGantt):
-        """
-        Méthode à exécuter quand on clic sur l'un des objets de gantt.
-        Peut créer un lien si on était en mode d'ajout de liens etc.
-        @param objGantt: l'objet sur lequel on a cliqué.
-        @override clicSurObjet(objet) in AbstractDisplayedCalendar()
-        """
-        # Si on est en mode ajout ou suppression de lien :
-        if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
-            
-            # Pour le mode d'ajout :
-            if self.__mode_LinkingLine == "+":
-                # Si le lien est accepté :
-                if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
-                    
-                    # On inverse le lien si il est à l'envers.
-                    if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
-                        self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
-    
-                    # On crée le lien et met donc à jour l'affichage.
-                    self.listeDisplayableItem.append(
-                        DependanceLink(
-                            self,
-                            self.getVisiblePart(self.__activeGanttObject.getLastPart()),
-                            self.getVisiblePart(objGantt.getFirstPart())))
-                    self.__highlightLinks(None)
-                    self.__endLinkingLine()
-                    self.updateAffichage()
-            
-            # Pour le mode de suppression de liens :
-            elif self.__mode_LinkingLine == "-":
-                # Si les liens sont normalement possibles :
-                if self.__activeGanttObject.getSchedulable().acceptLinkTo(objGantt.getSchedulable()):
-
-                    print("Suppression du lien entre %s et %s"%(self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable()))
-
-                    # Il faut trouver le lien :
-                    for lien in reversed(self.listeDisplayableItem):
-                        if isinstance(lien, DependanceLink):
-                            if (lien.getPartA().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())
-                            and lien.getPartB().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())):
-                                self.listeDisplayableItem.remove(lien)
-                                break
-
-                    # Si le lien existe dans un premier sens :
-                    if self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependances():
-                        objGantt.getSchedulable().removeDependance(self.__activeGanttObject.getSchedulable())
-                    # Dans le deuxième sens :
-                    elif self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependantes():
-                        self.__activeGanttObject.getSchedulable().removeDependance(objGantt.getSchedulable())
-                    
-                    # On met à jour l'affichage :
-                    self.__highlightLinks(None)
-                    self.__endLinkingLine()
-                    self.updateAffichage()
-
-        # Sinon on désélectionne tout les liens et les tâches,
-        # pour ne sélectionner que la tâche sur laquelle on a cliqué.
-        elif self.__activeGanttObject is None:
-            self.deselectEverything()
-            objGantt.getSchedulable().setSelected(True)
-            self.getDonneeCalendrier().updateColor()
-
-    def __onClicSurCanvas(self, pos=None):
-        """
-        Méthode exécutée quand on appuie sur échappe ou qu'on appuie
-        dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
-        @param pos: Event avec la position de la souris par rapport au Canvas(). 
-        """
-        if not self.__eventCanceled:
-            if self.__activeGanttObject is not None:
-                self.__endLinkingLine()
-            elif pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
-            else:
-                self.deselectEverything()
-        self.__highlightLinks(None)
-        self.__eventCanceled = False
-        self.can.focus_set()
-
-    def __onControlClicSurCanvas(self, pos=None):
-        """
-        Méthode exécutée quand on appuie sur Control-Clic.
-        @param pos: Event avec la position de la souris par rapport au Canvas(). 
-        """
-        if not self.__eventCanceled:
-            if pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
-        self.__eventCanceled = False
-        self.can.focus_set()
-
-    def __deleteSelected(self):
-        """
-        Permet de supprimer les objets qui sont actuellements sélectionnés.
-        Pour le moment ne gère que les liens, mais gèrera à terme
-        les autres schedulables aussi.
-        """
-        for item in reversed(self.listeDisplayableItem):
-            if isinstance(item, AbstractLink):
-                if item.isSelected():
-                    print(item)
-                    item.delete()
-                    self.listeDisplayableItem.remove(item)
-            elif isinstance(item, ObjetGantt):
-                obj = item.getSchedulable()
-                if obj.isSelected():
-                    # Environ...
-                    item.delete()
-                    self.listeDisplayableItem.remove(item)
-                    
-        self.updateAffichage()
-
-    def cancelEvent(self):
-        self.__eventCanceled = True
-
-    def __precalculer(self):
-        """
-        Permet de précalculer les Parts non fusionnées
-        des tâches affichées dans ce calendrier.
-        """
-        self.__parts = []
-        for displayable in self.listeDisplayableItem:
-            if isinstance(displayable, AbstractMultiFrameItem):
-                self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    #def __getBtnChangeJour(self):
+        #return self.getParametreAffichage().getBoutonsChangementJours()
 
     #def __trouverItems(self, pos):
         #"""
@@ -289,24 +108,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         #"""
         #return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
 
-    #def __getBtnChangeJour(self):
-        #return self.getParametreAffichage().getBoutonsChangementJours()
-
-    def getParametreAffichage(self):
-        """
-        Getter de ParametreAffichage.
-        @return ParametreAffichage.
-        """
-        return self.master.master.getParametreAffichage() # Skip le Notebook
-
-    def getNbTacheJour(self, jour):
-        """
-        Permet d'obtenir le nombre de de AbstractItemContent à mettre sur un jour donné.
-        @param jour: le jour dont on veut savoir le nombre de parts.
-        @return le nombre de part sur le jour donné.
-        """
-        return len(list(self.getPartsOfDay(jour)))
-    
     def getNbLigneTotal(self):
         """
         Permet de savoir le nombre de ligne totale sur l'ensemble des jours affichés.
@@ -317,64 +118,21 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for jour in rangeDate(self.getJourDebut(), self.getJourFin()):
             nbLigne = max(nbLigne, self.getNbTacheJour(jour))
         return nbLigne
-    
-    def getYScrolling(self):
-        """
-        Permet de savoir de combien le Canvas est scrollé.
-        @return un int correspondant au nombre de pixels scrollées dans le canvas via la scrollbar.
-        """
-        return int(round(self.can.yview()[0]*int(self.can.cget("scrollregion").split(" ")[3])))-1
-    
-    def getScrolledPosition(self, pos):
-        """
-        Permet d'obtenir la position de manipulation des données via programme à partir d'une position reçue via un event.
-        @param pos: Point() (ou Event() car il a les bons attributs aussi) correspondant à la
-        position reçue via événement ou qu'on veut scroller.
-        @return un Point() avec la position corrigée selon le scrolling du Canvas(), utilisable donc via le programme sans soucis.
-        """
-        return Point(pos.x, pos.y + self.getYScrolling())
-    
-    def getScrollableHeight(self):
-        """
-        Renvoie la partie visible du canvas en comptant tout ce qui peut être scrollé,
-        mais si la partie scrollable est plus petite que la partie visible, renvoie quand même
-        la partie visible.
-        @return le plus grand entre la partie scrollable et la hauteur du Canvas
-        """
-        return max(self.can.winfo_height(), int(self.can.cget("scrollregion").split(" ")[3]))
 
-    def updateAffichage(self, force = False):
+    def getNbTacheJour(self, jour):
         """
-        Mise à jour graphique.
+        Permet d'obtenir le nombre de de AbstractItemContent à mettre sur un jour donné.
+        @param jour: le jour dont on veut savoir le nombre de parts.
+        @return le nombre de part sur le jour donné.
         """
-        # Sécurité :
-        if self.can.winfo_width() != 0:
-            # On efface TOUT :
-            self.can.delete(ALL)
+        return len(list(self.getPartsOfDay(jour)))
 
-            # On réaffiche touououououout :
-            self.__precalculer()
-            self.__afficherLesJours()
-            self.__afficherLesTaches(force)
-            self.__ordonnerAffichage()
-
-            # On update la zone scrollable :
-            w = self.can.winfo_width()
-            h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
-            self.can.config(scrollregion = (0, 0, w, h))
-
-    def updateColor(self):
+    def getParametreAffichage(self):
         """
-        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
+        Getter de ParametreAffichage.
+        @return ParametreAffichage.
         """
-        for displayable in self.listeDisplayableItem:
-            displayable.updateColor(self.can)
-        
-        # Mise à jour des rectangles qui font la couleur de sélection des labels des jours.
-        for jour in self.__rectangleSelection:
-            # Est-ce que le jour est sélectionné ?
-            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
-            self.can.itemconfig(self.__rectangleSelection[jour], fill="#91C9F7" if jourSelectionne else "light grey")
+        return self.master.master.getParametreAffichage() # Skip le Notebook
 
     def getPartPosition(self, part):
         """
@@ -412,15 +170,262 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         return (part for part in self.__parts if part.getJour() == day)
 
-    def onIntervertir(self):
+    def getScrolledPosition(self, pos):
         """
-        Méthode appelée lorsqu'on interverti 2 jours.
-        S'occupe de rétablir les liens dans le bon sens.
-        @deprecated: TODO : Il faut revoir cette méthode ou alors en/la changer.
+        Permet d'obtenir la position de manipulation des données via programme à partir d'une position reçue via un event.
+        @param pos: Point() (ou Event() car il a les bons attributs aussi) correspondant à la
+        position reçue via événement ou qu'on veut scroller.
+        @return un Point() avec la position corrigée selon le scrolling du Canvas(), utilisable donc via le programme sans soucis.
         """
-        for lien in self.listeDisplayableItem:
-            if isinstance(lien, DependanceLink) and lien.getPartA().getSchedulable().getDebut() > lien.getPartB().getSchedulable().getDebut():
-                lien.inverserLaDependances()
+        return Point(pos.x, pos.y + self.getYScrolling())
+
+    def getScrollableHeight(self):
+        """
+        Renvoie la partie visible du canvas en comptant tout ce qui peut être scrollé,
+        mais si la partie scrollable est plus petite que la partie visible, renvoie quand même
+        la partie visible.
+        @return le plus grand entre la partie scrollable et la hauteur du Canvas
+        """
+        return max(self.can.winfo_height(), int(self.can.cget("scrollregion").split(" ")[3]))
+
+    def getYScrolling(self):
+        """
+        Permet de savoir de combien le Canvas est scrollé.
+        @return un int correspondant au nombre de pixels scrollées dans le canvas via la scrollbar.
+        """
+        return int(round(self.can.yview()[0]*int(self.can.cget("scrollregion").split(" ")[3])))-1
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def __afficherLesJours(self):
+        """
+        Permet d'afficher les noms des jours en haut de l'affichage, en fonction du début et de al fin de l'affichage.
+        """
+        # Largeur :
+        if self.getNbJour() == 0:
+            return
+        self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
+
+        # création de bandeau pour les jours
+        #self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
+        self.__rectangleSelection = {}
+
+        # Pour chaques jours :
+        for jour in range(self.getNbJour()):
+
+            # Position X :
+            x = int(jour * w)
+
+            # Est-ce que le jour est sélectionné ?
+            leJour = self.getJourDebut()+datetime.timedelta(days=jour)
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
+
+            # Fond coloré si c'est sélectionné :
+            self.__rectangleSelection[leJour] = self.can.create_rectangle(x, 0, x+w, AffichageGantt.TAILLE_BANDEAU_JOUR, width=0, fill="#91C9F7" if jourSelectionne else "light grey")
+
+            # Séparateurs :
+            if jour !=0:
+                self.can.create_line(x, 0, x, self.getScrollableHeight())
+
+            # Texte des jours :
+            self.can.create_text(x + w/2, AffichageGantt.TAILLE_BANDEAU_JOUR//2,
+                                 width = w,
+                                 text=JOUR[(jour+self.getJourDebut().weekday())%7])
+
+    def __afficherLesTaches(self, force = False):
+        """
+        Permet d'afficher les tâches et autres schedulables et les liens.
+        @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
+        """
+        # Va changer :
+        #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
+
+        for displayable in self.listeDisplayableItem:
+            displayable.redraw(self.can, force)
+
+    def __deleteSelected(self):
+        """
+        Permet de supprimer les objets qui sont actuellements sélectionnés.
+        Pour le moment ne gère que les liens, mais gèrera à terme
+        les autres schedulables aussi.
+        """
+        for item in reversed(self.listeDisplayableItem):
+            if isinstance(item, AbstractLink):
+                if item.isSelected():
+                    print(item)
+                    item.delete()
+                    self.listeDisplayableItem.remove(item)
+            elif isinstance(item, ObjetGantt):
+                obj = item.getSchedulable()
+                if obj.isSelected():
+                    # Environ...
+                    item.delete()
+                    self.listeDisplayableItem.remove(item)
+
+        self.updateAffichage()
+
+    def __endLinkingLine(self):
+        try:
+            self.can.delete(self.__id_LinkingLine)
+        except:
+            pass
+        self.__id_LinkingLine = None
+        self.__x1_LinkingLine = None
+        self.__y1_LinkingLine = None
+        self.__mode_LinkingLine = None
+        self.__activeGanttObject = None
+
+    def __highlightLinks(self, mode):
+        for l in self.listeDisplayableItem:
+            if isinstance(l, DependanceLink):
+                if mode == "+" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
+                                 or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
+                    l.highlight("#FFAF00")
+                elif mode == "-" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
+                                   or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
+                    l.highlight("#FF3F3F")
+                else:
+                    l.highlight(None)
+        self.updateColor()
+        self.__ordonnerAffichage()
+
+    def __ordonnerAffichage(self):
+        """
+        Cette méthode gère l'ordre des plans d'affichage.
+        """
+
+        # Ordre d'affichage
+        self.can.tag_raise("line")
+        self.can.tag_raise("highlight")
+        self.can.tag_raise("plus")
+
+    def __onClicSurCanvas(self, pos=None):
+        """
+        Méthode exécutée quand on appuie sur échappe ou qu'on appuie
+        dans le vide pour annuler le lien de la ligne verte. Sinon pour désélectionner les tâches.
+        @param pos: Event avec la position de la souris par rapport au Canvas().
+        """
+        if not self.__eventCanceled:
+            if self.__activeGanttObject is not None:
+                self.__endLinkingLine()
+            elif pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
+            else:
+                self.deselectEverything()
+        self.__highlightLinks(None)
+        self.__eventCanceled = False
+        self.can.focus_set()
+
+    def __onControlClicSurCanvas(self, pos=None):
+        """
+        Méthode exécutée quand on appuie sur Control-Clic.
+        @param pos: Event avec la position de la souris par rapport au Canvas().
+        """
+        if not self.__eventCanceled:
+            if pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
+        self.__eventCanceled = False
+        self.can.focus_set()
+
+    def __precalculer(self):
+        """
+        Permet de précalculer les Parts non fusionnées
+        des tâches affichées dans ce calendrier.
+        """
+        self.__parts = []
+        for displayable in self.listeDisplayableItem:
+            if isinstance(displayable, AbstractMultiFrameItem):
+                self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
+
+    def __updateLinkingLine(self, event):
+        """
+        Permet de mettre à jour la ligne verte.
+        Appelée quand la souris bouge sur le Canvas() contenu dans cet objet.
+        @param event: informations sur l'événement contenant la position de la souris.
+        """
+        if self.__id_LinkingLine is not None:
+            pos = self.getScrolledPosition(event)
+            self.__x1_LinkingLine = pos.x
+            self.__y1_LinkingLine = pos.y
+            self.can.coords(self.__id_LinkingLine,
+                            pos.x, pos.y,
+                            self.__activeGanttObject.getXDebutLinkingLine(), self.__activeGanttObject.getYDebutLinkingLine())
+
+    def beginLinkingLine(self, objGantt, mode="+"):
+        """
+        Permet de commencer une ligne verte pour un lien depuis un objetGantt.
+        @param objGantt: l'objetGantt depuis lequel commence le lien.
+        """
+        self.__onClicSurCanvas()
+        self.__activeGanttObject = objGantt
+        self.__highlightLinks(mode)
+        self.__x1_LinkingLine = self.__activeGanttObject.getXDebutLinkingLine()
+        self.__y1_LinkingLine = self.__activeGanttObject.getYDebutLinkingLine()
+        self.__mode_LinkingLine = mode
+        self.__id_LinkingLine = self.can.create_line(self.__x1_LinkingLine,
+                                                     self.__y1_LinkingLine,
+                                                     self.__x1_LinkingLine,
+                                                     self.__y1_LinkingLine,
+                                                     fill="#00CF00" if mode == "+" else "#CF0000",
+                                                     width = 2)
+
+    def cancelEvent(self):
+        self.__eventCanceled = True
+
+    def updateAffichage(self, force = False):
+        """
+        Mise à jour graphique.
+        """
+        # Sécurité :
+        if self.can.winfo_width() != 0:
+            # On efface TOUT :
+            self.can.delete(ALL)
+
+            # On réaffiche touououououout :
+            self.__precalculer()
+            self.__afficherLesJours()
+            self.__afficherLesTaches(force)
+            self.__ordonnerAffichage()
+
+            # On update la zone scrollable :
+            w = self.can.winfo_width()
+            h = self.getNbLigneTotal() * AffichageGantt.TAILLE_LIGNE + AffichageGantt.TAILLE_BANDEAU_JOUR
+            self.can.config(scrollregion = (0, 0, w, h))
+
+    def updateColor(self):
+        """
+        Permet de mettre à jour la couleur de tout les IDisplayableItem()s.
+        """
+        for displayable in self.listeDisplayableItem:
+            displayable.updateColor(self.can)
+
+        # Mise à jour des rectangles qui font la couleur de sélection des labels des jours.
+        for jour in self.__rectangleSelection:
+            # Est-ce que le jour est sélectionné ?
+            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
+            self.can.itemconfig(self.__rectangleSelection[jour], fill="#91C9F7" if jourSelectionne else "light grey")
+
+    ""
+    ######################
+    # Méthodes liées aux #
+    #    schedulables    #
+    ######################
+    ""
+    def addSchedulable(self, schedulable, region = None):
+        """
+        Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
+        @deprecated: Va être renommé en addSchedulable().
+        """
+        #if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
+            #return
+
+        self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
+
+        self.updateAffichage()
+        return schedulable # Inutile # To clear
 
     def identify_region(self, x, y):
         """
@@ -442,12 +447,12 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Position :
         pos = Point(x, y)
         pos = self.getScrolledPosition(pos)
-        
+
         # Jour :
         indiceJour = pos.x//self.tailleColonne;
         decalageJour = datetime.timedelta(days = indiceJour)
         jour = self.getJourDebut() + decalageJour
-        
+
         # Heures :
         y = pos.y - AffichageGantt.TAILLE_BANDEAU_JOUR
         if y < 0:
@@ -466,22 +471,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
                 (datetime.datetime.combine(jour, self.getHeureFin  ())
                 -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
-        
+
         date = datetime.datetime.combine(jour, heure)
         return date
-
-    def addSchedulable(self, schedulable, region = None):
-        """
-        Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
-        @deprecated: Va être renommé en addSchedulable().
-        """
-        #if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
-            #return
-
-        self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
-
-        self.updateAffichage()
-        return schedulable # Inutile
 
     def removeSchedulable(self, obj):
         """
@@ -503,60 +495,89 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         self.updateAffichage(True)
 
-    def __afficherLesJours(self):
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def clicSurObjet(self, objGantt):
         """
-        Permet d'afficher les noms des jours en haut de l'affichage, en fonction du début et de al fin de l'affichage.
+        Méthode à exécuter quand on clic sur l'un des objets de gantt.
+        Peut créer un lien si on était en mode d'ajout de liens etc.
+        @param objGantt: l'objet sur lequel on a cliqué.
+        @override clicSurObjet(objet) in AbstractDisplayedCalendar()
         """
-        # Largeur :
-        if self.getNbJour() == 0:
-            return
-        self.tailleColonne = w = self.can.winfo_width()/self.getNbJour()
-        
-        # création de bandeau pour les jours
-        #self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
-        self.__rectangleSelection = {}
+        # Si on est en mode ajout ou suppression de lien :
+        if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
 
-        # Pour chaques jours :
-        for jour in range(self.getNbJour()):
-            
-            # Position X :
-            x = int(jour * w)
-            
-            # Est-ce que le jour est sélectionné ?
-            leJour = self.getJourDebut()+datetime.timedelta(days=jour)
-            jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
+            # Pour le mode d'ajout :
+            if self.__mode_LinkingLine == "+":
+                # Si le lien est accepté :
+                if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
 
-            # Fond coloré si c'est sélectionné :
-            self.__rectangleSelection[leJour] = self.can.create_rectangle(x, 0, x+w, AffichageGantt.TAILLE_BANDEAU_JOUR, width=0, fill="#91C9F7" if jourSelectionne else "light grey")
+                    # On inverse le lien si il est à l'envers.
+                    if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
+                        self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
-            # Séparateurs :
-            if jour !=0:
-                self.can.create_line(x, 0, x, self.getScrollableHeight())
-            
-            # Texte des jours :
-            self.can.create_text(x + w/2, AffichageGantt.TAILLE_BANDEAU_JOUR//2,
-                                 width = w,
-                                 text=JOUR[(jour+self.getJourDebut().weekday())%7])
+                    # On crée le lien et met donc à jour l'affichage.
+                    self.listeDisplayableItem.append(
+                        DependanceLink(
+                            self,
+                            self.getVisiblePart(self.__activeGanttObject.getLastPart()),
+                            self.getVisiblePart(objGantt.getFirstPart())))
+                    self.__highlightLinks(None)
+                    self.__endLinkingLine()
+                    self.updateAffichage()
 
-    def __afficherLesTaches(self, force = False):
+            # Pour le mode de suppression de liens :
+            elif self.__mode_LinkingLine == "-":
+                # Si les liens sont normalement possibles :
+                if self.__activeGanttObject.getSchedulable().acceptLinkTo(objGantt.getSchedulable()):
+
+                    print("Suppression du lien entre %s et %s"%(self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable()))
+
+                    # Il faut trouver le lien :
+                    for lien in reversed(self.listeDisplayableItem):
+                        if isinstance(lien, DependanceLink):
+                            if (lien.getPartA().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())
+                            and lien.getPartB().getSchedulable() in (self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable())):
+                                self.listeDisplayableItem.remove(lien)
+                                break
+
+                    # Si le lien existe dans un premier sens :
+                    if self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependances():
+                        objGantt.getSchedulable().removeDependance(self.__activeGanttObject.getSchedulable())
+                    # Dans le deuxième sens :
+                    elif self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependantes():
+                        self.__activeGanttObject.getSchedulable().removeDependance(objGantt.getSchedulable())
+
+                    # On met à jour l'affichage :
+                    self.__highlightLinks(None)
+                    self.__endLinkingLine()
+                    self.updateAffichage()
+
+        # Sinon on désélectionne tout les liens et les tâches,
+        # pour ne sélectionner que la tâche sur laquelle on a cliqué.
+        elif self.__activeGanttObject is None:
+            self.deselectEverything()
+            objGantt.getSchedulable().setSelected(True)
+            self.getDonneeCalendrier().updateColor()
+
+    def deselectEverything(self):
+        super().deselectEverything()
+        for item in self.listeDisplayableItem:
+            if isinstance(item, DependanceLink):
+                item.setSelected(False)
+                item.updateColor(self.can)
+
+    def onIntervertir(self):
         """
-        Permet d'afficher les tâches et autres schedulables et les liens.
-        @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
+        Méthode appelée lorsqu'on interverti 2 jours.
+        S'occupe de rétablir les liens dans le bon sens.
+        @deprecated: TODO : Il faut revoir cette méthode ou alors en/la changer.
         """
-        # Va changer :
-        #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
-
-        for displayable in self.listeDisplayableItem:
-            displayable.redraw(self.can, force)
-
-    def __ordonnerAffichage(self):
-        """
-        Cette méthode gère l'ordre des plans d'affichage.
-        """
-
-        # Ordre d'affichage
-        self.can.tag_raise("line")
-        self.can.tag_raise("highlight")
-        self.can.tag_raise("plus")
+        for lien in self.listeDisplayableItem:
+            if isinstance(lien, DependanceLink) and lien.getPartA().getSchedulable().getDebut() > lien.getPartB().getSchedulable().getDebut():
+                lien.inverserLaDependances()
 
 from .ObjetGantt import *

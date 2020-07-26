@@ -46,7 +46,12 @@ class DatetimeItemPart:
         @return hash(self.__schedulable)
         """
         return hash(self.__schedulable)
-    
+
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
     def getDebut(self):
         """
         Getter pour le début de la part.

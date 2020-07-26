@@ -40,6 +40,11 @@ class CalendarZone(Frame):
         self.zoneDynamicCalendarFrame = ZoneAffichage(self) # frame avec la zone d'affichage des paramètre et la zone avec les données
         self.zoneDynamicCalendarFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
 
+    "" # Pour le repli de code je rappelle
+    #############
+    # Getters : #
+    #############
+    ""
     def getApplication(self):
         """
         Getter pour l'application.
@@ -47,6 +52,70 @@ class CalendarZone(Frame):
         """
         return self.master
 
+    def getBarreOutilActive(self):
+        """
+        Getter pour la barre d'outil des périodes active.
+        @return la barre d'outil des périodes active.
+        """
+        if self.__isBarrePeriode:
+            return self.outilBarPeriode
+        else:
+            return self.outilBar
+
+    def getDonneeCalendrier(self):
+        """
+        Getter pour le DonneeCalendrier.
+        @return le DonneeCalendrier.
+        """
+        return self.getZoneAffichage().getDonneeCalendrier()
+
+    def getFirstAndLast(self):
+        """
+        Getter parmi les tâches sélectionnés
+        Permet de déterminer la tache qui fini le plus tôt et la tache qui commence le plus tard
+        @return first : (Task) tache qui fini le plus tôt
+        @return last  : (Task) tache qui commence le plus tard
+        """
+
+        # Manière la plus simple avec min() et max() comme ceci, le critère se faisant suivant la lambda :
+        first = min(self.getDonneeCalendrier().getSelectedSchedulable(), key=lambda t: t.getFin())
+        last  = max(self.getDonneeCalendrier().getSelectedSchedulable(), key=lambda t: t.getDebut())
+
+        return first, last
+
+    def getPanneauActif(self):
+        """
+        Getter pour le panneau actif dans DonneeCalendrier.
+        @return le panneau actif dans DonneeCalendrier.
+        """
+        return self.getZoneAffichage().getPanneauActif()
+
+    def getParametreAffichage(self):
+        """
+        Getter pour les ParametreAffichage.
+        @return le ParametreAffichage.
+        """
+        return self.getZoneAffichage().getParametreAffichage()
+
+    def getPeriodeActive(self):
+        """
+        Getter de la periode active.
+        @return la période active.
+        """
+        return self.getDonneeCalendrier().getPeriodeActive()
+
+    def getZoneAffichage(self):
+        """
+        Getter pour la ZoneAffichage.
+        @return la ZoneAffichage.
+        """
+        return self.zoneDynamicCalendarFrame
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def setBarreOutilPeriode(self, value):
         """
         Permet de switcher entre la barre d'outil normale
@@ -61,15 +130,16 @@ class CalendarZone(Frame):
             self.outilBarPeriode.pack_forget()
             self.outilBar.pack(side=TOP, fill=X, expand=NO)
 
-    def getBarreOutilActive(self):
+    ""
+    ####################################################
+    # Pour la barre d'outil des calendries standards : #
+    ####################################################
+    ""
+    def afficherMasquerJour(self):
         """
-        Getter pour la barre d'outil des périodes active.
-        @return la barre d'outil des périodes active.
+        Permet d'afficher ou masquer un jour... TODO
         """
-        if self.__isBarrePeriode:
-            return self.outilBarPeriode
-        else:
-            return self.outilBar
+        pass # TODO
 
     def ajouterHeure(self):
         """
@@ -84,21 +154,6 @@ class CalendarZone(Frame):
         self.gestionHeure(nb, pos)
         self.getDonneeCalendrier().updateAffichage(force = True)
 
-    def gestionHeure(self, nombreHeure, position):
-        """
-        Fonction qui s'occupe de rajouter des heures visibles.
-        En dehors de la fonction ajouterHeure lié au bouton car on pourrait avoir à ajouter des heures autrement que par le bouton
-        @param nombreHeure : int relatif, permet d'ajouter ou retirer des heures
-        @param position    : string "Avant" / "Apres" pour savoir ou appliquer les changements
-        """
-        if nombreHeure is not None and position is not None:
-            if   position == "Avant":
-                timeHeure = datetime.time(self.getDonneeCalendrier().getHeureDebut().hour - nombreHeure)
-                self.getDonneeCalendrier().setHeureDebut(timeHeure)
-            elif position == "Apres":
-                timeHeure = datetime.time(self.getDonneeCalendrier().getHeureFin().hour + nombreHeure, self.getDonneeCalendrier().getHeureFin().minute)
-                self.getDonneeCalendrier().setHeureFin(timeHeure)
-
     def ajouterJour(self):
         """
         Méthode exécutée par la barre d'outil des périodes
@@ -108,127 +163,36 @@ class CalendarZone(Frame):
         nb, pos = askAjouterJour(totalJour)
         self.gestionJour(nb, pos)
 
-    def gestionJour(self, nombreDeJour, position):
+    def avancementMannuel(self):
         """
-        Fonction qui s'occupe d'ajouter ou de supprimer des jours
-        En dehors de la fonction ajouterJour lié au bouton car on pourrait avoir à ajouter des jours autrement que par le bouton
-        @param nombreDeJour : int relatif, permet d'ajouter ou retirer des jours
-        @param position     : string "Avant" / "Apres" pour savoir ou appliquer les changements
+        Permet de valider les tâches sélectionnées.
         """
-        if nombreDeJour is not None and position is not None:
-            periode = self.getPeriodeActive()
-            if   position == "Avant":
-                self.getDonneeCalendrier().setPeriodeActiveDebut(periode.getDebut() - datetime.timedelta(days=nombreDeJour))
-            elif position == "Apres":
-                self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
+        for tache in self.getPeriodeActive().getListSchedulables():#.getSchedulables():
+            if tache.isSelected():
+                tache.setDone(True)
+        self.getApplication().getTaskEditor().redessiner()
 
-            # Mise à jour du Combobox
-            self.getParametreAffichage().updateCombobox()
-
-
-
-    def selectionnerJour(self):
+    def avancementNormal(self):
         """
-        Méthode pour sélectionner les jours correspondants aux tâches sélectionnées.
+        Valide TOUTES les tâches qui sont avant maintenant.
         """
-        self.getDonneeCalendrier().deselectJours()
-        jours = set()
-        for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
-            for jour in rangeDate(schedulable.getDebut().date(), schedulable.getFin().date()):
-                jours.add(jour)
-        for jour in jours:
-            self.getDonneeCalendrier().selectJour(jour)
+        now = datetime.datetime.now()
+        for schedulable in self.getDonneeCalendrier().listeTask:
+            if schedulable.getFin() <= now:
+                schedulable.setDone(True)
+            schedulable.updateStatut()
+        self.getApplication().getTaskEditor().redessiner()
 
-    def afficherMasquerJour(self):
+    def avancementJourFini(self):
         """
-        Permet d'afficher ou masquer un jour... TODO
+        Valide toutes les tâches qui sont terminées aujourd'hui.
         """
-        pass # TODO
-
-    def deplacerIntervertir(self):
-        """
-        Permet d'intervertir 2 jours exactement.
-        Ce sont ceux sélectionnés par l'utilisateur.
-        """
-        self.getDonneeCalendrier().intervertir()
-
-    def decalerJour(self):
-        """
-        Permet de décaler les tâches sélectionnées par l'utilisateur,
-        d'un certain nombre de jours, suivant ce que l'utilisateur souhaite.
-        Un message lui sera demandé si jamais cela dépasse de la période.
-        """
-        # Si la liste est vide on évite la question
-        if len(list(self.getDonneeCalendrier().getSelectedSchedulable())) == 0:
-            return
-        
-        # On détermine le nombre de jour min et max
-        first, last = self.getFirstAndLast()
-        
-        debut = self.getPeriodeActive().getDebut() # Date de début
-        fin   = self.getPeriodeActive().getFin()   # Date de fin
-        
-
-        jourRetireBloque = (first.getFin().date() - debut).days
-        jourAjoutBloque = (fin - last.getDebut().date()).days
-        nb, pos, param = askDecalJour(debut, fin, jourRetireBloque, jourAjoutBloque)
-
-        if nb is None or pos is None or param is None or nb == 0:
-            return
-
-        # Ajustement des jours
-        horsChamp = False
-
-        for tache in self.getDonneeCalendrier().getSelectedSchedulable():
-            if isinstance(tache, Task): # TODO avec groupe.
-                # Si tout va bien
-                if  tache.getDebut().date() == tache.getFin().date()\
-                and debut <= (tache.getDebut()+datetime.timedelta(days=nb)).date()\
-                and fin   >= (tache.getFin()+datetime.timedelta(days=nb)).date():
-                    tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
-    
-                # Si on dépasse, on cadre selon les limites et mode bloquer
-                elif param == "bloquer":
-                    # Si on retire des heures au début
-                    if nb < 0:
-                        # On peut pas mettre un
-                        tache.setDebut(datetime.datetime.combine(debut, tache.getDebut().time()))
-                    # Si on ajoute pour mettre à la fin
-                    else:
-                        time = datetime.datetime.combine(fin, tache.getFin().time()) - tache.getDuree() # datetime - timedelta
-                        tache.setDebut(time)
-    
-                # Si on dépasse et que l'on ne bloque pas
-                elif param == "duree":
-                    tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
-                    horsChamp = True
-    
-                # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
-                if horsChamp:
-                    horsChamp = False
-                    choix, periode = askComplicationjour(tache, self.getApplication().getPeriodManager())
-                    # On annule les changements
-                    if choix is None:
-                        tache.setDebut(tache.getDebut()-datetime.timedelta(days=nb))
-                        continue
-                    # On agrandit la période
-                    elif choix == "agrandir":
-                        if tache.getDebut().date() < debut:
-                            addAvant = (debut - tache.getDebut().date()).days
-                            self.gestionJour(addAvant, "Avant")
-    
-                        else:
-                            addApres = (last.getFin().date()-fin).days
-                            self.gestionJour(addApres, "Apres")
-                    elif choix == "supprimer": # TODO supprimer la tache
-                        pass
-                    elif choix == "independante": # TODO rendre la tache indépendante
-                        pass
-                    elif choix =="changer":
-                        tache.setPeriode(periode)
-
-        self.getDonneeCalendrier().updateAffichage()
-
+        now = datetime.date.today()
+        for tache in self.getDonneeCalendrier().listeTask:
+            if tache.getFin().date() == now:
+                tache.setDone(True)
+            tache.updateStatut()
+        self.getApplication().getTaskEditor().redessiner()
 
     def decalerHeure(self): # TODO : gérer une tâche de plusieurs jours (peut-être)
         """
@@ -272,7 +236,7 @@ class CalendarZone(Frame):
                 and heureDebut <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
                 and heureFin   >= (tache.getFin()+datetime.timedelta(hours=nb)).time():
                     tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
-    
+
                 # Si on dépasse, on cadre selon les limites et mode bloquer
                 elif param == "bloquer":
                     # Si on retire des heures au début
@@ -284,12 +248,12 @@ class CalendarZone(Frame):
                         heureFin = heureFin # Time
                         time = datetime.datetime.combine(tache.getFin().date(), heureFin) - tache.getDuree() # datetime - timedelta
                         tache.setDebut(time)
-    
+
                 # Si on dépasse et que l'on ne bloque pas
                 elif param == "duree":
                     tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
                     horsChamp = True
-    
+
                 # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
                 if horsChamp and askChangerHeure():
                     timeAvant = heureDebut
@@ -301,22 +265,22 @@ class CalendarZone(Frame):
                         if tache.getDebut().time() < tache.getFin().time() and tache.getDebut().time() < timeAvant:
                             tacheAvant = tache
                             timeAvant  = tache.getDebut().time()
-    
+
                         # Si la fin est avant le début (hors date) ET qu'il est avant le referent
                         elif tache.getDebut().time() > tache.getFin().time() and tache.getFin().time() < timeAvant:
                             tacheAvant = tache
                             timeAvant  = tache.getFin().time()
-    
+
                         # Si la fin est après le début (hors date) ET qu'il est après le referent
                         if tache.getDebut().time() < tache.getFin().time() and tache.getFin().time() > timeApres:
                             tacheApres = tache
                             timeApres  = tache.getFin().time()
-    
+
                         # Si le début est après la fin (hors date) ET qu'il est après le referent
                         elif tache.getDebut().time() > tache.getFin().time() and tache.getDebut().time() > timeApres:
                             tacheApres = tache
                             timeApres  = tache.getDebut().time()
-    
+
                     # Maintenant on applique les changements
                     if tacheAvant is not None:
                         addAvant = heureDebut.hour - timeAvant.hour
@@ -326,6 +290,142 @@ class CalendarZone(Frame):
                         self.gestionHeure(addApres, "Apres")
 
         self.getDonneeCalendrier().updateAffichage()
+
+    def decalerJour(self):
+        """
+        Permet de décaler les tâches sélectionnées par l'utilisateur,
+        d'un certain nombre de jours, suivant ce que l'utilisateur souhaite.
+        Un message lui sera demandé si jamais cela dépasse de la période.
+        """
+        # Si la liste est vide on évite la question
+        if len(list(self.getDonneeCalendrier().getSelectedSchedulable())) == 0:
+            return
+
+        # On détermine le nombre de jour min et max
+        first, last = self.getFirstAndLast()
+
+        debut = self.getPeriodeActive().getDebut() # Date de début
+        fin   = self.getPeriodeActive().getFin()   # Date de fin
+
+
+        jourRetireBloque = (first.getFin().date() - debut).days
+        jourAjoutBloque = (fin - last.getDebut().date()).days
+        nb, pos, param = askDecalJour(debut, fin, jourRetireBloque, jourAjoutBloque)
+
+        if nb is None or pos is None or param is None or nb == 0:
+            return
+
+        # Ajustement des jours
+        horsChamp = False
+
+        for tache in self.getDonneeCalendrier().getSelectedSchedulable():
+            if isinstance(tache, Task): # TODO avec groupe.
+                # Si tout va bien
+                if  tache.getDebut().date() == tache.getFin().date()\
+                and debut <= (tache.getDebut()+datetime.timedelta(days=nb)).date()\
+                and fin   >= (tache.getFin()+datetime.timedelta(days=nb)).date():
+                    tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
+
+                # Si on dépasse, on cadre selon les limites et mode bloquer
+                elif param == "bloquer":
+                    # Si on retire des heures au début
+                    if nb < 0:
+                        # On peut pas mettre un
+                        tache.setDebut(datetime.datetime.combine(debut, tache.getDebut().time()))
+                    # Si on ajoute pour mettre à la fin
+                    else:
+                        time = datetime.datetime.combine(fin, tache.getFin().time()) - tache.getDuree() # datetime - timedelta
+                        tache.setDebut(time)
+
+                # Si on dépasse et que l'on ne bloque pas
+                elif param == "duree":
+                    tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
+                    horsChamp = True
+
+                # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
+                if horsChamp:
+                    horsChamp = False
+                    choix, periode = askComplicationjour(tache, self.getApplication().getPeriodManager())
+                    # On annule les changements
+                    if choix is None:
+                        tache.setDebut(tache.getDebut()-datetime.timedelta(days=nb))
+                        continue
+                    # On agrandit la période
+                    elif choix == "agrandir":
+                        if tache.getDebut().date() < debut:
+                            addAvant = (debut - tache.getDebut().date()).days
+                            self.gestionJour(addAvant, "Avant")
+
+                        else:
+                            addApres = (last.getFin().date()-fin).days
+                            self.gestionJour(addApres, "Apres")
+                    elif choix == "supprimer": # TODO supprimer la tache
+                        pass
+                    elif choix == "independante": # TODO rendre la tache indépendante
+                        pass
+                    elif choix =="changer":
+                        tache.setPeriode(periode)
+
+        self.getDonneeCalendrier().updateAffichage()
+
+    def degrouper(self):
+        """
+        Permet de dégrouper un groupe.
+        """
+        periode = self.getDonneeCalendrier().getPeriodeActive()
+        groupeManager = periode.getGroupeManager()
+        schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
+        # Petite vérification :
+        if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
+            return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
+
+        # Pour chaque groupes sélectionnés :
+        for groupe in set(schedulables):
+            # Ré-ajout des tâches qui étaient dans le groupe :
+            for t in groupe.getListTasks():
+                self.getApplication().getTaskEditor().ajouter(t)
+                #self.getDonneeCalendrier().addTask(t)
+            # Suppression du groupe :
+            groupeManager.supprimer(groupe)
+
+    def deplacerIntervertir(self):
+        """
+        Permet d'intervertir 2 jours exactement.
+        Ce sont ceux sélectionnés par l'utilisateur.
+        """
+        self.getDonneeCalendrier().intervertir()
+
+    def gestionHeure(self, nombreHeure, position):
+        """
+        Fonction qui s'occupe de rajouter des heures visibles.
+        En dehors de la fonction ajouterHeure lié au bouton car on pourrait avoir à ajouter des heures autrement que par le bouton
+        @param nombreHeure : int relatif, permet d'ajouter ou retirer des heures
+        @param position    : string "Avant" / "Apres" pour savoir ou appliquer les changements
+        """
+        if nombreHeure is not None and position is not None:
+            if   position == "Avant":
+                timeHeure = datetime.time(self.getDonneeCalendrier().getHeureDebut().hour - nombreHeure)
+                self.getDonneeCalendrier().setHeureDebut(timeHeure)
+            elif position == "Apres":
+                timeHeure = datetime.time(self.getDonneeCalendrier().getHeureFin().hour + nombreHeure, self.getDonneeCalendrier().getHeureFin().minute)
+                self.getDonneeCalendrier().setHeureFin(timeHeure)
+
+    def gestionJour(self, nombreDeJour, position):
+        """
+        Fonction qui s'occupe d'ajouter ou de supprimer des jours
+        En dehors de la fonction ajouterJour lié au bouton car on pourrait avoir à ajouter des jours autrement que par le bouton
+        @param nombreDeJour : int relatif, permet d'ajouter ou retirer des jours
+        @param position     : string "Avant" / "Apres" pour savoir ou appliquer les changements
+        """
+        if nombreDeJour is not None and position is not None:
+            periode = self.getPeriodeActive()
+            if   position == "Avant":
+                self.getDonneeCalendrier().setPeriodeActiveDebut(periode.getDebut() - datetime.timedelta(days=nombreDeJour))
+            elif position == "Apres":
+                self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
+
+            # Mise à jour du Combobox
+            self.getParametreAffichage().updateCombobox()
 
     def grouper(self):
         """
@@ -369,104 +469,23 @@ class CalendarZone(Frame):
         if ajout:
             groupeManager.ajouter(groupe)
 
-    def degrouper(self):
+    def selectionnerJour(self):
         """
-        Permet de dégrouper un groupe.
+        Méthode pour sélectionner les jours correspondants aux tâches sélectionnées.
         """
-        periode = self.getDonneeCalendrier().getPeriodeActive()
-        groupeManager = periode.getGroupeManager()
-        schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
-        # Petite vérification :
-        if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
-            return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
-        
-        # Pour chaque groupes sélectionnés :
-        for groupe in set(schedulables):
-            # Ré-ajout des tâches qui étaient dans le groupe :
-            for t in groupe.getListTasks():
-                self.getApplication().getTaskEditor().ajouter(t)
-                #self.getDonneeCalendrier().addTask(t)
-            # Suppression du groupe :
-            groupeManager.supprimer(groupe)
-
-    def avancementMannuel(self):
-        """
-        Permet de valider les tâches sélectionnées.
-        """
-        for tache in self.getPeriodeActive().getListSchedulables():#.getSchedulables():
-            if tache.isSelected():
-                tache.setDone(True)
-        self.getApplication().getTaskEditor().redessiner()
-
-    def avancementJourFini(self):
-        """
-        Valide toutes les tâches qui sont terminées aujourd'hui.
-        """
-        now = datetime.date.today()
-        for tache in self.getDonneeCalendrier().listeTask:
-            if tache.getFin().date() == now:
-                tache.setDone(True)
-            tache.updateStatut()
-        self.getApplication().getTaskEditor().redessiner()
-
-    def avancementNormal(self):
-        """
-        Valide TOUTES les tâches qui sont avant maintenant.
-        """
-        now = datetime.datetime.now()
-        for schedulable in self.getDonneeCalendrier().listeTask:
-            if schedulable.getFin() <= now:
-                schedulable.setDone(True)
-            schedulable.updateStatut()
-        self.getApplication().getTaskEditor().redessiner()
-
-    "" # Pour le repli de code je rappelle
-
-    ###################
-    # Autre Getters : #
-    ###################
-
-    def getPanneauActif(self):
-        """
-        Getter pour le panneau actif dans DonneeCalendrier.
-        @return le panneau actif dans DonneeCalendrier.
-        """
-        return self.getZoneAffichage().getPanneauActif()
-
-    def getDonneeCalendrier(self):
-        """
-        Getter pour le DonneeCalendrier.
-        @return le DonneeCalendrier.
-        """
-        return self.getZoneAffichage().getDonneeCalendrier()
-    
-    def getPeriodeActive(self):
-        """
-        Getter de la periode active.
-        @return la période active.
-        """
-        return self.getDonneeCalendrier().getPeriodeActive()
-    
-
-    def getParametreAffichage(self):
-        """
-        Getter pour les ParametreAffichage.
-        @return le ParametreAffichage.
-        """
-        return self.getZoneAffichage().getParametreAffichage()
-
-    def getZoneAffichage(self):
-        """
-        Getter pour la ZoneAffichage.
-        @return la ZoneAffichage.
-        """
-        return self.zoneDynamicCalendarFrame
+        self.getDonneeCalendrier().deselectJours()
+        jours = set()
+        for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
+            for jour in rangeDate(schedulable.getDebut().date(), schedulable.getFin().date()):
+                jours.add(jour)
+        for jour in jours:
+            self.getDonneeCalendrier().selectJour(jour)
 
     ""
     ########################################
     # Pour la barre d'outil des périodes : #
     ########################################
-
+    ""
     def voirTacheDansVue(self):
         """
         Permet de voir une tâche dans une autre vue, via demande
@@ -483,16 +502,4 @@ class CalendarZone(Frame):
         """
         pass
 
-    def getFirstAndLast(self):
-        """
-        Getter parmi les tâches sélectionnés
-        Permet de déterminer la tache qui fini le plus tôt et la tache qui commence le plus tard
-        @return first : (Task) tache qui fini le plus tôt
-        @return last  : (Task) tache qui commence le plus tard
-        """
 
-        # Manière la plus simple avec min() et max() comme ceci, le critère se faisant suivant la lambda :
-        first = min(self.getDonneeCalendrier().getSelectedSchedulable(), key=lambda t: t.getFin())
-        last  = max(self.getDonneeCalendrier().getSelectedSchedulable(), key=lambda t: t.getDebut())
-        
-        return first, last

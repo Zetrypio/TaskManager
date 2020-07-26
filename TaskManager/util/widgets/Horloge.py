@@ -25,6 +25,12 @@ class Horloge(Canvas):
         self.auto = True
         self.__after = None
         self.setnow()
+
+    "" # Marque pour le repli de code
+    #############
+    # Setters : #
+    #############
+    ""
     def set(self, heure, minute):
         """
         Permet de changer l'heure affichée sur l'horloge.
@@ -70,13 +76,7 @@ class Horloge(Canvas):
         y3 = 100 - 25*sin((self.minute-15)*2*pi/60)
         self.create_line(x3, y3, x2, y2, width=2)
         self.create_oval(97, 97, 103, 103, fill="white")
-    def setnow(self):
-        """
-        Permet de mettre l'heure actuelle sur l'horloge.
-        """
-        self.set(time.localtime().tm_hour, time.localtime().tm_min)
-        if self.auto:
-            self.__after = self.after(1000, self.setnow)
+
     def setAuto(self, auto):
         """
         Permet d'activer ou désactiver l'automatisation de l'horloge.
@@ -91,7 +91,15 @@ class Horloge(Canvas):
                 self.after_cancel(self.__after)
                 self.__after = None
 
+    def setnow(self):
+        """
+        Permet de mettre l'heure actuelle sur l'horloge.
+        """
+        self.set(time.localtime().tm_hour, time.localtime().tm_min)
+        if self.auto:
+            self.__after = self.after(1000, self.setnow)
 
+# Main
 def main():
     """
     Exemple d'utilisation de l'horloge.

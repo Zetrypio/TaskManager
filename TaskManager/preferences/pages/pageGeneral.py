@@ -29,6 +29,11 @@ class PageGeneral(AbstractPage):
         # Initialisation
         self._loadDataFile()
 
+    "" # Marque pour le repli de code
+    ###################################
+    # Méthodes liées à la fermeture : #
+    ###################################
+    ""
     def appliqueEffet(self, application):
         self._makeDictAndSave()
 

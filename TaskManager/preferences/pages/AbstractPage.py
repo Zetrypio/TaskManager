@@ -25,6 +25,24 @@ class AbstractPage(Frame):
         self.__sepTitre.pack(side = BOTTOM, fill = X)
         self.__lbTitre.pack(side = LEFT, fill = X)
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        return self.master.getApplication()
+
+    def getData(self):
+        return self.getApplication().getData()
+
+    def getIid(self):
+        return self.iid
+
+    def getIidParent(self):
+        """ Retourne la page parente du treeview """
+        return self.iidParent
+
     def getNom(self):
         return self.nom
 
@@ -32,19 +50,20 @@ class AbstractPage(Frame):
         """ Retourne le nom de la page principale du treeview """
         return self.getNom() if len(self.getIidParent().split("-")) <= 1 else self.getIidParent().split("-")[1]
 
-    def getIidParent(self):
-        """ Retourne la page parente du treeview """
-        return self.iidParent
-
-    def getIid(self):
-        return self.iid
-
-    def getProfilManager(self):
-        return self.getApplication().getProfilManager()
+    def getParametrageZone(self):
+        return self.master
 
     def getProfilFolder(self, profil = None):
         return self.getProfilManager().getProfilFolder(profil)
 
+    def getProfilManager(self):
+        return self.getApplication().getProfilManager()
+
+    ""
+    ##########################################################
+    # Méthodes liées à l'écriture et la lecture de données : #
+    ##########################################################
+    ""
     def readFile(self, nom, lireDef = True, lireCfg = True):
         """
         Fonction qui va lire les fichiers de préférences avec Data
@@ -71,6 +90,7 @@ class AbstractPage(Frame):
             value = self.getData().get(self.getNom(), donnee[1]) if condition else donnee[2]
             value = " " if value == "" and donnee[1] == "Lien" else value # Pour corriger le fait que le ConfigParser ne peut pas enregistrer des espaces...
             donnee[0].set(value)
+
     def _loadOneDataFromFile(self, key):
         """
         Fonction qui retourne la donnée voulu
@@ -82,6 +102,12 @@ class AbstractPage(Frame):
             self.getData().read(pathFile)
             return self.getData()[self.getNom()][key]
 
+    ""
+    #################################
+    # Méthodes liées à la fermeture #
+    #   de la fenetre préférences   #
+    #################################
+    ""
     def _makeDictAndSave(self):
         """
         Fonction qui fabrique un dictionnaire à partir des values de _listData
@@ -109,18 +135,14 @@ class AbstractPage(Frame):
     def appliqueEffet(self, application):
         raise NotImplementedError
 
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def ajouteToiTreeview(self, treeview):
         """
         Fonction qui permet l'affichage de la page dans le treeview
         @param treeview : <tkinter.treeview> le treeview sur lequel on doit s'afficher
         """
         treeview.insert(self.getIidParent(), END, text=self.getNom(), iid=self.getIid())
-
-    def getParametrageZone(self):
-        return self.master
-
-    def getApplication(self):
-        return self.master.getApplication()
-
-    def getData(self):
-        return self.getApplication().getData()

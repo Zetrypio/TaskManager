@@ -20,15 +20,19 @@ class PeriodManager:
         self.periodes = []
         self.taskEditor = None
         self.activePeriode = None
-    
-    def setTaskEditor(self, taskEditor):
+
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getActivePeriode(self):
         """
-        Setter pour le TaskEditor() car celui-ci n'existait
-        probablement pas lors de la création de cet objet.
-        @param taskEditor: le TaskEditor() à mettre.
+        Getter pour la période active.
+        @return la période active, ou None le cas échéant.
         """
-        self.taskEditor = taskEditor
-    
+        return self.activePeriode
+
     def getApplication(self):
         """
         Getter pour l'Application().
@@ -43,6 +47,45 @@ class PeriodManager:
         """
         return self.periodes[:]
 
+    def getPeriodesSelectionnees(self):
+        """
+        Permet d'obtenir la liste des périodes sélectionnées dans l'affichage de calendrier des périodes.
+        @return la liste des périodes sélectionnées dans l'affichage de calendrier des périodes.
+        """
+        return [periode for periode in self.periodes if periode.isSelected()]
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def setActivePeriode(self, periode):
+        """
+        Setter pour la période active.
+        @param periode: la période à mettre.
+        """
+        if not isinstance(periode, (Periode, None.__class__)):
+            raise ValueError("La période ne peut pas être %s")
+        self.activePeriode = periode
+        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
+        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
+
+        # Configuration du combobox en fonction de la durée de la période
+        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()
+    
+    def setTaskEditor(self, taskEditor):
+        """
+        Setter pour le TaskEditor() car celui-ci n'existait
+        probablement pas lors de la création de cet objet.
+        @param taskEditor: le TaskEditor() à mettre.
+        """
+        self.taskEditor = taskEditor
+
+    ""
+    ###############################################
+    # Méthodes liées à la gestion des périodes  : #
+    ###############################################
+    ""
     def ajouter(self, periode):
         """
         Permet d'ajouter une période au gestionnaire.
@@ -90,35 +133,11 @@ class PeriodManager:
             else:
                 self.setActivePeriode(None)
 
-    def setActivePeriode(self, periode):
-        """
-        Setter pour la période active.
-        @param periode: la période à mettre.
-        """
-        if not isinstance(periode, (Periode, None.__class__)):
-            raise ValueError("La période ne peut pas être %s")
-        self.activePeriode = periode
-        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
-        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
-
-        # Configuration du combobox en fonction de la durée de la période
-        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()
-    
-    def getActivePeriode(self):
-        """
-        Getter pour la période active.
-        @return la période active, ou None le cas échéant.
-        """
-        return self.activePeriode
-    
-    def getPeriodesSelectionnees(self):
-        """
-        Permet d'obtenir la liste des périodes sélectionnées dans l'affichage de calendrier des périodes.
-        @return la liste des périodes sélectionnées dans l'affichage de calendrier des périodes.
-        """
-        return [periode for periode in self.periodes if periode.isSelected()]
-
-    # Fonctions de la barre d'outil :
+    ""
+    ######################################################
+    # Méthodes liées aux fonctions de la barre d'outil : #
+    ######################################################
+    ""
     def deplacerPeriode(self):
         """
         Permet de déplacer la ou les périodes sélectionnées, via
@@ -150,20 +169,41 @@ class PeriodManager:
             showerror("Erreur de sélection", "Vous ne pouvez effectuer cette action qu'avec exactement une seule période sélectionnée.")
             return
         askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = True)
-        
-    def supprimerPeriodes(self):
+
+    def fusionnerPeriodes(self):
         """
-        Permet de supprimer les périodes sélectionnées.
-        Il doit y avoir au moins une période sélectionnée.
+        Permet de fusionner au moins deux périodes.
+        Si il y a un trou qui n'était pas couvert auparavant par l'ensemble des périodes sélectionnées,
+        il deviendra couvert par la nouvelle période créée.
+        Il doit y avoir au moins deux périodes sélectionnées.
         """
         periodes = self.getPeriodesSelectionnees()
-        if len(periodes) == 0:
-            return showerror("Erreur de sélection", "Vous devez avoir au moins une période sélectionnée pour effectuer cette action.")
-        for periode in reversed(periodes):
-            self.periodes.remove(periode)
-            self.app.getTaskEditor().supprimer(periode)
-        self.app.getDonneeCalendrier().updateAffichage()
-    
+        if len(periodes) < 2:
+            return showerror("Erreur de sélection", "Vous devez avoir au moins 2 périodes sélectionnées pour pouvoir effectuer cette action.")
+
+        # Fuuusioonnnnnn !!!!! :
+
+        # TODO : changer les périodes des tâches concernées.
+        nom = "Fusion de " + ", ".join(p.nom for p in periodes) + "."
+        debut = min(periodes, key=lambda p: p.getDebut()).getDebut()
+        fin   = max(periodes, key=lambda p: p.getFin()).getFin()
+        desc = ", ".join(p.desc for p in periodes)
+        color = periodes[0].getColor()
+
+        # Supprimer toutes les périodes sélectionnées :
+        self.supprimerPeriodes()
+
+        # et créer la nouvelle née :
+        self.ajouter(Periode(nom, debut, fin, desc, color))
+
+    def lierSchedulablePeriode(self, periode, schedulable):
+        """
+        Permet de lier un schedulable à une période pour que le schedulable soit maintenant dans la période demandée.
+        @param periode: la période dans laquelle mettre le schedulable demandée.
+        @param schedulable: le schedulable à rajouter à la période.
+        """
+        raise NotImplementedError # TODO
+
     def scinderPeriode(self):
         """
         Permet de scinder la période sélectionnée, via
@@ -187,36 +227,16 @@ class PeriodManager:
             newPeriode = Periode(self, periode.nom, dateScindage, prevFin, periode.desc, periode.getColor())
             # TODO : changer les périodes des tâches concernées.
             self.ajouter(newPeriode)
-    def fusionnerPeriodes(self):
+        
+    def supprimerPeriodes(self):
         """
-        Permet de fusionner au moins deux périodes.
-        Si il y a un trou qui n'était pas couvert auparavant par l'ensemble des périodes sélectionnées,
-        il deviendra couvert par la nouvelle période créée.
-        Il doit y avoir au moins deux périodes sélectionnées.
+        Permet de supprimer les périodes sélectionnées.
+        Il doit y avoir au moins une période sélectionnée.
         """
         periodes = self.getPeriodesSelectionnees()
-        if len(periodes) < 2:
-            return showerror("Erreur de sélection", "Vous devez avoir au moins 2 périodes sélectionnées pour pouvoir effectuer cette action.")
-
-        # Fuuusioonnnnnn !!!!! :
-       
-        # TODO : changer les périodes des tâches concernées.
-        nom = "Fusion de " + ", ".join(p.nom for p in periodes) + "."
-        debut = min(periodes, key=lambda p: p.getDebut()).getDebut()
-        fin   = max(periodes, key=lambda p: p.getFin()).getFin()
-        desc = ", ".join(p.desc for p in periodes)
-        color = periodes[0].getColor()
-        
-        # Supprimer toutes les périodes sélectionnées :
-        self.supprimerPeriodes()
-        
-        # et créer la nouvelle née :
-        self.ajouter(Periode(nom, debut, fin, desc, color))
-        
-    def lierSchedulablePeriode(self, periode, schedulable):
-        """
-        Permet de lier un schedulable à une période pour que le schedulable soit maintenant dans la période demandée.
-        @param periode: la période dans laquelle mettre le schedulable demandée.
-        @param schedulable: le schedulable à rajouter à la période.
-        """
-        raise NotImplementedError # TODO
+        if len(periodes) == 0:
+            return showerror("Erreur de sélection", "Vous devez avoir au moins une période sélectionnée pour effectuer cette action.")
+        for periode in reversed(periodes):
+            self.periodes.remove(periode)
+            self.app.getTaskEditor().supprimer(periode)
+        self.app.getDonneeCalendrier().updateAffichage()

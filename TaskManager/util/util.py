@@ -2,6 +2,10 @@
 import math
 import datetime
 
+def err(e):
+    """Return a nice string representation for error objects."""
+    return "%s : %s" % (e.__class__.__name__, e)
+
 def mymap(n, a, b, x, y): # Fonction map classique
     """
     Permet de mapper n entre a et b, vers entre x et y.
@@ -26,9 +30,7 @@ def posY(t, x1, y1, x2, y2):
     """
     return mymap(math.cos(mymap(t, x1, x2, 0, math.pi)), 1, -1, y1, y2)
 
-def err(e):
-    """Return a nice string representation for error objects."""
-    return "%s : %s" % (e.__class__.__name__, e)
+
 
 def ppcm(a, b):
     """Renvoie le plus petit commun multiple (ppcm) des 2 nombres a et b."""
@@ -53,13 +55,6 @@ def rangeDate(jourA, jourB, last = True):
             yield jourB
 
 ## Conversion datetime et str
-def dateToStr(d):
-    """
-    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
-    @param d : <datetime.date> celui qu'on doit tranformer
-    """
-    return "-".join([str(d.year), str(d.month), str(d.day)])
-
 def datetimeToStr(d):
     """
     Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
@@ -67,12 +62,12 @@ def datetimeToStr(d):
     """
     return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)])
 
-def timedeltaToStr(d):
+def dateToStr(d):
     """
-    Permet de tranformer un datetime en str selon le format suivant : DD-SS
-    @param d : <datetime.timedelta> celui qu'on doit tranformer
+    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
+    @param d : <datetime.date> celui qu'on doit tranformer
     """
-    return "-".join([str(d.days), str(d.seconds)])
+    return "-".join([str(d.year), str(d.month), str(d.day)])
 
 def strToDate(dt):
     """
@@ -100,3 +95,10 @@ def strToTimedelta(dt):
     """
     d, s = dt.split("-")
     return datetime.timedelta(days = int(d), seconds = int(s))
+
+def timedeltaToStr(d):
+    """
+    Permet de tranformer un datetime en str selon le format suivant : DD-SS
+    @param d : <datetime.timedelta> celui qu'on doit tranformer
+    """
+    return "-".join([str(d.days), str(d.seconds)])

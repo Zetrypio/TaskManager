@@ -13,19 +13,48 @@ class SelectionParametrage(Frame):
         self.tv = Treeview(self)
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tv.yview)
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        """
+        Getter pour l'application
+        @return l'application
+        """
+        return self.master.getApplication()
+
+    def getFenetrePreferences(self):
+        """
+        Getter pour la fenetre des préférences
+        @return FenetrePreferences
+        """
+        return self.getNavigationZone().getFenetrePreferences()
+
+    def getNavigationZone(self):
+        """
+        Getter pour le frame de la zone de navigation dans la fenetre des préférences
+        @return NavigationZone
+        """
+        return self.master
+
+    def getZoneParametrage(self):
+        """
+        Getter pour la zone de Paramétrage
+        @return ZoneParametrage
+        """
+        return self.zoneParam
+
+    ""
+    ################################
+    # Méthodes liées au Treeview : #
+    ################################
+    ""
     def onclick(self, e):
         # On récupère la cage qu'on a cliqué
         iidPageSelectionne = self.tv.focus()
         self.getFenetrePreferences().setPageActive(iidPageSelectionne)
-
-    def getNavigationZone(self):
-        return self.master
-
-    def getFenetrePreferences(self):
-        return self.getNavigationZone().getFenetrePreferences()
-
-    def getZoneParametrage(self):
-        return self.zoneParam
 
     def updateTreeview(self):
         # On efface tout
@@ -45,6 +74,3 @@ class SelectionParametrage(Frame):
         # Les lignes
         for page in self.getFenetrePreferences().getListePage():
             page.ajouteToiTreeview(self.tv)
-
-    def getApplication(self):
-        return self.master.getApplication()

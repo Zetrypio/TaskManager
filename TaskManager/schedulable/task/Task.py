@@ -67,6 +67,7 @@ class Task(AbstractSchedulableObject):
     # Méthode de l'interface ITaskEditorDisplayableObject #
     # implémentée par la superclasse de cette classe :    #
     #######################################################
+    ""
     def getHeader(self):
         """
         Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
@@ -139,6 +140,45 @@ class Task(AbstractSchedulableObject):
     # Définition des méthodes abstraites : #
     # de la superclasse.                   #
     ########################################
+    ""
+    def acceptLink(self):
+        """
+        Permet de savoir si l'objet peut être à l'origine d'un lien, sans se soucier
+        de la destination pour le moment encore inconnu.
+        @return True si l'objet est en capacité de faire des liens, False sinon.
+        """
+        return self._statut != "Inconnu" and self.getParent() is None
+
+    def acceptLinkTo(self, schedulable):
+        """
+        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peu importe le sens,
+        peu importe si le lien existe déjà.
+        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
+        """
+        return isinstance(schedulable, Task) and not self.intersectWith(schedulable)
+
+    def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la version affichable d'une tâche.
+        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
+        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie de la tâche à afficher.
+        """
+        # Ici, on s'en fiche de la part.
+        return DisplayableTask(frame, self, part)
+
+    def copy(self):
+        """
+        Permet d'obtenir une copie de la tâche
+        @return une copie de la tâche.
+        """
+        t = Task(self.getNom(), self.getPeriode(), self.getDescription(), self.getColor(),
+                 self.getDebut(), self.getDuree(), self.__rep, self.__nbrep, self.getParent())
+        # Doit-on copier les dépendances et le statut ?
+        t.__dependances = self.__dependances[:]
+        t.updateStatut()
+        # On retourne la copie :
+        return t
+
     def delete(self, app):
         """
         Permet de supprimer définitivement cette tâche.
@@ -156,61 +196,12 @@ class Task(AbstractSchedulableObject):
             app.getTaskEditor().redessiner()
             app.getPeriodManager().getActivePeriode().removeSchedulable(self)
 
-    def copy(self):
-        """
-        Permet d'obtenir une copie de la tâche
-        @return une copie de la tâche.
-        """
-        t = Task(self.getNom(), self.getPeriode(), self.getDescription(), self.getColor(),
-                 self.getDebut(), self.getDuree(), self.__rep, self.__nbrep, self.getParent())
-        # Doit-on copier les dépendances et le statut ?
-        t.__dependances = self.__dependances[:]
-        t.updateStatut()
-        # On retourne la copie :
-        return t
-
-    def updateStatut(self):
-        """
-        Permet de mettre à jour le statut de la tâche.
-        """
-        self._statut = "Inconnu" if self.getDebut() == None\
-                  else "Répétition" if self.__nbrep != 0\
-                  else "Fait" if self.__done\
-                  else "En retard" if self.getFin() < datetime.datetime.now()\
-                  else "En cours" if self.getDebut() < datetime.datetime.now()\
-                  else "À faire"
-
-    def createDisplayableInstance(self, frame, part):
-        """
-        Permet de créer une instance de la version affichable d'une tâche.
-        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
-        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie de la tâche à afficher.
-        """
-        # Ici, on s'en fiche de la part.
-        return DisplayableTask(frame, self, part)
-
-    def acceptLink(self):
-        """
-        Permet de savoir si l'objet peut être à l'origine d'un lien, sans se soucier
-        de la destination pour le moment encore inconnu.
-        @return True si l'objet est en capacité de faire des liens, False sinon.
-        """
-        return self._statut != "Inconnu" and self.getParent() is None
-
-    def acceptLinkTo(self, schedulable):
-        """
-        Permet de savoir si un lien est possible entre cet objet et l'objet reçu, peu importe le sens,
-        peu importe si le lien existe déjà.
-        @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
-        """
-        return isinstance(schedulable, Task) and not self.intersectWith(schedulable)
-
-    def getRawRepartition(self, displayedCalendar):
-        """
-        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-        """
-        return self.getRepartition(displayedCalendar)
+            def getRawRepartition(self, displayedCalendar):
+                """
+                @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+                @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+                """
+                return self.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
         """
@@ -239,20 +230,22 @@ class Task(AbstractSchedulableObject):
 
             yield DatetimeItemPart(date, heure1, heure2, self)
 
+    def updateStatut(self):
+        """
+        Permet de mettre à jour le statut de la tâche.
+        """
+        self._statut = "Inconnu" if self.getDebut() == None\
+                  else "Répétition" if self.__nbrep != 0\
+                  else "Fait" if self.__done\
+                  else "En retard" if self.getFin() < datetime.datetime.now()\
+                  else "En cours" if self.getDebut() < datetime.datetime.now()\
+                  else "À faire"
+
     ""
     ##############
     # Container: #
     ##############
-    def isContainer(self):
-        """
-        Permet de savoir si cette tâche est une tâche conteneur.
-        @return True si la tâche est une tâche conteneur, False sinon.
-        """
-        self.updateStatut()
-        if self._statut == "Inconnu" and not hasattr(self, "subtasks"):
-            self.subtasks = []
-        return self._statut == "Inconnu"
-
+    ""
     def addSubTask(self, task):
         """
         Permet d'ajouter une sous-tâche si cette tâche est une tâche conteneur.
@@ -271,6 +264,33 @@ class Task(AbstractSchedulableObject):
         self.subtasks.append(task)
         task.__parent = self    # Possible, au vu que ce sont des objets de même type.
 
+    def getParent(self):
+        """
+        Retourne la tâche conteneur qui contient cette tâche (si ce conteneur existe).
+        @return la tâche parente, ou None le cas échéant.
+        """
+        return self.__parent
+
+    def getSubTasks(self):
+        """
+        Permet d'obtenir les sous-tâches de cette tâche conteneur.
+        @return une copie de la liste des sous-tâches de cette tâche conteneur.
+        @raise RuntimeError: si cette tâche n'est pas une tâche conteneur.
+        """
+        if not self.isContainer():
+            raise RuntimeError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
+        return self.subtasks[:]
+
+    def isContainer(self):
+        """
+        Permet de savoir si cette tâche est une tâche conteneur.
+        @return True si la tâche est une tâche conteneur, False sinon.
+        """
+        self.updateStatut()
+        if self._statut == "Inconnu" and not hasattr(self, "subtasks"):
+            self.subtasks = []
+        return self._statut == "Inconnu"
+
     def removeSubTask(self, task):
         """
         Permet d'enlever une sous-tâche de cette tâche conteneur.
@@ -283,23 +303,6 @@ class Task(AbstractSchedulableObject):
         if task.__parent != self:
             raise RuntimeError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
         self.subtasks.remove(task)
-    
-    def getSubTasks(self):
-        """
-        Permet d'obtenir les sous-tâches de cette tâche conteneur.
-        @return une copie de la liste des sous-tâches de cette tâche conteneur.
-        @raise RuntimeError: si cette tâche n'est pas une tâche conteneur.
-        """
-        if not self.isContainer():
-            raise RuntimeError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
-        return self.subtasks[:]
-    
-    def getParent(self):
-        """
-        Retourne la tâche conteneur qui contient cette tâche (si ce conteneur existe).
-        @return la tâche parente, ou None le cas échéant.
-        """
-        return self.__parent
 
     ""
     #################
@@ -314,16 +317,6 @@ class Task(AbstractSchedulableObject):
         """
         self.__dependances.append(task)
         task.__dependantes.append(self)
-
-    def removeDependance(self, task):
-        """
-        Permet d'enlever une dépendance à cette tâche,
-        c'est-à-dire que notre tâche (self) dépendra de
-        cette nouvelle task.
-        @param task: la tâche dont celle-ci dépendait.
-        """
-        self.__dependances.remove(task)
-        task.__dependantes.remove(self)
 
     def getDependances(self):
         """
@@ -341,6 +334,16 @@ class Task(AbstractSchedulableObject):
         """
         return self.__dependantes[:]
 
+    def removeDependance(self, task):
+        """
+        Permet d'enlever une dépendance à cette tâche,
+        c'est-à-dire que notre tâche (self) dépendra de
+        cette nouvelle task.
+        @param task: la tâche dont celle-ci dépendait.
+        """
+        self.__dependances.remove(task)
+        task.__dependantes.remove(self)
+
     ""
     ###########################
     # Méthode "temporelles" : #
@@ -353,6 +356,21 @@ class Task(AbstractSchedulableObject):
         @return None si cette tâche n'a pas de début.
         """
         return self.__debut + datetime.timedelta() if self.__debut is not None else None # Faire une copie et vérifier les trucs
+
+    def getDuree(self):
+        """
+        Getter pour la Durée de la tâche.
+        @return un datetime.timedelta() correspondant à la durée de la tâche.
+        """
+        return self.__duree + datetime.timedelta() # Faire une copie
+
+    def getFin(self):
+        """
+        Getter pour la fin de la tâche.
+        @return un datetime.datetime() correspondant à la fin de la tâche si il existe.
+        @return None si la tâche n'as pas de début (en vrai c'est qu'elle n'as pas de fin).
+        """
+        return (self.__debut + self.__duree) if self.__debut is not None else None
 
     def setDebut(self, debut, change = "fin"):
         """
@@ -371,13 +389,6 @@ class Task(AbstractSchedulableObject):
         else:
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "fin" sont possibles.'%change)
 
-    def getDuree(self):
-        """
-        Getter pour la Durée de la tâche.
-        @return un datetime.timedelta() correspondant à la durée de la tâche.
-        """
-        return self.__duree + datetime.timedelta() # Faire une copie
-
     def setDuree(self, duree):
         """
         Setter de la duree de la tache
@@ -385,14 +396,6 @@ class Task(AbstractSchedulableObject):
         """
         self.__duree = duree
         self.setDebut(self.getDebut(), change = "fin")
-
-    def getFin(self):
-        """
-        Getter pour la fin de la tâche.
-        @return un datetime.datetime() correspondant à la fin de la tâche si il existe.
-        @return None si la tâche n'as pas de début (en vrai c'est qu'elle n'as pas de fin).
-        """
-        return (self.__debut + self.__duree) if self.__debut is not None else None
 
     def intersectWith(self, task):
         """
@@ -406,40 +409,7 @@ class Task(AbstractSchedulableObject):
     ####################
     # Autre méthodes : #
     ####################
-
-    def transformToDnd(self, taskEditor, rmenu):
-        """
-        Permet de transformer cette tâche en une tâche déplaçable,
-        c'est-à-dire une tâche conteneur. En vrai, ce sera une
-        nouvelle tâche, avec comme contenu cette tâche ici présente.
-        
-        @param taskEditor: Référence vers le TaskEditor pour pouvoir
-        faire les opérations.
-        @param rmenu: référence vers le RMenu de cet tâche en tant
-        qu'item du TaskEditor. Nécessaire pour l'opération.
-        """
-        # On supprime le RMenu pour le recréer après
-        # dans le TaskEditor via notre méthode getRMenuContent()
-        # car il va être différent.
-        rmenu.destroy()
-        del rmenu
-        
-        # On s'enlève du TaskEditor, mais on ne se supprime pas
-        # attention. On va juste se réajouter ailleurs...
-        taskEditor.supprimer(self)
-        
-        # On crée une tâche qui nous ressemble, mais dont le début
-        # n'est pas présent. Et pour cause : c'est ce qui fait que
-        # ça devient une tâche conteneur. On peut alors s'y ajouter.
-        newTask = self.copy()
-        newTask.__debut = None
-        newTask.updateStatut()
-        newTask.addSubTask(self)
-        
-        # Le fait de rajouter cette nouvelle tâche va nous rajouter
-        # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
-        taskEditor.ajouter(newTask)
-
+    ""
     #def getFilterStateWith(self, filter):
         #Si non autorisé par le filtre :
         #if ("name" in filter and self.nom.lower().count(filter["name"]) == 0)\
@@ -476,6 +446,44 @@ class Task(AbstractSchedulableObject):
         self.__done = value
         self.updateStatut()
 
+    def transformToDnd(self, taskEditor, rmenu):
+        """
+        Permet de transformer cette tâche en une tâche déplaçable,
+        c'est-à-dire une tâche conteneur. En vrai, ce sera une
+        nouvelle tâche, avec comme contenu cette tâche ici présente.
+        
+        @param taskEditor: Référence vers le TaskEditor pour pouvoir
+        faire les opérations.
+        @param rmenu: référence vers le RMenu de cet tâche en tant
+        qu'item du TaskEditor. Nécessaire pour l'opération.
+        """
+        # On supprime le RMenu pour le recréer après
+        # dans le TaskEditor via notre méthode getRMenuContent()
+        # car il va être différent.
+        rmenu.destroy()
+        del rmenu
+        
+        # On s'enlève du TaskEditor, mais on ne se supprime pas
+        # attention. On va juste se réajouter ailleurs...
+        taskEditor.supprimer(self)
+        
+        # On crée une tâche qui nous ressemble, mais dont le début
+        # n'est pas présent. Et pour cause : c'est ce qui fait que
+        # ça devient une tâche conteneur. On peut alors s'y ajouter.
+        newTask = self.copy()
+        newTask.__debut = None
+        newTask.updateStatut()
+        newTask.addSubTask(self)
+        
+        # Le fait de rajouter cette nouvelle tâche va nous rajouter
+        # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
+        taskEditor.ajouter(newTask)
+
+    ""
+    #######################################
+    # Méthodes liées à l'enregistrement : #
+    #######################################
+    ""
     def saveByDict(self):
         """
         Méthode qui sauvegarde les attributs présent (ici)

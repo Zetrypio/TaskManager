@@ -28,7 +28,12 @@ class ToolBar(Frame):
         self.lesBoutonsEnListes = [] # liste qui va contenir toutes les autres liste de bouton (pour un affichage cool) lesBoutonsEnListes[catégorie][bouton]
         self.lesFramesDesBoutons = [] # tout est dans le nom ... lesFramesDesBoutons[categorie][frame]
         self._ajouterCategoriesEtBoutons()
-        
+
+    ""
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def _ajouterCategoriesEtBoutons(self):
         """
         Méthode pour ajouter tout les boutons de la barre d'outil.
@@ -70,6 +75,30 @@ class ToolBar(Frame):
         self._creationBouton("Jour fini", self.master.avancementJourFini, getImage("Ressources/textures/par defaut/avancement_Jour.png"))
         self._creationBouton("Normal", self.master.avancementNormal, getImage("Ressources/textures/par defaut/avancement normal.png"))
 
+    def _creationBouton(self, texte, fonction = None, img = None, textVisible = False):
+        """
+        Permet de créer un bouton dans la dernière catégorie crée.
+        L'ordre de création est important, car il est répercuté sur l'affichage.
+        @param texte: Texte du bouton, quand textVisible = True ou que l'image manque.
+        Ce texte sera aussi utilisé pour l'infobulle. TODO : Mettre un message d'infobulle à part, custom ?
+        @param fonction = None: callback du bouton quand celui-ci est appuyé.
+        @param img = None: Image à mettre sur le bouton, ou None si celui-ci n'as pas d'image.
+        @param textVisible = False: True si on affiche toujours le texte, False sinon.
+        """
+        # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
+        if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2:
+            self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))
+            self.lesFramesDesBoutons[-1][-1].pack(side=TOP, expand=YES, fill=BOTH)
+
+        # Création et placement du bouton :
+        if textVisible:
+            b = Button(self.lesFramesDesBoutons[-1][-1], text=texte, compound=LEFT, command=fonction, image = img, width = 0)
+        else:
+            b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img, width = 0) # text=texte,
+        b.pack(side=LEFT, expand=YES, fill=BOTH, padx=2, pady=2)
+        self.lesBoutonsEnListes[-1].append(b)
+        ajouterInfoBulle(b, self.lesCategories[-1].cget("text")+" "+texte)
+
     def _creationCategorie(self, texte):
         """
         Permet de créer une catégorie.
@@ -84,27 +113,3 @@ class ToolBar(Frame):
         
         # Liste qui va contenir les futurs frames
         self.lesFramesDesBoutons.append([]) 
-
-    def _creationBouton(self, texte, fonction = None, img = None, textVisible = False):
-        """
-        Permet de créer un bouton dans la dernière catégorie crée.
-        L'ordre de création est important, car il est répercuté sur l'affichage.
-        @param texte: Texte du bouton, quand textVisible = True ou que l'image manque.
-        Ce texte sera aussi utilisé pour l'infobulle. TODO : Mettre un message d'infobulle à part, custom ?
-        @param fonction = None: callback du bouton quand celui-ci est appuyé.
-        @param img = None: Image à mettre sur le bouton, ou None si celui-ci n'as pas d'image.
-        @param textVisible = False: True si on affiche toujours le texte, False sinon. 
-        """
-        # si il n'y a plus de place dans les frames, on en fait une autre (et ça marche aussi s'il n'y en a pas encore) :
-        if len(self.lesFramesDesBoutons[-1]) == len(self.lesBoutonsEnListes[-1])/2: 
-            self.lesFramesDesBoutons[-1].append(Frame(self.lesCategories[-1]))
-            self.lesFramesDesBoutons[-1][-1].pack(side=TOP, expand=YES, fill=BOTH)            
-
-        # Création et placement du bouton :
-        if textVisible:
-            b = Button(self.lesFramesDesBoutons[-1][-1], text=texte, compound=LEFT, command=fonction, image = img, width = 0)
-        else:
-            b = Button(self.lesFramesDesBoutons[-1][-1], compound=LEFT, command=fonction, image = img, width = 0) # text=texte,
-        b.pack(side=LEFT, expand=YES, fill=BOTH, padx=2, pady=2)
-        self.lesBoutonsEnListes[-1].append(b)
-        ajouterInfoBulle(b, self.lesCategories[-1].cget("text")+" "+texte)

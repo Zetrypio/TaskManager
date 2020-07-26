@@ -44,8 +44,6 @@ style.map("Treeview",
           foreground=fixed_map("foreground"),
           background=fixed_map("background"))
 
-
-
 class Application(Frame):
     """
     Application Globale.
@@ -95,7 +93,65 @@ class Application(Frame):
         if not CHARGERPRECONFIG:
             self.__load()
 
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
+    def getBindingManager(self):
+        """ Retourne le Binding Manager """
+        return self.__BindingManager
 
+    def getBindingIn(self, categorie):
+        """
+        Permet d'obtenir les combinaisons
+        @param categorie : <str> nom de la catégorie dont on veux les bindings
+                          exemple : "Application"
+        @return <dict> contenant tous les bindings
+        """
+        return self.getBindingManager().getBindings()[categorie]
+
+    def getData(self):
+        """ Retourne le Gestionnaire des données """
+        return self.__data
+
+    def getDonneeCalendrier(self):
+        """
+        Permet d'obtenir le DonneeCalendrier.
+        @return le DonneeCalendrier.
+        """
+        return self.calendar.getDonneeCalendrier()
+
+    def getPanneauActif(self):
+        """
+        Permet d'obtenir le panneau actif dans les affichages de calendrier.
+        @return le panneau actif dans les affichages de calendrier.
+        """
+        return self.calendar.getPanneauActif()
+    def getPeriodManager(self):
+        """
+        Permet d'obtenir le PeriodManager.
+        @return le periodeManager.
+        """
+        return self.periodManager
+
+    def getProfilManager(self):
+        """ Retourne le Profil Manager """
+        return self.__profilManager
+
+    def getTaskEditor(self):
+        """
+        Permet d'obtenir le TaskEditor.
+        @return le TaskEditor.
+        """
+        return self.taskEditor
+
+    ""
+    ######################################
+    # Redéfinition de certaines méthodes #
+    # Pour une meilleure expérience      #
+    ######################################
+    ""
     def destroy(self):
         """
         Redéfinition de la méthode pour supprimer aussi la fenêtre parente
@@ -105,18 +161,11 @@ class Application(Frame):
             self.winfo_toplevel().destroy() # Pour détruire aussi la fenêtre parente
         except:pass
 
-    def save(self):
-        """
-        Fonction qui va enregister toutes les données
-        """
-        d = {}
-        d["periodes"] = {}
-        for periode in self.getPeriodManager().getPeriodes():
-            d["periodes"][periode.getNom()] = periode.saveByDict()
-
-        with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
-            f.write(json.dumps(d, indent=4))
-
+    ""
+    ###########################
+    # Traitement des fichiers #
+    ###########################
+    ""
     def __load(self):
         """
         Permet de charger les périodes enregistrées dans periode.json
@@ -177,6 +226,26 @@ class Application(Frame):
                 else :
                     self.getTaskEditor().ajouter(creeTache(schedulable, p))
 
+    def save(self):
+        """
+        Fonction qui va enregister toutes les données
+        """
+        d = {}
+        d["periodes"] = {}
+        for periode in self.getPeriodManager().getPeriodes():
+            d["periodes"][periode.getNom()] = periode.saveByDict()
+
+        with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
+            f.write(json.dumps(d, indent=4))
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def preferences(self):
+        self.prefFen.activateandwait()
+
     def restart(self):
         print("r")
 
@@ -195,59 +264,7 @@ class Application(Frame):
             self.taskEditor.setEditionPeriode(False)
             pass
 
-    def preferences(self):
-        self.prefFen.activateandwait()
-
-    def getPeriodManager(self):
-        """
-        Permet d'obtenir le PeriodManager.
-        @return le periodeManager.
-        """
-        return self.periodManager
-
-    def getPanneauActif(self):
-        """
-        Permet d'obtenir le panneau actif dans les affichages de calendrier.
-        @return le panneau actif dans les affichages de calendrier.
-        """
-        return self.calendar.getPanneauActif()
-
-    def getDonneeCalendrier(self):
-        """
-        Permet d'obtenir le DonneeCalendrier.
-        @return le DonneeCalendrier.
-        """
-        return self.calendar.getDonneeCalendrier()
-
-    def getTaskEditor(self):
-        """
-        Permet d'obtenir le TaskEditor.
-        @return le TaskEditor.
-        """
-        return self.taskEditor
-
-    def getData(self):
-        """ Retourne le Gestionnaire des données """
-        return self.__data
-
-    def getProfilManager(self):
-        """ Retourne le Profil Manager """
-        return self.__profilManager
-    def getBindingManager(self):
-        """ Retourne le Binding Manager """
-        return self.__BindingManager
-
-    def getBindingIn(self, categorie):
-        """
-        Permet d'obtenir les combinaisons
-        @param categorie : <str> nom de la catégorie dont on veux les bindings
-                          exemple : "Application"
-        @return <dict> contenant tous les bindings
-        """
-        return self.getBindingManager().getBindings()[categorie]
-
-
-
+## Main :
 def main():
     """Fonction main, principale du programme."""
     app = Application()

@@ -23,6 +23,35 @@ class ObjetClassique(AbstractMultiFrameItem):
         self.__widget = []
         self.__rmenu = {}
 
+    def __onSelect(self):
+        """
+        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
+        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
+        """
+        self.master.clicSurObjet(self)
+
+    def __onMultiSelect(self):
+        """
+        Permet d'inverser l'état de sélection de l'objet schedulable.
+        """
+        self._schedulable.inverseSelection()
+        self.master.getDonneeCalendrier().updateColor()
+
+    def delete(self):
+        for f in self.__listeCadre:
+            try:
+                f.destroy()
+            except:
+                pass
+        self.__listeCadre = []
+        self.__widget = []
+        for widget in self.__rmenu:
+            try:
+                self.__rmenu[widget].destroy()
+            except:
+                pass
+        self.__rmenu = {}
+
     def redraw(self, frame):
         # On se supprime :
         self.delete()
@@ -60,35 +89,6 @@ class ObjetClassique(AbstractMultiFrameItem):
                 self.__widget.append(widget)
                 self.__rmenu[widget] = rmenu
 
-    def __onSelect(self):
-        """
-        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
-        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
-        """
-        self.master.clicSurObjet(self)
-
-    def __onMultiSelect(self):
-        """
-        Permet d'inverser l'état de sélection de l'objet schedulable.
-        """
-        self._schedulable.inverseSelection()
-        self.master.getDonneeCalendrier().updateColor()
-
     def updateColor(self, frame):
         for w in self.__widget:
             w.updateColor()
-
-    def delete(self):
-        for f in self.__listeCadre:
-            try:
-                f.destroy()
-            except:
-                pass
-        self.__listeCadre = []
-        self.__widget = []
-        for widget in self.__rmenu:
-            try:
-                self.__rmenu[widget].destroy()
-            except:
-                pass
-        self.__rmenu = {}

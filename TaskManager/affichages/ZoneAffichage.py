@@ -39,8 +39,11 @@ class ZoneAffichage(Frame):
         # On retire la période pour car sinon il essate d'afficher -1 jour, et il a un peu de mal
         self.getListeDuree().remove(['Période', '-1'])
 
-
-
+    "" # Marque pour que le repli fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def getApplication(self):
         """
         Getter pour l'application.
@@ -55,20 +58,26 @@ class ZoneAffichage(Frame):
         """
         return self.getApplication().getData()
 
-    def getPanneauActif(self):
-        """
-        Renvoie le mode d'affichage de calendrier actif.
-        @return le calendrier actif.
-        """
-        return self.getDonneeCalendrier().getPanneauActif()
-    
     def getDonneeCalendrier(self):
         """
         Getter pour le DonneeCalendrier.
         @return le DonneeCalendrier.
         """
         return self.donneeCalendrierFrame
-    
+
+    def getListeDuree(self):
+        """
+        Permet d'obtenir la liste des durée avec [[nom][nombre de jour]]
+        """
+        return self.__listeValue
+
+    def getPanneauActif(self):
+        """
+        Renvoie le mode d'affichage de calendrier actif.
+        @return le calendrier actif.
+        """
+        return self.getDonneeCalendrier().getPanneauActif()
+
     def getParametreAffichage(self):
         """
         Getter pour le ParametreAffichage.
@@ -76,26 +85,11 @@ class ZoneAffichage(Frame):
         """
         return self.zoneParametre
 
-    def getListeDuree(self):
-        """
-        Permet d'obtenir la liste des durée avec [[nom][nombre de jour]]
-        """
-        return self.__listeValue
-        
-    def envoyerChangementNbJour(self, event):
-        """
-        Méthode callback du combobox qui gère le nombre de jours à afficher.
-        @param event: l'événement, doit contenir le combobox dans l'attritbut widget.
-        """
-        valeur = event.widget.get()
-        for duree in self.getListeDuree():
-            if valeur == duree[0]:
-                self.getDonneeCalendrier().setNbJour(int(duree[1]))
-                break # Important sinon on essaye les autre et on affiche la periode parce que la condition n'est pas vérifié
-        else: # Si c'est une période
-            self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
-            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
-
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def envoyerChangementJourDebut(self, valeur):
         """
         Permet d'envoyer les informations de changement de jours, suivant le bouton
@@ -113,5 +107,19 @@ class ZoneAffichage(Frame):
             #self.getDonneeCalendrier().setJourFin(self.getDonneeCalendrier().getJourFin()+datetime.timedelta(days = valeur))
 
         self.getDonneeCalendrier().setDureeJour(duree)
-    
+
+    def envoyerChangementNbJour(self, event):
+        """
+        Méthode callback du combobox qui gère le nombre de jours à afficher.
+        @param event: l'événement, doit contenir le combobox dans l'attritbut widget.
+        """
+        valeur = event.widget.get()
+        for duree in self.getListeDuree():
+            if valeur == duree[0]:
+                self.getDonneeCalendrier().setNbJour(int(duree[1]))
+                break # Important sinon on essaye les autre et on affiche la periode parce que la condition n'est pas vérifié
+        else: # Si c'est une période
+            self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
+            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
+
 

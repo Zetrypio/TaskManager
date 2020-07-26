@@ -21,8 +21,39 @@ class AbstractMultiFrameItem(IDisplayableItem):
         self.master = master
         self._schedulable = schedulable
 
-    def getSchedulable(self):
-        return self._schedulable
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getFirstPart(self):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getFirstPart(self.master)
+
+    def getLastPart(self):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        return self._schedulable.getLastPart(self.master)
+
+    def getPartPosition(self, part):
+        """
+        Permet de savoir la position d'un DatetimeItemPart parmi les autres.
+        @return la position de ce DatetimeItemPart en tant qu'int répartie sur
+        l'ensemble de ceux qui sont en même temps.
+        """
+        return self.master.getPartPosition(part)
+    
+    def getPartSpan(self, part):
+        """
+        Permet de savoir sur combien se répartie le DatetimeItemPart.
+        @return le nombre de sur combien se répartie le DatetimeItemPart.
+        """
+        return self.master.getPartSpan(part)
 
     def getRepartition(self):
         """
@@ -40,20 +71,8 @@ class AbstractMultiFrameItem(IDisplayableItem):
         """
         return self._schedulable.getRepartition(self.master)
 
-    
-    def getFirstPart(self):
-        """
-        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
-        @return la première datetimeItemPart affichée parmi toutes.
-        """
-        return self._schedulable.getFirstPart(self.master)
-
-    def getLastPart(self):
-        """
-        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
-        @return la dernière datetimeItemPart affichée parmi toutes.
-        """
-        return self._schedulable.getLastPart(self.master)
+    def getSchedulable(self):
+        return self._schedulable
 
     def getVisiblePart(self, part):
         """
@@ -64,20 +83,3 @@ class AbstractMultiFrameItem(IDisplayableItem):
         @return None si l'objet n'est pas visible du tout.
         """
         return self.master.getVisiblePart(part)
-    
-    def getPartPosition(self, part):
-        """
-        Permet de savoir la position d'un DatetimeItemPart parmi les autres.
-        @return la position de ce DatetimeItemPart en tant qu'int répartie sur
-        l'ensemble de ceux qui sont en même temps.
-        """
-        return self.master.getPartPosition(part)
-    
-    def getPartSpan(self, part):
-        """
-        Permet de savoir sur combien se répartie le DatetimeItemPart.
-        @return le nombre de sur combien se répartie le DatetimeItemPart.
-        """
-        return self.master.getPartSpan(part)
-
-

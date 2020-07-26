@@ -64,6 +64,11 @@ class DisplayableGroup(AbstractItemContent):
         #self.__texte.bind("<Button-1>", self._clique)
         #self.__texte.bind("<Control-Button-1>", self.multiSelection)
 
+    "" # Marque pour que le repli de code fasse ce que je veux
+    #############
+    # Getters : #
+    #############
+    ""
     def __getDisplayColor(self):
         """
         Getter pour savoir la véritable couleur d'affichage,
@@ -71,18 +76,28 @@ class DisplayableGroup(AbstractItemContent):
         """
         return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
 
-    def bindTo(self, binding, command, add=None):
-        self.bind(binding, command, add)
-        self.__texte.bind(binding, command, add)
-        # TODO : Ajouter les sous-tâches.
-
     def needButtonPlus(self, affichageGantt):
         return False
 
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
     def updateColor(self):
         """
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
         """
         self.__texte.config(bg=self.__getDisplayColor())
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def bindTo(self, binding, command, add=None):
+        self.bind(binding, command, add)
+        self.__texte.bind(binding, command, add)
+        # TODO : Ajouter les sous-tâches.
 
 from schedulable.groupe.Groupe import *

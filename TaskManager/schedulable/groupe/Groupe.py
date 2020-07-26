@@ -32,6 +32,21 @@ class Groupe(AbstractSchedulableObject):
     # Méthode de l'interface       #
     # ITaskEditorDisplayableObject #
     ################################
+    ""
+    def getDebut(self):
+        """
+        Le début de ce groupe, à savoir le début de la tâche qui commence le plus tôt.
+        @return datetime.datetime() du début de ce groupe.
+        """
+        return min(self.__listTasks, key=lambda  t:t.getDebut()).getDebut()
+
+    def getFin(self):
+        """
+        La fin de ce groupe, à savoir la fin de la tâche qui termine le plus tard.
+        @return datetime.datetime() de la fin de ce groupe.
+        """
+        return max(self.__listTasks, key=lambda  t:t.getFin()).getFin()
+
     def getHeader(self):
         """
         Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
@@ -51,31 +66,11 @@ class Groupe(AbstractSchedulableObject):
         yield {}
         yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
-    def setRMenuContent(self, taskEditor, rmenu):
-        """
-        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
-        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
-        que cette méthode retourne False
-        @param taskEditor : permet de faire des interactions avec le TaskEditor().
-        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
-        @return False car le RMenu() n'existe pas.
-        @specified by getRMenuContent() in ITaskEditorDisplayableObject().
-        """
-        return False # TODO
-    
-    def getDebut(self):
-        """
-        Le début de ce groupe, à savoir le début de la tâche qui commence le plus tôt.
-        @return datetime.datetime() du début de ce groupe.
-        """
-        return min(self.__listTasks, key=lambda  t:t.getDebut()).getDebut()
 
-    def getFin(self):
-        """
-        La fin de ce groupe, à savoir la fin de la tâche qui termine le plus tard.
-        @return datetime.datetime() de la fin de ce groupe.
-        """
-        return max(self.__listTasks, key=lambda  t:t.getFin()).getFin()
+    
+
+
+
 
     def setDone(self, value):
         """
@@ -95,43 +90,24 @@ class Groupe(AbstractSchedulableObject):
         #"""
         #pass # TODO
 
+    def setRMenuContent(self, taskEditor, rmenu):
+        """
+        Permet de rajouter les commandes au RMenu() de cet objet si il est présent.
+        Si cet objet n'a pas besoin de RMenu() dans le TaskEditor(), il faut simplement
+        que cette méthode retourne False
+        @param taskEditor : permet de faire des interactions avec le TaskEditor().
+        @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
+        @return False car le RMenu() n'existe pas.
+        @specified by getRMenuContent() in ITaskEditorDisplayableObject().
+        """
+        return False # TODO
+
     ""
     #######################################
     # Méthode abstraite de la superclasse #
     # AbstractSchedulableObject           #
     #######################################
-    def delete(self, app):
-        """
-        Permet de supprimer ce groupe.
-        TODO
-        """
-        pass # TODO
-
-    def copy(self):
-        """
-        Permet de copier ce groupe.
-        TODO
-        """
-        pass # TODO
-
-    def updateStatut(self):
-        """
-        Permet de mettre à jour le statut de ce groupe.
-        TODO
-        """
-        self._statut = "Fait" if not any(not t.isDone() for t in self.__listTasks)\
-                  else "En cours" if any(t.isDone() for t in self.__listTasks)\
-                  else "En retard" if any(t.getStatut()=="En retard" for t in self.__listTasks)\
-                  else "À Faire"
-
-    def createDisplayableInstance(self, frame, part):
-        """
-        Permet de créer une instance de la version affichable d'un groupe.
-        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
-        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie du groupe à afficher.
-        """
-        return DisplayableGroup(frame, self, part)
-
+    ""
     def acceptLink(self):
         """
         Permet de savoir si l'objet peut être à l'origine d'un lien, sans se soucier
@@ -146,6 +122,28 @@ class Groupe(AbstractSchedulableObject):
         @param schedulable: l'autre objet dont on doit faire le lien avec cet objet.
         """
         return False
+
+    def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la version affichable d'un groupe.
+        @param frame: master du tkinter.Frame() qu'est l'objet créé par cette méthode.
+        @param part: DatetimeItemPart() nécessaire pour savoir quelle partie du groupe à afficher.
+        """
+        return DisplayableGroup(frame, self, part)
+
+    def copy(self):
+        """
+        Permet de copier ce groupe.
+        TODO
+        """
+        pass # TODO
+
+    def delete(self, app):
+        """
+        Permet de supprimer ce groupe.
+        TODO
+        """
+        pass # TODO
 
     def getRawRerpartition(self, displayedCalendar):
         """
@@ -175,11 +173,21 @@ class Groupe(AbstractSchedulableObject):
             i += 1
         yield from parts
 
+    def updateStatut(self):
+        """
+        Permet de mettre à jour le statut de ce groupe.
+        TODO
+        """
+        self._statut = "Fait" if not any(not t.isDone() for t in self.__listTasks)\
+                  else "En cours" if any(t.isDone() for t in self.__listTasks)\
+                  else "En retard" if any(t.getStatut()=="En retard" for t in self.__listTasks)\
+                  else "À Faire"
+
     ""
     ####################
     # Autre méthodes : #
     ####################
-
+    ""
     def __canPartsBeOne(self, displayedCalendar, partA, partB):
         """
         Permet de savoir si 2 DatetimeItemParts peuvent être une seule,
@@ -203,12 +211,33 @@ class Groupe(AbstractSchedulableObject):
                     return False
         return True           
 
+    def addTask(self, task):
+        """
+        Permet d'ajouter une tâche à la liste du groupe.
+        @param task: la tâche à ajouter à la liste.
+        """
+        self.__listTasks.add(task)
+
     def getGroupeManager(self):
         """
         Getter pour le groupe Manager.
         @return le GroupeManager de ce groupe.
         """
         return self.groupeManager
+
+    def getListTasks(self):
+        """
+        Getter des tâches du groupe.
+        @return une copie de la liste des tâches de ce groupe.
+        """
+        return self.__listTasks.copy()
+
+    def removeTask(self, task):
+        """
+        Permet de retirer une tâche de la liste du groupe.
+        @param task: la tâche à enlever de la liste.
+        """
+        self.__listTasks.remove(task)
 
     def setGroupeManager(self, groupeManager):
         """
@@ -227,27 +256,11 @@ class Groupe(AbstractSchedulableObject):
         super().setPeriode(periode)
         self.__groupeManager = periode.getGroupeManager()
 
-    def getListTasks(self):
-        """
-        Getter des tâches du groupe.
-        @return une copie de la liste des tâches de ce groupe.
-        """
-        return self.__listTasks.copy()
-
-    def addTask(self, task):
-        """
-        Permet d'ajouter une tâche à la liste du groupe.
-        @param task: la tâche à ajouter à la liste.
-        """
-        self.__listTasks.add(task)
-
-    def removeTask(self, task):
-        """
-        Permet de retirer une tâche de la liste du groupe.
-        @param task: la tâche à enlever de la liste.
-        """
-        self.__listTasks.remove(task)
-
+    ""
+    #######################################
+    # Méthodes liées à l'enregistrement : #
+    #######################################
+    ""
     def saveByDict(self):
         """
         Méthode qui sauvegarde les attributs présent dans la classe "Groupe" (ici)

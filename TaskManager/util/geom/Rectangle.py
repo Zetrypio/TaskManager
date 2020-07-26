@@ -52,33 +52,17 @@ class Rectangle:
         else:
             raise TypeError("Vous devez utiliser exactement que 2 des 3 paramètres parmi y1, y2 et height.")
 
-    def getX1(self):
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getCenterPoint(self):
         """
-        Getter pour X1
-        @return x1
+        Getter pour le point du centre du rectangle.
+        @return util.geom.Point() correspondant au centre du rectangle.
         """
-        return self.__x1
-
-    def getY1(self):
-        """
-        Getter pour Y1
-        @return y1
-        """
-        return self.__y1
-
-    def getX2(self):
-        """
-        Getter pour X2
-        @return x2
-        """
-        return self.__x2
-
-    def getY2(self):
-        """
-        Getter pour Y2
-        @return y2
-        """
-        return self.__y2
+        return Point(self.getCenterX(), self.getCenterY())
 
     def getCenterX(self):
         """
@@ -94,12 +78,12 @@ class Rectangle:
         """
         return (self.__y1 + self.__y2)/2
 
-    def getCenterPoint(self):
+    def getHeight(self):
         """
-        Getter pour le point du centre du rectangle.
-        @return util.geom.Point() correspondant au centre du rectangle.
+        Getter pour la hauteur du rectangle.
+        @return y2 - y1.
         """
-        return Point(self.getCenterX(), self.getCenterY())
+        return abs(self.__y2 - self.__y1)
 
     def getWidth(self):
         """
@@ -108,13 +92,68 @@ class Rectangle:
         """
         return abs(self.__x2 - self.__x1)
 
-    def getHeight(self):
+    def getX1(self):
         """
-        Getter pour la hauteur du rectangle.
-        @return y2 - y1.
+        Getter pour X1
+        @return x1
         """
-        return abs(self.__y2 - self.__y1)
+        return self.__x1
 
+    def getX2(self):
+        """
+        Getter pour X2
+        @return x2
+        """
+        return self.__x2
+
+    def getY1(self):
+        """
+        Getter pour Y1
+        @return y1
+        """
+        return self.__y1
+
+    def getY2(self):
+        """
+        Getter pour Y2
+        @return y2
+        """
+        return self.__y2
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def setX1(self, x1):
+        """
+        Setter pour X1. Change la largeur car ne bouge pas x2.
+        """
+        self.__x1 = x1
+
+    def setX2(self, x2):
+        """
+        Setter pour X2. Change la largeur car ne bouge pas x1.
+        """
+        self.__x2 = x2
+
+    def setY1(self, y1):
+        """
+        Setter pour Y1. Change la hauteur car ne bouge pas y2.
+        """
+        self.__y1 = y1
+
+    def setY2(self, y2):
+        """
+        Setter pour Y2. Change la hauteur car ne bouge pas y1.
+        """
+        self.__y2 = y2
+
+    ""
+    #############
+    # Acteurs : #
+    #############
+    ""
     def moveby(self, amtX, amtY):
         """
         Permet de déplacer le rectangle d'une certaine quantitée,
@@ -126,27 +165,3 @@ class Rectangle:
         self.__y1 += amtY
         self.__x2 += amtX
         self.__y2 += amtY
-
-    def setX1(self, x1):
-        """
-        Setter pour X1. Change la largeur car ne bouge pas x2.
-        """
-        self.__x1 = x1
-
-    def setY1(self, y1):
-        """
-        Setter pour Y1. Change la hauteur car ne bouge pas y2.
-        """
-        self.__y1 = y1
-
-    def setX2(self, x2):
-        """
-        Setter pour X2. Change la largeur car ne bouge pas x1.
-        """
-        self.__x2 = x2
-
-    def setY2(self, y2):
-        """
-        Setter pour Y2. Change la hauteur car ne bouge pas y1.
-        """
-        self.__y2 = y2

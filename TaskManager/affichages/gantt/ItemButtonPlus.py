@@ -26,6 +26,44 @@ class ItemButtonPlus(IDisplayableItem):
         self.__part = part
         self.__x = self.__y = 0
 
+    "" # Marque pour le repli
+    #############
+    # Getters : #
+    #############
+    ""
+    def getSchedulable(self):
+        return self.__ganttObj.getSchedulable()
+
+    def getX(self):
+        """
+        Getter pour le centre X du plus.
+        Il est calculé lors de l'appel à la méthode redraw().
+        @return la position X du centre du plus.
+        """
+        return self.__x
+
+    def getY(self):
+        """
+        Getter pour le centre Y du plus.
+        Il est calculé lors de l'appel à la méthode redraw().
+        @return la position Y du centre du plus.
+        """
+        return self.__y
+
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
+    def delete(self):
+        """
+        Permet de supprimer cet objet de l'affichage.
+        Étant donné que tout est déjà effacé dans AffichageGantt
+        lors du redessinage, rien a été mis ici.
+        @override delete() in IDisplayableItem.
+        """
+        pass
+
     def redraw(self, canvas):
         """
         Permet de mettre à jour l'affichage.
@@ -64,32 +102,3 @@ class ItemButtonPlus(IDisplayableItem):
         canvas.tag_bind("plus%s"%(id(self.__ganttObj.getSchedulable())), "<Button-1>",
             lambda e: canvas.after(10,
                 lambda :self.__ganttObj.beginLinkingLine(Point(self.__x, self.__y))))
-
-    def delete(self):
-        """
-        Permet de supprimer cet objet de l'affichage.
-        Étant donné que tout est déjà effacé dans AffichageGantt
-        lors du redessinage, rien a été mis ici.
-        @override delete() in IDisplayableItem.
-        """
-        pass
-
-    def getSchedulable(self):
-        return self.__ganttObj.getSchedulable()
-
-    def getX(self):
-        """
-        Getter pour le centre X du plus.
-        Il est calculé lors de l'appel à la méthode redraw().
-        @return la position X du centre du plus.
-        """
-        return self.__x
-
-    def getY(self):
-        """
-        Getter pour le centre Y du plus.
-        Il est calculé lors de l'appel à la méthode redraw().
-        @return la position Y du centre du plus.
-        """
-        return self.__y
-

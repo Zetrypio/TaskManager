@@ -214,6 +214,28 @@ class PageTheme(AbstractPage):
         # On fini par charger le theme
         self.loadTheme(self.getNomCombobox())
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getNomCombobox(self):
+        return self.__varTheme.get()
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def setNomCombobox(self, nom):
+        self.__varTheme.set(nom)
+        self.__stateSaveBtn()
+
+    ""
+    ##############################################
+    # Méthodes tierces liées au fonctionnement : #
+    ##############################################
+    ""
     def __askcolor(self, value):
         color = askcolor()[1]
         # Si on clique sur la croix on annule l'opération
@@ -233,13 +255,6 @@ class PageTheme(AbstractPage):
             self.__boutonColor4.config(bg = color, activebackground = color)
             self.__varLb4.set(color)
 
-    def getNomCombobox(self):
-        return self.__varTheme.get()
-
-    def setNomCombobox(self, nom):
-        self.__varTheme.set(nom)
-        self.__stateSaveBtn()
-
     def __stateSaveBtn(self):
         """
         Fonction qui gère l'état du bouton d'enregistrememnt.
@@ -252,20 +267,11 @@ class PageTheme(AbstractPage):
             self.__btnEnregistrement.config(state = "normal")
             self.__btnSuppr.config(state = "normal")
 
-
-    def configCombobox(self):
-        """
-        Fonction qui va ajouter tous les thèmes qui ont été créer et tous les thèmes créé par l'utilisateur
-        """
-        self.readFile(NOMFICHIER)
-        # Mise en place dans le combobox du thème actuel
-        self.__listValueComboTheme = []
-        for section in self.getData().sections():
-            self.__listValueComboTheme.append(self.getData()[section]["Name"])
-
-        self.__comboThemeExistant.config(value=self.__listValueComboTheme)
-
-
+    ""
+    ##################################################
+    # Fonction liées à l'enregistrement des thèmes : #
+    ##################################################
+    ""
     def dictTheme(self, nomTheme):
         """
         Fonction qui retourne un dictionnaire (enfin je crois que c'est ça) avec toutes les valeurs que contient la page
@@ -332,6 +338,30 @@ class PageTheme(AbstractPage):
             self.configCombobox()
             self.loadTheme("Classique") # On revient toujours sur lui
 
+    ""
+    #############################################
+    # Méthodes liées au chargement des thèmes : #
+    #############################################
+    ""
+    def __comboSelected(self):
+        """
+        Fonction qui dit de loader le theme selectionné
+        """
+        self.loadTheme(self.__varTheme.get())
+        return
+
+    def configCombobox(self):
+        """
+        Fonction qui va ajouter tous les thèmes qui ont été créer et tous les thèmes créé par l'utilisateur
+        """
+        self.readFile(NOMFICHIER)
+        # Mise en place dans le combobox du thème actuel
+        self.__listValueComboTheme = []
+        for section in self.getData().sections():
+            self.__listValueComboTheme.append(self.getData()[section]["Name"])
+
+        self.__comboThemeExistant.config(value=self.__listValueComboTheme)
+
     def loadTheme(self, theme):
         """
         Lorsqu'on change le combobox il faut recharger les couleurs en place du thème choisi
@@ -360,6 +390,27 @@ class PageTheme(AbstractPage):
         self.setNomCombobox(theme)
         self.__stateSaveBtn()
 
+    def recupCouleur(self):
+        """
+        Va cherche la couleur et la valeur associé (ligne du treeview) concerné par cette couleur
+        """
+        def recupAuBonEndroit():
+            """ Fonction embarqué qui va retourner la valeur qu'il faut selon le choix su combobox """
+            ou = self.__comboCouleur.get()
+            if ou == "Couleur personnalisé" or ou == "":
+                return self.__varLb4.get()
+            else:
+                return ou
+
+        if self.__currentElem is not None:
+            # A la recherche qui est self.__currentElem et assignation de la bonne valeur
+            self.chercheComboValeur(self.__currentElem).set(recupAuBonEndroit())
+
+    ""
+    ################################
+    # Méthodes liées au Treeview : #
+    ################################
+    ""
     def chercheComboValeur(self, val):
         """
         Fonction qui va chercher à quel iid val correspond, et va retourne la variable qui est lié a cet iid
@@ -393,23 +444,6 @@ class PageTheme(AbstractPage):
         elif val == "Barre d'outils secondaire"+"-Couleur des boutons":
             return self.__varBOSCDB
 
-    def recupCouleur(self):
-        """
-        Va cherche la couleur et la valeur associé (ligne du treeview) concerné par cette couleur
-        """
-        def recupAuBonEndroit():
-            """ Fonction embarqué qui va retourner la valeur qu'il faut selon le choix su combobox """
-            ou = self.__comboCouleur.get()
-            if ou == "Couleur personnalisé" or ou == "":
-                return self.__varLb4.get()
-            else:
-                return ou
-
-        if self.__currentElem is not None:
-            # A la recherche qui est self.__currentElem et assignation de la bonne valeur
-            self.chercheComboValeur(self.__currentElem).set(recupAuBonEndroit())
-
-
     def onclick(self, e):
         """
         Pour le treeview
@@ -423,15 +457,13 @@ class PageTheme(AbstractPage):
         try:
             self.__comboCouleur.set(self.chercheComboValeur(iidElementSelectionne).get())
             self.__currentElem = iidElementSelectionne
-        except:pass
+        except:
+            pass
 
-    def __comboSelected(self):
-        """
-        Fonction qui dit de loader le theme selectionné
-        """
-        self.loadTheme(self.__varTheme.get())
-        return
-
+    ""
+    ###################################
+    # Méthodes liées à la fermeture : #
+    ###################################
+    ""
     def appliqueEffet(self, application):
         self._makeDictAndSave()
-

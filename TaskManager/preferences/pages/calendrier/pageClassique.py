@@ -33,6 +33,11 @@ class PageClassique(AbstractPage):
         self.__adaptSbHeureDebut()
         self.__adaptSbHeureFin()
 
+    "" # Marque pour le repli de code
+    #################################################
+    # Méthodes liées au nombre d'heure par défaut : #
+    #################################################
+    ""
     def __adaptSbHeureDebut(self):
         """
         Fonction qui adapte les possibilité du spinbox de l'heure de début en fonction de l'heure de fin
@@ -47,5 +52,10 @@ class PageClassique(AbstractPage):
         # Le split(":")[0] car il y a un certain formatage dans le spinbox
         self.__sbHeureFin.config(from_=int(self.__varHeureDebut.get().split(":")[0]))
 
+    ""
+    ###################################
+    # Méthodes liées à la fermeture : #
+    ###################################
+    ""
     def appliqueEffet(self, application):
         self._makeDictAndSave()

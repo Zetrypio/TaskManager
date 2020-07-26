@@ -64,6 +64,11 @@ class PeriodAdder(Frame):
         # Ligne 2 :
         self.champDescription .grid(row = 2, column = 0, columnspan = 8, sticky ="ew")
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
     def askDateDebut(self):
         """
         Permet de demander à l'utilisateur une date de début pour la période, par l'intermédaire d'une boîte de dialogue usuelle.
@@ -98,6 +103,11 @@ class PeriodAdder(Frame):
         """
         return self.fin - self.debut
 
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def autoSetDuree(self):
         """
         Permet de mettre automatiquement le widget de durée de la période vers
@@ -106,6 +116,11 @@ class PeriodAdder(Frame):
         ecart = self.getDuree()
         self.champJour.set(ecart.days)
 
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def valider(self):
         """
         Méthode exécutée quand on appuie sur le bouton validé, pour créer la nouvelle période et l'ajouter au PeriodManager.

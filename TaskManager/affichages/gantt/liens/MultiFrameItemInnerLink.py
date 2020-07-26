@@ -29,6 +29,19 @@ class MultiFrameItemInnerLink(AbstractLink):
 
         # TODO : tester lien déjà existant ?
 
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def isSelected(self):
+        return self.getPartA().getSchedulable().isSelected()
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def __setColor(self):
         """
         Méthode qui permet de mettre la bonne couleur selon ce qu'il y a besoin.
@@ -41,6 +54,11 @@ class MultiFrameItemInnerLink(AbstractLink):
             self.setColor("grey")
             self.setStrokeWeight(2)
 
+    ""
+    ##################################
+    # Méthodes liées à l'affichage : #
+    ##################################
+    ""
     def redraw(self, canvas):
         """
         Méthode pour dessiner la flèche.
@@ -53,6 +71,15 @@ class MultiFrameItemInnerLink(AbstractLink):
         # Ajouter infobulle :
         ajouterInfoBulleTagCanvas(canvas, self.getTag(), str(self.getPartA().getSchedulable()))
 
+    def updateColor(self, canvas):
+        self.__setColor()
+        super().updateColor(canvas)
+
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
     def _onClic(self):
         self._getAffichageGantt().cancelEvent()
         self._getAffichageGantt().deselectEverything()
@@ -63,10 +90,3 @@ class MultiFrameItemInnerLink(AbstractLink):
         self._getAffichageGantt().cancelEvent()
         self.getPartA().getSchedulable().inverseSelection()
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
-
-    def isSelected(self):
-        return self.getPartA().getSchedulable().isSelected()
-
-    def updateColor(self, canvas):
-        self.__setColor()
-        super().updateColor(canvas)

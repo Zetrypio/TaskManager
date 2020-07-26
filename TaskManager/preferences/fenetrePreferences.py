@@ -56,16 +56,34 @@ class FenetrePreferences(Dialog):
                 self.listePage.append(self.listePage.pop(self.listePage.index(page)))
 
         # Initialisation de la page de garde
-        self.setPageActive("-Général")
+        self.setPageActive("-General")
 
-    def __ajouterPage(self, Page):
-        """
-        Sert à rajouter une page dans le Treeview du navigationZone
-        @param Page : <sous classe - AbstractPage> sous classe qui est à rajouter dans la liste
-        """
-        self.listePage.append(Page)
-        self.updateTreeview()
+    "" # Marque pour le repli de code
+    #############
+    # Getters : #
+    #############
+    ""
+    def getApplication(self):
+        """ return self.app """
+        return self.app
 
+    def getListePage(self):
+        return self.listePage
+
+    def getNavigationZone(self):
+        return self.navigationZone
+
+    def getPageActive(self):
+        return self.pageActive
+
+    def getParametrageZone(self):
+        return self.parametrageZone
+
+    ""
+    #############
+    # Setters : #
+    #############
+    ""
     def setPageActive(self, iidPage):
         """
         @param iidPage : <str> contient l'iid de la page à mettre en premier plan
@@ -91,6 +109,19 @@ class FenetrePreferences(Dialog):
         self.pageActive = page
         page.pack(side=LEFT, expand = YES, fill = BOTH)
 
+    ""
+    #####################
+    # Autres méthodes : #
+    #####################
+    ""
+    def __ajouterPage(self, Page):
+        """
+        Sert à rajouter une page dans le Treeview du navigationZone
+        @param Page : <sous classe - AbstractPage> sous classe qui est à rajouter dans la liste
+        """
+        self.listePage.append(Page)
+        self.updateTreeview()
+
     def updateTreeview(self):
         self.getNavigationZone().updateTreeview()
 
@@ -101,20 +132,3 @@ class FenetrePreferences(Dialog):
         if txtBtn == "Appliquer" or txtBtn == "Ok":
             for page in self.getListePage():
                 page.appliqueEffet(self.getApplication())
-
-    def getApplication(self):
-        """ return self.app """
-        return self.app
-
-    def getPageActive(self):
-        return self.pageActive
-
-    def getListePage(self):
-        return self.listePage
-
-    def getParametrageZone(self):
-        return self.parametrageZone
-
-    def getNavigationZone(self):
-        return self.navigationZone
-

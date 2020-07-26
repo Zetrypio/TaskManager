@@ -23,10 +23,68 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self._statut    = ""
 
     "" # Marque pour que le repli de code fasse ce que je veux
-
     ############
     # Getters: #
     ############
+    ""
+    def getColor(self):
+        """
+        Getter pour la couleur de cet objet pour l'affichage.
+        Notez bien que c'est la couleur native, et que la sélection
+        def cet objet ne changera en rien la couleur renvoyée ici.
+        @return la couleur de cet objet.
+        """
+        return self.__color
+
+    def getDescription(self):
+        """
+        Permet d'obtenir la description de l'objet
+        qui a été donné par l'utilisateur lors de
+        sa création. (ou changé après TODO).
+        @return la description de cet objet.
+        """
+        return self.__desc
+
+    def getFilterStateWith(self, filter):
+        """
+        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
+        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
+        @param filter: Dictionnaire du filtre.
+        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
+        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
+        """
+
+        # TODO : À modifier
+
+        # Si non autorisé par le filtre :
+        if ("name" in filter and self.__nom.lower().count(filter["name"]) == 0)\
+        or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
+            return -1
+        # Filtre prioritaire ?
+        if "name" in filter and self.__nom.lower().startswith(filter["name"].lower()):
+            return 1
+        # Sinon : autorisé par le filtre, mais pas prioritaire.
+        return 0
+
+    def getFirstPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la première datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            return part
+
+    def getLastPart(self, displayedCalendar):
+        """
+        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
+        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
+        @return la dernière datetimeItemPart affichée parmi toutes.
+        """
+        for part in self.getRepartition(displayedCalendar):
+            pass
+        return part
+
     def getNom(self):
         """
         Getter pour le nom de l'objet planifiable.
@@ -42,48 +100,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @return la période de cet objet.
         """
         return self.__periode
-
-    def getDescription(self):
-        """
-        Permet d'obtenir la description de l'objet
-        qui a été donné par l'utilisateur lors de
-        sa création. (ou changé après TODO).
-        @return la description de cet objet.
-        """
-        return self.__desc
-
-    def getColor(self):
-        """
-        Getter pour la couleur de cet objet pour l'affichage.
-        Notez bien que c'est la couleur native, et que la sélection
-        def cet objet ne changera en rien la couleur renvoyée ici.
-        @return la couleur de cet objet.
-        """
-        return self.__color
-
-    def getStatut(self):
-        """
-        Permet de mettre à jour et obtenir le statut.
-        @return le statut de cet objet.
-        """
-        self.updateStatut()
-        return self._statut
-
-    def isSelected(self):
-        """
-        Permet de savoir si cet objet est sélectionné
-        @return True si l'objet est sélectionné.
-        @return False si l'objet n'est pas sélectionné.
-        """
-        return self.__selected
-
-    def isVisible(self):
-        """
-        Permet de savoir si cet objet est visible.
-        @return True si l'objet est visible.
-        @return False si l'objet est invisible.
-        """
-        return self.__visible
 
     def getRawRepartition(self, displayedCalendar):
         """
@@ -126,29 +142,59 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
-    def getFirstPart(self, displayedCalendar):
+    def getStatut(self):
         """
-        Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).
-        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
-        @return la première datetimeItemPart affichée parmi toutes.
+        Permet de mettre à jour et obtenir le statut.
+        @return le statut de cet objet.
         """
-        for part in self.getRepartition(displayedCalendar):
-            return part
+        self.updateStatut()
+        return self._statut
 
-    def getLastPart(self, displayedCalendar):
+    def isSelected(self):
         """
-        Getter pour obtenir la dernière part affichée de #getRepartition(displayedCalendar).
-        @param displayedCalendar: Nécessaire pour savoir l'obtenir parmi celle qui sont réellement affichables.
-        @return la dernière datetimeItemPart affichée parmi toutes.
+        Permet de savoir si cet objet est sélectionné
+        @return True si l'objet est sélectionné.
+        @return False si l'objet n'est pas sélectionné.
         """
-        for part in self.getRepartition(displayedCalendar):
-            pass
-        return part
+        return self.__selected
+
+    def isVisible(self):
+        """
+        Permet de savoir si cet objet est visible.
+        @return True si l'objet est visible.
+        @return False si l'objet est invisible.
+        """
+        return self.__visible
 
     ""
     ############
     # Setters: #
     ############
+    ""
+    def inverseSelection(self):
+        """
+        Permet d'inverser l'état de sélection.
+        Si l'objet était sélectionné, il ne le sera plus
+        et inversement.
+        """
+        self.__selected = not self.__selected
+
+    def setColor(self, color):
+        """
+        Setter pour la couleur de cet objet,
+        doit être un nom compatible avec les couleurs tkinter.
+        @param color: la couleur à mettre, sous forme de texte
+        au format tkinter.
+        """
+        self.__color = color
+
+    def setDescription(self, desc):
+        """
+        Setter pour la description de cet objet,
+        celle qui est donnée par l'utilisateur.
+        @param desc: la description à mettre, sous forme de texte.
+        """
+        self.__desc = desc
     def setNom(self, nom):
         """
         Setter pour le nom donné par l'utilisateur de cet objet.
@@ -163,23 +209,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @param periode: la période à mettre.
         """
         self.__periode = periode
-    
-    def setDescription(self, desc):
-        """
-        Setter pour la description de cet objet,
-        celle qui est donnée par l'utilisateur.
-        @param desc: la description à mettre, sous forme de texte.
-        """
-        self.__desc = desc
-    
-    def setColor(self, color):
-        """
-        Setter pour la couleur de cet objet,
-        doit être un nom compatible avec les couleurs tkinter.
-        @param color: la couleur à mettre, sous forme de texte
-        au format tkinter.
-        """
-        self.__color = color
 
     def setSelected(self, selected):
         """
@@ -188,14 +217,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         if not isinstance(selected, bool): raise TypeError("Exptected a boolean")
         self.__selected = selected
-
-    def inverseSelection(self):
-        """
-        Permet d'inverser l'état de sélection.
-        Si l'objet était sélectionné, il ne le sera plus
-        et inversement.
-        """
-        self.__selected = not self.__selected
 
     def setVisible(self, visible):
         """
@@ -209,14 +230,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     #####################
     # Clone and delete: #
     #####################
-    def delete(self, app):
-        """
-        Permet de supprimer l'objet.
-        @param app: Référence vers l'application pour obtenir les différents
-        endroits qui doivent être au courant que cet objet est supprimé.
-        """
-        raise NotImplementedError
-    
+    ""
     def copy(self):
         """
         Permet de copier cet objet.
@@ -224,46 +238,19 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def delete(self, app):
+        """
+        Permet de supprimer l'objet.
+        @param app: Référence vers l'application pour obtenir les différents
+        endroits qui doivent être au courant que cet objet est supprimé.
+        """
+        raise NotImplementedError
+
     ""
     ####################
     # Autre méthodes : #
     ####################
-    def getFilterStateWith(self, filter):
-        """
-        Permet de savoir l'état de filtrage de cet objet selon le filtre donné
-        lors de l'affichage de cet objet dans le Treeview() du TaskEditor().
-        @param filter: Dictionnaire du filtre.
-        @return -1 si l'élément n'est pas filtré, 1 si il est prioritaire, et 0 sinon.
-        @specified by getFilterStateWith(filter) in ITaskEditorDisplayableObject().
-        """
-        
-        # TODO : À modifier
-        
-        # Si non autorisé par le filtre :
-        if ("name" in filter and self.__nom.lower().count(filter["name"]) == 0)\
-        or ("type" in filter and not "Tâche" in filter["type"]): # TODO : Ajouter tâches indépendantes.
-            return -1
-        # Filtre prioritaire ?
-        if "name" in filter and self.__nom.lower().startswith(filter["name"].lower()):
-            return 1
-        # Sinon : autorisé par le filtre, mais pas prioritaire.
-        return 0
-
-    def updateStatut(self):
-        """
-        Permet de mettre à jour l'attribut statut.
-        """
-        raise NotImplementedError
-
-    def createDisplayableInstance(self, frame, part):
-        """
-        Permet de créer une instance de la variante affichable de cet objet.
-        @param frame: Le Frame dans lequel mettre l'instance.
-        @param part: La partie à afficher si nécessaire (pour les groupes par exemple).
-        @return une instance de la classe représentant la variante affichable de cet objet.
-        """
-        raise NotImplementedError
-
+    ""
     def acceptLink(self):
         """
         Permet de savoir si l'objet peut être à l'origine d'un lien, sans se soucier
@@ -280,6 +267,26 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
+    def createDisplayableInstance(self, frame, part):
+        """
+        Permet de créer une instance de la variante affichable de cet objet.
+        @param frame: Le Frame dans lequel mettre l'instance.
+        @param part: La partie à afficher si nécessaire (pour les groupes par exemple).
+        @return une instance de la classe représentant la variante affichable de cet objet.
+        """
+        raise NotImplementedError
+
+    def updateStatut(self):
+        """
+        Permet de mettre à jour l'attribut statut.
+        """
+        raise NotImplementedError
+
+    ""
+    #######################################
+    # Méthodes liées à l'enregistrement : #
+    #######################################
+    ""
     def saveByDict(self):
         """
         Méthode qui sauvegarde les attributs présent dans la super classe (ici)

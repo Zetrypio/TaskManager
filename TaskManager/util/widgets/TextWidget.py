@@ -24,14 +24,25 @@ class TextWidget(Frame):
         self.__text.config(state = DISABLED)
         self.__text.pack()
 
+    "" # Marque pour le repli de code
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def bindIt(self, *args, **kwargs):
         self.bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
 
-    def pack(self, *args, **kwargs):
-        Frame.pack(self, *args, **kwargs)
-        self.pack_propagate(False)
-
+    ""
+    #############################
+    # Redéfinition des méthodes #
+    #        d'affichage        #
+    #############################
+    ""
     def grid(self, *args, **kwargs):
         Frame.grid(self, *args, **kwargs)
         self.grid_propagate(False)
+
+    def pack(self, *args, **kwargs):
+        Frame.pack(self, *args, **kwargs)
+        self.pack_propagate(False)

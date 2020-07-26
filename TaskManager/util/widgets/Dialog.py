@@ -65,7 +65,11 @@ class Dialog(Frame):
         self.update()
         self.dialog.withdraw()
 
-
+    "" # Marque pour le repli de code
+    ##############
+    # Méthodes : #
+    ##############
+    ""
     def activate(self):
         """
         Permet d'activer le dialogue.
@@ -94,6 +98,22 @@ class Dialog(Frame):
             self.mainloop()
         self.__mainloop = False
         return self.__bouton_appuyer
+
+    def centerscreenalways(self):
+        """
+        Permet de recentrer la fenêtre du dialogue au
+        centre de l'écran dans tout les cas.
+        """
+        xy = self.geometry().split("+")[0]
+        x, y = xy.split("x")
+        x = int(x)
+        y = int(y)
+        sx = self.winfo_screenwidth()
+        sy = self.winfo_screenheight()
+        npx = sx/2 - x/2
+        npy = sy/2 - y/2
+        self.geometry("+%s+%s"%(int(npx), int(npy)))
+        self.update()
 
     def deactivate(self):
         """
@@ -147,23 +167,7 @@ class Dialog(Frame):
         """
         return self.dialog.geometry(*a)
 
-    def centerscreenalways(self):
-        """
-        Permet de recentrer la fenêtre du dialogue au
-        centre de l'écran dans tout les cas.
-        """
-        xy = self.geometry().split("+")[0]
-        x, y = xy.split("x")
-        x = int(x)
-        y = int(y)
-        sx = self.winfo_screenwidth()
-        sy = self.winfo_screenheight()
-        npx = sx/2 - x/2
-        npy = sy/2 - y/2
-        self.geometry("+%s+%s"%(int(npx), int(npy)))
-        self.update()
-
-
+# Fonctions autonomes :
 def askstring(master, nom, question):
     """
     Pose une question à l'utilisateur dans un dialogue,

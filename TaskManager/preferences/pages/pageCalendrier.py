@@ -88,23 +88,11 @@ class PageCalendrier(AbstractPage):
         self.__chargerStyle()
         self.__activeSemaineWidget() # gérer l'état des widgets de la semaine
 
-    def __convSbStrToInt(self, value):
-        """
-        Fonction qui convertie le texte du spinbox et de getData()[section][nom] en nombre de jour
-        @param value : <str> a convertir
-        @return : <int> du nombre de jour
-        """
-        morceau = value.split(" ")
-        # si c'est la période, à la fin
-        if len(morceau) == 1:
-            return 42
-        elif len(morceau) == 2 and morceau[1].startswith("jour"):
-            return int(morceau[0])
-        elif len(morceau) == 2 and morceau[1].startswith("semaine"):
-            return int(morceau[0])*7
-        else:
-            raise AttributeError()
-
+    "" # Marque pour le repli de code
+    ###############################
+    # Méthodes liées aux durées : #
+    ###############################
+    ""
     def __ajouter(self):
         """
         Enregistre la nouvelle durée crée
@@ -113,22 +101,6 @@ class PageCalendrier(AbstractPage):
         nom = self.__sbNbJour.get()
         duree = self.__convSbStrToInt(self.__sbNbJour.get()) # On prend que le nombre
         self.getData()[nom.upper()] = {"Nom":nom, "Duree en jour" : duree}
-
-        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
-        self.__chargerListBox()
-
-    def __supprimer(self):
-        """
-        Supprime la durée sélectionné du combobox
-        """
-        self.readFile(NOMFICHIER, lireDef=False)
-
-        section = self.__listebDureeCree.get(self.__listebDureeCree.curselection()).upper()
-        if section in self.getData().sections():
-            self.getData().remove_section(section)
-        else:
-            showerror("Action incorrect", "Vous ne pouvez pas retirer ce choix.")
-
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
@@ -149,70 +121,25 @@ class PageCalendrier(AbstractPage):
         # Trie de la liste
         listName.sort(key = lambda nom : self.__convSbStrToInt(nom))
 
-
         for duree in listName:
             self.__listebDureeCree.insert(END, duree)
 
-    def __chargerStyle(self):
+    def __convSbStrToInt(self, value):
         """
-        Permet de mettre toutes les possibilités de configuration d'affichage des jours dans self.__comboStyleFinal.
+        Fonction qui convertie le texte du spinbox et de getData()[section][nom] en nombre de jour
+        @param value : <str> a convertir
+        @return : <int> du nombre de jour
         """
-        # Constantes
-        jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-        mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-        lien        = self.__varLienStyle.get()
-        toudai      = datetime.datetime.today() # Pour la blague je le laisse, permet d'avoir un affichage joli
-
-        numJour     = str(toudai.day)
-        numMois     = str(toudai.month)
-        numJour2C   = "%02i"%toudai.day
-        numMois2C   = "%02i"%toudai.month
-        numAnnee    = str(toudai.year)
-        jourSemaine = str(jour[toudai.weekday()])
-        mois        = str(mois[toudai.month])
-
-        listAffichage = [] # liste des affichages disponible
-        listAffichage.append( lien.join([jourSemaine, numJour, mois]))                  # Lundi 1 Janvier
-        listAffichage.append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
-        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
-        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
-
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois]))               # L 1 Janvier
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
-
-        listAffichage.append( lien.join([numJour, mois]))                               # 1 Janvier
-        listAffichage.append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
-        listAffichage.append( lien.join([numJour, mois[:3]]))                           # 1 Jan
-        listAffichage.append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
-
-        listAffichage.append( lien.join([numJour2C, numMois2C]))                           # 01 01
-        listAffichage.append( lien.join([numJour2C, numMois2C, numAnnee]))                 # 01 01 2020
-        listAffichage.append( lien.join([numAnnee,  numMois2C, numJour2C]))                  # 2020 01 01
-
-
-        self.__comboStyleFinal.config(value = listAffichage)
-        ## Réafectation de la valeur d'avant (si on change le lien/première affectation)
-        # Première affectation
-        if self.__varComboStyleFinal.get() == "":
-            self.__varComboStyleFinal.set(listAffichage[0]) # Lundi 1 Janvier
-        # Changement du combo en cours
+        morceau = value.split(" ")
+        # si c'est la période, à la fin
+        if len(morceau) == 1:
+            return 42
+        elif len(morceau) == 2 and morceau[1].startswith("jour"):
+            return int(morceau[0])
+        elif len(morceau) == 2 and morceau[1].startswith("semaine"):
+            return int(morceau[0])*7
         else:
-            self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, lien))
-            self.__oldLien = lien
-
-
-    def __activeSemaineWidget(self):
-        """
-        Fonction qui gère l'état des combobox des semaines en fct de l'état du checkbutton
-        """
-        if self.__varNumDeLaSemaine.get():
-            self.__cbStyleNumDeLaSemaine.config(state = "readonly")
-            self.__cbCompteurNumDeLaSemaine.config(state = "readonly")
-        else :
-            self.__cbStyleNumDeLaSemaine.config(state = "disabled")
-            self.__cbCompteurNumDeLaSemaine.config(state = "disabled")
+            raise AttributeError()
 
     def __formatSpinBox(self):
         """
@@ -266,5 +193,91 @@ class PageCalendrier(AbstractPage):
         else:
             jour(str(val))
 
+    def __supprimer(self):
+        """
+        Supprime la durée sélectionné du Listbox
+        """
+        self.readFile(NOMFICHIER, lireDef=False)
+
+        section = self.__listebDureeCree.get(self.__listebDureeCree.curselection()).upper()
+        if section in self.getData().sections():
+            self.getData().remove_section(section)
+        else:
+            showerror("Action incorrect", "Vous ne pouvez pas retirer ce choix.")
+
+
+        self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
+        self.__chargerListBox()
+
+    ""
+    ############################################
+    # Méthodes liées à l'affichage des jours : #
+    ############################################
+    ""
+    def __activeSemaineWidget(self):
+        """
+        Fonction qui gère l'état des combobox des semaines en fct de l'état du checkbutton
+        """
+        if self.__varNumDeLaSemaine.get():
+            self.__cbStyleNumDeLaSemaine.config(state = "readonly")
+            self.__cbCompteurNumDeLaSemaine.config(state = "readonly")
+        else :
+            self.__cbStyleNumDeLaSemaine.config(state = "disabled")
+            self.__cbCompteurNumDeLaSemaine.config(state = "disabled")
+
+    def __chargerStyle(self):
+        """
+        Permet de mettre toutes les possibilités de configuration d'affichage des jours dans self.__comboStyleFinal.
+        """
+        # Constantes
+        jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+        lien        = self.__varLienStyle.get()
+        toudai      = datetime.datetime.today() # Pour la blague je le laisse, permet d'avoir un affichage joli
+
+        numJour     = str(toudai.day)
+        numMois     = str(toudai.month)
+        numJour2C   = "%02i"%toudai.day
+        numMois2C   = "%02i"%toudai.month
+        numAnnee    = str(toudai.year)
+        jourSemaine = str(jour[toudai.weekday()])
+        mois        = str(mois[toudai.month])
+
+        listAffichage = [] # liste des affichages disponible
+        listAffichage.append( lien.join([jourSemaine, numJour, mois]))                  # Lundi 1 Janvier
+        listAffichage.append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
+        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
+        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
+
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois]))               # L 1 Janvier
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
+        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
+
+        listAffichage.append( lien.join([numJour, mois]))                               # 1 Janvier
+        listAffichage.append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
+        listAffichage.append( lien.join([numJour, mois[:3]]))                           # 1 Jan
+        listAffichage.append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
+
+        listAffichage.append( lien.join([numJour2C, numMois2C]))                           # 01 01
+        listAffichage.append( lien.join([numJour2C, numMois2C, numAnnee]))                 # 01 01 2020
+        listAffichage.append( lien.join([numAnnee,  numMois2C, numJour2C]))                  # 2020 01 01
+
+
+        self.__comboStyleFinal.config(value = listAffichage)
+        ## Réafectation de la valeur d'avant (si on change le lien/première affectation)
+        # Première affectation
+        if self.__varComboStyleFinal.get() == "":
+            self.__varComboStyleFinal.set(listAffichage[0]) # Lundi 1 Janvier
+        # Changement du combo en cours
+        else:
+            self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, lien))
+            self.__oldLien = lien
+
+    ""
+    ###################################
+    # Méthodes liées à la fermeture : #
+    ###################################
+    ""
     def appliqueEffet(self, application):
         self._makeDictAndSave()
