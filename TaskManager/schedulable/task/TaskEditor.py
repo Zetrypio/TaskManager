@@ -145,9 +145,7 @@ class TaskEditor(Frame):
         @param parent: ID de la branche parente
         """
         # Si la tâche n'est pas filtrée
-        print("AVANT", type(displayable), self.FILTRE)
         if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
-            print("APRES", type(displayable), self.FILTRE)
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
             displayable.id = parentNew
@@ -194,10 +192,12 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-        self.getTaskInTaskEditor().append(schedulable)
+        #self.taches.append(schedulable)
         # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
+        elif isinstance(schedulable, AbstractSchedulableObject) and (schedulable.getDebut() is None or schedulable.getFin() is None):
+            self.getPeriodActive().addTaskUnplanified(schedulable)
         self.frameInput.updatePossiblePeriods()
         self.redessiner()
 

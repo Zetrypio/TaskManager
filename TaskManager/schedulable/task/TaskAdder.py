@@ -30,7 +30,7 @@ class TaskAdder(Frame):
 
         # Attributs normaux:
         date = time.localtime()
-        self.debut = datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
+        self.debut = None #datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
         self.fin = datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
         del date
 

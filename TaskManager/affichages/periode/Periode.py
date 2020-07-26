@@ -291,7 +291,6 @@ class Periode(ITaskEditorDisplayableObject):
         """
         ## Traitement du schedulable
         if region and schedulable.getDebut() is None:
-            print("ici")
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
             # plusieurs fois.
@@ -299,9 +298,7 @@ class Periode(ITaskEditorDisplayableObject):
             schedulable.setDebut(region)
         if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
             schedulable.setDuree(askDureeTache(self.getApplication(), self.getDuree() + datetime.timedelta(days = 1)))
-            print("là")
             if not schedulable.getDuree():
-                print("relà")
                 return None
         if schedulable is None :
             print("fini")
