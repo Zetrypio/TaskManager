@@ -311,8 +311,10 @@ class Periode(ITaskEditorDisplayableObject):
             return
 
         ## On le rentre dans la liste
+        # S'il n'est pas dans la liste des tache bizarres
         if not inListUnplanified:
             self.listSchedulables.append(schedulable)
+
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
@@ -370,10 +372,11 @@ class Periode(ITaskEditorDisplayableObject):
         print([s.__class__.__name__ for s in self.getListSchedulables()])
         print([s.getNom() for s in self.getListSchedulables()])
         return {
-            "nom"           : self.getNom(),
-            "debut"         : dateToStr(self.getDebut()),
-            "fin"           : dateToStr(self.getFin()),
-            "desc"          : self.desc,
-            "color"         : self.getColor(),
-            "schedulables"  : [schedulable.saveByDict() for schedulable in self.getListSchedulables()]
+            "nom"             : self.getNom(),
+            "debut"           : dateToStr(self.getDebut()),
+            "fin"             : dateToStr(self.getFin()),
+            "desc"            : self.desc,
+            "color"           : self.getColor(),
+            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListSchedulables()],
+            "unplanifiedTask" : [schedulable.saveSubtask() for schedulable in self.getListTaskUnplanified()]
             }

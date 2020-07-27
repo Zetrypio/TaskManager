@@ -522,3 +522,11 @@ class Task(AbstractSchedulableObject):
             dico["dependante"].append(dep.getNom())
 
         return dico
+
+    def saveSubtask(self):
+        """
+        Méthode qui enregistre les sous-taches seulement
+        @save subtasks : <list Task> contient une liste des dictionnaires des sous taches
+        @return dico : <dict>
+        """
+        return {"subtask" : [s.saveByDict() for s in self.getSubTasks()]}

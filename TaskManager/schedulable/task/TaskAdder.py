@@ -210,7 +210,8 @@ class TaskAdder(Frame):
             pp = Periode(self.getApplication().getPeriodManager(), "", self.getDebut().date(), self.getFin().date(), "")
             periodes = [p.nom for p in periodes if p.intersectWith(pp)]
         else:
-            periodes = []
+            periodeActive = self.getApplication().getPeriodManager().getActivePeriode()
+            periodes = [periodeActive] if periodeActive else []
         # Changer le combobox :
         self.champPeriode.config(values = ["(Aucune)"]+periodes)
         if self.getApplication().getPeriodManager().getActivePeriode() in periodes:
