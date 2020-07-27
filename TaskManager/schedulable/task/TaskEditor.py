@@ -196,6 +196,7 @@ class TaskEditor(Frame):
         # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
+        # Quand c'est une tache pas encore planifié
         elif isinstance(schedulable, AbstractSchedulableObject) and (schedulable.getDebut() is None or schedulable.getFin() is None):
             self.getPeriodActive().addTaskUnplanified(schedulable)
         self.frameInput.updatePossiblePeriods()
@@ -421,7 +422,6 @@ class TaskEditor(Frame):
             else:
                 pos = END
             # Ajout de la tâche :
-            print(self.FILTRE)
             self.__ajouterTache(t, indice, "", pos)
 
         # Add binding :

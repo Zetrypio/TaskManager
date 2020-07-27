@@ -290,6 +290,13 @@ class Periode(ITaskEditorDisplayableObject):
         @deprecated: va être renommé en addSchedulable()
         """
         ## Traitement du schedulable
+
+        # Si le schedulable viens d'une tache de ListTaskUnplanified
+        # A mettre avant de traiter le schdeulable
+        inListUnplanified = False
+        if schedulable in self.getListTaskUnplanified():
+            inListUnplanified = True
+
         if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
             # Cela permet de pouvoir Drag&Drop une même tâche
@@ -301,15 +308,14 @@ class Periode(ITaskEditorDisplayableObject):
             if not schedulable.getDuree():
                 return None
         if schedulable is None :
-            print("fini")
             return
 
         ## On le rentre dans la liste
-        self.listSchedulables.append(schedulable)
+        if not inListUnplanified:
+            self.listSchedulables.append(schedulable)
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
-        print(schedulable.getNom(), type(schedulable))
         return schedulable # Pour le dnd  "trouverPositionTache"
 
     def addTaskUnplanified(self, task):
