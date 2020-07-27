@@ -141,14 +141,6 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.listSchedulables[:]
 
-    def getListNotInListTaskUnplanified(self):
-        """
-        Méthode qui renvoie une liste des schedulables qui ne sont pas des sous-tasks d'éléments de self.listTaskUnplanified
-        @return <list> de schedulable
-        """
-        for s in self.getListSchedulables():
-            print(self.getListSchedulables())
-
     def getListTaskUnplanified(self):
         """
         Getter pour la liste des taches qui sont encore dans le taskEditor mais pas dans le calendrier
@@ -162,6 +154,18 @@ class Periode(ITaskEditorDisplayableObject):
         @return le nom
         """
         return self.nom
+
+    def getSchedulables(self):
+        """
+        Méthode qui renvoie une liste des schedulables qui ne sont pas des sous-tasks d'éléments de self.listTaskUnplanified
+        @return <list> de schedulable
+        """
+        lScheduPur = self.getListSchedulables()
+        lTemp = self.getListTaskUnplanified()
+        for task in lTemp:
+            for st in task.getSubtasks():
+                lScheduPur.append(st)
+        return lScheduPur[:]
 
     def intersectWith(self, other):
         """
@@ -322,8 +326,6 @@ class Periode(ITaskEditorDisplayableObject):
             return
 
         ## On le rentre dans la liste
-        # S'il n'est pas dans la liste des tache bizarres
-        #if not inListUnplanified:
         self.listSchedulables.append(schedulable)
 
         # On l'ajoute à tous le monde
@@ -337,7 +339,7 @@ class Periode(ITaskEditorDisplayableObject):
         C'est celles qui viennent tout juste d'être crée par le TaskAdder
         @param task : <task>
         """
-        pass
+        self.listTaskUnplanified.append(task)
 
 
     def iterateDisplayContent(self):
@@ -359,7 +361,8 @@ class Periode(ITaskEditorDisplayableObject):
         Permet d'enlever un objet du calendrier.
         @param obj: L'objet à enlever.
         """
-        self.listSchedulables.remove(schedulable)
+        if schedulable in self.getListSchedulables():
+            self.listSchedulables.remove(schedulable)
         self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)
 
     ""
