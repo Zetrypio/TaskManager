@@ -369,8 +369,6 @@ class Periode(ITaskEditorDisplayableObject):
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
-        print([s.__class__.__name__ for s in self.getListSchedulables()])
-        print([s.getNom() for s in self.getListSchedulables()])
         return {
             "nom"             : self.getNom(),
             "debut"           : dateToStr(self.getDebut()),
@@ -378,5 +376,5 @@ class Periode(ITaskEditorDisplayableObject):
             "desc"            : self.desc,
             "color"           : self.getColor(),
             "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListSchedulables()],
-            "unplanifiedTask" : [schedulable.saveSubtask() for schedulable in self.getListTaskUnplanified()]
+            "unplanifiedTask" : [schedulable.saveByDict() for schedulable in self.getListTaskUnplanified()]
             }

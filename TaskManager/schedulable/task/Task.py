@@ -501,8 +501,13 @@ class Task(AbstractSchedulableObject):
         """
         # On va chercher les attributs de la superclasse
         dico = super().saveByDict()
-        dico["debut"] = datetimeToStr(self.getDebut())
-        dico["duree"] = timedeltaToStr(self.getDuree())
+        # Si on est coteneur, il y a des attributs qu'on a pas
+        if self.isContainer():
+            dico["subtasts"] = [st.saveByDict() for st in self.getSubTasks()]
+
+        else :
+            dico["debut"] = datetimeToStr(self.getDebut())
+            dico["duree"] = timedeltaToStr(self.getDuree())
 
         dico["rep"] = self.__rep
         dico["nbrep"] = self.__nbrep
@@ -510,8 +515,6 @@ class Task(AbstractSchedulableObject):
         dico["parent"] = self.getParent().getNom() if self.getParent() else None
         dico["done"] = self.__done
 
-        if self.isContainer():
-            dico["subtasts"] = [st.getNom() for st in self.getSubTasks()]
 
         dico["dependance"] = []
         for dep in self.getDependances():
