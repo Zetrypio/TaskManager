@@ -141,6 +141,14 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.listSchedulables[:]
 
+    def getListNotInListTaskUnplanified(self):
+        """
+        Méthode qui renvoie une liste des schedulables qui ne sont pas des sous-tasks d'éléments de self.listTaskUnplanified
+        @return <list> de schedulable
+        """
+        for s in self.getListSchedulables():
+            print(self.getListSchedulables())
+
     def getListTaskUnplanified(self):
         """
         Getter pour la liste des taches qui sont encore dans le taskEditor mais pas dans le calendrier
@@ -293,9 +301,11 @@ class Periode(ITaskEditorDisplayableObject):
 
         # Si le schedulable viens d'une tache de ListTaskUnplanified
         # A mettre avant de traiter le schdeulable
+        """
         inListUnplanified = False
         if schedulable in self.getListTaskUnplanified():
             inListUnplanified = True
+        """
 
         if region and schedulable.getDebut() is None:
             # Important pour ne pas altérer l'originelle :
@@ -303,6 +313,7 @@ class Periode(ITaskEditorDisplayableObject):
             # plusieurs fois.
             schedulable = schedulable.copy()
             schedulable.setDebut(region)
+
         if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
             schedulable.setDuree(askDureeTache(self.getApplication(), self.getDuree() + datetime.timedelta(days = 1)))
             if not schedulable.getDuree():
@@ -312,8 +323,8 @@ class Periode(ITaskEditorDisplayableObject):
 
         ## On le rentre dans la liste
         # S'il n'est pas dans la liste des tache bizarres
-        if not inListUnplanified:
-            self.listSchedulables.append(schedulable)
+        #if not inListUnplanified:
+        self.listSchedulables.append(schedulable)
 
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
@@ -326,7 +337,7 @@ class Periode(ITaskEditorDisplayableObject):
         C'est celles qui viennent tout juste d'être crée par le TaskAdder
         @param task : <task>
         """
-        self.listTaskUnplanified.append(task)
+        pass
 
 
     def iterateDisplayContent(self):

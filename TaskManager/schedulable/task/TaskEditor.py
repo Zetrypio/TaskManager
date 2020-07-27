@@ -110,7 +110,13 @@ class TaskEditor(Frame):
         """
         l = self.getPeriodManager().getPeriodes()
         if self.getPeriodActive():
-            l += self.getPeriodActive().getListSchedulables() + self.getPeriodActive().getListTaskUnplanified()
+            schedulable = self.getPeriodActive().getListSchedulables()
+            l += schedulable + self.taches
+            for t in l:
+                if isinstance(t, Task):
+                    for superTask in self.taches:
+                        if t.getParent() == superTask:
+                            l.remove(t)
         return l
 
     ""
@@ -198,7 +204,7 @@ class TaskEditor(Frame):
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
         # Quand c'est une tache pas encore planifié
         elif isinstance(schedulable, AbstractSchedulableObject) and (schedulable.getDebut() is None or schedulable.getFin() is None):
-            self.getPeriodActive().addTaskUnplanified(schedulable)
+            self.taches.append(schedulable)
         self.frameInput.updatePossiblePeriods()
         self.redessiner()
 

@@ -93,6 +93,7 @@ class Application(Frame):
         if not CHARGERPRECONFIG:
             self.__load()
 
+
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
     # Getters : #
@@ -177,12 +178,15 @@ class Application(Frame):
             @param p : <periode> celle qui contient la tache
             @return <task>
             """
-            return Task(d["nom"],
-                        p,
-                        d["desc"],
-                        d["color"],
-                        strToDatetime(d["debut"]),
-                        strToTimedelta(d["duree"])
+            return Task(nom     = d["nom"],
+                        periode = p,
+                        desc    = d["desc"],
+                        color   = d["color"],
+                        debut   = strToDatetime(d["debut"]),
+                        duree   = strToTimedelta(d["duree"]),
+                        rep     = d["rep"],
+                        nbrep   = d["nbrep"],
+                        done    = d["done"]
                         )
         # Si le fichier n'existe pas, on ne fait rien
         if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
@@ -204,7 +208,8 @@ class Application(Frame):
                         )
             # On l'ajoute
             self.getPeriodManager().ajouter(p)
-            # On crée ses schedulables
+
+            # On crée ses schedulables standards
             for schedulable in myPeriode["schedulables"]:
                 print(schedulable["nom"])
                 # Si c'est un groupe :
@@ -225,6 +230,27 @@ class Application(Frame):
                 # Si c'est une tache standard :
                 else :
                     self.getTaskEditor().ajouter(creeTache(schedulable, p))
+
+            # Pour les taches contenant d'autres taches
+            for s in myPeriode["unplanifiedTask"]:
+                # s est un dico de la tache contenante
+                tacheS = Task(
+                            nom = s["nom"],
+                            periode = p,
+                            desc = s["desc"],
+                            color = s["color"],
+                            rep = s["rep"],
+                            nbrep = s["nbrep"],
+                            done = s["done"]
+                            )
+                # On ajoute les subtasks
+                for st in s["subtasks"]:
+                    print(tacheS, creeTache(st, p))
+                    # st <dict> d'une tache
+                    tacheST = creeTache(st, p)
+                    tacheS.addSubTask(tacheST)
+                    p.listTaskUnplanified.append(tacheS)
+                    self.getTaskEditor().ajouter(tacheST)
 
     def save(self):
         """
@@ -306,6 +332,7 @@ def main():
         group.addTask(tacheA2)
         periodeSemaine.getGroupeManager().ajouter(group)
         app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+
 
     
     

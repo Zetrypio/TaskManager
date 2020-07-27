@@ -47,6 +47,9 @@ class Task(AbstractSchedulableObject):
         # Est-ce que la tâche est faite ?
         self.__done = done or False
 
+        # Pour reconnaitre une task parmi toutes
+        self.uniqueID = str(self.addDependance)[-12:-2]
+
         # Liste des dépendances pour les liens
         self.__dependances = dependances if dependances else []
         self.__dependantes = dependantes if dependantes else []
@@ -503,7 +506,7 @@ class Task(AbstractSchedulableObject):
         dico = super().saveByDict()
         # Si on est coteneur, il y a des attributs qu'on a pas
         if self.isContainer():
-            dico["subtasts"] = [st.saveByDict() for st in self.getSubTasks()]
+            dico["subtasks"] = [st.saveByDict() for st in self.getSubTasks()]
 
         else :
             dico["debut"] = datetimeToStr(self.getDebut())

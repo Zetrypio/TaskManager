@@ -235,6 +235,6 @@ class TaskAdder(Frame):
         color = self.boutonColor.get()
         periode = None
         for p in self.getApplication().getPeriodManager().getPeriodes():
-            if p.nom == self.champPeriode.get():
+            if p.getNom() == self.champPeriode.get():
                 periode = p
         self.getTaskEditor().ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
