@@ -23,7 +23,7 @@ from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
 
-CHARGERPRECONFIG = True
+CHARGERPRECONFIG = False
 
 # CECI est la CORRECTION d'un BUG :
 
@@ -229,28 +229,17 @@ class Application(Frame):
 
                 # Si c'est une tache standard :
                 else :
-                    self.getTaskEditor().ajouter(creeTache(schedulable, p))
+                    myTache = creeTache(schedulable, p)
+                    self.getTaskEditor().ajouter(myTache)
+                    # On crée les sous taches
+                    if schedulable["subtasks"] is not None:
+                        for st in schedulable["subtasks"]:
+                            # st <dict> d'une tache
+                            tacheST = creeTache(st, p)
+                            myTache.addSubTask(tacheST)
+                            p.addSchedulable(tacheST)
+                            #self.getTaskEditor().ajouter(tacheST)
 
-            # Pour les taches contenant d'autres taches
-            for s in myPeriode["unplanifiedTask"]:
-                # s est un dico de la tache contenante
-                tacheS = Task(
-                            nom = s["nom"],
-                            periode = p,
-                            desc = s["desc"],
-                            color = s["color"],
-                            rep = s["rep"],
-                            nbrep = s["nbrep"],
-                            done = s["done"]
-                            )
-                # On ajoute les subtasks
-                for st in s["subtasks"]:
-                    print(tacheS, creeTache(st, p))
-                    # st <dict> d'une tache
-                    tacheST = creeTache(st, p)
-                    tacheS.addSubTask(tacheST)
-                    p.listTaskUnplanified.append(tacheS)
-                    self.getTaskEditor().ajouter(tacheST)
 
     def save(self):
         """

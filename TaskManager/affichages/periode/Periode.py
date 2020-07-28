@@ -387,5 +387,5 @@ class Periode(ITaskEditorDisplayableObject):
             "fin"             : dateToStr(self.getFin()),
             "desc"            : self.desc,
             "color"           : self.getColor(),
-            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListSchedulables()]
+            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListAllThingsInPeriod()]
             }

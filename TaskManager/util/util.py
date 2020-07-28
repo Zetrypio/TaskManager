@@ -60,14 +60,14 @@ def datetimeToStr(d):
     Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
     @param d : <datetime.datetime> celui qu'on doit tranformer
     """
-    return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)])
+    return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)]) if isinstance(d, datetime.datetime) else None
 
 def dateToStr(d):
     """
     Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
     @param d : <datetime.date> celui qu'on doit tranformer
     """
-    return "-".join([str(d.year), str(d.month), str(d.day)])
+    return "-".join([str(d.year), str(d.month), str(d.day)]) if isinstance(d, datetime.date) else None
 
 def strToDate(dt):
     """
@@ -75,6 +75,8 @@ def strToDate(dt):
     @param dt : <str>
     @return <datetime.date>
     """
+    if not isinstance(dt, str):
+        return None
     y, m, d = dt.split("-")
     return datetime.date(int(y), int(m), int(d))
 
@@ -84,6 +86,8 @@ def strToDatetime(dt):
     @param dt : <str>
     @return <datetime.datetime>
     """
+    if not isinstance(dt, str):
+        return None
     y, m, d, h, mi, s = dt.split("-")
     return datetime.datetime(int(y), int(m), int(d), int(h), int(mi), int(s))
 
@@ -93,6 +97,8 @@ def strToTimedelta(dt):
     @param dt : <str>
     @return <datetime.timedelta>
     """
+    if not isinstance(dt, str):
+        return None
     d, s = dt.split("-")
     return datetime.timedelta(days = int(d), seconds = int(s))
 
@@ -101,4 +107,4 @@ def timedeltaToStr(d):
     Permet de tranformer un datetime en str selon le format suivant : DD-SS
     @param d : <datetime.timedelta> celui qu'on doit tranformer
     """
-    return "-".join([str(d.days), str(d.seconds)])
+    return "-".join([str(d.days), str(d.seconds)]) if isinstance(d, datetime.timedelta) else None

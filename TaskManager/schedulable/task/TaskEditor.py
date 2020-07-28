@@ -194,9 +194,10 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-        # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
         if self.getPeriodActive():
             self.getPeriodActive().addItemInListAllThingsInPeriod(schedulable)
+
+        # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
         # Quand c'est une tache pas encore planifié
