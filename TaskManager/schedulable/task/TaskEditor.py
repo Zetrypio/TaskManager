@@ -418,8 +418,19 @@ class TaskEditor(Frame):
         # configuration des colonnes
         self.tree.column("#0", width = 0)
         self.tree.column(0,    width = 0)
-        self.tree.heading("#0", text="Tâche", command = self.tri_alphabetique)
-        self.tree.heading(0,    text="Statut", command = self.tri_statut)
+
+        # On modifie le nom des colonnes
+        if "type" in self.FILTRE and "Tâche" in self.FILTRE["type"]:
+            tHeaderFirst = "Tâche"
+            tHeaderSecon = "Statut"
+        elif "type" in self.FILTRE and "Période" in self.FILTRE["type"]:
+            tHeaderFirst = "Période"
+            tHeaderSecon = "Statut"
+        else :
+            tHeaderFirst = tHeaderSecon = ""
+
+        self.tree.heading("#0", text=tHeaderFirst, command = self.tri_alphabetique)
+        self.tree.heading(0,    text=tHeaderSecon, command = self.tri_statut)
 
         # Position d'insertion (utilisé pour les filtres prioritaires)
         insertPos = 0
