@@ -55,6 +55,9 @@ class Application(Frame):
         @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
+
+        # Liste de clés qui permettent de référé à une tache précise
+        self.listKey = []
         os.makedirs(os.path.expanduser("~/.taskManager/"), exist_ok = True)
 
         self.__data = Data()
@@ -186,7 +189,8 @@ class Application(Frame):
                         duree   = strToTimedelta(d["duree"]),
                         rep     = d["rep"],
                         nbrep   = d["nbrep"],
-                        done    = d["done"]
+                        done    = d["done"],
+                        id      = d["id"]
                         )
         # Si le fichier n'existe pas, on ne fait rien
         if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
@@ -211,7 +215,6 @@ class Application(Frame):
 
             # On crée ses schedulables standards
             for schedulable in myPeriode["schedulables"]:
-                print(schedulable["nom"])
                 # Si c'est un groupe :
                 if "listTasks" in schedulable:
                     g = Groupe(

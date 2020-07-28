@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
 import datetime
+import random
 
 from ..AbstractSchedulableObject import *
 
@@ -17,7 +18,7 @@ from affichages.items.content.DisplayableTask import *
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
-                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False, dependances = None, dependantes = None):
+                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False, dependances = None, dependantes = None, id = None):
         """
         @param nom         : nom de la tâche.
         @param periode     : Période de la tâche, peut être None.
@@ -29,6 +30,7 @@ class Task(AbstractSchedulableObject):
         @param nbrep       : nombre de répétitions.
         @param dependances : <list Task>
         @param dependantes : <list Task>
+        @param id          : <str> contient l'id de la tache
         """
         # Constructeur parent :
         super().__init__(nom, periode, desc, color)
@@ -48,7 +50,7 @@ class Task(AbstractSchedulableObject):
         self.__done = done or False
 
         # Pour reconnaitre une task parmi toutes
-        self.uniqueID = str(self.addDependance)[-12:-2]
+        self.__uniqueID = id if id is not None else self.setUniqueID()
 
         # Liste des dépendances pour les liens
         self.__dependances = dependances if dependances else []
@@ -434,6 +436,13 @@ class Task(AbstractSchedulableObject):
                 listeGroupe.append(groupe)
         return listeGroupes
 
+    def getUniqueID(self):
+        """
+        Permet d'obtenir l'ID de la tache
+        @return : <str> self.__uniqueID
+        """
+        return self.__uniqueID
+
     def isDone(self):
         """
         Getter pour savoir si la tâche est validée.
@@ -448,6 +457,29 @@ class Task(AbstractSchedulableObject):
         """
         self.__done = value
         self.updateStatut()
+
+    def setUniqueID(self):
+        """
+        Permet d'ajouter un uniqueID à la tache et de le mettre dans la liste
+        qui vérifie s'il est bien unique
+        @raise AttributeError si toute les possibilités ont été faites
+        """
+        id = str(self.__init__)[-12:-2]
+        i = 0 # Stopper si on fait trop de boucles
+        while id in self.getPeriode().getApplication().listKey:
+            l = list(id)
+            r = random.shuffle(l)
+            id = ''.join(r)
+            i+=1
+            if i == 30:
+                id += "htcfjgvkkjgyftcgvhbh"
+
+            if i == 100:
+                raise AttributeError
+
+        self.getPeriode().getApplication().listKey.append(id)
+        return id
+
 
     def transformToDnd(self, taskEditor, rmenu):
         """
@@ -516,13 +548,15 @@ class Task(AbstractSchedulableObject):
         dico["parent"] = self.getParent().getNom() if self.getParent() else None
         dico["done"] = self.__done
 
+        dico["id"] = self.getUniqueID()
+
 
         dico["dependance"] = []
         for dep in self.getDependances():
-            dico["dependance"].append(dep.getNom())
+            dico["dependance"].append(dep.getUniqueID())
 
         dico["dependante"] = []
         for dep in self.getDependantes():
-            dico["dependante"].append(dep.getNom())
+            dico["dependante"].append(dep.getUniqueID())
 
         return dico
