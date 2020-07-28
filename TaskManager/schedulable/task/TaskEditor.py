@@ -104,20 +104,16 @@ class TaskEditor(Frame):
 
     def getTaskInTaskEditor(self):
         """
-        Getter pour la liste des taches qui doivent être affiché
+        Getter pour la liste des taches qui doivent être affiché ou des périodes selon le filtre
         @old : remplace taches
         @return une liste de schedulable et TaskUnplanified
         """
-        l = self.getPeriodManager().getPeriodes()
-        if self.getPeriodActive():
-            schedulable = self.getPeriodActive().getListSchedulables()
-            l += schedulable + self.taches
-            for t in l:
-                if isinstance(t, Task):
-                    for superTask in self.taches:
-                        if t.getParent() == superTask:
-                            l.remove(t)
-        return l
+        if "type" in self.FILTRE and "Période" in self.FILTRE["type"]:
+            return self.getPeriodManager().getPeriodes()
+        elif self.getPeriodActive():
+            return self.getPeriodActive().getListAllThingsInPeriod()
+        else:
+            return []
 
     ""
     #############
@@ -198,13 +194,14 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet planifiable à la liste.
         @param schedulable: l'objet à rajouter.
         """
-        self.taches.append(schedulable)
         # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
+        if self.getPeriodActive():
+            self.getPeriodActive().addItemInListAllThingsInPeriod(schedulable)
         if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
         # Quand c'est une tache pas encore planifié
         elif isinstance(schedulable, AbstractSchedulableObject) and (schedulable.getDebut() is None or schedulable.getFin() is None):
-            #self.taches.append(schedulable)
+            #self.taches.append(schedulable) # To clear
             pass
         self.frameInput.updatePossiblePeriods()
         self.redessiner()
@@ -214,10 +211,10 @@ class TaskEditor(Frame):
         Permet de supprimer un objet planifiable de la liste.
         @param schedulable: l'objet à enlever.
         """
-        if schedulable in self.taches:
-            self.taches.remove(schedulable)
+        if schedulable in self.getTaskInTaskEditor():
+            self.getPeriodActive().removeItemInListAllThingsInPeriod(schedulable)
         else:
-            for s in self.taches:
+            for s in self.getTaskInTaskEditor():
                 if isinstance(s, Task) and s.isContainer():
                     for st in s.getSubTasks():
                         if st == schedulable:
@@ -288,7 +285,7 @@ class TaskEditor(Frame):
             self.MODE_TRI = "Alpha_reverse"
         else:
             self.MODE_TRI = "Alpha"
-        self.taches.sort(key=lambda t: t.getNom(), reverse=self.MODE_TRI=="Alpha_reverse")
+        self.getTaskInTaskEditor().sort(key=lambda t: t.getNom(), reverse=self.MODE_TRI=="Alpha_reverse")
         self.redessiner()
 
     def tri_statut(self):
@@ -298,27 +295,27 @@ class TaskEditor(Frame):
         """
         if self.MODE_TRI == "Statut_importance":
             self.MODE_TRI = "Statut_prochain"
-            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
-            self.taches.sort(key=lambda t: 0 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
+            self.getTaskInTaskEditor().sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
+            self.getTaskInTaskEditor().sort(key=lambda t: 0 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
                                       else 1 if t.getStatut() == "Inconnu"
                                       else 2)
         elif self.MODE_TRI == "Statut_prochain":
             self.MODE_TRI = "Statut_autre"
             # Alphabétique pout les Inconnus -> tri alphabétique :
-            self.taches.sort(key=lambda t: t.getNom())
+            self.getTaskInTaskEditor().sort(key=lambda t: t.getNom())
             # Ne change pas l'ordre des noms des Inconnus
             # car ils ont tous le même début qui est None
             # -> tri par début pour le reste :
-            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
+            self.getTaskInTaskEditor().sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
             # Tri selon le statut :
-            self.taches.sort(key=lambda t: 0 if t.getStatut() == "Inconnu"
+            self.getTaskInTaskEditor().sort(key=lambda t: 0 if t.getStatut() == "Inconnu"
                                       else 1 if t.getStatut() == "Retard"
                                       else 2 if t.getStatut() == "Répétition"
                                       else 3)
         else:
             self.MODE_TRI = "Statut_importance"
-            self.taches.sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
-            self.taches.sort(key=lambda t: 0 if t.getStatut() == "Retard"
+            self.getTaskInTaskEditor().sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
+            self.getTaskInTaskEditor().sort(key=lambda t: 0 if t.getStatut() == "Retard"
                                       else 1 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
                                       else 2)
         self.redessiner()
@@ -338,7 +335,7 @@ class TaskEditor(Frame):
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
             for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-                for t in self.taches:
+                for t in self.getTaskInTaskEditor():
                     if isinstance(t, Task) and t.getStatut() == "Inconnu":
                         if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
@@ -428,7 +425,7 @@ class TaskEditor(Frame):
         insertPos = 0
 
         # On ajoute les tâches :
-        for indice, t in enumerate(self.taches):
+        for indice, t in enumerate(self.getTaskInTaskEditor()):
             # Définition de la position prioritaire ou non :
             if self.__filterStateOf(t) == 1:
                 pos = insertPos

@@ -33,8 +33,10 @@ class Periode(ITaskEditorDisplayableObject):
         self.desc = desc
         self.color = color
         self.selected = False
+
+        # Listes :
         self.listSchedulables = []
-        self.listTaskUnplanified = []
+        self.listAllThingsInPeriod = [] # Liste faite pour le taskEditor et l'enregistrement
 
         # datetime avant lequel tout est fait
         self.dateStatut = None
@@ -134,6 +136,13 @@ class Periode(ITaskEditorDisplayableObject):
                     else "Prochainement" if self.debut > datetime.datetime.now().date()\
                     else "Finie"
 
+    def getListAllThingsInPeriod(self):
+        """
+        Getter pour la liste des choses (task, taches contenantes, groupes) pour le taskEditor et l'enregistrement
+        @return la liste de self.listAllThingsInPeriod car on s'occupe de faire des tries dans TaskEditor
+        """
+        return self.listAllThingsInPeriod
+
     def getListSchedulables(self):
         """
         Getter pour la liste des schedulables
@@ -141,31 +150,12 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.listSchedulables[:]
 
-    def getListTaskUnplanified(self):
-        """
-        Getter pour la liste des taches qui sont encore dans le taskEditor mais pas dans le calendrier
-        @return un copy de self.listTaskUnplanified
-        """
-        return self.listTaskUnplanified[:]
-
     def getNom(self):
         """
         Getter pour le nom de la période
         @return le nom
         """
         return self.nom
-
-    def getSchedulables(self):
-        """
-        Méthode qui renvoie une liste des schedulables qui ne sont pas des sous-tasks d'éléments de self.listTaskUnplanified
-        @return <list> de schedulable
-        """
-        lScheduPur = self.getListSchedulables()
-        lTemp = self.getListTaskUnplanified()
-        for task in lTemp:
-            for st in task.getSubtasks():
-                lScheduPur.append(st)
-        return lScheduPur[:]
 
     def intersectWith(self, other):
         """
@@ -333,13 +323,13 @@ class Periode(ITaskEditorDisplayableObject):
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
         return schedulable # Pour le dnd  "trouverPositionTache"
 
-    def addTaskUnplanified(self, task):
+    def addItemInListAllThingsInPeriod(self, task):
         """
-        Méthode qui ajoute la tache à une liste de tache qui ne sont pas encore mise sur le calendrier
-        C'est celles qui viennent tout juste d'être crée par le TaskAdder
+        Méthode qui ajoute l'objet à une liste des schedulables à afficher dans le task éditor
+        (pas complet manque les périodes, géré par le TaskEditor)
         @param task : <task>
         """
-        self.listTaskUnplanified.append(task)
+        self.listAllThingsInPeriod.append(task)
 
 
     def iterateDisplayContent(self):
@@ -355,6 +345,14 @@ class Periode(ITaskEditorDisplayableObject):
         yield "Durée :", self.getDuree()
         yield "Fin :", self.fin
         yield "Description :", self.desc
+
+    def removeItemInListAllThingsInPeriod(self, task):
+        """
+        Méthode qui retire l'objet à une liste des schedulables à afficher dans le task éditor
+        (pas complet manque les périodes, géré par le TaskEditor)
+        @param task : <task>
+        """
+        self.listAllThingsInPeriod.remove(task)
 
     def removeSchedulable(self, schedulable):
         """
@@ -389,6 +387,5 @@ class Periode(ITaskEditorDisplayableObject):
             "fin"             : dateToStr(self.getFin()),
             "desc"            : self.desc,
             "color"           : self.getColor(),
-            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListSchedulables()],
-            "unplanifiedTask" : [schedulable.saveByDict() for schedulable in self.getListTaskUnplanified()]
+            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListSchedulables()]
             }
