@@ -8,6 +8,7 @@ from util.widgets.infobulle import *
 from util.util import *
 
 from .AbstractLink import *
+from affichages.items.DatetimeItemPart import *
 
 class DependanceLink(AbstractLink):
     """
@@ -44,7 +45,7 @@ class DependanceLink(AbstractLink):
     # Getters : #
     #############
     ""
-    def getPartA(self):
+    def getPartObjA(self):
         """
         Getter pour le départ de la fleche
         @return <Task> self.__objGantt_A
@@ -52,7 +53,7 @@ class DependanceLink(AbstractLink):
         print(type(self.__objGantt_A))
         return self.__objGantt_A
 
-    def getPartB(self):
+    def getPartObjB(self):
         """
         Getter pour l'arrivée de la fleche
         @return <Task> self.__objGantt_B

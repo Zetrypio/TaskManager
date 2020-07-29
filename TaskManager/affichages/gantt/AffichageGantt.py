@@ -251,23 +251,32 @@ class AffichageGantt(AbstractDisplayedCalendar):
             for lien in self.listeDisplayableItem:
                 if isinstance(lien, DependanceLink):
                     # Est ce que ce lien va fais la liaison de notre schdulable
-                    if lien.getPartA() is displayable.getSchdulable() and lien.getPartB() is dep:
+                    if lien.getPartObjA() is displayable.getSchedulable() and lien.getPartObjB() is dep:
                         return True
             else :
                 return False
+
+        def getObjGantt(schedulable):
+            """
+            Fonction embarqué qui retourne l'objet Gantt en fonction de la task
+            @param schedulable : <Task> celle a tester
+            @return <objGantt> celui qui affiche la Task "schedulable"
+            """
+            for s in self.listeDisplayableItem:
+                if isinstance(s.getSchedulable(), Task) and s.getSchedulable() is schedulable:
+                    return s
+
         # Va changer :
         #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)
             # Si le displayable a une dépendance
-            if isinstance(displayable.getSchedulable(), Task) and displayable.getSchedulable().getDependances() is not []:
+            if isinstance(displayable, ObjetGantt) and isinstance(displayable.getSchedulable(), Task) and displayable.getSchedulable().getDependances() is not []:
                 for dep in displayable.getSchedulable().getDependances():
                     # Recherche des liens
                     if not getLien(displayable.getSchedulable(), dep):
-                        #self.createLink(displayable.getSchedulable(), dep)
-                        pass
-
+                        self.createLink(displayable, getObjGantt(dep))
 
     def __deleteSelected(self):
         """
