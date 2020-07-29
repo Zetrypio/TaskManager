@@ -44,6 +44,21 @@ class DependanceLink(AbstractLink):
     # Getters : #
     #############
     ""
+    def getPartA(self):
+        """
+        Getter pour le départ de la fleche
+        @return <Task> self.__objGantt_A
+        """
+        print(type(self.__objGantt_A))
+        return self.__objGantt_A
+
+    def getPartB(self):
+        """
+        Getter pour l'arrivée de la fleche
+        @return <Task> self.__objGantt_B
+        """
+        return self.__objGantt_B
+
     def isSelected(self):
         """
         Permet de savoir si le lien est sélectionné.

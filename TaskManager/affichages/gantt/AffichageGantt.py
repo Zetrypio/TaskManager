@@ -240,11 +240,34 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'afficher les tâches et autres schedulables et les liens.
         @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
         """
+        def getLien(taskA, taskB):
+            """
+            Fonction embarqué qui dit si un objet dépendance link existe entre les 2 tasks
+            @param taskA : <Task> Tache de départ du lien
+            @param taskB : <Task> Tache d'e départ'arrivée du lien
+            @return <bool> True  : le lien existe
+                    <bool> False : Le lien n'existe pas
+            """
+            for lien in self.listeDisplayableItem:
+                if isinstance(lien, DependanceLink):
+                    # Est ce que ce lien va fais la liaison de notre schdulable
+                    if lien.getPartA() is displayable.getSchdulable() and lien.getPartB() is dep:
+                        return True
+            else :
+                return False
         # Va changer :
         #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)
+            # Si le displayable a une dépendance
+            if isinstance(displayable.getSchedulable(), Task) and displayable.getSchedulable().getDependances() is not []:
+                for dep in displayable.getSchedulable().getDependances():
+                    # Recherche des liens
+                    if not getLien(displayable.getSchedulable(), dep):
+                        #self.createLink(displayable.getSchedulable(), dep)
+                        pass
+
 
     def __deleteSelected(self):
         """
