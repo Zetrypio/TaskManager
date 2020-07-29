@@ -50,7 +50,6 @@ class DependanceLink(AbstractLink):
         Getter pour le départ de la fleche
         @return <Task> self.__objGantt_A
         """
-        print(type(self.__objGantt_A))
         return self.__objGantt_A
 
     def getPartObjB(self):

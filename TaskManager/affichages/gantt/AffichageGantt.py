@@ -119,7 +119,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for lien in self.listeDisplayableItem:
             if isinstance(lien, DependanceLink):
                 # Est ce que ce lien va fais la liaison de notre schdulable
-                if lien.getPartObjA() is displayable.getSchedulable() and lien.getPartObjB() is dep:
+                if lien.getPartObjA() is taskA and lien.getPartObjB() is taskB:
                     return True
         else :
             return False
@@ -551,13 +551,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                         self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
-                    ## Check si le lien existe déjà
-                    if self.__getLien(objB, objA):
-                       raise RuntimeError("Lien déjà existant.")
-
                     # A faire car on perd activeGanttObject dans createLink
                     # Deplus l'ajout de dependance dois se faire apres sinon on raise RunTimeError
                     objA, objB = objGantt, self.__activeGanttObject
+
+                    ## Check si le lien existe déjà
+                    if self.__getLien(objB.getSchedulable(), objA.getSchedulable()):
+                       raise RuntimeError("Lien déjà existant.")
 
                     # On crée le lien et met donc à jour l'affichage.
                     self.createLink(objB, objA)
