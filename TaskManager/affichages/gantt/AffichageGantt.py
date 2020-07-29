@@ -521,6 +521,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
                     # On crée le lien et met donc à jour l'affichage.
                     self.createLink(self.__activeGanttObject, objGantt)
+                    # Création de la dépendance :
+                    objGantt.getSchedulable().addDependance(self.__activeGanttObject.getSchedulable())
                     self.updateAffichage()
 
             # Pour le mode de suppression de liens :

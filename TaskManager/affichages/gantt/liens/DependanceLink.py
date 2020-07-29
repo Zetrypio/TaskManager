@@ -39,9 +39,6 @@ class DependanceLink(AbstractLink):
         self.__objGantt_B = partB.getSchedulable()
         self.__selected = False
 
-        # Création de la dépendance :
-        partB.getSchedulable().addDependance(partA.getSchedulable())
-
     "" # Marque pour le repli de code
     #############
     # Getters : #
