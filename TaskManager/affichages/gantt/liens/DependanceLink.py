@@ -32,8 +32,8 @@ class DependanceLink(AbstractLink):
         super().__init__(affichageGantt, partA, partB)
 
         # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas :
-        if partB.getSchedulable() in partA.getSchedulable().getDependantes():
-            raise RuntimeError("Lien déjà existant.")
+        #if partB.getSchedulable() in partA.getSchedulable().getDependantes():
+            #raise RuntimeError("Lien déjà existant.")
 
         # Attributs :
         self.__objGantt_A = partA.getSchedulable()
