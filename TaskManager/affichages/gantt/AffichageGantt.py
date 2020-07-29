@@ -520,13 +520,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
                     # On crée le lien et met donc à jour l'affichage.
-                    self.listeDisplayableItem.append(
-                        DependanceLink(
-                            self,
-                            self.getVisiblePart(self.__activeGanttObject.getLastPart()),
-                            self.getVisiblePart(objGantt.getFirstPart())))
-                    self.__highlightLinks(None)
-                    self.__endLinkingLine()
+                    self.createLink(self.__activeGanttObject, objGantt)
                     self.updateAffichage()
 
             # Pour le mode de suppression de liens :
@@ -562,6 +556,22 @@ class AffichageGantt(AbstractDisplayedCalendar):
             self.deselectEverything()
             objGantt.getSchedulable().setSelected(True)
             self.getDonneeCalendrier().updateColor()
+
+    def createLink(self, objA, objB):
+        """
+        Méthode qui crée un dependanceLink et le rajoute à la liste
+        @param objA : <ObjetGantt> départ  de la flèche
+        @param objB : <ObjetGantt> arrivée de la flèche
+        Sens de la flèche : objA --> objB
+        """
+        self.listeDisplayableItem.append(
+            DependanceLink(
+                self,
+                self.getVisiblePart(objA.getLastPart()),
+                self.getVisiblePart(objB.getFirstPart())))
+        self.__highlightLinks(None)
+        self.__endLinkingLine()
+
 
     def deselectEverything(self):
         super().deselectEverything()
