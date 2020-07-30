@@ -108,6 +108,22 @@ class AffichageGantt(AbstractDisplayedCalendar):
         #"""
         #return self.can.find_overlapping(pos.x-1, pos.y-1, pos.x+1, pos.y+1)
 
+    def __getLien(self, taskA, taskB):
+        """
+        Fonction embarqué qui dit si un objet dépendance link existe entre les 2 tasks
+        @param taskA : <Task> Tache de départ du lien
+        @param taskB : <Task> Tache d'arrivée du lien
+        @return <bool> True  : le lien existe
+                <bool> False : Le lien n'existe pas
+        """
+        for lien in self.listeDisplayableItem:
+            if isinstance(lien, DependanceLink):
+                # Est ce que ce lien va fais la liaison de notre schdulable
+                if lien.getPartObjA() is taskA and lien.getPartObjB() is taskB:
+                    return True
+        else :
+            return False
+
     def getNbLigneTotal(self):
         """
         Permet de savoir le nombre de ligne totale sur l'ensemble des jours affichés.
@@ -240,11 +256,27 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'afficher les tâches et autres schedulables et les liens.
         @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
         """
+        def getObjGantt(schedulable):
+            """
+            Fonction embarqué qui retourne l'objet Gantt en fonction de la task
+            @param schedulable : <Task> celle a tester
+            @return <objGantt> celui qui affiche la Task "schedulable"
+            """
+            for s in self.listeDisplayableItem:
+                if isinstance(s.getSchedulable(), Task) and s.getSchedulable() is schedulable:
+                    return s
+
         # Va changer :
         #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)
+            # Si le displayable a une dépendance
+            if isinstance(displayable, ObjetGantt) and isinstance(displayable.getSchedulable(), Task) and displayable.getSchedulable().getDependantes() is not []:
+                for dep in displayable.getSchedulable().getDependantes():
+                    # Recherche des liens
+                    if not self.__getLien(displayable.getSchedulable(), dep):
+                        self.createLink(displayable, getObjGantt(dep))
 
     def __deleteSelected(self):
         """
@@ -518,14 +550,19 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                         self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
+                    # A faire car on perd activeGanttObject dans createLink
+                    # Deplus l'ajout de dependance dois se faire apres sinon on raise RunTimeError
+                    objA, objB = objGantt, self.__activeGanttObject
+
+                    ## Check si le lien existe déjà
+                    if self.__getLien(objB.getSchedulable(), objA.getSchedulable()):
+                       raise RuntimeError("Lien déjà existant.")
+
                     # On crée le lien et met donc à jour l'affichage.
-                    self.listeDisplayableItem.append(
-                        DependanceLink(
-                            self,
-                            self.getVisiblePart(self.__activeGanttObject.getLastPart()),
-                            self.getVisiblePart(objGantt.getFirstPart())))
-                    self.__highlightLinks(None)
-                    self.__endLinkingLine()
+                    self.createLink(objB, objA)
+
+                    # Création de la dépendance :
+                    objA.getSchedulable().addDependance(objB.getSchedulable())
                     self.updateAffichage()
 
             # Pour le mode de suppression de liens :
@@ -561,6 +598,22 @@ class AffichageGantt(AbstractDisplayedCalendar):
             self.deselectEverything()
             objGantt.getSchedulable().setSelected(True)
             self.getDonneeCalendrier().updateColor()
+
+    def createLink(self, objA, objB):
+        """
+        Méthode qui crée un dependanceLink et le rajoute à la liste
+        @param objA : <ObjetGantt> départ  de la flèche
+        @param objB : <ObjetGantt> arrivée de la flèche
+        Sens de la flèche : objA --> objB
+        """
+        self.listeDisplayableItem.append(
+            DependanceLink(
+                self,
+                self.getVisiblePart(objA.getLastPart()),
+                self.getVisiblePart(objB.getFirstPart())))
+        self.__highlightLinks(None)
+        self.__endLinkingLine()
+
 
     def deselectEverything(self):
         super().deselectEverything()

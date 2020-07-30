@@ -8,6 +8,7 @@ from util.widgets.infobulle import *
 from util.util import *
 
 from .AbstractLink import *
+from affichages.items.DatetimeItemPart import *
 
 class DependanceLink(AbstractLink):
     """
@@ -31,22 +32,33 @@ class DependanceLink(AbstractLink):
         super().__init__(affichageGantt, partA, partB)
 
         # Tester si la dépendance existe déjà, si c'est vrai on ne le fait pas :
-        if partB.getSchedulable() in partA.getSchedulable().getDependantes():
-            raise RuntimeError("Lien déjà existant.")
+        #if partB.getSchedulable() in partA.getSchedulable().getDependantes():
+            #raise RuntimeError("Lien déjà existant.")
 
         # Attributs :
         self.__objGantt_A = partA.getSchedulable()
         self.__objGantt_B = partB.getSchedulable()
         self.__selected = False
 
-        # Création de la dépendance :
-        partB.getSchedulable().addDependance(partA.getSchedulable())
-
     "" # Marque pour le repli de code
     #############
     # Getters : #
     #############
     ""
+    def getPartObjA(self):
+        """
+        Getter pour le départ de la fleche
+        @return <Task> self.__objGantt_A
+        """
+        return self.__objGantt_A
+
+    def getPartObjB(self):
+        """
+        Getter pour l'arrivée de la fleche
+        @return <Task> self.__objGantt_B
+        """
+        return self.__objGantt_B
+
     def isSelected(self):
         """
         Permet de savoir si le lien est sélectionné.
