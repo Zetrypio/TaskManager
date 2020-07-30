@@ -37,7 +37,7 @@ class ParametreAffichage(Frame):
         # Combobox de quelle période :
         self.listePeriode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.listePeriode.set(self.listePeriode.cget("values")[-1])
-        #self.listePeriode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) # TODO
+        #self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp()) # TODO
         # Label : du combien de jour
         self.lbCbJour = Label(self.midFrame, text = "Montrer :")
         # Combobox de combien de jours :
@@ -78,6 +78,20 @@ class ParametreAffichage(Frame):
         """
         return self.getApplication().getData()
 
+    def getPeriodeActive(self):
+        """
+        Permet d'obtenir la période active
+        @return <Période> période active
+        """
+        return self.getPeriodManager().getActivePeriode()
+
+    def getPeriodManager(self):
+        """
+        Permet d'obtenir le PeriodManager
+        @return PeriodManager
+        """
+        return self.getApplication().getPeriodManager()
+
     def getZoneAffichage(self):
         """
         Permet d'obtenir la ZoneAffichage.
@@ -100,7 +114,7 @@ class ParametreAffichage(Frame):
             else:
                 return int(self.getData()[nom.upper()]["Duree en jour"])
 
-        periode = self.getZoneAffichage().getDonneeCalendrier().getPeriodeActive()
+        periode = self.getPeriodeActive()
         nbJour = periode.getDuree().days
 
         listeValue = [] # liste des strings
@@ -119,7 +133,7 @@ class ParametreAffichage(Frame):
         Permet de mettre des choix en fonction des périodes
         """
         listeValue = [] # liste des strings
-        for p in self.getApplication().getPeriodManager().getPeriodes():
+        for p in self.getPeriodManager().getPeriodes():
             listeValue.append(p.getNom())
 
         self.listePeriode.config(value = listeValue)
@@ -140,11 +154,17 @@ class ParametreAffichage(Frame):
         finally:
             self.listeMode.config(state = etatActuel)
 
+    def setPeriodeActiveForApp(self):
+        """
+        Méthode pour changer la période actuelle en passant par le combobox
+        """
+        self.getPeriodManager().setActivePeriodeWithName(self.listePeriode.get())
+
     def setPeriodeActiveInCombo(self):
         """
         Met la période active dans le combobox des périodes
         """
-        self.listePeriode.set(self.getApplication().getPeriodManager().getActivePeriode().getNom())
+        self.listePeriode.set(self.getPeriodeActive().getNom())
 
     def setStateListe(self, state):
         """
