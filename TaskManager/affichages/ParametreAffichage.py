@@ -37,7 +37,7 @@ class ParametreAffichage(Frame):
         # Combobox de quelle période :
         self.listePeriode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.listePeriode.set(self.listePeriode.cget("values")[-1])
-        #self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp()) # TODO
+        self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp()) # TODO
         # Label : du combien de jour
         self.lbCbJour = Label(self.midFrame, text = "Montrer :")
         # Combobox de combien de jours :

@@ -192,6 +192,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         self.updateAffichage(True)
 
+    def resetSchedulable(self):
+        """
+        Permet de vider self.listeDisplayableItem
+        """
+        self.listeDisplayableItem = []
+
     ""
     ##################################
     # Méthodes liées à l'affichage : #

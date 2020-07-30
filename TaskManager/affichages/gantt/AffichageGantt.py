@@ -526,6 +526,12 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         self.updateAffichage(True)
 
+    def resetSchedulable(self):
+        """
+        Permet de vider self._list
+        """
+        self.listeDisplayableItem = []
+
     ""
     #####################
     # Autres méthodes : #

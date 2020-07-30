@@ -74,6 +74,9 @@ class PeriodManager:
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().setPeriodeActiveInCombo()
 
+        self.app.getDonneeCalendrier().switchPeriode()
+        self.app.getTaskEditor().redessiner()
+
     def setActivePeriodeWithName(self, name):
         """
         Méthode qui permet de set une période active à partir du nom de cette période

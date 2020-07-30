@@ -232,6 +232,24 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         self.jourSelectionnes.add(jour)
         self.updateColor()
 
+    def switchPeriode(self):
+        """
+        Méthode qui met à jour les schedulables de chaque calendrier
+        """
+        # On vide tout
+        for panneau in self.getToutLesPanneaux():
+            panneau.resetSchedulable()
+
+        periode = self.getPeriodeActive()
+        # On rajoute tout
+        for schedulable in periode.getListSchedulables():
+            # Pour chaque panneau
+            for panneau in self.getToutLesPanneaux():
+                panneau.addSchedulable(schedulable)
+
+        # Et on met à jour
+        self.updateAffichage()
+
     ""
     ####################
     # Méthodes liées à #

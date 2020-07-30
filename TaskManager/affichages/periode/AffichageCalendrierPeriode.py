@@ -225,4 +225,8 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         """
         pass
 
-
+    def resetSchedulable(self):
+        """
+        Permet de vider self._list
+        """
+        pass
