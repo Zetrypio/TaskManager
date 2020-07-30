@@ -41,7 +41,7 @@ class PageCalendrier(AbstractPage):
         self.__frameStyle = LabelFrame(self._mFrame, text = "Style d'affichage des jours")
 
         self.__varComboStyleFinal = StringVar()
-        #self._listData.append([self.__varComboStyleFinal, "", "JSE NN MM"]) # TODO
+        self._listData.append([self.__varComboStyleFinal, "", None]) # TODO
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
         self._listData.append([self.__varLienStyle, "Lien", " "])
@@ -83,9 +83,9 @@ class PageCalendrier(AbstractPage):
         self.__cbCompteurNumDeLaSemaine.grid(column = 3, row = 2, sticky = "we") # Combobox du comptage des semaines
 
         # Fonctions
-        self._loadDataFile() # Pour les prefs standards
-        self.__chargerListBox() # Pour les prefs durées
-        self.__chargerStyle()
+        self._loadDataFile()         # Pour les prefs standards
+        self.__chargerListBox()      # Pour les prefs durées
+        self.__chargerStyle()        # Pour les style d'affichage du jour (Lundi 3 mars / 3 mars 2020)
         self.__activeSemaineWidget() # gérer l'état des widgets de la semaine
 
     "" # Marque pour le repli de code
@@ -267,7 +267,7 @@ class PageCalendrier(AbstractPage):
         self.__comboStyleFinal.config(value = listAffichage)
         ## Réafectation de la valeur d'avant (si on change le lien/première affectation)
         # Première affectation
-        if self.__varComboStyleFinal.get() == "":
+        if self.__varComboStyleFinal.get() == "None":
             self.__varComboStyleFinal.set(listAffichage[0]) # Lundi 1 Janvier
         # Changement du combo en cours
         else:
