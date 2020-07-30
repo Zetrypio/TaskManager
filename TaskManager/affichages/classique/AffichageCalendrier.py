@@ -150,8 +150,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         self.updateAffichage()
 
-        return schedulable # on renvoie le schedulable avec éventuellement son début et sa durée. TRÈS IMPORTANT. # To clear il me semble
-
     def identify_region(self, x, y):
         """
         Renvoie la région à la position X et Y.

@@ -425,7 +425,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
 
         self.updateAffichage()
-        return schedulable # Inutile # To clear
 
     def identify_region(self, x, y):
         """

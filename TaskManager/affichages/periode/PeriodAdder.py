@@ -140,4 +140,4 @@ class PeriodAdder(Frame):
         # Création de la période :
         periode = Periode(self.periodManager, nom, debut, fin, desc, color)
         self.periodManager.ajouter(periode)
-        #self.master.ajouter(periode) # TODO
+        #self.master.ajouter(periode) # TODO (master = taskEditor)

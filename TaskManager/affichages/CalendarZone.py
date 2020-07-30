@@ -203,10 +203,11 @@ class CalendarZone(Frame):
         # Si la liste est vide on évite la question
         if len(list(self.getDonneeCalendrier().getSelectedSchedulable())) == 0:
             return
-        # S'il y a une tache de plus j'un jour on est mal enfin à voir
+        # S'il y a une tache de plus j'un jour on est mal enfin à voir #TODO
         for tache in self.getDonneeCalendrier().getSelectedSchedulable():
             if tache.getDuree() > datetime.timedelta(days=1):
                 showerror("Selection invalide", "Vous ne pouvez pas décaler en heure une tache de plus d'un jour.")
+                return
 
         # On détermine le nombre d'heure min et max
         first, last = self.getFirstAndLast()

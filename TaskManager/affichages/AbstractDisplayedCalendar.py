@@ -288,7 +288,7 @@ class AbstractDisplayedCalendar(Frame):
     #    schedulables    #
     ######################
     ""
-    def addSchedulable(self, schedulable, region = None): # TODO : renommer en addSchedulable
+    def addSchedulable(self, schedulable, region = None):
         """
       - Permet d'ajouter un schedulable sur le panneau d'affichage.
 
@@ -303,9 +303,9 @@ class AbstractDisplayedCalendar(Frame):
       - Et le plus important : la méthode doit renvoyer le schedulable avec sa durée prédéfinie.
 
       - Dans les sous-classes, ça donne :
-        def addTask(self, schedulable, region = None):
+        def addSchedulable(self, schedulable, region = None):
             '''Permet d'ajouter une schedulable, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if (schedulable := SuperCalendrier.addTask(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
+            if (schedulable := SuperCalendrier.addSchedulable(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
                 return
 
             ####################
@@ -320,31 +320,13 @@ class AbstractDisplayedCalendar(Frame):
                 # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
-            return schedulable # on renvoie la tache avec son début et sa durée. TRÈS IMPORTANT.
+            return schedulable # on renvoie la tache avec son début et sa durée.
+            # C'était "TRÈS IMPORTANT", maintentant que c'est la période qui s'en occupe, ce n'est plus nécéssaire
 
         @param schedulable: le schedulable à rajouter
         @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
         @return le schedulable, potentiellement changé.
-        @deprecated: va être renommé en addSchedulable()
         """
-        """
-        self.getPeriodeActive()
-        if self.__class__ == AbstractDisplayedCalendar:
-            raise NotImplementedError
-        if region and schedulable.getDebut() is None:
-            # Important pour ne pas altérer l'originelle :
-            # Cela permet de pouvoir Drag&Drop une même tâche
-            # plusieurs fois.
-            schedulable = schedulable.copy()
-            schedulable.setDebut(region)
-        if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
-            schedulable.setDuree(self.askDureeTache())
-            if not schedulable.getDuree():
-                return None
-        if schedulable is None : return
-        self.listeTask.append(schedulable) # TODO : C'est une task/groupe bref pas ce qu'un calendrier doit contenir
-        # SUITE À FAIRE DANS LES SOUS-CLASSES.
-        return schedulable"""
         raise NotImplementedError
 
     def clicSurObjet(self, objet):

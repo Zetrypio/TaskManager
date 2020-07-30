@@ -12,7 +12,6 @@ def askDureeTache(master, longueurPeriode):
     @param longueurPeriode = longueur de la periode
     @return la durée choisie par l'utilisateur.
     """
-    # TODO : bouger dans un fichier à part (comme tout les dialogues) ?
     # Fonction quand on ferme le dialogue :
     duree = None
     def onClose(bouton):

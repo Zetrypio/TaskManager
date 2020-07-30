@@ -72,7 +72,7 @@ class BindingManager:
                 with open("Ressources/prefs/" + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
                     self.__donneePref = load(f)
             else:
-                with open("Ressources/prefs/" + NOMFICHIER + ".json", "w", encoding="utf-8") as f: # TODO, faire un dico des bindings
+                with open("Ressources/prefs/" + NOMFICHIER + ".json", "w", encoding="utf-8") as f:
                     f.write(dumps({"user":{}, "profil":{}}, indent=4))
                 with open("Ressources/prefs/" + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
                     self.__donneePref = load(f)

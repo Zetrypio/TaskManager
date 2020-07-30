@@ -207,8 +207,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.listPanneau:
             panneau.addSchedulable(schedulable, region)
 
-        #return tache # Pas important # To clear
-
     def deselectJours(self):
         """
         Permet de désélectionner tout les jours sélectionnés.
