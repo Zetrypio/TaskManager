@@ -329,6 +329,10 @@ class Periode(ITaskEditorDisplayableObject):
         (pas complet manque les périodes, géré par le TaskEditor)
         @param task : <task>
         """
+
+        # Si c'est une période on va pas le rajouter....
+        if isinstance(task, Periode):
+            return
         self.listAllThingsInPeriod.append(task)
 
 
