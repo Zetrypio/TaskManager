@@ -72,6 +72,8 @@ class PeriodManager:
 
         # Configuration du combobox en fonction de la durée de la période
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()
+        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().setPeriodeActiveInCombo()
+
     
     def setTaskEditor(self, taskEditor):
         """
@@ -118,6 +120,9 @@ class PeriodManager:
         # que c'est automatiquement celle-ci par défaut.
         if self.activePeriode is None:
             self.setActivePeriode(periode)
+
+        # On met le combobox des périodes à jour
+        self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
     
     def supprimer(self, periode):
         """

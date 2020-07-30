@@ -426,7 +426,7 @@ class CalendarZone(Frame):
                 self.getDonneeCalendrier().setPeriodeActiveFin(periode.getFin() + datetime.timedelta(days=nombreDeJour))
 
             # Mise à jour du Combobox
-            self.getParametreAffichage().updateCombobox()
+            self.getParametreAffichage().updateComboboxNbJour()
 
     def grouper(self):
         """

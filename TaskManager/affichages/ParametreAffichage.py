@@ -30,11 +30,26 @@ class ParametreAffichage(Frame):
         self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
 
+        ## Frame du milieu
+        self.midFrame = Frame(self)
+        # Label : de la période
+        self.lbPeriode = Label(self.midFrame, text = "Periode :")
+        # Combobox de quelle période :
+        self.listePeriode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
+        self.listePeriode.set(self.listePeriode.cget("values")[-1])
+        #self.listePeriode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) # TODO
+        # Label : du combien de jour
+        self.lbCbJour = Label(self.midFrame, text = "Montrer :")
         # Combobox de combien de jours :
-        self.listeMode = Combobox(self, values=['Periode'], state= "readonly")
+        self.listeMode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.listeMode.set(self.listeMode.cget("values")[-1])
         self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
-        self.listeMode.pack(side=TOP, fill=Y)
+        # Affichage
+        self.midFrame.pack(side=TOP, fill=Y)
+        self.lbPeriode.pack(side = LEFT)
+        self.listePeriode.pack(side=LEFT)
+        self.lbCbJour.pack(side = LEFT)
+        self.listeMode.pack(side=LEFT)
 
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
@@ -96,10 +111,18 @@ class ParametreAffichage(Frame):
             if nbJour >= int(self.getData()[duree]["Duree en jour"]):
                 listeValue.append(self.getData()[duree]["nom"])
 
-
-        listeValue.sort(key = lambda v : dureeEnJour(v))
-
+        # Et on setup la liste
         self.listeMode.config(value = listeValue)
+
+    def configPossibiliteListePeriode(self):
+        """
+        Permet de mettre des choix en fonction des périodes
+        """
+        listeValue = [] # liste des strings
+        for p in self.getApplication().getPeriodManager().getPeriodes():
+            listeValue.append(p.getNom())
+
+        self.listePeriode.config(value = listeValue)
 
     def setModeListe(self, mode = None):
         """
@@ -117,6 +140,12 @@ class ParametreAffichage(Frame):
         finally:
             self.listeMode.config(state = etatActuel)
 
+    def setPeriodeActiveInCombo(self):
+        """
+        Met la période active dans le combobox des périodes
+        """
+        self.listePeriode.set(self.getApplication().getPeriodManager().getActivePeriode().getNom())
+
     def setStateListe(self, state):
         """
         Permet de changer l'état du combobox, en étant certain que le mode ne
@@ -126,10 +155,17 @@ class ParametreAffichage(Frame):
             state = "readonly"
         self.listeMode.config(state = state)
 
-    def updateCombobox(self):
+    def updateComboboxNbJour(self):
         """
         Fonction qui met à jour les possibilités du combobox et
         en plus remet l'affichage période s'il y était avant.
         """
         self.configPossibiliteListe()
         self.listeMode.event_generate("<<ComboboxSelected>>")
+
+    def updateComboboxPeriode(self):
+        """
+        Fonction qui met à jour les possibilités du combobox et
+        en plus remet l'affichage période s'il y était avant.
+        """
+        self.configPossibiliteListePeriode()
