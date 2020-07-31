@@ -198,7 +198,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             semaine = self.getSemaineOf(jour)
             jourDebutSemaine = jour
             isFirst = 2
-            p.tag = str(NEW_TAG_ID)
+            #p.tag = str(NEW_TAG_ID)
             while jour < p.getFin():
                 jour += datetime.timedelta(days = 1)
                 if jour.weekday()%7 == 0:
@@ -206,7 +206,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p),
                                               w,
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p)+self.getPeriodHeight(),
-                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
+                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = p.getUniqueID())
                     isFirst = 0
                     semaine += 1
                     jourDebutSemaine = jour
@@ -214,7 +214,8 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh,
                                       int(jour.weekday()+1)*w/7 -3,
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
-                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = NEW_TAG_ID)
+                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = p.getUniqueID())
+
             NEW_TAG_ID += 1
 
     def updateColor(self):
@@ -252,7 +253,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                 if tag == "current":
                     continue
                 for p in self.getApplication().getPeriodManager().getPeriodes():
-                    if p.tag == tag:
+                    if p.getUniqueID() == tag:
                         p.setSelected(True if not control else not p.isSelected())
         self.updateAffichage()
 

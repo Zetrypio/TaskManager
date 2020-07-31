@@ -41,9 +41,12 @@ class Periode(ITaskEditorDisplayableObject):
         # datetime avant lequel tout est fait
         self.dateStatut = None
 
+
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
         # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourra l'obtenir avec une méthode...
+
+        self.uniqueID = self.setUniqueID()# Pour le calendrier des périodes sinon ça bug
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
@@ -157,6 +160,13 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.nom
 
+    def getUniqueID(self):
+        """
+        Getter pour l'unique Id
+        @reutrn l'uniqueID
+        """
+        return self.uniqueID
+
     def intersectWith(self, other):
         """
         Permet de savoir si cette période s'intersectionne avec une autre.
@@ -247,6 +257,28 @@ class Periode(ITaskEditorDisplayableObject):
         """
         if not isinstance(value, bool): raise TypeError("Expected a boolean")
         self.selected = value
+
+    def setUniqueID(self):
+        """
+        Permet d'ajouter un uniqueID à une période et de le mettre dans la liste
+        qui vérifie s'il est bien unique
+        @raise AttributeError si toute les possibilités ont été faites
+        """
+        id = str(self.__init__)[-12:-2]
+        i = 0 # Stopper si on fait trop de boucles
+        while id in self.getApplication().listKey:
+            l = list(id)
+            r = random.shuffle(l)
+            id = ''.join(r)
+            i+=1
+            if i == 30:
+                id += "htcfjgvkkjgyftcgvhbh"
+
+            if i == 100:
+                raise AttributeError
+
+        self.getApplication().listKey.append(id)
+        return id
 
     ""
     ######################
