@@ -119,7 +119,7 @@ class ZoneAffichage(Frame):
                 self.getDonneeCalendrier().setNbJour(int(duree[1]))
                 break # Important sinon on essaye les autre et on affiche la periode parce que la condition n'est pas vérifié
         else: # Si c'est une période
-            self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
             self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
+            self.getDonneeCalendrier().setDureeJour(self.getDonneeCalendrier().getLongueurPeriode())
 
 
