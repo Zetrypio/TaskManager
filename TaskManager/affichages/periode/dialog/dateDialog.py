@@ -5,7 +5,6 @@ from tkinter import Label, Frame
 import datetime
 
 from util.widgets.Dialog import *
-from util.widgets.Horloge import *
 from util.widgets.ttkcalendar import *
 from util.util import *
 
