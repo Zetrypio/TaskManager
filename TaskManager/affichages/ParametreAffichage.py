@@ -3,6 +3,9 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+MOIS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
 class ParametreAffichage(Frame):
     """
     Classe contenant les boutons permettant de savoir
@@ -30,14 +33,15 @@ class ParametreAffichage(Frame):
         self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
 
-        ## Frame du milieu
+        ### Frame du milieu
+        ## Config calendrier classique
         self.midFrame = Frame(self)
         # Label : de la période
         self.lbPeriode = Label(self.midFrame, text = "Periode :")
         # Combobox de quelle période :
         self.listePeriode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.listePeriode.set(self.listePeriode.cget("values")[-1])
-        self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp()) # TODO
+        self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp())
         # Label : du combien de jour
         self.lbCbJour = Label(self.midFrame, text = "Montrer :")
         # Combobox de combien de jours :
@@ -45,11 +49,20 @@ class ParametreAffichage(Frame):
         self.comboDuree.set(self.comboDuree.cget("values")[-1])
         self.comboDuree.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         # Affichage
-        self.midFrame.pack(side=TOP, fill=Y)
         self.lbPeriode.pack(side = LEFT)
         self.listePeriode.pack(side=LEFT)
         self.lbCbJour.pack(side = LEFT)
         self.comboDuree.pack(side=LEFT)
+        ## Config Calendrier des périodes
+        self.midFramePeriode = Frame(self)
+        self.comboMoisPeriode = Combobox(self.midFramePeriode, value = MOIS, state = "readonly")
+        # Affichage
+        self.comboMoisPeriode.pack()
+        #self.comboMoisPeriode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour)
+
+
+        # Affichage
+        self.midFrame.pack(side=TOP, fill=Y)
 
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
@@ -191,6 +204,21 @@ class ParametreAffichage(Frame):
     # Méthodes liées aux périodes : #
     #################################
     ""
+    def setPeriodeMode(self, calendrierPeriode = False, month = None):
+        """
+        Méthode qui change les combobox en cours
+        @param calendrierPeriode : <Bool> True -> on pack le frame avec combo des mois de l'année
+                                          False -> on pack le frame avec le combo de la période actuelle + durée d'affichage
+        @param month             : Mois actuel, celui de base a afficher
+        """
+        if calendrierPeriode:
+            self.midFrame.pack_forget()
+            self.midFramePeriode.pack(side=TOP, fill=Y)
+            self.comboMoisPeriode.set(MOIS[month-1])
+        else:
+            self.midFramePeriode.pack_forget()
+            self.midFrame.pack(side=TOP, fill=Y)
+
     def switchPeriode(self):
         """
         Méthode a appeler quand on doit charger une période

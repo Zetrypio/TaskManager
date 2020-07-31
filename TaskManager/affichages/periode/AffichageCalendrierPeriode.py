@@ -122,8 +122,9 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         Ce widget diffère pour afficher "1 Mois" dans la liste (et désactive la liste).
         @override doConfiguration() in AbstractDisplayedCalendar().
         """
-        paramAffichage.setStateListe(DISABLED)
-        paramAffichage.setModeListe("1 Mois")
+        #paramAffichage.setStateListe(DISABLED)
+        #paramAffichage.setModeListe("1 Mois")
+        paramAffichage.setPeriodeMode(True, self.mois)
         self.getApplication().setModeEditionPeriode(True)
 
     def updateAffichage(self, force = False):

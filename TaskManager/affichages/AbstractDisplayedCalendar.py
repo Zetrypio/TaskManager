@@ -397,13 +397,14 @@ class AbstractDisplayedCalendar(Frame):
     ""
     def doConfiguration(self, paramAffichage):
         """
-        Méthode pour éventuellement changer la barre d'outil
-        secondaire quand ce panneau est actif.
+        Méthode pour éventuellement changer la barre d'outil secondaire + taskEditor + parametreAffichage
+        quand ce panneau est actif.
 
         Par défaut, fait un reset normal de cette barre.
         """
         self.getApplication().setModeEditionPeriode(False)
-        paramAffichage.setStateListe(NORMAL)
+        paramAffichage.setPeriodeMode(False)
+        #paramAffichage.setStateListe(NORMAL)
         for duree in self.getZoneAffichage().getListeDuree():
             if self.getNbJour() == int(duree[1]):
                 paramAffichage.setModeListe(duree[0])
