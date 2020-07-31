@@ -206,7 +206,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p),
                                               w,
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p)+self.getPeriodHeight(),
-                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = p.getUniqueID())
+                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = [p.getUniqueID(), "DoubleForSet"])
                     isFirst = 0
                     semaine += 1
                     jourDebutSemaine = jour
@@ -214,9 +214,10 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh,
                                       int(jour.weekday()+1)*w/7 -3,
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
-                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = p.getUniqueID())
+                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = [p.getUniqueID(), "DoubleForSet"])
 
             NEW_TAG_ID += 1
+            self.can.tag_bind("DoubleForSet", '<Double-Button-1>', lambda e : self.getApplication().getPeriodManager().setActivePeriode(self.findItem(e)))
 
     def updateColor(self):
         """
@@ -244,18 +245,29 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         @param control=False: True si l'événement est avec le modifier dû à la touche Contrôle, False sinon.
         Si c'est avec la touche contrôle, alors la/les période(s) précédemment sélectionnées ne sont pas désélectionnées.
         """
-        x, y = event.x, event.y
+        #x, y = event.x, event.y
         if not control:
             for p in self.getApplication().getPeriodManager().getPeriodes():
                 p.setSelected(False)
-        for item in self.can.find_overlapping(x, y, x, y):
+
+        if self.findItem(event) is not None:
+            self.findItem(event).setSelected(True if not control else not p.isSelected())
+        self.updateAffichage()
+
+    def findItem(self, event):
+        """
+        Retourne la période qui est à coté de l'event
+        @return <periode> ou <None>
+        """
+        for item in self.can.find_overlapping(event.x, event.y, event.x, event.y):
             for tag in self.can.gettags(item):
                 if tag == "current":
                     continue
                 for p in self.getApplication().getPeriodManager().getPeriodes():
                     if p.getUniqueID() == tag:
-                        p.setSelected(True if not control else not p.isSelected())
-        self.updateAffichage()
+                        return p
+        else :
+            return None
 
     def removeSchedulable(self, schedulable):
         """
