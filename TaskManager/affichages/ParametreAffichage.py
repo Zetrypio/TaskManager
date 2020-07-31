@@ -204,6 +204,13 @@ class ParametreAffichage(Frame):
     # Méthodes liées aux périodes : #
     #################################
     ""
+    def changeMoisCombobox(self, val):
+        """
+        Permet de mettre a jour le combobox en fonction du mois (quand on passe par les boutons
+        @param val : <int> au format datetime, c'est à dire index de MOIS +1
+        """
+        self.comboMoisPeriode.set(MOIS[val-1])
+
     def setPeriodeMode(self, calendrierPeriode = False, month = None):
         """
         Méthode qui change les combobox en cours
@@ -215,11 +222,11 @@ class ParametreAffichage(Frame):
             self.midFrame.pack_forget()
             self.midFramePeriode.pack(side=TOP, fill=Y)
             self.comboMoisPeriode.set(MOIS[month-1])
-            self.boutonApres.config(state = NORMAL)
-            self.boutonAvant.config(state = NORMAL)
         else:
             self.midFramePeriode.pack_forget()
             self.midFrame.pack(side=TOP, fill=Y)
+
+        self.getZoneAffichage().getDonneeCalendrier().updateAffichage()
 
     def switchPeriode(self):
         """

@@ -122,12 +122,23 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
     # Méthodes liées à l'affichage : #
     ##################################
     ""
+    def changeAnnee(self, value):
+        """
+        Permet de changer le mois d'affichage
+        @param value : <int> +/- 1 par rapport a l'année actuelle
+        """
+        self.annee += value
+        self.updateAffichage()
+
     def changeMoisAffiche(self, value):
         """
         Méthode qui permet de se balader entre les mois
         @param value : <int> +/- 1 nombre à rajouter a self.mois pour obtenir celui qu'on veut afficher
         """
         self.mois += value
+        if self.mois > 12 or self.mois < 0:
+            self.mois = 1
+        self.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().changeMoisCombobox(self.mois)
         self.updateAffichage()
 
     def doConfiguration(self, paramAffichage):
@@ -142,6 +153,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         #paramAffichage.setModeListe("1 Mois")
         paramAffichage.setPeriodeMode(True, self.mois)
         self.getApplication().setModeEditionPeriode(True)
+        self.getDonneeCalendrier().updateAffichage()
 
     def updateAffichage(self, force = False):
         """

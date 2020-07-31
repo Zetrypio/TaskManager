@@ -281,7 +281,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
             self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
 
-        if self.getFinPeriode() is None or self.getJourFin() is None:
+        # Si on est sur le panneau des périodes on garde les boutons
+        if isinstance(self.getPanneauActif(), AffichageCalendrierPeriode):
+            self.master.zoneParametre.boutonBienAvant.configure(state=NORMAL)
+            self.master.zoneParametre.boutonAvant.configure(state=NORMAL)
+            self.master.zoneParametre.boutonBienApres.configure(state=NORMAL)
+            self.master.zoneParametre.boutonApres.configure(state=NORMAL)
+
+        elif self.getFinPeriode() is None or self.getJourFin() is None:
             self.master.zoneParametre.boutonBienApres.configure(state=DISABLED)
             self.master.zoneParametre.boutonApres.configure(state=DISABLED)
         elif self.getJourFin() > self.getFinPeriode():

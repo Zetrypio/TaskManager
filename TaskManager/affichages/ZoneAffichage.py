@@ -99,7 +99,12 @@ class ZoneAffichage(Frame):
         +1 ou -1 pour augmenter ou diminuer de 1 jour.
         """
         if isinstance(self.getPanneauActif(), AffichageCalendrierPeriode):
-            self.getPanneauActif().changeMoisAffiche(valeur)
+            if valeur == "d": # On baisse d'une année
+                self.getPanneauActif().changeAnnee(-1)
+            elif valeur == "f": # On augmente d'une année
+                self.getPanneauActif().changeAnnee(1)
+            else: # Sinon c'est juste le mois qu'on change
+                self.getPanneauActif().changeMoisAffiche(valeur)
         else:
             duree = self.getDonneeCalendrier().getDureeJour()
             if valeur == "d": # Si on appuie sur remettre au début
