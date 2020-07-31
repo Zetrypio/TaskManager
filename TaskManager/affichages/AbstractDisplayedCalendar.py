@@ -176,14 +176,12 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    #def getSelectedTask(self):
-        #"""
-        #Permet d'obtenir la liste des tâches sélectionnées.
-        #@return: la liste des tâches sélectionnées.
-        #@deprecated: permettra de renvoyer plus que des tâches,
-        #dans le futur. Changera alors de nom.
-        #"""
-        #return [task for task in self.listeTask if task.isSelected()]
+    def getSchedulables(self):
+        """
+        Permet d'obtenir la liste des objets planifiables.
+        @return: la liste des objets planifiables, comme des groupes ou des tâches.
+        """
+        return self.getPeriodeActive().getListSchedulables()
 
     def getSelectedSchedulable(self):
         return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
