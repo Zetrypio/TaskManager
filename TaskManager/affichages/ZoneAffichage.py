@@ -6,6 +6,7 @@ import datetime
 
 from .DonneeCalendrier import *
 from .ParametreAffichage import *
+from .periode.AffichageCalendrierPeriode import *
 
 class ZoneAffichage(Frame):
     """
@@ -90,23 +91,33 @@ class ZoneAffichage(Frame):
     # Setters : #
     #############
     ""
-    def envoyerChangementJourDebut(self, valeur):
+    def envoyerChangementDebut(self, valeur):
         """
         Permet d'envoyer les informations de changement de jours, suivant le bouton
         sur lequel on a appuyé.
         @param valeur: "f" pour aller à la fin, "d" pour aller au début,
         +1 ou -1 pour augmenter ou diminuer de 1 jour.
         """
-        duree = self.getDonneeCalendrier().getDureeJour()
-        if valeur == "d": # Si on appuie sur remettre au début
-            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
-        elif valeur == "f": # Si on appuie sur mettre à la fin
-            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour()+datetime.timedelta(days=1))
+        if isinstance(self.getPanneauActif(), AffichageCalendrierPeriode):
+            self.getPanneauActif().changeMoisAffiche(valeur)
         else:
-            self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getJourDebut()+datetime.timedelta(days = valeur))
-            #self.getDonneeCalendrier().setJourFin(self.getDonneeCalendrier().getJourFin()+datetime.timedelta(days = valeur))
+            duree = self.getDonneeCalendrier().getDureeJour()
+            if valeur == "d": # Si on appuie sur remettre au début
+                self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getDebutPeriode())
+            elif valeur == "f": # Si on appuie sur mettre à la fin
+                self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getFinPeriode()-self.getDonneeCalendrier().getDureeJour()+datetime.timedelta(days=1))
+            else:
+                self.getDonneeCalendrier().setJourDebut(self.getDonneeCalendrier().getJourDebut()+datetime.timedelta(days = valeur))
+                #self.getDonneeCalendrier().setJourFin(self.getDonneeCalendrier().getJourFin()+datetime.timedelta(days = valeur))
 
-        self.getDonneeCalendrier().setDureeJour(duree)
+            self.getDonneeCalendrier().setDureeJour(duree)
+
+    def envoyerChangementMois(self, valeur):
+        """
+        Permet de changer le mois a afficher dans le calendrier des périodes
+        @param valeur : <int> correspond au mois a afficher (ok pour datetime si +1)
+        """
+        self.getPanneauActif().setMois(valeur+1)
 
     def envoyerChangementNbJour(self, event):
         """

@@ -22,15 +22,15 @@ class ParametreAffichage(Frame):
         # Note : self.master est référence vers ZoneAffichage.
 
         # Boutons avant :
-        self.boutonBienAvant = Button(self, text="<<", command=lambda:master.envoyerChangementJourDebut("d"))
+        self.boutonBienAvant = Button(self, text="<<", command=lambda:master.envoyerChangementDebut("d"))
         self.boutonBienAvant.pack(side=LEFT, fill=Y)
-        self.boutonAvant = Button(self, text="<", command=lambda:master.envoyerChangementJourDebut(-1))
+        self.boutonAvant = Button(self, text="<", command=lambda:master.envoyerChangementDebut(-1))
         self.boutonAvant.pack(side=LEFT, fill=Y)    
 
         # Boutons après :
-        self.boutonBienApres = Button(self, text=">>", command=lambda:master.envoyerChangementJourDebut("f"))
+        self.boutonBienApres = Button(self, text=">>", command=lambda:master.envoyerChangementDebut("f"))
         self.boutonBienApres.pack(side=RIGHT, fill=Y)          
-        self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementJourDebut(1))
+        self.boutonApres = Button(self, text=">", command=lambda:master.envoyerChangementDebut(1))
         self.boutonApres.pack(side=RIGHT, fill=Y)             
 
         ### Frame du milieu
@@ -58,7 +58,7 @@ class ParametreAffichage(Frame):
         self.comboMoisPeriode = Combobox(self.midFramePeriode, value = MOIS, state = "readonly")
         # Affichage
         self.comboMoisPeriode.pack()
-        #self.comboMoisPeriode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour)
+        self.comboMoisPeriode.bind("<<ComboboxSelected>>",lambda e, MOIS=MOIS, strMois=self.comboMoisPeriode.get() : master.envoyerChangementMois(MOIS.index(e.widget.get())))
 
 
         # Affichage
@@ -209,12 +209,14 @@ class ParametreAffichage(Frame):
         Méthode qui change les combobox en cours
         @param calendrierPeriode : <Bool> True -> on pack le frame avec combo des mois de l'année
                                           False -> on pack le frame avec le combo de la période actuelle + durée d'affichage
-        @param month             : Mois actuel, celui de base a afficher
+        @param month             : <int> indice du mois actuel, celui de base a afficher
         """
         if calendrierPeriode:
             self.midFrame.pack_forget()
             self.midFramePeriode.pack(side=TOP, fill=Y)
             self.comboMoisPeriode.set(MOIS[month-1])
+            self.boutonApres.config(state = NORMAL)
+            self.boutonAvant.config(state = NORMAL)
         else:
             self.midFramePeriode.pack_forget()
             self.midFrame.pack(side=TOP, fill=Y)

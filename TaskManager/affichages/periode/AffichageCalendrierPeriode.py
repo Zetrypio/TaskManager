@@ -109,11 +109,27 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         """
         self.setJourDebut(jour)
 
+    def setMois(self, mois):
+        """
+        Permet de changer le mois d'affichage
+        @param mois : <int> n° correspondant au mois (version ok pour datetime)
+        """
+        self.mois = mois
+        self.updateAffichage()
+
     ""
     ##################################
     # Méthodes liées à l'affichage : #
     ##################################
     ""
+    def changeMoisAffiche(self, value):
+        """
+        Méthode qui permet de se balader entre les mois
+        @param value : <int> +/- 1 nombre à rajouter a self.mois pour obtenir celui qu'on veut afficher
+        """
+        self.mois += value
+        self.updateAffichage()
+
     def doConfiguration(self, paramAffichage):
         """
         Méthode pour éventuellement changer la barre d'outil
