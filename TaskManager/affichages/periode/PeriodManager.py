@@ -71,8 +71,7 @@ class PeriodManager:
         self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
 
         # Configuration du combobox en fonction de la durée de la période
-        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().configPossibiliteListe()
-        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().setPeriodeActiveInCombo()
+        self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().switchPeriode()
 
         self.app.getDonneeCalendrier().switchPeriode()
         self.app.getTaskEditor().redessiner()

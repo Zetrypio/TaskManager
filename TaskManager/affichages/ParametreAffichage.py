@@ -41,15 +41,15 @@ class ParametreAffichage(Frame):
         # Label : du combien de jour
         self.lbCbJour = Label(self.midFrame, text = "Montrer :")
         # Combobox de combien de jours :
-        self.listeMode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
-        self.listeMode.set(self.listeMode.cget("values")[-1])
-        self.listeMode.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
+        self.comboDuree = Combobox(self.midFrame, values=['Periode'], state= "readonly")
+        self.comboDuree.set(self.comboDuree.cget("values")[-1])
+        self.comboDuree.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         # Affichage
         self.midFrame.pack(side=TOP, fill=Y)
         self.lbPeriode.pack(side = LEFT)
         self.listePeriode.pack(side=LEFT)
         self.lbCbJour.pack(side = LEFT)
-        self.listeMode.pack(side=LEFT)
+        self.comboDuree.pack(side=LEFT)
 
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
@@ -126,7 +126,7 @@ class ParametreAffichage(Frame):
                 listeValue.append(self.getData()[duree]["nom"])
 
         # Et on setup la liste
-        self.listeMode.config(value = listeValue)
+        self.comboDuree.config(value = listeValue)
 
     def configPossibiliteListePeriode(self):
         """
@@ -144,27 +144,21 @@ class ParametreAffichage(Frame):
         @param mode = None: None si on met sur le dernier élément de la liste, ou un autre
         texte si on veut quelque chose en particulier.
         """
-        etatActuel = self.listeMode.cget("state")
-        self.listeMode.config(state = NORMAL)
+        etatActuel = self.comboDuree.cget("state")
+        self.comboDuree.config(state = NORMAL)
         try:
-            if mode is None and self.listeMode.get() not in self.listeMode.cget("values"):
-                self.listeMode.set(self.listeMode.cget("values")[-1])
+            if mode is None and self.comboDuree.get() not in self.comboDuree.cget("values"):
+                self.comboDuree.set(self.comboDuree.cget("values")[-1])
             elif mode is not None:
-                self.listeMode.set(mode)
+                self.comboDuree.set(mode)
         finally:
-            self.listeMode.config(state = etatActuel)
+            self.comboDuree.config(state = etatActuel)
 
     def setPeriodeActiveForApp(self):
         """
         Méthode pour changer la période actuelle en passant par le combobox
         """
         self.getPeriodManager().setActivePeriodeWithName(self.listePeriode.get())
-
-    def setPeriodeActiveInCombo(self):
-        """
-        Met la période active dans le combobox des périodes
-        """
-        self.listePeriode.set(self.getPeriodeActive().getNom())
 
     def setStateListe(self, state):
         """
@@ -173,7 +167,7 @@ class ParametreAffichage(Frame):
         """
         if state == NORMAL:
             state = "readonly"
-        self.listeMode.config(state = state)
+        self.comboDuree.config(state = state)
 
     def updateComboboxNbJour(self):
         """
@@ -181,7 +175,7 @@ class ParametreAffichage(Frame):
         en plus remet l'affichage période s'il y était avant.
         """
         self.configPossibiliteListe()
-        self.listeMode.event_generate("<<ComboboxSelected>>")
+        self.comboDuree.event_generate("<<ComboboxSelected>>")
 
     def updateComboboxPeriode(self):
         """
@@ -189,3 +183,22 @@ class ParametreAffichage(Frame):
         en plus remet l'affichage période s'il y était avant.
         """
         self.configPossibiliteListePeriode()
+
+    ""
+    #################################
+    # Méthodes liées aux périodes : #
+    #################################
+    ""
+    def switchPeriode(self):
+        """
+        Méthode a appeler quand on doit charger une période
+        """
+        # On met à jour la liste des durée possible
+        self.configPossibiliteListe()
+        # On set le combo des périodes avec le nom de la période
+        self.listePeriode.set(self.getPeriodeActive().getNom())
+
+        # On affiche la période entière
+        self.comboDuree.set("Période")
+        self.comboDuree.event_generate("<<ComboboxSelected>>")
+
