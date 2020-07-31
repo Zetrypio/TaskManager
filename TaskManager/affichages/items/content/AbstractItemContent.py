@@ -28,6 +28,19 @@ class AbstractItemContent(Frame):
     # Getters : #
     #############
     ""
+    def getApplication(self):
+        return self._schedulable.getPeriode().getApplication()
+
+    def getDonneeCalendrier(self):
+        return self.getApplication().getDonneeCalendrier()
+
+    def getSchedulable(self):
+        """
+        Getter du schedulable.
+        @return le schedulable.
+        """
+        return self._schedulable
+
     def needButtonPlus(self, affichageGantt):
         """
         Permet de savoir si cette part à besoin d'un bouton

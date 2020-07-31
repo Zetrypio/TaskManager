@@ -37,6 +37,8 @@ class DisplayableGroup(AbstractItemContent):
         self.__texte.insert(INSERT, "\n")
         self.__texte.insert(INSERT, self._schedulable.getDescription())
 
+        self.__taskFrame = []
+
         # Ajout des tâches à l'intérieur :
         for t in self._schedulable.getListTasks() :
             self.__texte.insert(INSERT, "\n")
@@ -47,6 +49,7 @@ class DisplayableGroup(AbstractItemContent):
             tache.configSize(width = 10, height = 2)
             tache.bindTo("<Button-1>",         lambda e, task=tache: self.__onTaskSelected(task, False))
             tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
+            self.__taskFrame.append(tache)
             self.__texte.window_create(INSERT, window = f)#, stretch = 1)
         # TODO : filtrer selon la part.
         
@@ -91,6 +94,8 @@ class DisplayableGroup(AbstractItemContent):
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
         """
         self.__texte.config(bg=self.__getDisplayColor())
+        for t in self.__taskFrame:
+            t.updateColor()
 
     ""
     #####################
@@ -100,7 +105,7 @@ class DisplayableGroup(AbstractItemContent):
     def bindTo(self, binding, command, add=None):
         self.bind(binding, command, add)
         self.__texte.bind(binding, command, add)
-        # TODO : Ajouter les sous-tâches.
+        # TODO : Ajouter les sous-tâches ?
 
     def __onTaskSelected(self, task, control):
         """
@@ -109,6 +114,14 @@ class DisplayableGroup(AbstractItemContent):
         @param task: L'objet d'affichage représentant de la tâche qui reçoit le clic.
         @param control: Permet de savoir si il y a la touche contrôle avec le clic.
         """
-        print("Task selection: task =", task, "; control =", control)
+        print("Task selection: task =", task.getSchedulable(), "| control =", control)
+        if not control:
+            # TODO : désélectionner tout.
+            self.getDonneeCalendrier().deselectEverything()
+            self._schedulable.setSelected(False)
+        task.getSchedulable().setSelected(True)
+        self._schedulable.setSelected(True)
+        self.updateColor()
+        
 
 from schedulable.groupe.Groupe import *

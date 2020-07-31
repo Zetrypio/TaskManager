@@ -66,12 +66,6 @@ class Groupe(AbstractSchedulableObject):
         yield {}
         yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
-
-    
-
-
-
-
     def setDone(self, value):
         """
         Permet de valider le groupe, en validant toutes les tâches contenues dans le groupe.
@@ -172,6 +166,18 @@ class Groupe(AbstractSchedulableObject):
                 i-=1
             i += 1
         yield from parts
+
+    def setSelected(self, selected):
+        """
+        Permet de sélectionner ou désélectionner cet objet.
+        Si il s'agit d'une désélection, désélectionne aussi les sous-tâches.
+        @param selected: True si l'objet doit être sélectionné, False sinon.
+        @override setSelected(value) in AbstractSchedulableObject.
+        """
+        super().setSelected(selected)
+        if not selected:
+            for t in self.__listTasks:
+                t.setSelected(False)
 
     def updateStatut(self):
         """

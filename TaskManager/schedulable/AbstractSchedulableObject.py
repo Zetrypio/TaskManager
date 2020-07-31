@@ -212,7 +212,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
 
     def setSelected(self, selected):
         """
-        Permet de sélectionner ou déselectionner cet objet.
+        Permet de sélectionner ou désélectionner cet objet.
         @param selected: True si l'objet doit être sélectionné, False sinon.
         """
         if not isinstance(selected, bool): raise TypeError("Exptected a boolean")
