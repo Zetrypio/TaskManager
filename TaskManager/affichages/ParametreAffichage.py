@@ -125,6 +125,8 @@ class ParametreAffichage(Frame):
             if nbJour >= int(self.getData()[duree]["Duree en jour"]):
                 listeValue.append(self.getData()[duree]["nom"])
 
+        # On trie la liste
+        listeValue.sort(key = lambda v : dureeEnJour(v))
         # Et on setup la liste
         self.comboDuree.config(value = listeValue)
 
