@@ -167,7 +167,7 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        for tache in self.getPeriodeActive().getListSchedulables():#.getSchedulables():
+        for tache in self.getPeriodeActive().getSchedulables():
             if tache.isSelected():
                 tache.setDone(True)
         self.getApplication().getTaskEditor().redessiner()
@@ -177,7 +177,7 @@ class CalendarZone(Frame):
         Valide TOUTES les tâches qui sont avant maintenant.
         """
         now = datetime.datetime.now()
-        for schedulable in self.getDonneeCalendrier().listeTask:
+        for schedulable in self.getDonneeCalendrier().getSchedulables():
             if schedulable.getFin() <= now:
                 schedulable.setDone(True)
             schedulable.updateStatut()
@@ -188,7 +188,7 @@ class CalendarZone(Frame):
         Valide toutes les tâches qui sont terminées aujourd'hui.
         """
         now = datetime.date.today()
-        for tache in self.getDonneeCalendrier().listeTask:
+        for tache in self.getDonneeCalendrier().getSchedulables():
             if tache.getFin().date() == now:
                 tache.setDone(True)
             tache.updateStatut()
