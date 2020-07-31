@@ -83,5 +83,9 @@ class DisplayableTask(AbstractItemContent):
     #####################
     ""
     def bindTo(self, binding, command, add=None):
+        """
+        Permet de binder tout les widgets contenus dans celui-ci.
+        @see tkinter.Misc#bind(binding, command, add) pour la documentation du binding.
+        """
         self.bind(binding, command, add)
         self.__texte.bind(binding, command, add)

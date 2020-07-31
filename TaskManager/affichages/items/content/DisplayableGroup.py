@@ -45,6 +45,8 @@ class DisplayableGroup(AbstractItemContent):
             tache.pack_propagate(True)
             tache.pack(expand = YES, fill = BOTH)
             tache.configSize(width = 10, height = 2)
+            tache.bindTo("<Button-1>",         lambda e, task=tache: self.__onTaskSelected(task, False))
+            tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
             self.__texte.window_create(INSERT, window = f)#, stretch = 1)
         # TODO : filtrer selon la part.
         
@@ -99,5 +101,14 @@ class DisplayableGroup(AbstractItemContent):
         self.bind(binding, command, add)
         self.__texte.bind(binding, command, add)
         # TODO : Ajouter les sous-tâches.
+
+    def __onTaskSelected(self, task, control):
+        """
+        Méthode de callback de quand on clic sur l'une des tâches du groupe,
+        éventuellement avec la touche contrôle en plus, pour faire la sélection des tâches du groupe.
+        @param task: L'objet d'affichage représentant de la tâche qui reçoit le clic.
+        @param control: Permet de savoir si il y a la touche contrôle avec le clic.
+        """
+        print("Task selection: task =", task, "; control =", control)
 
 from schedulable.groupe.Groupe import *
