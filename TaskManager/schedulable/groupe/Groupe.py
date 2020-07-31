@@ -28,6 +28,7 @@ class Groupe(AbstractSchedulableObject):
         """Return a nice string representation for Groupe()s objects."""
         return "Groupe %s, contenant %s tâches."%(self.getNom(), len(self.__listTasks))
 
+    ""
     ################################
     # Méthode de l'interface       #
     # ITaskEditorDisplayableObject #
@@ -237,6 +238,13 @@ class Groupe(AbstractSchedulableObject):
         @return une copie de la liste des tâches de ce groupe.
         """
         return self.__listTasks.copy()
+
+    def getSelectedTask(self):
+        """
+        Permet de d'obtenir les sous-tâches qui sont sélectionnées dans le groupe.
+        @return un générateur avec les sous-tâches qui sont sélectionnées dans le groupe.
+        """
+        return (t for t in self.__listTasks if t.isSelected())
 
     def removeTask(self, task):
         """

@@ -116,7 +116,6 @@ class DisplayableGroup(AbstractItemContent):
         """
         print("Task selection: task =", task.getSchedulable(), "| control =", control)
         if not control:
-            # TODO : désélectionner tout.
             self.getDonneeCalendrier().deselectEverything()
             self._schedulable.setSelected(False)
         task.getSchedulable().setSelected(True)
