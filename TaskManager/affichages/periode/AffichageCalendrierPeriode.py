@@ -128,6 +128,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         @param value : <int> +/- 1 par rapport a l'année actuelle
         """
         self.annee += value
+        self.getParametreAffichage().setLabelAnnee(self.annee)
         self.updateAffichage()
 
     def changeMoisAffiche(self, value):
@@ -151,7 +152,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         """
         #paramAffichage.setStateListe(DISABLED)
         #paramAffichage.setModeListe("1 Mois")
-        paramAffichage.setPeriodeMode(True, self.mois)
+        paramAffichage.setPeriodeMode(True, self.mois, self.annee)
         self.getApplication().setModeEditionPeriode(True)
         self.getDonneeCalendrier().updateAffichage()
 

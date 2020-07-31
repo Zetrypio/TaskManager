@@ -56,9 +56,12 @@ class ParametreAffichage(Frame):
         ## Config Calendrier des périodes
         self.midFramePeriode = Frame(self)
         self.comboMoisPeriode = Combobox(self.midFramePeriode, value = MOIS, state = "readonly")
+        self.comboMoisPeriode.bind("<<ComboboxSelected>>",lambda e, MOIS=MOIS : master.envoyerChangementMois(MOIS.index(e.widget.get())))
+        self.varAnnee = StringVar()
+        self.lbAnnee = Label(self.midFramePeriode, textvariable = self.varAnnee)
         # Affichage
-        self.comboMoisPeriode.pack()
-        self.comboMoisPeriode.bind("<<ComboboxSelected>>",lambda e, MOIS=MOIS, strMois=self.comboMoisPeriode.get() : master.envoyerChangementMois(MOIS.index(e.widget.get())))
+        self.comboMoisPeriode.pack(side=LEFT)
+        self.lbAnnee.pack(side = LEFT)
 
 
         # Affichage
@@ -153,6 +156,12 @@ class ParametreAffichage(Frame):
 
         self.listePeriode.config(value = listeValue)
 
+    def setLabelAnnee(self, annee):
+        """
+        Permet de mettre a jour l'année a afficher
+        """
+        self.varAnnee.set(annee)
+
     def setModeListe(self, mode = None):
         """
         Permet de changer la valeur du combobox, sans altérer son état de lecture.
@@ -211,17 +220,19 @@ class ParametreAffichage(Frame):
         """
         self.comboMoisPeriode.set(MOIS[val-1])
 
-    def setPeriodeMode(self, calendrierPeriode = False, month = None):
+    def setPeriodeMode(self, calendrierPeriode = False, month = None, year = None):
         """
         Méthode qui change les combobox en cours
         @param calendrierPeriode : <Bool> True -> on pack le frame avec combo des mois de l'année
                                           False -> on pack le frame avec le combo de la période actuelle + durée d'affichage
         @param month             : <int> indice du mois actuel, celui de base a afficher
+        @param year              : <int> annee en cours d'affichage
         """
         if calendrierPeriode:
             self.midFrame.pack_forget()
             self.midFramePeriode.pack(side=TOP, fill=Y)
             self.comboMoisPeriode.set(MOIS[month-1])
+            self.varAnnee.set(year)
         else:
             self.midFramePeriode.pack_forget()
             self.midFrame.pack(side=TOP, fill=Y)

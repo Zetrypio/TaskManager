@@ -135,13 +135,12 @@ class AbstractDisplayedCalendar(Frame):
         """
         return self.getDureeJour().days
 
-    def getPeriodeActive(self):
+    def getParametreAffichage(self):
         """
-        Getter pour la période active.
-        Nécessaire pour savoir quelle période afficher.
-        @return la période active.
+        Getter du frame ParametreAffichage
+        @return ParametreAffichage
         """
-        return self.getApplication().getPeriodManager().getActivePeriode()
+        return self.getZoneAffichage().getParametreAffichage()
 
     def getPartPosition(self, part):
         """
@@ -175,6 +174,14 @@ class AbstractDisplayedCalendar(Frame):
         @return diffère suivant les besoins dans les sous-classes.
         """
         raise NotImplementedError
+
+    def getPeriodeActive(self):
+        """
+        Getter pour la période active.
+        Nécessaire pour savoir quelle période afficher.
+        @return la période active.
+        """
+        return self.getApplication().getPeriodManager().getActivePeriode()
 
     def getSchedulables(self):
         """
