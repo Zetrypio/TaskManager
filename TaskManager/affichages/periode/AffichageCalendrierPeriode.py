@@ -185,9 +185,16 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         
         NEW_TAG_ID = 0
         for p in self.getApplication().getPeriodManager().getPeriodes():
-            if p.getDebut().month != self.getJourDebut().month or p.getDebut().year != self.getJourDebut().year:
+
+            if (p.getDebut().month != self.mois and p.getFin().month != self.mois) or p.getDebut().year != self.annee:
                 continue
+
             jour = p.getDebut()
+            # On va chercher le 1er jour
+            i=1
+            while jour.month != self.mois:
+                jour = p.getDebut() + datetime.timedelta(days = i)
+                i+=1
             semaine = self.getSemaineOf(jour)
             jourDebutSemaine = jour
             isFirst = 2
