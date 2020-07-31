@@ -140,7 +140,7 @@ class TaskAdder(Frame):
         """
         # On va chercher le style avec data
         if self.getApplication().getData().testDataExist("General", "General", "afficher les heures sur l'horloge"):
-            return self.getApplication().getData().getOneValue("General", "General", "afficher les heures sur l'horloge")
+            return 'True' == self.getApplication().getData().getOneValue("General", "General", "afficher les heures sur l'horloge")
         else:
             return False
 
