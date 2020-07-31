@@ -115,7 +115,7 @@ class ParametreAffichage(Frame):
                 return int(self.getData()[nom.upper()]["Duree en jour"])
 
         periode = self.getPeriodeActive()
-        nbJour = periode.getDuree().days
+        nbJour = self.getZoneAffichage().getDonneeCalendrier().getLongueurPeriode().days
 
         listeValue = [] # liste des strings
         # On va chercher dans data les valeurs
