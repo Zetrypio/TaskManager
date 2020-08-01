@@ -1,4 +1,4 @@
-# *-* coding:utf-8 *-*
+# -*- coding:utf-8 -*-
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
@@ -6,6 +6,7 @@ from tkinter.colorchooser import askcolor
 import tkinter.messagebox
 
 from ..AbstractPage import *
+from util.widgets.ColorButton import *
 from util.widgets.Dialog import askstring, askyesnowarning
 
 """
@@ -74,19 +75,19 @@ class PageTheme(AbstractPage):
 
         # Widgets
         self.__lbColorTxt1 = Label(self.__frameCouleurCustom, text="Couleur principale :")
-        self.__boutonColor1 = TkButton(self.__frameCouleurCustom, command = lambda e=None : self.__askcolor(1), width = 4, relief = GROOVE, bg = "#ffffff", activebackground = "#ffffff")
+        self.__boutonColor1 = ColorButton(self.__frameCouleurCustom, command = lambda c: self.__askcolor(1, c))
         self.__varLb1 = StringVar()
         self.__listeVarTheme.append(self.__varLb1)
         self.__lbColor1 = Label(self.__frameCouleurCustom, textvariable=self.__varLb1)
 
         self.__lbColorTxt2 = Label(self.__frameCouleurCustom, text="Couleur secondaire :")
-        self.__boutonColor2 = TkButton(self.__frameCouleurCustom, command = lambda e=None : self.__askcolor(2), width = 4, relief = GROOVE, bg = "#ffffff", activebackground = "#ffffff")
+        self.__boutonColor2 = ColorButton(self.__frameCouleurCustom, command = lambda c: self.__askcolor(2, c))
         self.__varLb2 = StringVar()
         self.__listeVarTheme.append(self.__varLb2)
         self.__lbColor2 = Label(self.__frameCouleurCustom, textvariable=self.__varLb2)
 
         self.__lbColorTxt3 = Label(self.__frameCouleurCustom, text="Couleur tertiaire :")
-        self.__boutonColor3 = TkButton(self.__frameCouleurCustom, command = lambda e=None : self.__askcolor(3), width = 4, relief = GROOVE, bg = "#ffffff", activebackground = "#ffffff")
+        self.__boutonColor3 = ColorButton(self.__frameCouleurCustom, command = lambda c: self.__askcolor(3, c))
         self.__varLb3 = StringVar()
         self.__listeVarTheme += [self.__varLb3] # Le str vide pour le commentaire
         self.__lbColor3 = Label(self.__frameCouleurCustom, textvariable=self.__varLb3)
@@ -154,7 +155,7 @@ class PageTheme(AbstractPage):
         # Coté sélection de la couleur
         self.__comboCouleur = Combobox(self.__frameZoneSelection, value=['Couleur principale', "Couleur secondaire", "Couleur tertiaire", "Couleur personnalisé"], state = "readonly")
         self.__lbColorTxt4 = Label(self.__frameZoneSelection, text="Couleur personnalisé :")
-        self.__boutonColor4 = TkButton(self.__frameZoneSelection, command = lambda e=None : self.__askcolor(4), width = 4, relief = GROOVE, bg = "#ffffff", activebackground = "#ffffff")
+        self.__boutonColor4 = ColorButton(self.__frameZoneSelection, command = lambda c : self.__askcolor(4, c))
         self.__varLb4 = StringVar()
         self.__lbColor4 = Label(self.__frameZoneSelection, textvariable=self.__varLb4)
         self.__varLb4.set(self.__boutonColor4.cget("bg"))
@@ -166,7 +167,6 @@ class PageTheme(AbstractPage):
         self.__caseTtkButton = Checkbutton(self.__frameZoneBasSelection, text="Voulez-vous utiliser les boutons de ttk ?", variable=self.__varTtkButton)
         self.__btnEnregistrement = Button(self.__frameZoneBasSelection, text="Enregistrer", command=lambda e=None :self.enregistrer(self.getNomCombobox()))
         self.__btnEnregistrementSous = Button(self.__frameZoneBasSelection, text="Enregistrer-sous", command=self.enregistrerSous)
-
 
 
 
@@ -236,23 +236,15 @@ class PageTheme(AbstractPage):
     # Méthodes tierces liées au fonctionnement : #
     ##############################################
     ""
-    def __askcolor(self, value):
-        color = askcolor()[1]
-        # Si on clique sur la croix on annule l'opération
-        if color is None:
-            return
+    def __askcolor(self, value, color):
 
         if value == 1:
-            self.__boutonColor1.config(bg = color, activebackground = color)
             self.__varLb1.set(color)
         elif value == 2:
-            self.__boutonColor2.config(bg = color, activebackground = color)
             self.__varLb2.set(color)
         elif value == 3:
-            self.__boutonColor3.config(bg = color, activebackground = color)
             self.__varLb3.set(color)
         elif value == 4:
-            self.__boutonColor4.config(bg = color, activebackground = color)
             self.__varLb4.set(color)
 
     def __stateSaveBtn(self):
