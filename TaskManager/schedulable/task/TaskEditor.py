@@ -159,7 +159,6 @@ class TaskEditor(Frame):
             # + celle de la ligne
             if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
                 self.tree.tag_configure("Couleur%s"%displayable.getColor(), foreground = adaptTextColor(displayable.getColor()))
-                pass
 
 
             # Si le niveau de récursion est trop élevé : on stop.

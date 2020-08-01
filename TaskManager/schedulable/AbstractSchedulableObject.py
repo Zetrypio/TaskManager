@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 from .task.ITaskEditorDisplayableObject import *
 
+from util.util import adaptTextColor
+
 class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     """
     Classe permettant la généralisation de Task et Group.
@@ -12,15 +14,17 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @param desc    : description de l'objet.
         @param color   : texte désignant une couleur compatible avec les noms tkinter.
         """
-        self.__nom      = nom
-        self.__periode  = periode
-        self.__desc     = desc
-        self.__color    = color
-        
-        self.__selected = False
-        self.__visible  = True
+        self.__nom       = nom
+        self.__periode   = periode
+        self.__desc      = desc
+        self.__color     = color
 
-        self._statut    = ""
+        self.__textColor = adaptTextColor(color)
+        
+        self.__selected  = False
+        self.__visible   = True
+
+        self._statut     = ""
 
     "" # Marque pour que le repli de code fasse ce que je veux
     ############
@@ -150,6 +154,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self.updateStatut()
         return self._statut
 
+    def getTextColor(self):
+        """
+        Getter de la couleur du texte
+        @return self.__textColor
+        """
+        return self.__textColor
+
     def isSelected(self):
         """
         Permet de savoir si cet objet est sélectionné
@@ -187,6 +198,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         au format tkinter.
         """
         self.__color = color
+        self.__textColor = adaptTextColor(color)
 
     def setDescription(self, desc):
         """

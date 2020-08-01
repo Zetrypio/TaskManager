@@ -24,7 +24,10 @@ class DisplayableGroup(AbstractItemContent):
         super().__init__(master, schedulable, bg = schedulable.getColor(), **kwargs)
         
         # Création des widgets :
-        self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
+        if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
+            self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), fg=self._schedulable.getTextColor(), width=0, height=0)
+        else :
+            self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
         self.__scrollbar = Scrollbar(self, orient = VERTICAL, command = self.__texte.yview)
         self.__texte.configure(yscrollcommand = self.__scrollbar.set)
 

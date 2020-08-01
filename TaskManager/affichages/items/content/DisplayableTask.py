@@ -20,7 +20,10 @@ class DisplayableTask(AbstractItemContent):
         """
 
         # Création des widgets :
-        self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), width=0, height=0)
+        if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
+            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), fg=self._schedulable.getTextColor(), width=0, height=0)
+        else:
+            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), width=0, height=0)
 
         # Config des Tags :
         self.__texte.tag_config("titre", font="Arial 12 bold")
