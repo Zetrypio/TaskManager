@@ -5,6 +5,7 @@ from util.importPIL import *
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame
+from tkinter.messagebox import showerror, showinfo
 import os
 import json
 
@@ -286,7 +287,21 @@ class Application(Frame):
         self.prefFen.activateandwait()
 
     def restart(self):
-        print("r")
+        """
+        Restarter de l'application.
+        """
+        try:
+            self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
+        except BaseException as e:
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+        else:
+            if sys.platform.startswith("win"):
+                command = "start pyw -3.8 "
+            else:
+                command = "pythonw3 " # À tester sur mac ou linux (mais bon mac ne supporte pas l'application de toutes façon...).
+            command += sys.argv[0]
+            os.system(command)
+            raise SystemExit(0)
 
     def setModeEditionPeriode(self, enEdition):
         """
