@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label, Button as TkButton
 from tkinter.colorchooser import askcolor
+from PIL.ImageColor import colormap
 
 class ColorButton(TkButton):
     """
@@ -39,17 +40,13 @@ class ColorButton(TkButton):
         Permet d'obtenir la couleur (du bouton).
         @return la couleur du bouton.
         """
-        # On passe par cette formulatio bizarre pour éviter un retour d'une énum tkinter
-        # type "white" au lieu de "#ffffff"
-        r, g, b = self.winfo_rgb(self.cget('bg')) # Donne du 16 bits
-        r, g, b = hex(int(r/256)), hex(int(g/256)), hex(int(b/256)) # le int pour arrondir
-        if r == hex(0):
-            r += "0"
-        if g == hex(0):
-            g += "0"
-        if b == hex(0):
-            b += "0"
-        return "#" + str(r)[2:] + str(g)[2:] + str(b)[2:]
+        color = self.cget('bg')
+
+        # Pour convertir en code hexa :
+        if color[0] != "#" or len(color) != 7:
+            return colormap[color.lower()]
+
+        return color
 
     ""
     #############

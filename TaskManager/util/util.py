@@ -4,7 +4,7 @@ import datetime
 
 def adaptTextColor(color):
     """
-    Fonction qui permet de renvoiyer la couleur du texte, selon que la couleur passé est sombre ou claire
+    Fonction qui permet de renvoyer la couleur du texte, selon que la couleur passé est sombre ou claire
     @param color : <str> "#......" couleur a test
     @return "#000000" or "#ffffff"
     """
@@ -71,21 +71,21 @@ def rangeDate(jourA, jourB, last = True):
 ## Conversion datetime et str
 def datetimeToStr(d):
     """
-    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
-    @param d : <datetime.datetime> celui qu'on doit tranformer
+    Permet de transformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
+    @param d : <datetime.datetime> celui qu'on doit transformer
     """
     return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)]) if isinstance(d, datetime.datetime) else None
 
 def dateToStr(d):
     """
-    Permet de tranformer un datetime en str selon le format suivant : YYYY-MM-DD
-    @param d : <datetime.date> celui qu'on doit tranformer
+    Permet de transformer un datetime en str selon le format suivant : YYYY-MM-DD
+    @param d : <datetime.date> celui qu'on doit transformer
     """
     return "-".join([str(d.year), str(d.month), str(d.day)]) if isinstance(d, datetime.date) else None
 
 def strToDate(dt):
     """
-    Permet de tranformer un str (convertie pas dateToStr()) en date
+    Permet de transformer un str (convertie par dateToStr()) en date
     @param dt : <str>
     @return <datetime.date>
     """
@@ -96,7 +96,7 @@ def strToDate(dt):
 
 def strToDatetime(dt):
     """
-    Permet de tranformer un str (convertie pas datetimeToStr()) en datetime
+    Permet de transformer un str (convertie par datetimeToStr()) en datetime
     @param dt : <str>
     @return <datetime.datetime>
     """
@@ -107,7 +107,7 @@ def strToDatetime(dt):
 
 def strToTimedelta(dt):
     """
-    Permet de tranformer un str (convertie pas timedeltaToStr()) en timedelta
+    Permet de transformer un str (convertie par timedeltaToStr()) en timedelta
     @param dt : <str>
     @return <datetime.timedelta>
     """
@@ -118,7 +118,7 @@ def strToTimedelta(dt):
 
 def timedeltaToStr(d):
     """
-    Permet de tranformer un datetime en str selon le format suivant : DD-SS
-    @param d : <datetime.timedelta> celui qu'on doit tranformer
+    Permet de transformer un datetime en str selon le format suivant : DD-SS
+    @param d : <datetime.timedelta> celui qu'on doit transformer
     """
     return "-".join([str(d.days), str(d.seconds)]) if isinstance(d, datetime.timedelta) else None
