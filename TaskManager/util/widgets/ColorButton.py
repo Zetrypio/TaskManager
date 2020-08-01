@@ -70,7 +70,7 @@ class ColorButton(TkButton):
         """
         Permet de demander une couleur à l'utilisateur et de l'appliquer sur ce bouton.
         """
-        col = askcolor()
+        col = askcolor(parent = self)
         if not col :      return False
         self.set(col[1]); return True
     
