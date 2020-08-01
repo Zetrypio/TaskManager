@@ -251,7 +251,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                 p.setSelected(False)
 
         if self.findItem(event) is not None:
-            self.findItem(event).setSelected(True if not control else not p.isSelected())
+            self.findItem(event).setSelected(True if not control else not self.findItem(event).isSelected())
         self.updateAffichage()
 
     def findItem(self, event):
