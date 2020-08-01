@@ -267,7 +267,7 @@ class Application(Frame):
 
     def save(self):
         """
-        Fonction qui va enregister toutes les données
+        Fonction qui va enregistrer toutes les données
         """
         d = {}
         d["periodes"] = {}
@@ -275,7 +275,7 @@ class Application(Frame):
             d["periodes"][periode.getNom()] = periode.saveByDict()
 
         with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
-            f.write(json.dumps(d, indent=4))
+            json.dump(d, f, indent=4)
 
     ""
     #####################
