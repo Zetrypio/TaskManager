@@ -2,6 +2,20 @@
 import math
 import datetime
 
+def adaptTextColor(color):
+    """
+    Fonction qui permet de renvoiyer la couleur du texte, selon que la couleur passé est sombre ou claire
+    @param color : <str> "#......" couleur a test
+    @return "#000000" or "#ffffff"
+    """
+    r = int(color[1:3], 16)
+    g = int(color[3:5], 16)
+    b = int(color[5:7], 16)
+    if 0.3*b+0.59*r+0.11*g < 128:
+        return "#FFFFFF"
+    else:
+        return "#000000"
+
 def err(e):
     """Return a nice string representation for error objects."""
     return "%s : %s" % (e.__class__.__name__, e)

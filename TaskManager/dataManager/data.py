@@ -92,6 +92,7 @@ class Data(ConfigParser):
         if not self.testDataExist(nomFichier, nomSection, nomCle):
             raise ValueError("%s n'existe pas dans %s du fichier %s.\n utiliser la méthode data.testDataExist() pour éviter l'erreur"%(nomCle, nomSection, nomFichier))
         return self[nomSection][nomCle]
+
     def getProfilFolder(self):
         return self.__profilFolder
 

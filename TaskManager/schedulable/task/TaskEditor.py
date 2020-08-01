@@ -10,6 +10,7 @@ from util.widgets.RMenu import *
 from .dialog.askHeureExacteDialog import *
 from .Task import *
 from .TaskAdder import *
+from util.util import adaptTextColor
 
 from ..AbstractSchedulableObject import *
 
@@ -153,7 +154,13 @@ class TaskEditor(Frame):
             displayable.id = parentNew
 
             # On fait la couleur :
+
             self.tree.tag_configure("Couleur%s"%displayable.getColor(), background = displayable.getColor())
+            # + celle de la ligne
+            if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
+                self.tree.tag_configure("Couleur%s"%displayable.getColor(), foreground = adaptTextColor(displayable.getColor()))
+                pass
+
 
             # Si le niveau de récursion est trop élevé : on stop.
             if recursionLevel >= 3:
