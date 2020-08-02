@@ -177,7 +177,7 @@ class Application(Frame):
         """
         def creeTache(d, p):
             """
-            Fonction embarquée qui crée une tache avvec son dico
+            Fonction embarquée qui crée une tache avec son dico
             @param d : <dict> celui qu'a crée la tache
             @param p : <periode> celle qui contient la tache
             @return <task>
