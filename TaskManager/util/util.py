@@ -11,8 +11,6 @@ def adaptTextColor(color):
     r = int(color[1:3], 16)
     g = int(color[3:5], 16)
     b = int(color[5:7], 16)
-    print ("av", r, g, b)
-    print ("ap", 0.3*r+0.59*g+0.1*b)
     if 0.3*r+0.59*g+0.1*b < 128:
         return "#FFFFFF"
     else:
