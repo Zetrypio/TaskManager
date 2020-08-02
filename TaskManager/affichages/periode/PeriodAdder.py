@@ -121,9 +121,13 @@ class PeriodAdder(Frame):
     # Autres méthodes : #
     #####################
     ""
-    def valider(self):
+    def createPeriode(self):
         """
-        Méthode exécutée quand on appuie sur le bouton validé, pour créer la nouvelle période et l'ajouter au PeriodManager.
+        Méthode pour créer la période qui correspond au champs qui ont été saisis par l'utilisateur.
+        Ne rajoute pas la période dans le periodManager.
+        Il est important de faire une méthode séparée, car elle est utilisée également sans la validation
+        dans les cas des dialogues de modification/duplications de période.
+        @return la période créée.
         """
         # Si il manque un champ, on ne valide pas
         if (not self.champNom.get().strip()
@@ -131,13 +135,20 @@ class PeriodAdder(Frame):
             or self.fin is None):
             showerror("Erreur", "L'un des champs n'est pas rempli comme il faut ou est vide.")
             return
+
+        # Récupération des champs :
         nom   = self.champNom.get().strip()
-        debut = self.debut + datetime.timedelta() # Faire une copie de la date
-        fin   = self.fin  +  datetime.timedelta() # Ici aussi
-        desc  = self.champDescription.get("0.0", END) # Du début jusqu'à la fin !
+        debut = self.debut + datetime.timedelta()       # Faire une copie de la date
+        fin   = self.fin  +  datetime.timedelta()       # Ici aussi
+        desc  = self.champDescription.get("0.0", END)   # Du début jusqu'à la fin !
         color = self.boutonColor.get()
-        
+
         # Création de la période :
-        periode = Periode(self.periodManager, nom, debut, fin, desc, color)
+        return Periode(self.periodManager, nom, debut, fin, desc, color)
+
+    def valider(self):
+        """
+        Méthode exécutée quand on appuie sur le bouton validé, pour créer la nouvelle période et l'ajouter au PeriodManager.
+        """
+        periode = self.createPeriode()
         self.periodManager.ajouter(periode)
-        #self.master.ajouter(periode) # TODO (master = taskEditor)

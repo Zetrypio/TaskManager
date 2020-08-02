@@ -6,40 +6,35 @@ from tkinter import Label, Frame
 from util.widgets.Dialog import *
 
 
-def askPeriode(periodManager, taskEditor, from_ = None, duplicate = False):
+def askPeriode(periodManager, taskEditor, from_ = None):
     from ..PeriodAdder import PeriodAdder
 
     per = from_
 
     def onClose(button):
-        if button == "Ajouter" or button == "Modifier":
-            p.valider()
-    
-    def supprimerPuisAjouter(*a):
-        pass # TODO quand on aura de quoi faire.
-#        taskEditor.remove(per)
-#        taskEditor.ajouter(*a)
+        if button == "Ajouter":
+            periode = p.createPeriode()
+            
+            ## Ajout des schedulables et autres :
+            # Il faut en faire une copie,
+            # Mais pour éviter tout les soucis de non copies en profondeur
+            # (je pense notamment aux dépendances qui pourrait alors se trouver dans une autre période...)
+            # on va faire une "sauvegarde-lecture" dans la RAM.
+            data = per.saveByDict()
+            
 
-    def configurer():
-        periodManager.supprimerPeriodes()
-        valider()
-    
     fen = Dialog(command = onClose,
-                 buttons = ("Ajouter" if duplicate else "Modifier", "Fermer" if duplicate else "Annuler"),
-                 exitButton = ("Modifier", "Annuler", "Fermer", "WM_DELETE_WINDOW"))
+                 buttons = ("Ajouter", "Fermer"),
+                 exitButton = ("Fermer", "WM_DELETE_WINDOW"))
 
     fen.redessiner = taskEditor.redessiner
     fen.ajouter = taskEditor.ajouter
-    
+
     p = PeriodAdder(periodManager, fen)
     p.pack(expand = YES, fill = BOTH)
     p.boutonValider.grid_forget()
-    
-    if not duplicate:
-        fen.ajouter = supprimerPuisAjouter
-        valider = p.valider
-        p.valider = configurer
 
+    # Ajouter les champs déjà rempli si on a une période :
     if per is not None:
         p.debut = per.getDebut()
         p.fin   = per.getFin()
@@ -47,6 +42,8 @@ def askPeriode(periodManager, taskEditor, from_ = None, duplicate = False):
         p.champDebut      .config(text = p.debut)
         p.champFin        .config(text = p.fin)
         p.champDescription.insert(END, per.desc)
-        p.boutonColor     .config(bg = per.color)
+        p.boutonColor     .set(per.color)
     
     fen.activateandwait()
+
+    
