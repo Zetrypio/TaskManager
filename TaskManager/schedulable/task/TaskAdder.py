@@ -131,7 +131,22 @@ class TaskAdder(Frame):
         """
         unit = self.champUniteeRepet.get()
         val = int(self.champRepetition.get())
-        return val, unit
+        if unit == "minutes":
+            return datetime.timedelta(minutes=val)
+        elif unit == "heures":
+            return datetime.timedelta(hours=val)
+        elif unit == "jours":
+            return datetime.timedelta(days=val)
+        elif unit == "semaines":
+            return datetime.timedelta(weeks=val)
+        
+        # ATTENTION LES ECARTS NE SONT PAS EXACT SUR CES SUIVANTS :
+        elif unit == "mois":
+            return datetime.timedelta(days=val*30)
+        elif unit == "années":
+            return datetime.timedelta(days=val*365)
+        else:
+            return val, unit
 
     def getStyleHorloge(self):
         """

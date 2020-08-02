@@ -188,7 +188,7 @@ class Application(Frame):
                         color   = d["color"],
                         debut   = strToDatetime(d["debut"]),
                         duree   = strToTimedelta(d["duree"]),
-                        rep     = d["rep"],
+                        rep     = strToTimedelta(d["rep"]),
                         nbrep   = d["nbrep"],
                         done    = d["done"],
                         id      = d["id"]
