@@ -206,28 +206,21 @@ class Application(Frame):
             self.getPeriodManager().ajouter(p)
 
             ## On crée ses schedulables standards
-            for schedulable in dataPeriode["schedulables"]:
+            for dataSchedulable in dataPeriode["schedulables"]:
                 # Si c'est un groupe :
-                if "listTasks" in schedulable:
-                    g = Groupe(
-                            schedulable["nom"],
-                            p,
-                            schedulable["desc"],
-                            schedulable["color"],
-                            )
-                    # On crée les tâches du groupe et on le lui les rajoute
-                    for t in schedulable["listTasks"]:
-                        g.addTask(Task.load(t, p))
+                if "listTasks" in dataSchedulable:
+                    g = Groupe.load(dataSchedulable, p)
 
-                    # On ajoute le groupe à la période
+                    # On ajoute le groupe à la période car il ne le fait pas tout seul.
+                    # (auto ajoute au TaskEditor aussi)
                     p.getGroupeManager().ajouter(g)
 
-                # Si c'est une tâche standard :
+                # Sinon c'est une tâche standard :
                 else :
-                    myTache = Task.load(schedulable, p)
+                    myTache = Task.load(dataSchedulable, p)
                     self.getTaskEditor().ajouter(myTache)
                     # On crée les sous tâches
-                    if schedulable["subtasks"] is not None:
+                    if dataSchedulable["subtasks"] is not None:
                         for st in schedulable["subtasks"]:
                             # st <dict> d'une tache
                             tacheST = Task.load(st, p)
@@ -236,7 +229,7 @@ class Application(Frame):
                             #self.getTaskEditor().ajouter(tacheST)
 
             ## Maintenant on passe au lien dépendances/dépendantes de la période
-            for s in myPeriode["schedulables"]:
+            for s in dataPeriode["schedulables"]:
                 # S'il y a une dépendance ou plus
                 if "dependance" in s and s["dependance"] is not None:
                     for dep in s["dependance"]:

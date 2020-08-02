@@ -29,6 +29,31 @@ class Groupe(AbstractSchedulableObject):
         return "Groupe %s, contenant %s tâches."%(self.getNom(), len(self.__listTasks))
 
     ""
+    ###############################
+    # Constructeurs alternatifs : #
+    ###############################
+    ""
+    @staticmethod
+    def load(data, periode):
+        """
+        Constructeur alternatif des groupes, via lecture d'un json.
+        Normalement la lecture d'un json donné via la méthode saveByDict()
+        doit redonner une copie complète et profonde de ce groupe.
+        @attention le groupe ne s'ajoute pas dans le GroupManager de la Periode.
+        @param data: le json à lire.
+        @param periode: la période du groupe.
+        @return le groupe.
+        """
+        # Création de l'instance :
+        g = Groupe(data["nom"], periode, data["desc"], data["color"])
+
+        # Ajout des sous-tâches :
+        for t in data["listTasks"]:
+            g.addTask(Task.load(t, periode))
+
+        return g
+
+    ""
     ################################
     # Méthode de l'interface       #
     # ITaskEditorDisplayableObject #
