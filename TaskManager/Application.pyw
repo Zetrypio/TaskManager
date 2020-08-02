@@ -197,22 +197,16 @@ class Application(Frame):
         with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
             data = load(f)
 
-        ## Créons les périodes
+        ## Création des périodes
         for periode in data["periodes"]:
-            myPeriode = data["periodes"][periode]
+            dataPeriode = data["periodes"][periode]
             # On crée la période
-            p = Periode(self.getPeriodManager(),
-                        myPeriode["nom"],
-                        strToDate(myPeriode["debut"]),
-                        strToDate(myPeriode["fin"]),
-                        myPeriode["desc"],
-                        myPeriode["color"]
-                        )
+            p = Periode.load(dataPeriode, self.getPeriodManager())
             # On l'ajoute
             self.getPeriodManager().ajouter(p)
 
             ## On crée ses schedulables standards
-            for schedulable in myPeriode["schedulables"]:
+            for schedulable in dataPeriode["schedulables"]:
                 # Si c'est un groupe :
                 if "listTasks" in schedulable:
                     g = Groupe(
@@ -221,27 +215,27 @@ class Application(Frame):
                             schedulable["desc"],
                             schedulable["color"],
                             )
-                    # On crée les taches du groupe et on le lui les rajoute
+                    # On crée les tâches du groupe et on le lui les rajoute
                     for t in schedulable["listTasks"]:
-                        g.addTask(creeTache(t, p))
+                        g.addTask(Task.load(t, p))
 
-                    # On ajoute le groupe à la periode
+                    # On ajoute le groupe à la période
                     p.getGroupeManager().ajouter(g)
 
-                # Si c'est une tache standard :
+                # Si c'est une tâche standard :
                 else :
                     myTache = Task.load(schedulable, p)
                     self.getTaskEditor().ajouter(myTache)
-                    # On crée les sous taches
+                    # On crée les sous tâches
                     if schedulable["subtasks"] is not None:
                         for st in schedulable["subtasks"]:
                             # st <dict> d'une tache
-                            tacheST = creeTache(st, p)
+                            tacheST = Task.load(st, p)
                             myTache.addSubTask(tacheST)
                             p.addSchedulable(tacheST)
                             #self.getTaskEditor().ajouter(tacheST)
 
-            ## Maintentant on passe au lien dépendances/dépendantes de la période
+            ## Maintenant on passe au lien dépendances/dépendantes de la période
             for s in myPeriode["schedulables"]:
                 # S'il y a une dépendance ou plus
                 if "dependance" in s and s["dependance"] is not None:

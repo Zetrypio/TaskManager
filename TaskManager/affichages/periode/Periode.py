@@ -4,9 +4,9 @@ import datetime
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
-from util.util import dateToStr
-
 from schedulable.task.dialog.askDureeTache import *
+
+from util.util import *
 
 from .dialog.dupliquerPeriodDialog import *
 from .dialog.modifierPeriodDialog import *
@@ -45,7 +45,6 @@ class Periode(ITaskEditorDisplayableObject):
 
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
-        # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourra l'obtenir avec une méthode...
 
         self.uniqueID = self.setUniqueID()# Pour le calendrier des périodes sinon ça bug
 
@@ -54,6 +53,20 @@ class Periode(ITaskEditorDisplayableObject):
         return "Période: %s, de %s à %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
 
     "" # Marque pour le repli de code
+    ##############################
+    # Constructeur alternatifs : #
+    ##############################
+    ""
+    @staticmethod
+    def load(data, periodManager):
+        return Periode(periodManager,
+                       data["nom"],
+                       strToDate(data["debut"]),
+                       strToDate(data["fin"]),
+                       data["desc"],
+                       data["color"])
+
+    ""
     #############
     # Getters : #
     #############
