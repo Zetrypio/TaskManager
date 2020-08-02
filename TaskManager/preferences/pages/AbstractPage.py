@@ -7,7 +7,8 @@ import os
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
+        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
         super().__init__(master, **kwargs)
         self.nom = nom
@@ -15,6 +16,7 @@ class AbstractPage(Frame):
         self.iid = self.getIidParent()+"-"+self.getNom()
 
         self._listData = [] # C'est une liste qui contient toutes les variables de contrôles à enregistrer + les key pour le dico [variable, text]
+        self._listDataRestart = [] # Contient les variables qui si elles sont changées, nécéssite un redémarrage de l'application pour s'appliquer
 
         self._mFrame = Frame(self)
         self.__lbTitre = Label(self, text=self.nom)
@@ -35,6 +37,13 @@ class AbstractPage(Frame):
 
     def getData(self):
         return self.getApplication().getData()
+
+    def getFenetrePreferences(self):
+        """
+        Getter pour la fenetre des préférences
+        @return self.master (parametrageZone) <FenetrePreferences> (Dialog)
+        """
+        return self.master.getFenetrePreferences()
 
     def getIid(self):
         return self.iid
@@ -123,6 +132,14 @@ class AbstractPage(Frame):
         else:
             self.getData().clear()
 
+        ## Testons s'il y a eu des changements importants
+        i = 0
+        while not self.getFenetrePreferences().getRestartMode() and i < len(self._listDataRestart):
+            donnee = self._listDataRestart[i]
+            if donnee[1].get() != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
+                self.getFenetrePreferences().setRestartMode()
+            i+=1
+
         # On créer le dico
         dict = {}
         # On compile tout
@@ -140,6 +157,20 @@ class AbstractPage(Frame):
     # Autres méthodes : #
     #####################
     ""
+    def _addDataNeedRestart(self, listConfigData):
+        """
+        Permet d'ajouter une variable qui nécéssite un restart de l'application
+        @param listConfigData : <list> les valeurs pour ajouter à self._listData
+        """
+        self._listData.append(listConfigData)
+        # C'est les données qui seront utile pour cherche avec data#getOneValue()
+        # self._listDataRestart[data][0] = set des données pour data
+        #                       [...][0][0] = nom fichier
+        #                       [...][0][1] = nom section
+        #                       [...][0][2] = nom clé
+        # self._listDataRestart[data][1] = variable où on doit ".get()" pour tester le changement
+        self._listDataRestart.append([(self.getPagePrincipale(), self.getNom(), listConfigData[1]), listConfigData[0]])
+
     def ajouteToiTreeview(self, treeview):
         """
         Fonction qui permet l'affichage de la page dans le treeview

@@ -13,7 +13,8 @@ class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "Calendrier", **kwargs)
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option,  ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
+        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
 
         def changeMode(v): # Fonction d'assignement qu'un certain lambda sait pas faire

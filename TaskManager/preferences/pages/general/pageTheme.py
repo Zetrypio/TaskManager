@@ -61,7 +61,7 @@ class PageTheme(AbstractPage):
         # Widget
         self.__lbCombo = Label(self.__frameChoixTheme, text = "Sélectionnez un thème")
         self.__varTheme = StringVar()
-        self._listData.append([self.__varTheme, "Theme choisi", "Classique"])
+        self._addDataNeedRestart([self.__varTheme, "Theme choisi", "Classique"])
         self.__comboThemeExistant = Combobox(self.__frameChoixTheme, state="readonly", textvariable = self.__varTheme)
         self.__comboThemeExistant.bind("<<ComboboxSelected>>", lambda e=None : self.__comboSelected())
         self.__btnSuppr = Button(self.__frameChoixTheme, text="Supprimer", command = self.supprimerTheme)

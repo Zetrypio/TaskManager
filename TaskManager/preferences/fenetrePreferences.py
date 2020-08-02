@@ -32,6 +32,9 @@ class FenetrePreferences(Dialog):
         self.parametrageZone = ParametrageZone(master = self)
         self.parametrageZone.pack(side = LEFT, expand = YES, fill = BOTH, padx=2, pady=2)
 
+        # Variable pour indiquer si on doit restart
+        self.mustRestart = False
+
         # Gestion des pages
         self.listePage = []
         self.pageActive = None
@@ -79,6 +82,13 @@ class FenetrePreferences(Dialog):
     def getParametrageZone(self):
         return self.parametrageZone
 
+    def getRestartMode(self):
+        """
+        Getter du mode pour restart
+        @return self.mustRestart : <bool> True si il faut redemarrer
+                                          False si pas besoin
+        """
+
     ""
     #############
     # Setters : #
@@ -109,6 +119,13 @@ class FenetrePreferences(Dialog):
         self.pageActive = page
         page.pack(side=LEFT, expand = YES, fill = BOTH)
 
+    def setRestartMode(self):
+        """
+        Permet de dire qu'il faudra relancer l'application
+        S'occupe seulement de mettre en True
+        """
+        self.mustRestart = True
+
     ""
     #####################
     # Autres méthodes : #
@@ -132,3 +149,7 @@ class FenetrePreferences(Dialog):
         if txtBtn == "Appliquer" or txtBtn == "Ok":
             for page in self.getListePage():
                 page.appliqueEffet(self.getApplication())
+                # Doit-on restart l'application ?
+                if self.mustRestart:
+                    self.mustRestart = False
+                    print("a restarter")
