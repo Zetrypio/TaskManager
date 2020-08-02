@@ -3,7 +3,8 @@ from tkinter.messagebox import showerror
 
 from util.widgets.Dialog import *
 
-from .dialog.periodDialog import *
+from .dialog.dupliquerPeriodDialog import *
+from .dialog.modifierPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 from .Periode import *
 

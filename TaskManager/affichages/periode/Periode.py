@@ -8,7 +8,8 @@ from util.util import dateToStr
 
 from schedulable.task.dialog.askDureeTache import *
 
-from .dialog.periodDialog import *
+from .dialog.dupliquerPeriodDialog import *
+from .dialog.modifierPeriodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 
