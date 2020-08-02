@@ -6,6 +6,7 @@ from tkinter import Label, Frame
 from util.widgets.Dialog import *
 from .navigation.navigationZone import *
 from .parametrage.parametrageZone import *
+from .dialog.askRestart import *
 
 # Pages
 from .pages.pageGeneral import *
@@ -88,6 +89,7 @@ class FenetrePreferences(Dialog):
         @return self.mustRestart : <bool> True si il faut redemarrer
                                           False si pas besoin
         """
+        return self.mustRestart
 
     ""
     #############
@@ -150,6 +152,7 @@ class FenetrePreferences(Dialog):
             for page in self.getListePage():
                 page.appliqueEffet(self.getApplication())
                 # Doit-on restart l'application ?
-                if self.mustRestart:
+                if self.getRestartMode():
                     self.mustRestart = False
-                    print("a restarter")
+                    if askRestart():
+                        self.getApplication().restart()
