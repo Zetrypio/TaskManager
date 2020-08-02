@@ -175,24 +175,6 @@ class Application(Frame):
         """
         Permet de charger les périodes enregistrées dans periode.json
         """
-        def creeTache(d, p):
-            """
-            Fonction embarquée qui crée une tache avec son dico
-            @param d : <dict> celui qu'a crée la tache
-            @param p : <periode> celle qui contient la tache
-            @return <task>
-            """
-            return Task(nom     = d["nom"],
-                        periode = p,
-                        desc    = d["desc"],
-                        color   = d["color"],
-                        debut   = strToDatetime(d["debut"]),
-                        duree   = strToTimedelta(d["duree"]),
-                        rep     = strToTimedelta(d["rep"]),
-                        nbrep   = d["nbrep"],
-                        done    = d["done"],
-                        id      = d["id"]
-                        )
 
         def chercheTask(id, p):
             """
@@ -206,13 +188,15 @@ class Application(Frame):
                 if isinstance(t, Task) and id == t.getUniqueID():
                     return t
             return None
-        # Si le fichier n'existe pas, on ne fait rien
+
+        # Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
         if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
             return
 
-        # Chargeons ce fameux fichier
+        # Chargement du fichier
         with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
             data = load(f)
+
         ## Créons les périodes
         for periode in data["periodes"]:
             myPeriode = data["periodes"][periode]
@@ -246,7 +230,7 @@ class Application(Frame):
 
                 # Si c'est une tache standard :
                 else :
-                    myTache = creeTache(schedulable, p)
+                    myTache = Task.load(schedulable, p)
                     self.getTaskEditor().ajouter(myTache)
                     # On crée les sous taches
                     if schedulable["subtasks"] is not None:

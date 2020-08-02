@@ -18,7 +18,12 @@ from affichages.items.content.DisplayableTask import *
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
-                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False, dependances = None, dependantes = None, id = None):
+                 debut=None, duree=None,
+                 rep=-1, nbrep = 0,
+                 parent = None,
+                 done = False,
+                 dependances = None, dependantes = None,
+                 id = None):
         """
         @param nom         : nom de la tâche.
         @param periode     : Période de la tâche, peut être None.
@@ -67,7 +72,31 @@ class Task(AbstractSchedulableObject):
         return "Task: %s, from %s to %s, %s"%(self.getNom(), self.getDebut() or "Unknown", self.getFin() or "Unknown", self.getStatut())
 
     "" # Marque pour repli de code
-
+    ###############################
+    # Constructeurs alternatifs : #
+    ###############################
+    ""
+    @staticmethod
+    def load(d, p):
+        """
+        Constructeur alternatif (en tant que méthode statique) qui crée une tache
+        à partir des informations d'enregistrement que cette tâche aurait pu produire.
+        @param d : dictionnaire qu'aurait créé cette tâche si on lui demandait d'enregistrer...
+        @param p : Periode de la tâche.
+        @return la tâche nouvellement créee.
+        """
+        return Task(nom     = d["nom"],
+                    periode = p,
+                    desc    = d["desc"],
+                    color   = d["color"],
+                    debut   = strToDatetime(d["debut"]),
+                    duree   = strToTimedelta(d["duree"]),
+                    rep     = strToTimedelta(d["rep"]),
+                    nbrep   = d["nbrep"],
+                    done    = d["done"],
+                    id      = d["id"]
+                    )
+    ""
     #######################################################
     # Méthode de l'interface ITaskEditorDisplayableObject #
     # implémentée par la superclasse de cette classe :    #
