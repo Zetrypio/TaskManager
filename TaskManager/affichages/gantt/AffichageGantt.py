@@ -110,7 +110,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
     def __getLien(self, taskA, taskB):
         """
-        Fonction embarqué qui dit si un objet dépendance link existe entre les 2 tasks
+        Fonction qui dit si un objet dépendance link existe entre les 2 tasks
         @param taskA : <Task> Tache de départ du lien
         @param taskB : <Task> Tache d'arrivée du lien
         @return <bool> True  : le lien existe
@@ -261,10 +261,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
             Fonction embarqué qui retourne l'objet Gantt en fonction de la task
             @param schedulable : <Task> celle a tester
             @return <objGantt> celui qui affiche la Task "schedulable"
+                        None si celui-ci n'a pas été trouvé
             """
             for s in self.listeDisplayableItem:
                 if isinstance(s.getSchedulable(), Task) and s.getSchedulable() is schedulable:
                     return s
+            else :
+                return None
 
         # Va changer :
         #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
@@ -276,7 +279,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 for dep in displayable.getSchedulable().getDependantes():
                     # Recherche des liens
                     if not self.__getLien(displayable.getSchedulable(), dep):
-                        self.createLink(displayable, getObjGantt(dep))
+                        # Si la des n'est pas encore dans la liste des listeDisplayableItem, on attends
+                        if getObjGantt(dep) is not None:
+                            self.createLink(displayable, getObjGantt(dep))
 
     def __deleteSelected(self):
         """

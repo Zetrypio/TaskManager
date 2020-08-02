@@ -89,6 +89,9 @@ class ProfilManager:
         """
         self.__read()
         self.__donnee["profil"][profil] = path
+        # Si c'est le profil actif, il faut prévenir Data
+        if profil == self.getProfilActif():
+            self.getApplication().getData().setProfilFolder(path)
         self.__write()
 
     def setProfilActif(self, profil):
