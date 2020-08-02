@@ -26,7 +26,7 @@ class Task(AbstractSchedulableObject):
         @param color       : couleur avec un nom compatible avec les noms de couleurs tkinter.
         @param debut       : datetime. du début.
         @param duree       : datetime.
-        @param rep         : répétition.
+        @param rep         : temps entre répétition.
         @param nbrep       : nombre de répétitions.
         @param dependances : <list Task>
         @param dependantes : <list Task>
@@ -210,30 +210,43 @@ class Task(AbstractSchedulableObject):
 
     def getRepartition(self, displayedCalendar):
         """
+        TODO : Gère également les tâches à répétition. 
         @see AbstractSchedulableObject#getRerpartition(displayedCalendar)
         @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
         """
-        if self.getDebut().date() == self.getFin().date():
-            yield DatetimeItemPart(self.getDebut().date(),
-                                   self.getDebut().time(),
-                                   self.getFin().time(),
-                                   self)
-        else:
-            debutJour = datetime.time(0, 0, 0)
-            finJour   = datetime.time(23, 59, 59)
-
-            date = self.getDebut().date()
-            heure1 = self.getDebut().time()
-            heure2 = finJour
-
-            while date < self.getFin().date():
+        def addRepartition(instance):
+            if instance.getDebut().date() == instance.getFin().date():
+                yield DatetimeItemPart(instance.getDebut().date(),
+                                       instance.getDebut().time(),
+                                       instance.getFin().time(),
+                                       self)
+            else:
+                debutJour = datetime.time(0, 0, 0)
+                finJour   = datetime.time(23, 59, 59)
+    
+                date = instance.getDebut().date()
+                heure1 = instance.getDebut().time()
+                heure2 = finJour
+    
+                while date < instance.getFin().date():
+                    yield DatetimeItemPart(date, heure1, heure2, self)
+                    heure1 = debutJour
+                    date += datetime.timedelta(days = 1)
+    
+                heure2 = instance.getFin().time()
+    
                 yield DatetimeItemPart(date, heure1, heure2, self)
-                heure1 = debutJour
-                date += datetime.timedelta(days = 1)
 
-            heure2 = self.getFin().time()
-
-            yield DatetimeItemPart(date, heure1, heure2, self)
+        if self.__nbrep > 0:
+            instance = self.copy()
+            count = self.__nbrep
+            while count > 0 and instance.getDebut().date() < self.getPeriode().getFin():
+                instance.setDebut(instance.getDebut() + instance.__rep)
+                count -= 1
+                yield from addRepartition(instance)
+        else:
+            yield from addRepartition(self)
+            
 
     def updateStatut(self):
         """
@@ -462,23 +475,11 @@ class Task(AbstractSchedulableObject):
         """
         Permet d'ajouter un uniqueID à la tache et de le mettre dans la liste
         qui vérifie s'il est bien unique
-        @raise AttributeError si toute les possibilités ont été faites
         """
-        id = str(self.__init__)[-12:-2]
-        i = 0 # Stopper si on fait trop de boucles
-        while id in self.getPeriode().getApplication().listKey:
-            l = list(id)
-            r = random.shuffle(l)
-            id = ''.join(r)
-            i+=1
-            if i == 30:
-                id += "htcfjgvkkjgyftcgvhbh"
-
-            if i == 100:
-                raise AttributeError
-
-        self.getPeriode().getApplication().listKey.append(id)
-        return id
+        ID = id(self)
+        while str(ID) in self.getPeriode().getApplication().listKey:
+            ID += 1
+        return str(ID)
 
 
     def transformToDnd(self, taskEditor, rmenu):
@@ -536,12 +537,12 @@ class Task(AbstractSchedulableObject):
         """
         # On va chercher les attributs de la superclasse
         dico = super().saveByDict()
-        # Si on est coteneur, il y a des attributs qu'on a pas
+        # Si on est conteneur, il y a des attributs qu'on a pas
 
         dico["debut"] = datetimeToStr(self.getDebut())
         dico["duree"] = timedeltaToStr(self.getDuree())
 
-        dico["rep"] = self.__rep
+        dico["rep"] = timedeltaToStr(self.__rep)
         dico["nbrep"] = self.__nbrep
 
         dico["subtasks"] = [st.saveByDict() for st in self.getSubTasks()] if self.isContainer() else None

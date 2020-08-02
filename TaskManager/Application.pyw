@@ -177,7 +177,7 @@ class Application(Frame):
         """
         def creeTache(d, p):
             """
-            Fonction embarquée qui crée une tache avvec son dico
+            Fonction embarquée qui crée une tache avec son dico
             @param d : <dict> celui qu'a crée la tache
             @param p : <periode> celle qui contient la tache
             @return <task>
@@ -188,7 +188,7 @@ class Application(Frame):
                         color   = d["color"],
                         debut   = strToDatetime(d["debut"]),
                         duree   = strToTimedelta(d["duree"]),
-                        rep     = d["rep"],
+                        rep     = strToTimedelta(d["rep"]),
                         nbrep   = d["nbrep"],
                         done    = d["done"],
                         id      = d["id"]

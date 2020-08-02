@@ -195,17 +195,18 @@ class TaskEditor(Frame):
                 except:
                     pass
 
-    def ajouter(self, schedulable):
+    def ajouter(self, iTaskEditorDisplayableObject):
         """
         Permet d'ajouter un objet planifiable à la liste.
-        @param schedulable: l'objet à rajouter.
+        @param iTaskEditorDisplayableObject: l'objet à rajouter.
         """
-        if self.getPeriodActive():
-            self.getPeriodActive().addItemInListAllThingsInPeriod(schedulable)
+        if isinstance(iTaskEditorDisplayableObject, AbstractSchedulableObject):
+            schedulable = iTaskEditorDisplayableObject
+            schedulable.getPeriode().addItemInListAllThingsInPeriod(schedulable)
 
-        # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
-        if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
+            # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
+            if schedulable.getStatut() != "Inconnu":
+                self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
 
         self.frameInput.updatePossiblePeriods()
         self.redessiner()
