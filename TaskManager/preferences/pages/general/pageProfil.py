@@ -107,6 +107,8 @@ class PageProfil(AbstractPage):
                move(self.getProfilFolder()+os.sep+file, path)
 
            self.getProfilManager().saveNewPath(path, self.__cbProfil.get())
+           # On dit qu'un redemarrage est maintenant nécéssaire
+           self.getFenetrePreferences().setRestartMode()
 
     ""
     ###################################

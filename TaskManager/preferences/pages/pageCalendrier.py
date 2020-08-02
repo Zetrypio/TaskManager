@@ -106,6 +106,9 @@ class PageCalendrier(AbstractPage):
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
 
+        # On dit qu'un redemarrage est maintenant nécéssaire
+        self.getFenetrePreferences().setRestartMode()
+
     def __chargerListBox(self):
         """
         Permet de mettre toutes les durée dans le listBox
@@ -205,10 +208,14 @@ class PageCalendrier(AbstractPage):
             self.getData().remove_section(section)
         else:
             showerror("Action incorrect", "Vous ne pouvez pas retirer cette durée.")
+            return
 
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
+
+        # On dit qu'un redemarrage est maintenant nécéssaire
+        self.getFenetrePreferences().setRestartMode()
 
     ""
     ############################################

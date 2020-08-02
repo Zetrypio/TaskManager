@@ -290,6 +290,15 @@ class PageTheme(AbstractPage):
         self.readFile(NOMFICHIER)
         dict = self.dictTheme(nom)
 
+        # Existe-il déjà un tel thème ?
+        if nom.upper() in self.getData().sections():
+            # On parcours le nouveau dictionnaire
+            for k, v in dict.items():
+                # A la recherche d'un élément différent
+                if str(v) != self.getData()[nom.upper()][k]:
+                    # On dit qu'un redemarrage est maintenant nécéssaire
+                    self.getFenetrePreferences().setRestartMode()
+
         # On enregistre
         self.readFile(NOMFICHIER, lireDef = False, lireCfg = True)
         self.getData()[nom.upper()] = dict
@@ -316,7 +325,7 @@ class PageTheme(AbstractPage):
         # Bonus de enregistrer sous
         self.configCombobox()
         self.__varTheme.set(name)
-        self.loadTheme()
+        self.loadTheme(name)
 
     def supprimerTheme(self):
         """

@@ -227,6 +227,10 @@ class PageClavier(AbstractPage):
         for item in self.__listeItemTreeview:
             s, n, b = self.__valueLineTV(item)
             dict[s][n]["bindings"] = b
+            # On regarde si qqch change
+            if b != self.getBindingManager().getBind(self.getProfilFolder(), s, n):
+                # On dit qu'un redemarrage est maintenant nécéssaire
+                self.getFenetrePreferences().setRestartMode()
 
         self.getBindingManager().save(dict)
 
