@@ -203,7 +203,7 @@ class PageCalendrier(AbstractPage):
         if section in self.getData().sections():
             self.getData().remove_section(section)
         else:
-            showerror("Action incorrect", "Vous ne pouvez pas retirer ce choix.")
+            showerror("Action incorrect", "Vous ne pouvez pas retirer cette durée.")
 
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")

@@ -38,7 +38,7 @@ NOMFICHIER = os.sep + "theme"
 class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
-         # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+         # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
 
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
