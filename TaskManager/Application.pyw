@@ -218,15 +218,7 @@ class Application(Frame):
                 # Sinon c'est une tâche standard :
                 else :
                     myTache = Task.load(dataSchedulable, p)
-                    self.getTaskEditor().ajouter(myTache)
-                    # On crée les sous tâches
-                    if dataSchedulable["subtasks"] is not None:
-                        for st in schedulable["subtasks"]:
-                            # st <dict> d'une tache
-                            tacheST = Task.load(st, p)
-                            myTache.addSubTask(tacheST)
-                            p.addSchedulable(tacheST)
-                            #self.getTaskEditor().ajouter(tacheST)
+#                    self.getTaskEditor().ajouter(myTache)
 
             ## Maintenant on passe au lien dépendances/dépendantes de la période
             for s in dataPeriode["schedulables"]:
@@ -234,8 +226,6 @@ class Application(Frame):
                 if "dependance" in s and s["dependance"] is not None:
                     for dep in s["dependance"]:
                         chercheTask(s['id'], p).addDependance(chercheTask(dep, p))
-
-
 
     def save(self):
         """

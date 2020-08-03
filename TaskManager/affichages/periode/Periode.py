@@ -42,7 +42,6 @@ class Periode(ITaskEditorDisplayableObject):
         # datetime avant lequel tout est fait
         self.dateStatut = None
 
-
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
 
@@ -329,7 +328,7 @@ class Periode(ITaskEditorDisplayableObject):
                 # car celle-ci existe déjà, mais qui contiendrait les cadres/panneaux des classes
                 # que l'on va créer pour cette représentation. Cependant, on pourrais dire, si
                 # c'est possible, que cette classe pourrait être utilisée pour plusieurs dispositions
-                # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
+                # si celles-ci sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
         @param schedulable: le schedulable à rajouter
@@ -340,7 +339,7 @@ class Periode(ITaskEditorDisplayableObject):
         ## Traitement du schedulable
 
         # Si le schedulable viens d'une tache de ListTaskUnplanified
-        # A mettre avant de traiter le schdeulable
+        # À mettre avant de traiter le schdeulable
         """
         inListUnplanified = False
         if schedulable in self.getListTaskUnplanified():
@@ -371,7 +370,7 @@ class Periode(ITaskEditorDisplayableObject):
 
     def addItemInListAllThingsInPeriod(self, task):
         """
-        Méthode qui ajoute l'objet à une liste des schedulables à afficher dans le task éditor
+        Méthode qui ajoute l'objet à une liste des schedulables à afficher dans le task editor
         (pas complet manque les périodes, géré par le TaskEditor)
         @param task : <task>
         """
@@ -398,7 +397,7 @@ class Periode(ITaskEditorDisplayableObject):
 
     def removeItemInListAllThingsInPeriod(self, task):
         """
-        Méthode qui retire l'objet à une liste des schedulables à afficher dans le task éditor
+        Méthode qui retire l'objet à une liste des schedulables à afficher dans le task editor
         (pas complet manque les périodes, géré par le TaskEditor)
         @param task : <task>
         """
@@ -420,7 +419,7 @@ class Periode(ITaskEditorDisplayableObject):
     ""
     def saveByDict(self):
         """
-        Méthode qui enrrgistre ce qu'elle peut de la période
+        Méthode qui enregistre ce qu'elle peut de la période
 
         @save nom   : <str> contient le nom de la période
         @save debut : <date> du début de la période

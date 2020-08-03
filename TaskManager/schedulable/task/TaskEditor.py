@@ -105,14 +105,14 @@ class TaskEditor(Frame):
 
     def getTaskInTaskEditor(self):
         """
-        Getter pour la liste des taches qui doivent être affiché ou des périodes selon le filtre
-        @old : remplace taches
+        Getter pour la liste des tâches qui doivent être affiché ou des périodes selon le filtre
+        @old : remplace tâches
         @return une liste de schedulable et TaskUnplanified
         """
         if "type" in self.FILTRE and "Période" in self.FILTRE["type"]:
             return self.getPeriodManager().getPeriodes()
         elif self.getPeriodActive():
-            return self.getPeriodActive().getListAllThingsInPeriod()
+            return self.getPeriodActive().getListSchedulables()#getListAllThingsInPeriod()
         else:
             return []
 

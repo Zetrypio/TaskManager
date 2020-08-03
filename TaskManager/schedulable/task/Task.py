@@ -8,7 +8,7 @@ import random
 
 from ..AbstractSchedulableObject import *
 
-from util.util import datetimeToStr, timedeltaToStr
+from util.util import *
 from .dialog.datetimeDialog import *
 from .TaskInDnd import *
 
@@ -77,25 +77,33 @@ class Task(AbstractSchedulableObject):
     ###############################
     ""
     @staticmethod
-    def load(d, p):
+    def load(d, p, add = True):
         """
         Constructeur alternatif (en tant que méthode statique) qui crée une tache
         à partir des informations d'enregistrement que cette tâche aurait pu produire.
         @param d : dictionnaire qu'aurait créé cette tâche si on lui demandait d'enregistrer...
-        @param p : Periode de la tâche.
-        @return la tâche nouvellement créee.
+        @param p : période de la tâche.
+        @param add: True si on ajoute la tâche aux période, TaskEditor et autre, False sinon.
+        @return la tâche nouvellement créée.
         """
-        return Task(nom     = d["nom"],
-                    periode = p,
-                    desc    = d["desc"],
-                    color   = d["color"],
-                    debut   = strToDatetime(d["debut"]),
-                    duree   = strToTimedelta(d["duree"]),
-                    rep     = strToTimedelta(d["rep"]),
-                    nbrep   = d["nbrep"],
-                    done    = d["done"],
-                    id      = d["id"]
-                    )
+        t = Task(nom     = d["nom"],
+            periode = p,
+            desc    = d["desc"],
+            color   = d["color"],
+            debut   = strToDatetime(d["debut"]),
+            duree   = strToTimedelta(d["duree"]),
+            rep     = strToTimedelta(d["rep"]),
+            nbrep   = d["nbrep"],
+            done    = d["done"],
+            id      = d["id"])
+        # On crée les sous tâches
+        if d["subtasks"] is not None:
+            for dataSubTask in d["subtasks"]:
+                subTask = Task.load(dataSubTask, p, add)
+                t.addSubTask(subTask)
+        if add:
+            p.addSchedulable(t)
+        return t
     ""
     #######################################################
     # Méthode de l'interface ITaskEditorDisplayableObject #

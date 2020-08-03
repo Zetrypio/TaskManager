@@ -3,6 +3,7 @@
 from affichages.items.DatetimeItemPart import *
 
 from ..AbstractSchedulableObject import *
+from ..task.Task import *
 
 class Groupe(AbstractSchedulableObject):
     def __init__(self, nom, periode, desc, color, *listTasks):
@@ -49,7 +50,7 @@ class Groupe(AbstractSchedulableObject):
 
         # Ajout des sous-tâches :
         for t in data["listTasks"]:
-            g.addTask(Task.load(t, periode))
+            g.addTask(Task.load(t, periode, add=False))
 
         return g
 
