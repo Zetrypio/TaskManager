@@ -8,7 +8,8 @@ from util.util import dateToStr
 
 from schedulable.task.dialog.askDureeTache import *
 
-from .dialog.periodDialog import *
+from .dialog.modifierPeriodDialog import *
+from .dialog.dupliquerPeriodDialog import *
 from .dialog.decalerPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 
@@ -144,6 +145,7 @@ class Periode(ITaskEditorDisplayableObject):
         Getter pour la liste des choses (task, taches contenantes, groupes) pour le taskEditor et l'enregistrement
         @return la liste de self.listAllThingsInPeriod car on s'occupe de faire des tries dans TaskEditor
         """
+        print ("GET listeAllThings :", self.listAllThingsInPeriod)
         return self.listAllThingsInPeriod
 
     def getListSchedulables(self):
@@ -365,7 +367,9 @@ class Periode(ITaskEditorDisplayableObject):
         # Si c'est une période on va pas le rajouter....
         if isinstance(task, Periode):
             return
+        print ("ADD listeAllThings :", task)
         self.listAllThingsInPeriod.append(task)
+        print ("VAL listeAllThings :", self.listAllThingsInPeriod)
 
 
     def iterateDisplayContent(self):
@@ -388,7 +392,9 @@ class Periode(ITaskEditorDisplayableObject):
         (pas complet manque les périodes, géré par le TaskEditor)
         @param task : <task>
         """
+        print ("DEL listeAllThings :", task)
         self.listAllThingsInPeriod.remove(task)
+        print ("VAL listeAllThings :", self.listAllThingsInPeriod)
 
     def removeSchedulable(self, schedulable):
         """
