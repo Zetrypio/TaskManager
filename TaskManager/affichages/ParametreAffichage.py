@@ -6,6 +6,9 @@ from tkinter import Frame, Label
 MOIS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
+
+
+
 class ParametreAffichage(Frame):
     """
     Classe contenant les boutons permettant de savoir

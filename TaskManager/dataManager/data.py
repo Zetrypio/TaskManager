@@ -6,7 +6,7 @@ class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
         # Création des attributs
-        self.__currentThemeName = "Classique"
+        self.__currentThemeName = None
         self.__profilFolder = None
 
     "" # Marque pour le repli
@@ -81,6 +81,9 @@ class Data(ConfigParser):
     # Getters #
     ###########
     ""
+    def getCurrentTheme(self):
+        return self.__currentThemeName
+
     def getOneValue(self, nomFichier, nomSection, nomCle):
         """
         Méthode qui renvoie une valeur précise

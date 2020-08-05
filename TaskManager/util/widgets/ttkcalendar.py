@@ -86,7 +86,7 @@ class Calendar(ttk.Frame):
     def __config_calendar(self):
         cols = self._cal.formatweekheader(3).split()
         self._calendar['columns'] = cols
-        self._calendar.tag_configure('header', background='grey90')
+        self._calendar.tag_configure('header', background='#222222')
         self._calendar.insert('', 'end', values=cols, tag='header')
         # adjust its columns width
         font = tkFont.Font()
