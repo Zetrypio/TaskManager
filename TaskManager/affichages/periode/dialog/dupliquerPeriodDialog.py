@@ -6,7 +6,8 @@ from tkinter import Label, Frame
 from util.widgets.Dialog import *
 
 
-def askPeriode(periodManager, taskEditor, from_ = None):
+def askDupliquerPeriode(periodManager, taskEditor, from_ = None):
+    from affichages.periode.Periode import Periode
     from ..PeriodAdder import PeriodAdder
 
     per = from_
@@ -21,6 +22,14 @@ def askPeriode(periodManager, taskEditor, from_ = None):
             # (je pense notamment aux dépendances qui pourrait alors se trouver dans une autre période...)
             # on va faire une "sauvegarde-lecture" dans la RAM.
             data = per.saveByDict()
+            newPeriode = Periode.load(data, periodManager)
+            # Puis on remet les attributs :
+            newPeriode.setNom(periode.getNom())
+            newPeriode.setDebut(periode.getDebut())
+            newPeriode.setFin(periode.getFin())
+            newPeriode.setDescription(periode.getDescription())
+            newPeriode.setColor(periode.getColor())
+            periodManager.ajouter(newPeriode)
             
 
     fen = Dialog(command = onClose,
@@ -45,5 +54,3 @@ def askPeriode(periodManager, taskEditor, from_ = None):
         p.boutonColor     .set(per.color)
     
     fen.activateandwait()
-
-    

@@ -162,6 +162,9 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.nom
 
+    def getDescription(self):
+        return self.desc
+
     def getUniqueID(self):
         """
         Getter pour l'unique Id
@@ -230,6 +233,15 @@ class Periode(ITaskEditorDisplayableObject):
             self.debut = fin - duree
         else:
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
+
+    def setNom(self, nom):
+        self.nom = nom
+
+    def setDescription(self, description):
+        self.desc = description
+
+    def setColor(self, color):
+        self.color = color
 
     def setRMenuContent(self, taskEditor, rmenu):
         """

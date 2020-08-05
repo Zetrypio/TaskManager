@@ -378,7 +378,6 @@ class TaskEditor(Frame):
         @param x: La position en X demandée.
         @param y: La position en Y demandée.
         """
-        print ("[TaskEditor.__trouverPositionTache] tache =", tache)
         panneau = self.master.getPanneauActif()
         x -= panneau.winfo_rootx() # transformer les coordonnées pour qu'elles soient relatives au panneau.
         y -= panneau.winfo_rooty()
