@@ -6,6 +6,7 @@ from tkinter import Label, Frame
 from util.widgets.Dialog import *
 from .navigation.navigationZone import *
 from .parametrage.parametrageZone import *
+from .dialog.askRestart import *
 
 # Pages
 from .pages.pageGeneral import *
@@ -31,6 +32,9 @@ class FenetrePreferences(Dialog):
 
         self.parametrageZone = ParametrageZone(master = self)
         self.parametrageZone.pack(side = LEFT, expand = YES, fill = BOTH, padx=2, pady=2)
+
+        # Variable pour indiquer si on doit restart
+        self.mustRestart = False
 
         # Gestion des pages
         self.listePage = []
@@ -79,6 +83,14 @@ class FenetrePreferences(Dialog):
     def getParametrageZone(self):
         return self.parametrageZone
 
+    def getRestartMode(self):
+        """
+        Getter du mode pour restart
+        @return self.mustRestart : <bool> True si il faut redemarrer
+                                          False si pas besoin
+        """
+        return self.mustRestart
+
     ""
     #############
     # Setters : #
@@ -109,6 +121,13 @@ class FenetrePreferences(Dialog):
         self.pageActive = page
         page.pack(side=LEFT, expand = YES, fill = BOTH)
 
+    def setRestartMode(self):
+        """
+        Permet de dire qu'il faudra relancer l'application
+        S'occupe seulement de mettre en True
+        """
+        self.mustRestart = True
+
     ""
     #####################
     # Autres méthodes : #
@@ -132,3 +151,8 @@ class FenetrePreferences(Dialog):
         if txtBtn == "Appliquer" or txtBtn == "Ok":
             for page in self.getListePage():
                 page.appliqueEffet(self.getApplication())
+                # Doit-on restart l'application ?
+                if self.getRestartMode():
+                    self.mustRestart = False
+                    if askRestart():
+                        self.getApplication().restart()

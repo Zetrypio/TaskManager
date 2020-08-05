@@ -27,7 +27,6 @@ from dataManager.BindingManager import *
 CHARGERPRECONFIG = False
 
 # CECI est la CORRECTION d'un BUG :
-
 style = Style()
 
 def fixed_map(option):
@@ -45,6 +44,8 @@ style.map("Treeview",
           foreground=fixed_map("foreground"),
           background=fixed_map("background"))
 
+#style.theme_use("clam")
+
 class Application(Frame):
     """
     Application Globale.
@@ -56,6 +57,8 @@ class Application(Frame):
         @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
+
+
 
         # Liste de clés qui permettent de référé à une tache précise
         self.listKey = []
@@ -254,7 +257,7 @@ class Application(Frame):
         try:
             self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
         except BaseException as e:
-            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :/n%s : %s"%(e.__class__.__name__, e))
         else:
             if sys.platform.startswith("win"):
                 command = "start pyw -3.8 "
@@ -282,7 +285,15 @@ class Application(Frame):
 ## Main :
 def main():
     """Fonction main, principale du programme."""
+    #window = ThemedTk(theme="equilux")
     app = Application()
+
+    app.tk.eval("source themeNoirBasique.tcl")
+    # Comment the two next lines to have classical "vista" from ttk theme
+    style.theme_use("black")
+    app.tk_setPalette(background="#424242", fieldbackground="#424242", itembackground="#424242", selectforeground="#424242")
+
+
     w = app.winfo_toplevel().winfo_screenwidth()
     h = app.winfo_toplevel().winfo_screenheight()
     app.winfo_toplevel().geometry("%sx%s+%s+%s"%(int(0.9*w), int(0.8*h), int(0.05*w), int(0.05*h)))

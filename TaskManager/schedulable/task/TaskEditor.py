@@ -414,9 +414,26 @@ class TaskEditor(Frame):
         self.scrollbar.destroy()
         self.__rmenu = []
 
+        # Cherchons la couleur de fond
+        data = self.getApplication().getData()
+        coul = data.getOneValue("theme", data.getOneValue("general", "Thème", "theme choisi").upper(), "liste des tã£â¢ches-couleur de fond")
+        if coul is None:
+            coul = "#ffffff"
+        if coul == "couleur principale":
+            coul = data.getOneValue("theme", data.getCurrentTheme(), "couleur principale")
+        elif coul == "couleur secondaire":
+            coul = data.getOneValue("theme", data.getCurrentTheme(), "couleur secondaire")
+        elif coul == "couleur tertiaire":
+            coul = data.getOneValue("theme", data.getCurrentTheme(), "couleur tertiaire")
+
+
+
+
         # On recrée tout :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
+
+
 
         # avec la scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)

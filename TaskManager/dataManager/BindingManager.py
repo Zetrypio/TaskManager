@@ -42,9 +42,9 @@ class BindingManager:
 
     def getBindings(self):
         """
-        @return self.__donnee : <dict> qui contient tous les binds de l'application
+        @return une copie self.__donnee : <dict> qui contient tous les binds de l'application
         """
-        return self.__donnee
+        return self.__donnee.copy()
 
     def getProfilFolder(self):
         return self.getApplication().getProfilManager().getProfilFolder(None)

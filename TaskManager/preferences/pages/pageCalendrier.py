@@ -13,7 +13,8 @@ class PageCalendrier(AbstractPage):
     def __init__(self, master, **kwargs):
         super().__init__(master, nom = "Calendrier", **kwargs)
         # Note : self.master renvoie a ParametrageZone
-        # Note : Si on rajoute une option ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", variableParDefaut])
+        # Note : Si on rajoute une option,  ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
+        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
 
         def changeMode(v): # Fonction d'assignement qu'un certain lambda sait pas faire
@@ -41,7 +42,7 @@ class PageCalendrier(AbstractPage):
         self.__frameStyle = LabelFrame(self._mFrame, text = "Style d'affichage des jours")
 
         self.__varComboStyleFinal = StringVar()
-        #self._listData.append([self.__varComboStyleFinal, "", None])
+        #self._listData.append([self.__varComboStyleFinal, "", None]) TODO
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
         self._listData.append([self.__varLienStyle, "Lien", " "])
@@ -104,6 +105,9 @@ class PageCalendrier(AbstractPage):
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
+
+        # On dit qu'un redemarrage est maintenant nécéssaire
+        self.getFenetrePreferences().setRestartMode()
 
     def __chargerListBox(self):
         """
@@ -204,10 +208,14 @@ class PageCalendrier(AbstractPage):
             self.getData().remove_section(section)
         else:
             showerror("Action incorrect", "Vous ne pouvez pas retirer cette durée.")
+            return
 
 
         self.getData().sauv(self.getProfilFolder() + NOMFICHIER + ".cfg")
         self.__chargerListBox()
+
+        # On dit qu'un redemarrage est maintenant nécéssaire
+        self.getFenetrePreferences().setRestartMode()
 
     ""
     ############################################

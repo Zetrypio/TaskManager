@@ -279,7 +279,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 for dep in displayable.getSchedulable().getDependantes():
                     # Recherche des liens
                     if not self.__getLien(displayable.getSchedulable(), dep):
-                        # Si la des n'est pas encore dans la liste des listeDisplayableItem, on attends
+                        # Si la dep n'est pas encore dans la liste des listeDisplayableItem, on attends
                         if getObjGantt(dep) is not None:
                             self.createLink(displayable, getObjGantt(dep))
 
