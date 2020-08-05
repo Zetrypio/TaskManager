@@ -101,7 +101,8 @@ class Task(AbstractSchedulableObject):
             p.addPrimitiveSchedulable(t)
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
-                subTask = Task.load(dataSubTask, p, add)
+                subTask = Task.load(dataSubTask, p, False)
+                p.addInstanciatedSchedulable(subTask)
                 t.addSubTask(subTask)
         elif add:
             p.addInstanciatedSchedulable(t)
