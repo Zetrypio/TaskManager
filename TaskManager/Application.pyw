@@ -68,7 +68,7 @@ class Application(Frame):
         self.periodManager = PeriodManager(self)
 
         ## Preferences
-        # A mettre près la création de la fenetre car le ProfilManagera besoin de la fenetre pour en changer le titre
+        # À mettre près la création de la fenêtre car le ProfilManagera besoin de la fenêtre pour en changer le titre
         self.__profilManager  = ProfilManager(self)
         self.__BindingManager = BindingManager(self) # À mettre après le ProfilManager car il faut savoir quel fichier de binding charger
         self.menu = MenuBar(self.winfo_toplevel(), self) # Il faut le mettre après le BindingManagerpour les accelerator
@@ -87,7 +87,7 @@ class Application(Frame):
         self.bind_all("<<open-file>>"  , lambda e=None:self.open())
         self.bind_all("<<quit>>"       , lambda e=None:self.quitter())
 
-        # Set des bindings méchanique en lien avec le bindingManager
+        # Set des bindings mécanique en lien avec le bindingManager
 
         #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
 
@@ -335,10 +335,12 @@ def main():
         raise
     except BaseException as e:
         Frame().winfo_toplevel().withdraw()
+        app._report_exception()
         showerror("Erreur Fatale", "Erreur Fatale de l'application.\nL'application va essayer d'enregistrer.\n%s : %s"%(e.__class__.__name__, e))
     finally:
         try:
             app.save()
         except BaseException as e:
             Frame().winfo_toplevel().withdraw()
+            app._report_exception()
             showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))

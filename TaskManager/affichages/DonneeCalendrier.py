@@ -242,7 +242,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
 
         periode = self.getPeriodeActive()
         # On rajoute tout
-        for schedulable in periode.getListSchedulables():
+        for schedulable in periode.getInstanciatedSchedulables():
             # Pour chaque panneau
             for panneau in self.getToutLesPanneaux():
                 panneau.addSchedulable(schedulable)
