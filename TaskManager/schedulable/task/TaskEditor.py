@@ -389,16 +389,16 @@ class TaskEditor(Frame):
             region += datetime.timedelta(minutes = minute2 - minute1)
             region = askHeureExacte(self, region) # Définie dans le dialogue askHeureExacteDialog.py
             if region is not None:
-#                sousTache = panneau.addTask(tache, region = region)
-#                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
-#                    if p != panneau:
-#                        p.addTask(sousTache, region)
-                # FIXME : Gérer la région !
                 sousTache = panneau.applyRegion(tache, region)
                 if sousTache is not None:
-                    self.getPeriodManager().getActivePeriode().addInstanciatedSchedulable(tache)
+                    # Mise à jour du statut :
                     sousTache.updateStatut()
+                    # Ajout de la sous-tâche à la tâche:
                     tache.addSubTask(sousTache)
+                    # au calendrier :
+                    self.getPeriodManager().getActivePeriode().addInstanciatedSchedulable(sousTache)
+                    # update le tout :
+                    self.getApplication().getDonneeCalendrier().updateAffichage()
                     self.redessiner()
 
     ""
