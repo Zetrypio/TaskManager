@@ -135,19 +135,14 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     #    schedulables    #
     ######################
     ""
-    def addSchedulable(self, schedulable, region = None):
+    def addSchedulable(self, schedulable):
         """
         Permet d'ajouter un objet planifiable à l'affichage dans le calendrier.
         @param schedulable: l'objet à rajouter pour l'affichage.
         @param region : correspond au début de l'objet planifiable si celle-ci n'en a pas.
         @return la tâche qui à peut-être été changé pour des raisons d'affichage.
         """
-        # :=  on attribut la variable en plus de tester la condition
-        #if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
-        #    return
-
         self.listeDisplayableItem.append(ObjetClassique(self, schedulable))
-
         self.updateAffichage()
 
     def identify_region(self, x, y):

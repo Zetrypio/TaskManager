@@ -254,28 +254,30 @@ class Task(AbstractSchedulableObject):
         @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
         """
         def addRepartition(instance):
-            if instance.getDebut().date() == instance.getFin().date():
-                yield DatetimeItemPart(instance.getDebut().date(),
-                                       instance.getDebut().time(),
-                                       instance.getFin().time(),
-                                       self)
-            else:
-                debutJour = datetime.time(0, 0, 0)
-                finJour   = datetime.time(23, 59, 59)
-    
-                date = instance.getDebut().date()
-                heure1 = instance.getDebut().time()
-                heure2 = finJour
-    
-                while date < instance.getFin().date():
+            if not instance.isContainer():
+                if instance.getDebut().date() == instance.getFin().date():
+                    yield DatetimeItemPart(instance.getDebut().date(),
+                                           instance.getDebut().time(),
+                                           instance.getFin().time(),
+                                           self)
+                else:
+                    debutJour = datetime.time(0, 0, 0)
+                    finJour   = datetime.time(23, 59, 59)
+        
+                    date = instance.getDebut().date()
+                    heure1 = instance.getDebut().time()
+                    heure2 = finJour
+        
+                    while date < instance.getFin().date():
+                        yield DatetimeItemPart(date, heure1, heure2, self)
+                        heure1 = debutJour
+                        date += datetime.timedelta(days = 1)
+        
+                    heure2 = instance.getFin().time()
+        
                     yield DatetimeItemPart(date, heure1, heure2, self)
-                    heure1 = debutJour
-                    date += datetime.timedelta(days = 1)
-    
-                heure2 = instance.getFin().time()
-    
-                yield DatetimeItemPart(date, heure1, heure2, self)
 
+        # Permet de gérer les tâches à répétitions différemment de celles qui sont normales :
         if self.__nbrep > 0:
             instance = self.copy()
             count = self.__nbrep

@@ -378,6 +378,7 @@ class TaskEditor(Frame):
         @param x: La position en X demandée.
         @param y: La position en Y demandée.
         """
+        print ("[TaskEditor.__trouverPositionTache] tache =", tache)
         panneau = self.master.getPanneauActif()
         x -= panneau.winfo_rootx() # transformer les coordonnées pour qu'elles soient relatives au panneau.
         y -= panneau.winfo_rooty()
@@ -388,14 +389,17 @@ class TaskEditor(Frame):
             region += datetime.timedelta(minutes = minute2 - minute1)
             region = askHeureExacte(self, region) # Définie dans le dialogue askHeureExacteDialog.py
             if region is not None:
-                #sousTache = panneau.addTask(tache, region = region)
-                #for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
-                    #if p != panneau:
-                        #p.addTask(sousTache, region)
-                sousTache = self.getPeriodManager().getActivePeriode().addSchedulable(tache, region = region)
-                sousTache.updateStatut()
-                tache.addSubTask(sousTache)
-                self.redessiner()
+#                sousTache = panneau.addTask(tache, region = region)
+#                for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
+#                    if p != panneau:
+#                        p.addTask(sousTache, region)
+                # FIXME : Gérer la région !
+                sousTache = panneau.applyRegion(tache, region)
+                if sousTache is not None:
+                    self.getPeriodManager().getActivePeriode().addInstanciatedSchedulable(tache)
+                    sousTache.updateStatut()
+                    tache.addSubTask(sousTache)
+                    self.redessiner()
 
     ""
     #####################

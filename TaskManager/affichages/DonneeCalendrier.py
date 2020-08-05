@@ -192,20 +192,18 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     #    schedulables    #
     ######################
     ""
-    def addSchedulable(self, schedulable, region = None):
+    def addSchedulable(self, schedulable):
         """
         Permet d'ajouter une tâche.
         @param tache: la Task à mettre -> à changer en Schedulable.
         @param region: correspond au début de la tâche si celle-ci n'en a pas.
         @deprecated: task va devenir un schedulable et le nom de la fonction va alors changer.
         """
-        #tache = super().addTask(tache, region) # region est géré dans la variante parent : on ne s'en occupe plus ici.
-
         ####################
         # Ajout graphique. #
         ####################
         for panneau in self.listPanneau:
-            panneau.addSchedulable(schedulable, region)
+            panneau.addSchedulable(schedulable)
 
     def deselectJours(self):
         """

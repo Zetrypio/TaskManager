@@ -4,7 +4,6 @@ import datetime
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
-from schedulable.task.dialog.askDureeTache import *
 
 from util.util import *
 
@@ -292,7 +291,7 @@ class Periode(ITaskEditorDisplayableObject):
             raise RuntimeError("Seul des objets planifiables peuvent aller dans la liste des objets planifiables instanciés.")
         self.__instanciatedSchedulables.append(schedulable)
 
-        # TODO : revoir pour être certain :
+        # FIXME : revoir pour être certain : OK il faut gérer la région, ailleurs.
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
