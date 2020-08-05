@@ -322,12 +322,12 @@ class Periode(ITaskEditorDisplayableObject):
         yield "Fin :", self.fin
         yield "Description :", self.desc
 
-    def removeInstanciatedSchedulable(self, task):
+    def removeInstanciatedSchedulable(self, schedulable):
         """
         Permet de retirer un objet planifiable de la liste des schedulables instanciés.
-        @param task : <task>
+        @param schedulable : AbstractSchedulableObject à enlever.
         """
-        self.__instanciatedSchedulables.remove(task)
+        self.__instanciatedSchedulables.remove(schedulable)
 
         # TODO : revoir pour être certain :
         self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)

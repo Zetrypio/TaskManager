@@ -217,12 +217,12 @@ class TaskEditor(Frame):
         @param schedulable: l'objet à enlever.
         """
         if schedulable in self.getTaskInTaskEditor():
-            self.getPeriodActive().removeItemInListAllThingsInPeriod(schedulable)
+            self.getPeriodActive().removePrimitiveSchedulable(schedulable)
         else:
             for s in self.getTaskInTaskEditor():
                 if isinstance(s, Task) and s.isContainer():
-                    for st in s.getSubTasks():
-                        if st == schedulable:
+#                    for st in s.getSubTasks():
+#                        if st == schedulable:
                             s.removeSubTask(schedulable)
         self.redessiner()
         #if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":

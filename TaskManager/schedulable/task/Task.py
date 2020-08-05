@@ -97,12 +97,14 @@ class Task(AbstractSchedulableObject):
             done    = d["done"],
             id      = d["id"])
         # On crée les sous tâches
+        if add:
+            p.addPrimitiveSchedulable(t)
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
                 subTask = Task.load(dataSubTask, p, add)
                 t.addSubTask(subTask)
-        if add:
-            p.addSchedulable(t)
+        elif add:
+            p.addInstanciatedSchedulable(t)
         return t
     ""
     #######################################################
@@ -228,15 +230,15 @@ class Task(AbstractSchedulableObject):
         """
         if self.__parent is None and not self.isContainer():
             app.getTaskEditor().supprimer(self)
-            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
         elif self.isContainer():
             app.getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                app.getPeriodManager().getActivePeriode().removeSchedulable(t)
+                app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
             app.getTaskEditor().redessiner()
-            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
 
             def getRawRepartition(self, displayedCalendar):
                 """
@@ -514,8 +516,9 @@ class Task(AbstractSchedulableObject):
         qui vérifie s'il est bien unique
         """
         ID = id(self)
-        while str(ID) in self.getPeriode().getApplication().listKey:
-            ID += 1
+        if self.getPeriode():
+            while str(ID) in self.getPeriode().getApplication().listKey:
+                ID += 1
         return str(ID)
 
 

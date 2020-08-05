@@ -346,7 +346,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
         """
-        for s in self.getPeriodeActive().getListSchedulables():
+        for s in self.getPeriodeActive().getInstanciatedSchedulables():
             s.setSelected(False)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
 
