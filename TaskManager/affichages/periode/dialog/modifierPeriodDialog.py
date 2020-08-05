@@ -6,14 +6,31 @@ from tkinter import Label, Frame
 from util.widgets.Dialog import *
 
 
-def askPeriode(periodManager, taskEditor, from_ = None):
+def askModifierPeriode(periodManager, taskEditor, from_ = None):
     from ..PeriodAdder import PeriodAdder
 
     per = from_
 
     def onClose(button):
-        if button == "Ajouter" or button == "Modifier":
-            p.valider()
+        if button == "Ajouter":
+            periode = p.createPeriode()
+            
+            ## Ajout des schedulables et autres :
+            # Il faut en faire une copie,
+            # Mais pour éviter tout les soucis de non copies en profondeur
+            # (je pense notamment aux dépendances qui pourrait alors se trouver dans une autre période...)
+            # on va faire une "sauvegarde-lecture" dans la RAM.
+            # TODO : FIXME
+            data = per.saveByDict()
+            periodManager.supprimer(per)
+            per = Periode.load(data, periodManager)
+            # Puis on remet les attributs :
+            per.setNom(periode.getNom())
+            per.setDebut(periode.getDebut())
+            per.setFin(periode.getFin())
+            per.setDescription(periode.getDescription())
+            per.setColor(periode.getColor())
+            periodManager.ajouter(per)
     
     def supprimerPuisAjouter(*a):
         pass # TODO quand on aura de quoi faire.
@@ -35,14 +52,10 @@ def askPeriode(periodManager, taskEditor, from_ = None):
     p.pack(expand = YES, fill = BOTH)
     p.boutonValider.grid_forget()
     
-    fen.ajouter = supprimerPuisAjouter
-    valider = p.valider
-    p.valider = configurer
-
-    # Sauvegarder les tâches : TODO
-    if per:
-        listSchedulables =      per.listSchedulables
-        listAllThingsInPeriod = per.listAllThingsInPeriod
+#    # Sauvegarder les tâches : TODO
+#    if per:
+#        listSchedulables =      per.listSchedulables
+#        listAllThingsInPeriod = per.listAllThingsInPeriod
 
     # Ajouter les champs déjà rempli si on a une période :
     if per is not None:

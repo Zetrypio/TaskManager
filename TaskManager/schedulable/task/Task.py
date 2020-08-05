@@ -8,7 +8,7 @@ import random
 
 from ..AbstractSchedulableObject import *
 
-from util.util import datetimeToStr, timedeltaToStr
+from util.util import *
 from .dialog.datetimeDialog import *
 from .TaskInDnd import *
 
@@ -18,7 +18,12 @@ from affichages.items.content.DisplayableTask import *
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
     def __init__(self, nom, periode, desc="", color="white",
-                 debut=None, duree=None, rep=-1, nbrep = 0, parent = None, done = False, dependances = None, dependantes = None, id = None):
+                 debut=None, duree=None,
+                 rep=-1, nbrep = 0,
+                 parent = None,
+                 done = False,
+                 dependances = None, dependantes = None,
+                 id = None):
         """
         @param nom         : nom de la tâche.
         @param periode     : Période de la tâche, peut être None.
@@ -67,7 +72,42 @@ class Task(AbstractSchedulableObject):
         return "Task: %s, from %s to %s, %s"%(self.getNom(), self.getDebut() or "Unknown", self.getFin() or "Unknown", self.getStatut())
 
     "" # Marque pour repli de code
-
+    ###############################
+    # Constructeurs alternatifs : #
+    ###############################
+    ""
+    @staticmethod
+    def load(d, p, add = True):
+        """
+        Constructeur alternatif (en tant que méthode statique) qui crée une tache
+        à partir des informations d'enregistrement que cette tâche aurait pu produire.
+        @param d : dictionnaire qu'aurait créé cette tâche si on lui demandait d'enregistrer...
+        @param p : période de la tâche.
+        @param add: True si on ajoute la tâche aux période, TaskEditor et autre, False sinon.
+        @return la tâche nouvellement créée.
+        """
+        t = Task(nom     = d["nom"],
+            periode = p,
+            desc    = d["desc"],
+            color   = d["color"],
+            debut   = strToDatetime(d["debut"]),
+            duree   = strToTimedelta(d["duree"]),
+            rep     = strToTimedelta(d["rep"]),
+            nbrep   = d["nbrep"],
+            done    = d["done"],
+            id      = d["id"])
+        # On crée les sous tâches
+        if add:
+            p.addPrimitiveSchedulable(t)
+        if d["subtasks"] is not None:
+            for dataSubTask in d["subtasks"]:
+                subTask = Task.load(dataSubTask, p, False)
+                p.addInstanciatedSchedulable(subTask)
+                t.addSubTask(subTask)
+        elif add:
+            p.addInstanciatedSchedulable(t)
+        return t
+    ""
     #######################################################
     # Méthode de l'interface ITaskEditorDisplayableObject #
     # implémentée par la superclasse de cette classe :    #
@@ -191,15 +231,15 @@ class Task(AbstractSchedulableObject):
         """
         if self.__parent is None and not self.isContainer():
             app.getTaskEditor().supprimer(self)
-            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
         elif self.isContainer():
             app.getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                app.getPeriodManager().getActivePeriode().removeSchedulable(t)
+                app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
             app.getTaskEditor().redessiner()
-            app.getPeriodManager().getActivePeriode().removeSchedulable(self)
+            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
 
             def getRawRepartition(self, displayedCalendar):
                 """
@@ -215,28 +255,30 @@ class Task(AbstractSchedulableObject):
         @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
         """
         def addRepartition(instance):
-            if instance.getDebut().date() == instance.getFin().date():
-                yield DatetimeItemPart(instance.getDebut().date(),
-                                       instance.getDebut().time(),
-                                       instance.getFin().time(),
-                                       self)
-            else:
-                debutJour = datetime.time(0, 0, 0)
-                finJour   = datetime.time(23, 59, 59)
-    
-                date = instance.getDebut().date()
-                heure1 = instance.getDebut().time()
-                heure2 = finJour
-    
-                while date < instance.getFin().date():
+            if not instance.isContainer():
+                if instance.getDebut().date() == instance.getFin().date():
+                    yield DatetimeItemPart(instance.getDebut().date(),
+                                           instance.getDebut().time(),
+                                           instance.getFin().time(),
+                                           self)
+                else:
+                    debutJour = datetime.time(0, 0, 0)
+                    finJour   = datetime.time(23, 59, 59)
+        
+                    date = instance.getDebut().date()
+                    heure1 = instance.getDebut().time()
+                    heure2 = finJour
+        
+                    while date < instance.getFin().date():
+                        yield DatetimeItemPart(date, heure1, heure2, self)
+                        heure1 = debutJour
+                        date += datetime.timedelta(days = 1)
+        
+                    heure2 = instance.getFin().time()
+        
                     yield DatetimeItemPart(date, heure1, heure2, self)
-                    heure1 = debutJour
-                    date += datetime.timedelta(days = 1)
-    
-                heure2 = instance.getFin().time()
-    
-                yield DatetimeItemPart(date, heure1, heure2, self)
 
+        # Permet de gérer les tâches à répétitions différemment de celles qui sont normales :
         if self.__nbrep > 0:
             instance = self.copy()
             count = self.__nbrep
@@ -477,8 +519,9 @@ class Task(AbstractSchedulableObject):
         qui vérifie s'il est bien unique
         """
         ID = id(self)
-        while str(ID) in self.getPeriode().getApplication().listKey:
-            ID += 1
+        if self.getPeriode():
+            while str(ID) in self.getPeriode().getApplication().listKey:
+                ID += 1
         return str(ID)
 
 

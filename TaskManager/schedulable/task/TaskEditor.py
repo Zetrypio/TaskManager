@@ -105,14 +105,14 @@ class TaskEditor(Frame):
 
     def getTaskInTaskEditor(self):
         """
-        Getter pour la liste des taches qui doivent être affiché ou des périodes selon le filtre
-        @old : remplace taches
+        Getter pour la liste des tâches qui doivent être affiché ou des périodes selon le filtre
+        @old : remplace tâches
         @return une liste de schedulable et TaskUnplanified
         """
         if "type" in self.FILTRE and "Période" in self.FILTRE["type"]:
             return self.getPeriodManager().getPeriodes()
         elif self.getPeriodActive():
-            return self.getPeriodActive().getListAllThingsInPeriod()
+            return self.getPeriodActive().getPrimitivesSchedulables()
         else:
             return []
 
@@ -202,11 +202,11 @@ class TaskEditor(Frame):
         """
         if isinstance(iTaskEditorDisplayableObject, AbstractSchedulableObject):
             schedulable = iTaskEditorDisplayableObject
-            schedulable.getPeriode().addItemInListAllThingsInPeriod(schedulable)
+            schedulable.getPeriode().addPrimitiveSchedulable(schedulable)
 
             # Les périodes et les tasks pas encore planifiée, ne remplissent pas la condition "schedulable.getStatut()"
             if schedulable.getStatut() != "Inconnu":
-                self.getPeriodManager().getActivePeriode().addSchedulable(schedulable)
+                self.getPeriodManager().getActivePeriode().addInstanciatedSchedulable(schedulable)
 
         self.frameInput.updatePossiblePeriods()
         self.redessiner()
@@ -217,12 +217,12 @@ class TaskEditor(Frame):
         @param schedulable: l'objet à enlever.
         """
         if schedulable in self.getTaskInTaskEditor():
-            self.getPeriodActive().removeItemInListAllThingsInPeriod(schedulable)
+            self.getPeriodActive().removePrimitiveSchedulable(schedulable)
         else:
             for s in self.getTaskInTaskEditor():
                 if isinstance(s, Task) and s.isContainer():
-                    for st in s.getSubTasks():
-                        if st == schedulable:
+#                    for st in s.getSubTasks():
+#                        if st == schedulable:
                             s.removeSubTask(schedulable)
         self.redessiner()
         #if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
@@ -388,14 +388,17 @@ class TaskEditor(Frame):
             region += datetime.timedelta(minutes = minute2 - minute1)
             region = askHeureExacte(self, region) # Définie dans le dialogue askHeureExacteDialog.py
             if region is not None:
-                #sousTache = panneau.addTask(tache, region = region)
-                #for p in self.master.getDonneeCalendrier().getToutLesPanneaux():
-                    #if p != panneau:
-                        #p.addTask(sousTache, region)
-                sousTache = self.getPeriodManager().getActivePeriode().addSchedulable(tache, region = region)
-                sousTache.updateStatut()
-                tache.addSubTask(sousTache)
-                self.redessiner()
+                sousTache = panneau.applyRegion(tache, region)
+                if sousTache is not None:
+                    # Mise à jour du statut :
+                    sousTache.updateStatut()
+                    # Ajout de la sous-tâche à la tâche:
+                    tache.addSubTask(sousTache)
+                    # au calendrier :
+                    self.getPeriodManager().getActivePeriode().addInstanciatedSchedulable(sousTache)
+                    # update le tout :
+                    self.getApplication().getDonneeCalendrier().updateAffichage()
+                    self.redessiner()
 
     ""
     #####################

@@ -4,9 +4,8 @@ import datetime
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
-from util.util import dateToStr
 
-from schedulable.task.dialog.askDureeTache import *
+from util.util import *
 
 from .dialog.modifierPeriodDialog import *
 from .dialog.dupliquerPeriodDialog import *
@@ -36,24 +35,33 @@ class Periode(ITaskEditorDisplayableObject):
         self.selected = False
 
         # Listes :
-        self.listSchedulables = []
-        self.listAllThingsInPeriod = [] # Liste faite pour le taskEditor et l'enregistrement
-
-        # datetime avant lequel tout est fait
-        self.dateStatut = None
-
+        self.__primitivesSchedulables = []   # Liste des objets primitifs | natifs
+        self.__instanciatedSchedulables = [] # Liste des objets instanciés
 
         # Création d'un groupe manager de la période
         self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
-        # Doit-on faire une liste des tâches contenues ? je pense pas, mais on pourra l'obtenir avec une méthode...
 
-        self.uniqueID = self.setUniqueID()# Pour le calendrier des périodes sinon ça bug
+        self.uniqueID = self.setUniqueID() # Pour le calendrier des périodes sinon ça bug
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
         return "Période: %s, de %s à %s"%(self.nom, self.debut or "Unknown", self.getFin() or "Unknown")
 
     "" # Marque pour le repli de code
+    ##############################
+    # Constructeur alternatifs : #
+    ##############################
+    ""
+    @staticmethod
+    def load(data, periodManager):
+        return Periode(periodManager,
+                       data["nom"],
+                       strToDate(data["debut"]),
+                       strToDate(data["fin"]),
+                       data["desc"],
+                       data["color"])
+
+    ""
     #############
     # Getters : #
     #############
@@ -73,13 +81,6 @@ class Periode(ITaskEditorDisplayableObject):
         @return la couleur native d'affichage de l'objet.
         """
         return self.color
-
-    def getDateStatut(self):
-        """
-        Getter de la datetime clé
-        @deprecated: On va complètement changer ce système.
-        """
-        return self.dateStatut
 
     def getDebut(self):
         """
@@ -140,20 +141,19 @@ class Periode(ITaskEditorDisplayableObject):
                     else "Prochainement" if self.debut > datetime.datetime.now().date()\
                     else "Finie"
 
-    def getListAllThingsInPeriod(self):
+    def getPrimitivesSchedulables(self):
         """
-        Getter pour la liste des choses (task, taches contenantes, groupes) pour le taskEditor et l'enregistrement
-        @return la liste de self.listAllThingsInPeriod car on s'occupe de faire des tries dans TaskEditor
+        Getter pour la liste des objets planifiables primitifs, c'est-à-dire y compris ceux qui ne sont que dans le TaskEditor (dnd).
+        @return une copie de la liste des schedulables primitifs.
         """
-        print ("GET listeAllThings :", self.listAllThingsInPeriod)
-        return self.listAllThingsInPeriod
+        return self.__primitivesSchedulables[:]
 
-    def getListSchedulables(self):
+    def getInstanciatedSchedulables(self):
         """
         Getter pour la liste des schedulables
-        @return un copy de self.listSchedulables
+        @return une copie de la liste des schedulables instanciés.
         """
-        return self.listSchedulables[:]
+        return self.__instanciatedSchedulables[:]
 
     def getNom(self):
         """
@@ -162,10 +162,13 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.nom
 
+    def getDescription(self):
+        return self.desc
+
     def getUniqueID(self):
         """
         Getter pour l'unique Id
-        @reutrn l'uniqueID
+        @return l'uniqueID
         """
         return self.uniqueID
 
@@ -197,13 +200,6 @@ class Periode(ITaskEditorDisplayableObject):
     # Setters : #
     #############
     ""
-    def setDateStatut(self, datetime):
-        """
-        Setter du datetime de limite de statut.
-        @deprecated: On va complètement changer ce système.
-        """
-        self.dateStatut = datetime
-
     def setDebut(self, debut, change = "duree"):
         """
         Permet de mettre le début de la période.
@@ -237,6 +233,15 @@ class Periode(ITaskEditorDisplayableObject):
             self.debut = fin - duree
         else:
             raise ValueError('Mauvaise valeur à changer : %s, seulement "duree" et "debut" sont possibles.'%change)
+
+    def setNom(self, nom):
+        self.nom = nom
+
+    def setDescription(self, description):
+        self.desc = description
+
+    def setColor(self, color):
+        self.color = color
 
     def setRMenuContent(self, taskEditor, rmenu):
         """
@@ -288,88 +293,30 @@ class Periode(ITaskEditorDisplayableObject):
     #    schedulables    #
     ######################
     ""
-    def addSchedulable(self, schedulable, region = None):
+    def addInstanciatedSchedulable(self, schedulable):
         """
-      - Permet d'ajouter un schedulable sur le panneau d'affichage.
-
-      - Méthode à redéfinir dans les sous-classes, en appelant
-        la variante parent (celle de SuperCalendrier), car celle-ci
-        s'occuppe de mettre le schedulable dans la liste et de demander la durée
-        à l'utilisateur quand celle-ci n'est pas définie (càd: elle est de 0).
-
-      - Cependant, la suite doit être redéfinie dans les sous-classes pour gérer
-        l'affichage de la tâche.
-
-      - Et le plus important : la méthode doit renvoyer le schedulable avec sa durée prédéfinie.
-
-      - Dans les sous-classes, ça donne :
-        def addTask(self, schedulable, region = None):
-            '''Permet d'ajouter une schedulable, region correspond au début de la tâche si celle-ci n'en a pas.'''
-            if (schedulable := SuperCalendrier.addTask(self, schedulable, region)) == None: # region est géré dans la variante parent : on ne s'en occupe plus ici.
-                return
-
-            ####################
-            # Ajout graphique. #
-            ####################
-            ... # Note : on utilisera très probablement une liste, non ?
-            ... # et peut-être une classe particulière, défini dans le même fichier ?
-            ... # Quand je dis une liste, c'est une liste différente de self.listeTask,
-                # car celle-ci existe déjà, mais qui contiendrait les cadres/panneaux des classes
-                # que l'on va créer pour cette représentation. Cependant, on pourrais dire, si
-                # c'est possible, que cette classe pourrait être utilisée pour plusieurs dispositions
-                # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
-                # d'affichage d'une tâche custom.
-
-        @param schedulable: le schedulable à rajouter
-        @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
-        @return le schedulable, potentiellement changé.
-        @deprecated: va être renommé en addSchedulable()
+        Permet d'ajouter un objet planifiable à la liste des objets planifiables 
+        @param schedulable: le schedulable à rajouter.
         """
-        ## Traitement du schedulable
+        # Si c'est une période on va pas le rajouter....
+        if not isinstance(schedulable, AbstractSchedulableObject):
+            raise RuntimeError("Seul des objets planifiables peuvent aller dans la liste des objets planifiables instanciés.")
+        self.__instanciatedSchedulables.append(schedulable)
 
-        # Si le schedulable viens d'une tache de ListTaskUnplanified
-        # A mettre avant de traiter le schdeulable
-        """
-        inListUnplanified = False
-        if schedulable in self.getListTaskUnplanified():
-            inListUnplanified = True
-        """
-
-        if region and schedulable.getDebut() is None:
-            # Important pour ne pas altérer l'originelle :
-            # Cela permet de pouvoir Drag&Drop une même tâche
-            # plusieurs fois.
-            schedulable = schedulable.copy()
-            schedulable.setDebut(region)
-
-        if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
-            schedulable.setDuree(askDureeTache(self.getApplication(), self.getDuree() + datetime.timedelta(days = 1)))
-            if not schedulable.getDuree():
-                return None
-        if schedulable is None :
-            return
-
-        ## On le rentre dans la liste
-        self.listSchedulables.append(schedulable)
-
+        # FIXME : revoir pour être certain : OK il faut gérer la région, ailleurs.
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
-        return schedulable # Pour le dnd  "trouverPositionTache"
 
-    def addItemInListAllThingsInPeriod(self, task):
+    def addPrimitiveSchedulable(self, schedulable):
         """
-        Méthode qui ajoute l'objet à une liste des schedulables à afficher dans le task éditor
-        (pas complet manque les périodes, géré par le TaskEditor)
-        @param task : <task>
+        Méthode qui ajoute l'objet à une liste des schedulables à afficher dans le task editor
+        @param schedulable : l'AbstractSchedulableObject à ajouter.
         """
-
         # Si c'est une période on va pas le rajouter....
-        if isinstance(task, Periode):
-            return
-        print ("ADD listeAllThings :", task)
-        self.listAllThingsInPeriod.append(task)
-        print ("VAL listeAllThings :", self.listAllThingsInPeriod)
+        if not isinstance(schedulable, AbstractSchedulableObject):
+            raise RuntimeError("Seul des objets planifiables peuvent aller dans la liste des objets planifiables primitifs.")
+        self.__primitivesSchedulables.append(schedulable)
 
 
     def iterateDisplayContent(self):
@@ -386,24 +333,22 @@ class Periode(ITaskEditorDisplayableObject):
         yield "Fin :", self.fin
         yield "Description :", self.desc
 
-    def removeItemInListAllThingsInPeriod(self, task):
+    def removeInstanciatedSchedulable(self, schedulable):
         """
-        Méthode qui retire l'objet à une liste des schedulables à afficher dans le task éditor
-        (pas complet manque les périodes, géré par le TaskEditor)
-        @param task : <task>
+        Permet de retirer un objet planifiable de la liste des schedulables instanciés.
+        @param schedulable : AbstractSchedulableObject à enlever.
         """
-        print ("DEL listeAllThings :", task)
-        self.listAllThingsInPeriod.remove(task)
-        print ("VAL listeAllThings :", self.listAllThingsInPeriod)
+        self.__instanciatedSchedulables.remove(schedulable)
 
-    def removeSchedulable(self, schedulable):
+        # TODO : revoir pour être certain :
+        self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)
+
+    def removePrimitiveSchedulable(self, schedulable):
         """
-        Permet d'enlever un objet du calendrier.
+        Permet d'enlever un objet planifiable de la liste des schedulables primitifs.
         @param obj: L'objet à enlever.
         """
-        if schedulable in self.getListSchedulables():
-            self.listSchedulables.remove(schedulable)
-        self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)
+        self.__primitivesSchedulables.remove(schedulable)
 
     ""
     ####################################
@@ -412,7 +357,7 @@ class Periode(ITaskEditorDisplayableObject):
     ""
     def saveByDict(self):
         """
-        Méthode qui enrrgistre ce qu'elle peut de la période
+        Méthode qui enregistre ce qu'elle peut de la période
 
         @save nom   : <str> contient le nom de la période
         @save debut : <date> du début de la période
@@ -429,5 +374,5 @@ class Periode(ITaskEditorDisplayableObject):
             "fin"             : dateToStr(self.getFin()),
             "desc"            : self.desc,
             "color"           : self.getColor(),
-            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getListAllThingsInPeriod()]
+            "schedulables"    : [schedulable.saveByDict() for schedulable in self.getPrimitivesSchedulables()]
             }
