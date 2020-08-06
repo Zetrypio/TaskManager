@@ -57,8 +57,6 @@ class Application(Frame):
         @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
-        themeUse(self.tk, "aquativo", self)
-
 
         # Liste de clés qui permettent de référé à une tache précise
         self.listKey = []
@@ -187,7 +185,7 @@ class Application(Frame):
             @param p  : <periode> celle qui contient la tache
             @return <task> recherché, None si non trouvé
             """
-            for t in p.getListSchedulables():
+            for t in p.getPrimitivesSchedulables():
                 if isinstance(t, Task) and id == t.getUniqueID():
                     return t
             return None
@@ -285,7 +283,6 @@ class Application(Frame):
 ## Main :
 def main():
     """Fonction main, principale du programme."""
-    #window = ThemedTk(theme="equilux")
     app = Application()
 
 

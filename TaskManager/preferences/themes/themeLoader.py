@@ -16,7 +16,7 @@ def themeUse(tcl, name, widget):
     @param widget : <widget> pour le tk_setPalette() n'import quel widget lié à l'Application
     """
     color = None
-    if name in NEWTHEMES:
+    if name in NEWTHEMES and name not in sty.theme_names():
         fileName = name
         if "scid" in name:
             fileName = "scid"
@@ -25,9 +25,8 @@ def themeUse(tcl, name, widget):
     sty.theme_use(name)
 
     if color is not None:
-        bg , fg = color.split(" ")
-        print("bg :", bg, "fg :", fg)
         # Traitement des couleurs pour le setPalette
+        bg , fg = color.split(" ")
         widget.tk_setPalette(background=bg[1:-1], foreground = fg)
 
 
