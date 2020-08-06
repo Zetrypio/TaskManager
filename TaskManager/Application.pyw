@@ -71,7 +71,7 @@ class Application(Frame):
         self.periodManager = PeriodManager(self)
 
         ## Preferences
-        # A mettre près la création de la fenetre car le ProfilManagera besoin de la fenetre pour en changer le titre
+        # À mettre près la création de la fenêtre car le ProfilManagera besoin de la fenêtre pour en changer le titre
         self.__profilManager  = ProfilManager(self)
         self.__BindingManager = BindingManager(self) # À mettre après le ProfilManager car il faut savoir quel fichier de binding charger
         self.menu = MenuBar(self.winfo_toplevel(), self) # Il faut le mettre après le BindingManagerpour les accelerator
@@ -90,7 +90,7 @@ class Application(Frame):
         self.bind_all("<<open-file>>"  , lambda e=None:self.open())
         self.bind_all("<<quit>>"       , lambda e=None:self.quitter())
 
-        # Set des bindings méchanique en lien avec le bindingManager
+        # Set des bindings mécanique en lien avec le bindingManager
 
         #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
 
@@ -178,24 +178,6 @@ class Application(Frame):
         """
         Permet de charger les périodes enregistrées dans periode.json
         """
-        def creeTache(d, p):
-            """
-            Fonction embarquée qui crée une tache avec son dico
-            @param d : <dict> celui qu'a crée la tache
-            @param p : <periode> celle qui contient la tache
-            @return <task>
-            """
-            return Task(nom     = d["nom"],
-                        periode = p,
-                        desc    = d["desc"],
-                        color   = d["color"],
-                        debut   = strToDatetime(d["debut"]),
-                        duree   = strToTimedelta(d["duree"]),
-                        rep     = strToTimedelta(d["rep"]),
-                        nbrep   = d["nbrep"],
-                        done    = d["done"],
-                        id      = d["id"]
-                        )
 
         def chercheTask(id, p):
             """
@@ -209,65 +191,44 @@ class Application(Frame):
                 if isinstance(t, Task) and id == t.getUniqueID():
                     return t
             return None
-        # Si le fichier n'existe pas, on ne fait rien
+
+        # Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
         if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
             return
 
-        # Chargeons ce fameux fichier
+        # Chargement du fichier
         with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
             data = load(f)
-        ## Créons les périodes
+
+        ## Création des périodes
         for periode in data["periodes"]:
-            myPeriode = data["periodes"][periode]
+            dataPeriode = data["periodes"][periode]
             # On crée la période
-            p = Periode(self.getPeriodManager(),
-                        myPeriode["nom"],
-                        strToDate(myPeriode["debut"]),
-                        strToDate(myPeriode["fin"]),
-                        myPeriode["desc"],
-                        myPeriode["color"]
-                        )
+            p = Periode.load(dataPeriode, self.getPeriodManager())
             # On l'ajoute
             self.getPeriodManager().ajouter(p)
 
             ## On crée ses schedulables standards
-            for schedulable in myPeriode["schedulables"]:
+            for dataSchedulable in dataPeriode["schedulables"]:
                 # Si c'est un groupe :
-                if "listTasks" in schedulable:
-                    g = Groupe(
-                            schedulable["nom"],
-                            p,
-                            schedulable["desc"],
-                            schedulable["color"],
-                            )
-                    # On crée les taches du groupe et on le lui les rajoute
-                    for t in schedulable["listTasks"]:
-                        g.addTask(creeTache(t, p))
+                if "listTasks" in dataSchedulable:
+                    g = Groupe.load(dataSchedulable, p)
 
-                    # On ajoute le groupe à la periode
+                    # On ajoute le groupe à la période car il ne le fait pas tout seul.
+                    # (auto ajoute au TaskEditor aussi)
                     p.getGroupeManager().ajouter(g)
 
-                # Si c'est une tache standard :
+                # Sinon c'est une tâche standard :
                 else :
-                    myTache = creeTache(schedulable, p)
-                    self.getTaskEditor().ajouter(myTache)
-                    # On crée les sous taches
-                    if schedulable["subtasks"] is not None:
-                        for st in schedulable["subtasks"]:
-                            # st <dict> d'une tache
-                            tacheST = creeTache(st, p)
-                            myTache.addSubTask(tacheST)
-                            p.addSchedulable(tacheST)
-                            #self.getTaskEditor().ajouter(tacheST)
+                    myTache = Task.load(dataSchedulable, p)
+#                    self.getTaskEditor().ajouter(myTache)
 
-            ## Maintentant on passe au lien dépendances/dépendantes de la période
-            for s in myPeriode["schedulables"]:
+            ## Maintenant on passe au lien dépendances/dépendantes de la période
+            for s in dataPeriode["schedulables"]:
                 # S'il y a une dépendance ou plus
                 if "dependance" in s and s["dependance"] is not None:
                     for dep in s["dependance"]:
                         chercheTask(s['id'], p).addDependance(chercheTask(dep, p))
-
-
 
     def save(self):
         """
@@ -380,10 +341,12 @@ def main():
         raise
     except BaseException as e:
         Frame().winfo_toplevel().withdraw()
-        showerror("Erreur Fatale", "Erreur Fatale de l'application./nL'application va essayer d'enregistrer./n%s : %s"%(e.__class__.__name__, e))
+        app._report_exception()
+        showerror("Erreur Fatale", "Erreur Fatale de l'application.\nL'application va essayer d'enregistrer.\n%s : %s"%(e.__class__.__name__, e))
     finally:
         try:
             app.save()
         except BaseException as e:
             Frame().winfo_toplevel().withdraw()
-            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :/n%s : %s"%(e.__class__.__name__, e))
+            app._report_exception()
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))

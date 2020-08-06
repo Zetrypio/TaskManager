@@ -451,16 +451,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
     #    schedulables    #
     ######################
     ""
-    def addSchedulable(self, schedulable, region = None):
+    def addSchedulable(self, schedulable):
         """
         Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
-        @deprecated: Va être renommé en addSchedulable().
         """
-        #if not (schedulable := super().addTask(schedulable, region)): # region est géré dans la variante parent : on ne s'en occupe plus ici.
-            #return
-
         self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
-
         self.updateAffichage()
 
     def identify_region(self, x, y):

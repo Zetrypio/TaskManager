@@ -10,6 +10,7 @@ from .items.DatetimeItemPart import *
 from util.widgets.Dialog import *
 
 from schedulable.task.Task import *
+from schedulable.task.dialog.askDureeTache import *
 
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 
@@ -191,7 +192,7 @@ class AbstractDisplayedCalendar(Frame):
         return self.getPeriodeActive().getListSchedulables()
 
     def getSelectedSchedulable(self):
-        return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
+        return (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
 
     def getVisiblePart(self, part):
         """
@@ -334,6 +335,26 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
+    def applyRegion(self, schedulable, region):
+        """
+        Cette méthode permet d'appliquer une région à une tâche, pour le dnd.
+        Cela permet de créer la sous-tâche.
+        @param tache: la tâche à mettre.
+        @param region: la région à appliquer.
+        @return la sous-tâche juste créée.
+        """
+        if region and schedulable.getDebut() is None:
+            # Important de copier pour ne pas altérer l'originelle :
+            # Cela permet de pouvoir Drag&Drop une même tâche
+            # plusieurs fois.
+            schedulable = schedulable.copy()
+            schedulable.setDebut(region)
+        if isinstance(schedulable, Task) and schedulable.getDuree() <= datetime.timedelta():
+            schedulable.setDuree(askDureeTache(self, self.getLongueurPeriode()))
+            if not schedulable.getDuree():
+                return None
+        return schedulable
+
     def clicSurObjet(self, objet):
         """
         Méthode à exécuter quand on clic sur l'un des objets.
@@ -346,7 +367,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
         """
-        for s in self.getPeriodeActive().getListSchedulables():
+        for s in self.getPeriodeActive().getInstanciatedSchedulables():
             s.setSelected(False)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
 
@@ -388,7 +409,7 @@ class AbstractDisplayedCalendar(Frame):
         if not control:
             self.deselectEverything()
 
-        for schedulable in self.getPeriodeActive().getListSchedulables(): # On pourrait pas renommer la liste ?
+        for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             # Si l'objet est partiellement sur le jour :
             if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
                 schedulable.setSelected(True)

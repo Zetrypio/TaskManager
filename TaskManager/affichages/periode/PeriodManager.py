@@ -3,7 +3,8 @@ from tkinter.messagebox import showerror
 
 from util.widgets.Dialog import *
 
-from .dialog.periodDialog import *
+from .dialog.dupliquerPeriodDialog import *
+from .dialog.modifierPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 from .Periode import *
 
@@ -164,7 +165,7 @@ class PeriodManager:
         if len(periodes) == 0:
             return showerror("Erreur de sélection", "Vous devez avoir au moins une période sélectionnée pour effectuer cette action.")
         elif len(periodes) == 1:
-             askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = False)
+             askModifierPeriode(self, self.taskEditor, from_ = periodes[0])
         else:
             duree = askDureeJours()
             if duree is not None:
@@ -184,7 +185,7 @@ class PeriodManager:
         if len(periodes) != 1:
             showerror("Erreur de sélection", "Vous ne pouvez effectuer cette action qu'avec exactement une seule période sélectionnée.")
             return
-        askPeriode(self, self.taskEditor, from_ = periodes[0], duplicate = True)
+        askDupliquerPeriode(self, self.taskEditor, from_ = periodes[0])
 
     def fusionnerPeriodes(self):
         """
