@@ -20,6 +20,7 @@ from util.util import *
 
 from MenuBar import *
 from preferences.fenetrePreferences import *
+from preferences.themes.themeLoader import *
 from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
@@ -44,7 +45,6 @@ style.map("Treeview",
           foreground=fixed_map("foreground"),
           background=fixed_map("background"))
 
-#style.theme_use("clam")
 
 class Application(Frame):
     """
@@ -57,7 +57,7 @@ class Application(Frame):
         @param **kwargs: paramètre de configurations du tkinter.Frame() que cet objet est.
         """
         super().__init__(master, **kwargs)
-
+        themeUse(self.tk, "aquativo", self)
 
 
         # Liste de clés qui permettent de référé à une tache précise
@@ -326,11 +326,6 @@ def main():
     """Fonction main, principale du programme."""
     #window = ThemedTk(theme="equilux")
     app = Application()
-
-    app.tk.eval("source themeNoirBasique.tcl")
-    # Comment the two next lines to have classical "vista" from ttk theme
-    style.theme_use("black")
-    app.tk_setPalette(background="#424242", fieldbackground="#424242", itembackground="#424242", selectforeground="#424242")
 
 
     w = app.winfo_toplevel().winfo_screenwidth()

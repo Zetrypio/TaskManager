@@ -1,8 +1,17 @@
+# black.tcl -
+#
+#   Experimental!
+#
+#  Copyright (c) 2007-2008 Mats Bengtsson
+#
+# $Id: black.tcl,v 1.2 2009/10/25 19:21:30 oberdorfer Exp $
+# Date de téléchargement : 2020/08/04
+
 variable colors
 array set colors {
   -disabledfg	"DarkGrey"
   -frame  	"#424242"
-  -dark	    "#222222"
+  -dark         "#222222"
   -darker 	"#121212"
   -darkest	"black"
   -lighter	"#626262"
@@ -79,5 +88,17 @@ if {[info commands ::ttk::style] ne ""} {
       -background [list selected $colors(-selectbg)] \
       -foreground [list selected $colors(-selectfg)]
 
-  $styleCmd configure Treeview -fieldbackground $colors(-lighter)
+  $styleCmd configure Treeview -fieldbackground $colors(-lighter);
+
+variable e
+foreach val [list background foreground] {
+lappend e [$styleCmd lookup . -$val]
 }
+
+  return $e
+}
+
+
+proc getBackgroundColor {} {
+    return "#424242"
+    }

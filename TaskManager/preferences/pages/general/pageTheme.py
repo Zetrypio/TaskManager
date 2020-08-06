@@ -5,6 +5,7 @@ from tkinter import Label, Frame, Button as TkButton
 from tkinter.colorchooser import askcolor
 import tkinter.messagebox
 
+from preferences.themes.themeLoader import *
 from ..AbstractPage import *
 from util.widgets.ColorButton import *
 from util.widgets.Dialog import askstring, askyesnowarning
@@ -207,6 +208,11 @@ class PageTheme(AbstractPage):
         self.__btnEnregistrement.pack(side = LEFT, pady=3)
         self.__btnEnregistrementSous.pack(side=LEFT)
 
+        ## COMBO THEME
+        self.__cbRealTheme = Combobox(self.__frameChoixTheme, value = getThemes())
+        self.__cbRealTheme.bind("<<ComboboxSelected>>", self.apply)
+        self.__cbRealTheme.pack()
+
 
         # Final
         self._loadDataFile() # Pour les prefs standards
@@ -228,6 +234,8 @@ class PageTheme(AbstractPage):
     # Setters : #
     #############
     ""
+    def apply(self, e):
+        themeUse(e.widget.tk, e.widget.get(), e.widget)
     def setNomCombobox(self, nom):
         self.__varTheme.set(nom)
         self.__stateSaveBtn()
