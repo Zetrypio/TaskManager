@@ -6,7 +6,7 @@ class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
         # Création des attributs
-        self.__currentThemeName = None
+        self.__currentThemeBg = None
         self.__profilFolder = None
 
     "" # Marque pour le repli
@@ -81,8 +81,8 @@ class Data(ConfigParser):
     # Getters #
     ###########
     ""
-    def getCurrentTheme(self):
-        return self.__currentThemeName
+    def getCurrentThemeBg(self):
+        return self.__currentThemeBg
 
     def getOneValue(self, nomFichier, nomSection, nomCle):
         """
@@ -104,6 +104,15 @@ class Data(ConfigParser):
     # Setters #
     ###########
     ""
+    def setCurrentThemeBg(self, value):
+        """
+        Setter de la couleur de background de la palette Tk
+        @param value : <str> code couleur pour tk
+        """
+        self.testString(value)
+        self.__currentThemeBg = value
+        return
+
     def setProfilFolder(self, value):
         """
         Setter du path du profil en cours

@@ -20,7 +20,7 @@ class Calendar(ttk.Frame):
     datetime = calendar.datetime.datetime
     timedelta = calendar.datetime.timedelta
 
-    def __init__(self, master=None, **kw):
+    def __init__(self,data=None, master=None, **kw):
         """
         WIDGET-SPECIFIC OPTIONS
 
@@ -37,6 +37,9 @@ class Calendar(ttk.Frame):
 
         self._date = self.datetime(year, month, 1)
         self._selection = None # no date selected
+
+        # data pour la couleur du bandeau
+        self.data = data if data is not None else None
 
         ttk.Frame.__init__(self, master, **kw)
 
@@ -56,6 +59,7 @@ class Calendar(ttk.Frame):
 
         # set the minimal size for the widget
         self._calendar.bind('<Map>', self.__minsize)
+
 
     def __setitem__(self, item, value):
         if item in ('year', 'month'):
@@ -86,7 +90,7 @@ class Calendar(ttk.Frame):
     def __config_calendar(self):
         cols = self._cal.formatweekheader(3).split()
         self._calendar['columns'] = cols
-        self._calendar.tag_configure('header', background='#222222')
+        self._calendar.tag_configure('header', background=self.data.getCurrentThemeBg())
         self._calendar.insert('', 'end', values=cols, tag='header')
         # adjust its columns width
         font = tkFont.Font()

@@ -8,10 +8,11 @@ from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
 from util.util import *
 
-def askdate():
+def askdate(data):
     """
     Permet d'ouvrir une boîte de dialogue usuelle pour demander
     la date (et pas l'heure) à l'utilisateur.
+    @param data : <Data> pour la couleur du bandeau du calendrier
     @return datetime.date() choisie par l'utilisateur ou None
     """
     # Variable qui contient la valeur de retour :
@@ -35,7 +36,7 @@ def askdate():
     # Construction du dialogue :
     fen = Dialog(title = "Choix de la date", buttons = ("Ok", "Annuler"), command=onClose)
     # création des widgets :
-    cal = Calendar(fen, firstweekday=calendar.MONDAY)
+    cal = Calendar(master = fen, data = data, firstweekday=calendar.MONDAY)
     # placement des widgets :
     cal.pack(expand=1, fill='both')
 

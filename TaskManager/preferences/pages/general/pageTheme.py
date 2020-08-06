@@ -77,7 +77,7 @@ class PageTheme(AbstractPage):
 
         # Final
         self._loadDataFile() # Pour les prefs standards
-        themeUse(self.tk, self.__varTheme.get(), self)
+        themeUse(self.tk, self.__varTheme.get(), self, self.getData())
 
 
     ""
@@ -91,7 +91,7 @@ class PageTheme(AbstractPage):
         @param e : <event>
         """
         # e.widget.tk = interprêteur TCL
-        themeUse(e.widget.tk, self.__varTheme.get(), e.widget)
+        themeUse(e.widget.tk, self.__varTheme.get(), e.widget, self.getData())
         if self.__varTheme.get() == "equilux":
             self.__varPerf.set("Ce thème affecte grandement les performance de l'application")
         elif "scid" in self.__varTheme.get():

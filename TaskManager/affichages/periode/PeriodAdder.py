@@ -77,7 +77,7 @@ class PeriodAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate()
+        date = askdate(self.getApplication().getData())
         if date is not None:
             self.debut = date
         self.champDebut.config(text = date)
@@ -91,11 +91,18 @@ class PeriodAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate()
+        date = askdate(self.getApplication().getData())
         if date is not None:
             self.fin = date
         self.champFin.config(text = date)
         self.autoSetDuree()
+
+    def getApplication(self):
+        """
+        Getter pour l'application
+        @return l'Application
+        """
+        return self.getTaskEditor().getApplication()
 
     def getDuree(self):
         """
@@ -103,6 +110,12 @@ class PeriodAdder(Frame):
         """
         return self.fin - self.debut
 
+    def getTaskEditor(self):
+        """
+        Getter pour le taskEditor
+        @return <Taskeditor>
+        """
+        return self.master
     ""
     #############
     # Setters : #
@@ -152,3 +165,5 @@ class PeriodAdder(Frame):
         """
         periode = self.createPeriode()
         self.periodManager.ajouter(periode)
+
+

@@ -8,7 +8,10 @@ from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
 from util.widgets.Horloge import *
 
-def askdatetime(style):
+def askdatetime(style, data):
+    """
+    @param data : <Data> pour la couleur du bandeau du calendrier
+    """
     # Callback quand on ferme la fenêtre par l'un des boutons :
     date = ""
     heure = ""
@@ -106,7 +109,7 @@ def askdatetime(style):
     cadre = Frame(fen)
     cadre.pack(side = RIGHT)
     # création des widgets :
-    cal = Calendar(fen, firstweekday=calendar.MONDAY)
+    cal = Calendar(master = fen,data =data, firstweekday=calendar.MONDAY)
     hor = Horloge(cadre, number = style)
     # placement des widgets :
     cal.pack(side = LEFT, expand=1, fill='both')
