@@ -192,7 +192,7 @@ class AbstractDisplayedCalendar(Frame):
         return self.getPeriodeActive().getListSchedulables()
 
     def getSelectedSchedulable(self):
-        return (schedulable for schedulable in self.getPeriodeActive().getListSchedulables() if schedulable.isSelected())
+        return (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
 
     def getVisiblePart(self, part):
         """
@@ -409,7 +409,7 @@ class AbstractDisplayedCalendar(Frame):
         if not control:
             self.deselectEverything()
 
-        for schedulable in self.getPeriodeActive().getListSchedulables(): # On pourrait pas renommer la liste ?
+        for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             # Si l'objet est partiellement sur le jour :
             if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
                 schedulable.setSelected(True)
