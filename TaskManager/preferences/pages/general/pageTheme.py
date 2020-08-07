@@ -72,14 +72,14 @@ class PageTheme(AbstractPage):
         ## Affichage
         self.__caseAdaptTexteTache.grid(row = 0, column = 0, columnspan = 2)
         Label(self._mFrame, text = "Thème :").grid(row = 1, column = 0)
-        self.__cbRealTheme.grid(row = 1, column = 1)
+        self.__cbRealTheme.grid(row = 1, column = 1, sticky = "we")
         self.__btnApply.grid(row = 2, column = 1, sticky = "e")
         self.__lbPerf.grid(row = 2, column = 0, sticky = "w")
 
 
         # Final
         self._loadDataFile() # Pour les prefs standards
-        themeUse(self.tk, self.__varTheme.get(), self, self.getData())
+        themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
 
     ""
     #############
@@ -91,7 +91,7 @@ class PageTheme(AbstractPage):
         Méthode qui applique le thème
         """
         # self.tk = interprêteur TCL
-        themeUse(self.tk, self.__varTheme.get(), self, self.getData())
+        themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
 
 
     def prevent(self):
