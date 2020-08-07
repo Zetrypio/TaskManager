@@ -328,10 +328,7 @@ class Periode(ITaskEditorDisplayableObject):
             raise RuntimeError("Seul des objets planifiables peuvent aller dans la liste des objets planifiables instanciés.")
         self.__instanciatedSchedulables.append(schedulable)
 
-        # FIXME : revoir pour être certain : OK il faut gérer la région, ailleurs.
-        # On l'ajoute à tous le monde
-        # Important pour les calendriers, car enfaite c'est un (schedulable OK)
-
+        # On ajoute évidemment les versions instanciés aux calendriers, puisque c'est pour cela qu'elles sont faites.
         self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
 
     def addPrimitiveSchedulable(self, schedulable):
