@@ -351,8 +351,6 @@ class Task(AbstractSchedulableObject):
         @return True si la tâche est une tâche conteneur, False sinon.
         """
         self.updateStatut()
-#        if self._statut == "Inconnu" and not hasattr(self, "__subtasks"):
-#            self.__subtasks = []
         return self._statut == "Inconnu"
 
     def removeSubTask(self, task):
@@ -366,7 +364,7 @@ class Task(AbstractSchedulableObject):
             raise RuntimeError("Impossible d'enlever une tâche d'une tâche non conteneur.")
         if task.__parent != self:
             raise RuntimeError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
-        self.subtasks.remove(task)
+        self.__subtasks.remove(task)
 
     ""
     #################

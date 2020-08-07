@@ -63,7 +63,7 @@ class TaskEditor(Frame):
         self.barreRecherche.bind("<FocusOut>", lambda e: self.__chercher(e.widget.get()))
         self.barreRecherche.bind("<Return>", lambda e: self.__chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches : self.__chercher(e.widget.get()))
+        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self.__chercher(e.widget.get()))
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -71,7 +71,7 @@ class TaskEditor(Frame):
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
         self.scrollbar.pack(expand = NO, fill = BOTH, side = RIGHT)
         self.tree.configure(yscrollcommand = self.scrollbar.set)
-        
+
         # Mise à jour graphique :
         self.redessiner()
 
@@ -201,7 +201,6 @@ class TaskEditor(Frame):
         Permet d'ajouter un objet affichable dans le TaskEditor.
         @param iTaskEditorDisplayableObject: l'objet à rajouter.
         """
-        # TODO
         if isinstance(iTaskEditorDisplayableObject, AbstractSchedulableObject):
             schedulable = iTaskEditorDisplayableObject
             schedulable.getPeriode().addPrimitiveSchedulable(schedulable)   # Ajout primitif
@@ -221,12 +220,8 @@ class TaskEditor(Frame):
         else:
             for s in self.getTaskInTaskEditor():
                 if isinstance(s, Task) and s.isContainer():
-#                    for st in s.getSubTasks():
-#                        if st == schedulable:
-                            s.removeSubTask(schedulable)
+                    s.removeSubTask(schedulable)
         self.redessiner()
-        #if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
-            #self.master.getDonneeCalendrier().removeSchedulable(schedulable) # XXX ça casse pas tout j'espère ?
 
     ""
     ###########################

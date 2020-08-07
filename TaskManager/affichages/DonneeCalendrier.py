@@ -216,8 +216,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Permet d'enlever un objet du calendrier.
         @param obj: L'objet à enlever.
         """
-        #super().removeSchedulable(obj)
-
         for panneau in self.listPanneau:
             panneau.removeSchedulable(obj)
 
@@ -244,10 +242,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         # On instancie tout :
         for schedulable in periode.getPrimitivesSchedulables():
             schedulable.instantiate()
-
-#        # On rajoute tout
-#        for schedulable in periode.getInstanciatedSchedulables():
-#            self.addSchedulable(schedulable)
 
         # Et on met à jour
         self.updateAffichage()

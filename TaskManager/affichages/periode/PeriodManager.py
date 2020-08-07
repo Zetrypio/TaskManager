@@ -124,14 +124,12 @@ class PeriodManager:
         # On ajoute la période :
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
-#        self.app.getTaskEditor().ajouter(periode)
         
         # Si il n'y a pas de période active, alors on dit
         # que c'est automatiquement celle-ci par défaut.
         if self.activePeriode is None:
             self.setActivePeriode(periode)
 
-#        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
         # On met le combobox des périodes à jour
         self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
     
