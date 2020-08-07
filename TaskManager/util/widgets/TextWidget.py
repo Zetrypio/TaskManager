@@ -45,7 +45,7 @@ class TextWidget(Canvas):
         """
         self.__width  = width  if width  is not None else self.__width
         self.__height = height if height is not None else self.__height
-        self.resize(width, height)
+        self.__resize()
 
     def __resize(self):
         self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.__height or self.winfo_height())
