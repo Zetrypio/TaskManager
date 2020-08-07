@@ -362,6 +362,7 @@ class Periode(ITaskEditorDisplayableObject):
         """
         self.__instanciatedSchedulables.remove(schedulable)
 
+        # On ajoute évidemment les versions instanciés aux calendriers, puisque c'est pour cela qu'elles sont faites.
         # TODO : revoir pour être certain :
         self.getApplication().getDonneeCalendrier().removeSchedulable(schedulable)
 

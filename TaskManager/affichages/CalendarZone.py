@@ -387,6 +387,7 @@ class CalendarZone(Frame):
                 periode.addPrimitiveSchedulable(t)
                 t.instantiate()
             # Suppression du groupe :
+            periode.removeInstanciatedSchedulable(groupe)
             periode.removePrimitiveSchedulable(groupe)
 
         # Mise à jour de l'affichage qu'à la fin :
@@ -467,12 +468,14 @@ class CalendarZone(Frame):
         
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
+            periode.removeInstanciatedSchedulable(t)
             periode.removePrimitiveSchedulable(t)
 
         if ajout:
             periode.addPrimitiveSchedulable(groupe)
             self.getApplication().getTaskEditor().redessiner()
             groupe.instantiate()
+            self.getDonneeCalendrier().updateAffichage()
 
     def selectionnerJour(self):
         """
