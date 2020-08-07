@@ -20,7 +20,6 @@ class Groupe(AbstractSchedulableObject):
         super().__init__(nom, periode, desc, color)
         
         # Attributs :
-        self.__groupeManager = periode.getGroupeManager()
         self.__listTasks = set(listTasks) # Un set supprime toujours les doublons.
 
     "" # Marque pour repli de code
@@ -40,7 +39,6 @@ class Groupe(AbstractSchedulableObject):
         Constructeur alternatif des groupes, via lecture d'un json.
         Normalement la lecture d'un json donné via la méthode saveByDict()
         doit redonner une copie complète et profonde de ce groupe.
-        @attention le groupe ne s'ajoute pas dans le GroupManager de la Periode.
         @param data: le json à lire.
         @param periode: la période du groupe.
         @return le groupe.
@@ -251,13 +249,6 @@ class Groupe(AbstractSchedulableObject):
         """
         self.__listTasks.add(task)
 
-    def getGroupeManager(self):
-        """
-        Getter pour le groupe Manager.
-        @return le GroupeManager de ce groupe.
-        """
-        return self.groupeManager
-
     def getListTasks(self):
         """
         Getter des tâches du groupe.
@@ -279,14 +270,6 @@ class Groupe(AbstractSchedulableObject):
         """
         self.__listTasks.remove(task)
 
-    def setGroupeManager(self, groupeManager):
-        """
-        Setter du groupe Manager.
-        @param groupeManager: le GroupeManager à mettre.
-        """
-        self.groupeManager = groupeManager
-        self.setPeriode(groupeManager.getPeriode())
-
     def setPeriode(self, periode):
         """
         Setter pour la période de ce groupe.
@@ -294,7 +277,6 @@ class Groupe(AbstractSchedulableObject):
         @override setPeriode(periode) in AbstractSchedulableObject.
         """
         super().setPeriode(periode)
-        self.__groupeManager = periode.getGroupeManager()
 
     ""
     #######################################

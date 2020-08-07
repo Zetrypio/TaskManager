@@ -13,7 +13,6 @@ from affichages.CalendarZone import *
 from affichages.periode.Periode import *
 from affichages.periode.PeriodManager import *
 from schedulable.groupe.Groupe import *
-from schedulable.groupe.GroupeManager import *
 from schedulable.task.TaskEditor import *
 
 from util.util import *
@@ -274,23 +273,24 @@ def main():
         app.getPeriodManager().ajouter(periodeSemaine)
 
         # Création de tâches préfaites (c'est du lore)
-        app.getTaskEditor().ajouter(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-        app.getTaskEditor().ajouter(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-        app.getTaskEditor().ajouter(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
-        app.getTaskEditor().ajouter(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
-        app.getTaskEditor().ajouter(Task("Joyeux anniversaire", periodeSemaine,
+        periodeSemaine.addPrimitiveSchedulable(Task("B",  periodeSemaine, "", "#7CF0F7", datetime.datetime(2020, 7,  8,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        periodeSemaine.addPrimitiveSchedulable(Task("C",  periodeSemaine, "", "#C2F77C", datetime.datetime(2020, 7,  8, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        periodeSemaine.addPrimitiveSchedulable(Task("E",  periodeSemaine, "", "#5D7CDC", datetime.datetime(2020, 7, 12, 10, 0, 0), datetime.timedelta(3,0,0, 0, 0, 1)))
+        periodeSemaine.addPrimitiveSchedulable(Task("F",  periodeSemaine, "", "#FA6FFF", datetime.datetime(2020, 7,  8, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        periodeSemaine.addPrimitiveSchedulable(Task("Joyeux anniversaire", periodeSemaine,
                                     "Gâteau au chocolat et ne pas oublier la crême anglaise", "#85FAB7",
                                     datetime.datetime(2020, 7, 26, 12, 0, 0), datetime.timedelta(0,0,0, 0, 0, 5)))
 
         # Création d'un groupe préfait
         tacheA1 = Task("A1", periodeSemaine, "", "#F77CAA", datetime.datetime(2020, 7,  6,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1))
         tacheA2 = Task("A2", periodeSemaine, "", "#42A69A", datetime.datetime(2020, 7,  6, 10, 0, 0), datetime.timedelta(0,0,0, 0, 0, 2))
-        # Les 2 première tâches sont dans le groupe.
         group = Groupe("Mon Groupe", periodeSemaine, "description", "#FF88FF")
         group.addTask(tacheA1)
         group.addTask(tacheA2)
-        periodeSemaine.getGroupeManager().ajouter(group)
-        app.getTaskEditor().ajouter(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
+        periodeSemaine.addPrimitiveSchedulable(group)
+
+        # Et une autre tâche
+        periodeSemaine.addPrimitiveSchedulable(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
 
 
     

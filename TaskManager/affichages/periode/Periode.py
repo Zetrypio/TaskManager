@@ -2,7 +2,6 @@
 import datetime
 
 from schedulable.groupe.Groupe import *
-from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
 
@@ -38,9 +37,6 @@ class Periode(ITaskEditorDisplayableObject):
         # Listes :
         self.__primitivesSchedulables = []   # Liste des objets primitifs | natifs
         self.__instanciatedSchedulables = [] # Liste des objets instanciés
-
-        # Création d'un groupe manager de la période
-        self.groupeManager = GroupeManager(self.periodManager.getApplication(), self)
 
         self.uniqueID = self.setUniqueID() # Pour le calendrier des périodes sinon ça bug
 
@@ -82,7 +78,6 @@ class Periode(ITaskEditorDisplayableObject):
             if "listTasks" in dataSchedulable:
                 g = Groupe.load(dataSchedulable, p)
                 p.addPrimitiveSchedulable(g)
-#                p.getGroupeManager().ajouter(g) # On ajoute le groupe à la période car il ne le fait pas tout seul.
 
             # Sinon c'est une tâche standard :
             else :
@@ -108,7 +103,7 @@ class Periode(ITaskEditorDisplayableObject):
         Getter pour l'Application
         @return l'application
         """
-        return self.getGroupeManager().getApplication()
+        return self.periodManager.getApplication()
 
     def getColor(self):
         """
@@ -157,13 +152,6 @@ class Periode(ITaskEditorDisplayableObject):
         @return datetime.date() correspondant à la fin de la période.
         """
         return self.fin + datetime.timedelta() # Faire une copie de la date
-
-    def getGroupeManager(self):
-        """
-        Getter pour le gestionnaire de groupe de cette période.
-        @return le GroupManager de cette période.
-        """
-        return self.groupeManager
 
     def getHeader(self):
         """

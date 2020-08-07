@@ -373,8 +373,8 @@ class CalendarZone(Frame):
         """
         Permet de dégrouper un groupe.
         """
+        # Obtention de la période et des schedulables instanciés sélectionnés :
         periode = self.getDonneeCalendrier().getPeriodeActive()
-        groupeManager = periode.getGroupeManager()
         schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
         # Petite vérification :
         if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
@@ -384,10 +384,12 @@ class CalendarZone(Frame):
         for groupe in set(schedulables):
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
-                self.getApplication().getTaskEditor().ajouter(t)
-                #self.getDonneeCalendrier().addTask(t)
+                periode.addPrimitiveSchedulable(t) # TODO : instantiate
             # Suppression du groupe :
-            groupeManager.supprimer(groupe)
+            periode.removePrimitiveSchedulable(groupe)
+
+        # Mise à jour de l'affichage qu'à la fin :
+        self.getDonneeCalendrier().updateAffichage()
 
     def deplacerIntervertir(self):
         """
@@ -432,8 +434,7 @@ class CalendarZone(Frame):
         """
         Permet de grouper les tâches.
         """
-        periode = self.getDonneeCalendrier().getPeriodeActive()
-        groupeManager = periode.getGroupeManager()
+        periode = self.getPeriodeActive()
         schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
         # Petite vérification :
         if len(schedulables) < 2:
@@ -464,11 +465,11 @@ class CalendarZone(Frame):
         
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
-            self.getApplication().getTaskEditor().supprimer(t)
-            self.getPeriodeActive().removeSchedulable(t)
+            periode.removePrimitiveSchedulable(t)
 
         if ajout:
-            groupeManager.ajouter(groupe)
+            periode.addPrimitiveSchedulable(groupe)
+            # TODO : instantiate group
 
     def selectionnerJour(self):
         """

@@ -475,17 +475,17 @@ class Task(AbstractSchedulableObject):
          #Sinon : autorisé par le filtre, mais pas prioritaire.
        #return 0
 
-    def getGroupes(self):
-        """
-        Retourne une liste ? de groupe auxquelles appartient la tache.
-        """
-        import warnings
-        warnings.warn(DeprecationWarning("getGroupes ?"))
-        listeGroupe = []
-        for groupe in self.getPeriode().getGroupeManager().getGroupes():
-            if tache in groupe.getListTasks():
-                listeGroupe.append(groupe)
-        return listeGroupes
+    #def getGroupes(self):
+    #    """
+    #    Retourne une liste ? de groupe auxquelles appartient la tache.
+    #    """
+    #    import warnings
+    #    warnings.warn(DeprecationWarning("getGroupes ?"))
+    #    listeGroupe = []
+    #    for groupe in self.getPeriode().getGroupe-Manager().getGroupes():
+    #        if tache in groupe.getListTasks():
+    #            listeGroupe.append(groupe)
+    #    return listeGroupes
 
     def getUniqueID(self):
         """

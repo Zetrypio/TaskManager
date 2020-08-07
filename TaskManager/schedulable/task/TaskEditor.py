@@ -197,9 +197,11 @@ class TaskEditor(Frame):
 
     def ajouter(self, iTaskEditorDisplayableObject):
         """
-        Permet d'ajouter un objet planifiable à la liste.
+        MÉTHODE À EXÉCUTER PAR LE TaskAdder() ET LE PeriodAdder() UNIQUEMENT !
+        Permet d'ajouter un objet affichable dans le TaskEditor.
         @param iTaskEditorDisplayableObject: l'objet à rajouter.
         """
+        # TODO
         if isinstance(iTaskEditorDisplayableObject, AbstractSchedulableObject):
             schedulable = iTaskEditorDisplayableObject
             schedulable.getPeriode().addPrimitiveSchedulable(schedulable)
