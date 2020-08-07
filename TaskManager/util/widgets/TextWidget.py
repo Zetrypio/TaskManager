@@ -17,20 +17,20 @@ class TextWidget(Canvas):
         """
         Canvas.__init__(self, master, width = width, height = height)
 
-        self.__text = Text(self,  **kw)
+        self.__text = Text(self, height = 0, width = 0, **kw)
         if text is None:
             text = "ERROR"
         self.__text.insert(END, text)
         self.__text.config(state = DISABLED)
-        self.__text.pack()
+        self.create_window(0, 0, width = width, height = height, anchor = "nw", window = self.__text)
 
     "" # Marque pour le repli de code
     ##############
     # Méthodes : #
     ##############
     ""
-    def bindIt(self, *args, **kwargs):
-        self.bind(*args, **kwargs)
+    def bind(self, *args, **kwargs):
+        super().bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
 
     ""
@@ -40,9 +40,9 @@ class TextWidget(Canvas):
     #############################
     ""
     def grid(self, *args, **kwargs):
-        Canvas.grid(self, *args, **kwargs)
+        super().grid(*args, **kwargs)
         self.grid_propagate(False)
 
     def pack(self, *args, **kwargs):
-        Canvas.pack(self, *args, **kwargs)
+        super().pack(*args, **kwargs)
         self.pack_propagate(False)
