@@ -384,11 +384,13 @@ class CalendarZone(Frame):
         for groupe in set(schedulables):
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
-                periode.addPrimitiveSchedulable(t) # TODO : instantiate
+                periode.addPrimitiveSchedulable(t)
+                t.instantiate()
             # Suppression du groupe :
             periode.removePrimitiveSchedulable(groupe)
 
         # Mise à jour de l'affichage qu'à la fin :
+        self.getApplication().getTaskEditor().redessiner()
         self.getDonneeCalendrier().updateAffichage()
 
     def deplacerIntervertir(self):
@@ -469,7 +471,8 @@ class CalendarZone(Frame):
 
         if ajout:
             periode.addPrimitiveSchedulable(groupe)
-            # TODO : instantiate group
+            self.getApplication().getTaskEditor().redessiner()
+            groupe.instantiate()
 
     def selectionnerJour(self):
         """
