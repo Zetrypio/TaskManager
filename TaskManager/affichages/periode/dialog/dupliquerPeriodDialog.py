@@ -36,8 +36,9 @@ def askDupliquerPeriode(periodManager, taskEditor, from_ = None):
                  buttons = ("Ajouter", "Fermer"),
                  exitButton = ("Fermer", "WM_DELETE_WINDOW"))
 
-    fen.redessiner = taskEditor.redessiner
-    fen.ajouter = taskEditor.ajouter
+    fen.redessiner     = taskEditor.redessiner
+    fen.ajouter        = taskEditor.ajouter
+    fen.getApplication = taskEditor.getApplication
 
     p = PeriodAdder(periodManager, fen)
     p.pack(expand = YES, fill = BOTH)
