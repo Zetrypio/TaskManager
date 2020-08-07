@@ -324,8 +324,8 @@ class Task(AbstractSchedulableObject):
             raise RuntimeError("Impossible de rajouter une tâche conteneur dans une autre tâche conteneur")
         if task.__parent is not None:
             raise RuntimeError("Impossible de rajouter une tâche dans un conteneur, sachant qu'elle est déjà présente dans un autre conteneur")
-        self.subtasks.append(task)
-        task.__parent = self    # Possible, au vu que ce sont des objets de même type.
+        self.__subtasks.append(task)
+        task.__parent = self    # Accès private possible, au vu que ce sont des objets de même type.
 
     def getParent(self):
         """
@@ -342,7 +342,7 @@ class Task(AbstractSchedulableObject):
         """
         if not self.isContainer():
             raise RuntimeError("Impossible d'obtenir les sous-tâches d'une tâche non conteneur.")
-        return self.subtasks[:]
+        return self.__subtasks[:]
 
     def isContainer(self):
         """

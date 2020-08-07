@@ -61,9 +61,6 @@ class TaskAdder(Frame):
         self.champNbRepetition.set(0)
         self.champRepetition.set(1)
         self.champUniteeRepet.set(self.champUniteeRepet.cget("values")[2])
-        # Période :
-        self.champPeriode       = Combobox(self, state = "readonly")
-        self.updatePossiblePeriods()
         # Autres :
         self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
         self.boutonColor        = ColorButton(self)
@@ -86,9 +83,7 @@ class TaskAdder(Frame):
         self.champRepetition  .grid(row = 2, column = 5, sticky = "ew")
         self.champUniteeRepet .grid(row = 2, column = 6, sticky = "ew", columnspan = 2)
         # Ligne 3 :
-        self.champPeriode     .grid(row = 3, column = 2, columnspan = 6, sticky = "ew")
-        # Ligne 4 :
-        self.champDescription .grid(row = 4, column = 0, columnspan = 8, sticky ="ew")
+        self.champDescription .grid(row = 3, column = 0, columnspan = 8, sticky ="ew")
 
     "" # Marque pour le repli de code
     #############
@@ -214,28 +209,6 @@ class TaskAdder(Frame):
         self.champHeure.set(ecart.seconds//3600)
         self.champMinute.set(ecart.seconds//60%60)
 
-    def updatePossiblePeriods(self):
-        """
-        Méthode à appeler dès que les périodes possibles changent.
-        """
-        periodes = self.getApplication().getPeriodManager().getPeriodes()
-        #print(periodes)
-        # Trouver les périodes présentes dans la plage sélectionnée :
-        if self.debut is not None and self.fin is not None:
-            pp = Periode(self.getApplication().getPeriodManager(), "", self.getDebut().date(), self.getFin().date(), "")
-            periodes = [p.nom for p in periodes if p.intersectWith(pp)]
-        else:
-            periodeActive = self.getApplication().getPeriodManager().getActivePeriode()
-            periodes = [periodeActive] if periodeActive else []
-        # Changer le combobox :
-        self.champPeriode.config(values = ["(Aucune)"]+periodes)
-        if self.getApplication().getPeriodManager().getActivePeriode() in periodes:
-            self.champPeriode.set(self.getApplication().getPeriodManager().getActivePeriode().nom)
-        elif periodes:
-            self.champPeriode.set(self.champPeriode.cget("values")[1])
-        else:
-            self.champPeriode.set("(Aucune)")
-
     def valider(self):
         """
         Méthode quand on valide la création d'une tâche.
@@ -248,8 +221,5 @@ class TaskAdder(Frame):
         nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.get()
-        periode = None
-        for p in self.getApplication().getPeriodManager().getPeriodes():
-            if p.getNom() == self.champPeriode.get():
-                periode = p
+        periode = self.getApplication().getPeriodManager().getActivePeriode()
         self.getTaskEditor().ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))

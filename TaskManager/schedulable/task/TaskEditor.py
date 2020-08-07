@@ -208,7 +208,6 @@ class TaskEditor(Frame):
             schedulable.instantiate()                                       # Ajout instancié selon la tâche
             self.getApplication().getDonneeCalendrier().updateAffichage()   # Update
 
-        self.frameInput.updatePossiblePeriods()
         self.redessiner()
 
     def supprimer(self, schedulable):
@@ -228,7 +227,6 @@ class TaskEditor(Frame):
         self.redessiner()
         #if isinstance(schedulable, AbstractSchedulableObject) and schedulable.getStatut() != "Inconnu":
             #self.master.getDonneeCalendrier().removeSchedulable(schedulable) # XXX ça casse pas tout j'espère ?
-        self.frameInput.updatePossiblePeriods()
 
     ""
     ###########################
