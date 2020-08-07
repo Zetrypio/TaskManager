@@ -144,7 +144,8 @@ class Task(AbstractSchedulableObject):
                 yield "Dépendantes :", len(self.__dependantes)
                 yield a
                 yield from self.__dependantes
-        if self.__parent is None: # Ne pas répéter les descriptions identiques dans les sous-tâches.
+        if (self.__parent is None           # Ne pas répéter les descriptions identiques dans les sous-tâches.
+        and self.getDescription().strip()): # Ne pas afficher les descriptions vides.
             yield "Description :", self.getDescription()
         if self.isContainer():
             a = {
