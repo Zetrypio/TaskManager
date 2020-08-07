@@ -40,22 +40,22 @@ class ParametreAffichage(Frame):
         ## Config calendrier classique
         self.midFrame = Frame(self)
         # Label : de la période
-        self.lbPeriode = Label(self.midFrame, text = "Periode :")
+        self.lbPeriode = Label(self.midFrame, text = "de la période :")
         # Combobox de quelle période :
         self.listePeriode = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.listePeriode.set(self.listePeriode.cget("values")[-1])
         self.listePeriode.bind("<<ComboboxSelected>>",lambda e = None : self.setPeriodeActiveForApp())
         # Label : du combien de jour
-        self.lbCbJour = Label(self.midFrame, text = "Montrer :")
+        self.lbCbJour = Label(self.midFrame, text = "Afficher :")
         # Combobox de combien de jours :
         self.comboDuree = Combobox(self.midFrame, values=['Periode'], state= "readonly")
         self.comboDuree.set(self.comboDuree.cget("values")[-1])
         self.comboDuree.bind("<<ComboboxSelected>>",master.envoyerChangementNbJour) #passer par le maître et pas de parenthèses car on n'appelle pas la fonction, on la passe en paramètre
         # Affichage
-        self.lbPeriode.pack(side = LEFT)
-        self.listePeriode.pack(side=LEFT)
         self.lbCbJour.pack(side = LEFT)
         self.comboDuree.pack(side=LEFT)
+        self.lbPeriode.pack(side = LEFT)
+        self.listePeriode.pack(side=LEFT)
         ## Config Calendrier des périodes
         self.midFramePeriode = Frame(self)
         self.comboMoisPeriode = Combobox(self.midFramePeriode, value = MOIS, state = "readonly")
