@@ -42,13 +42,13 @@ class PageCalendrier(AbstractPage):
         self.__frameStyle = LabelFrame(self._mFrame, text = "Style d'affichage des jours")
 
         self.__varComboStyleFinal = StringVar()
-        #self._listData.append([self.__varComboStyleFinal, "", None]) TODO
+        self._listData.append([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_M"])
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
         self._listData.append([self.__varLienStyle, "Lien", " "])
         self.__oldLien = self._listData[-1][-1] # pour le retrouver lorsqu'on change le lien et refaire l'affichage du combobox
         self.__comboLienStyle = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varLienStyle, value = [" ", "/", "-", "."])
-        self.__comboLienStyle.bind("<<ComboboxSelected>>", lambda e=None : self.__chargerStyle())
+        self.__comboLienStyle.bind("<<ComboboxSelected>>", lambda e=None : self.__changeLien())
         # Affichage numéro de la semaine
         self.__varNumDeLaSemaine = BooleanVar()
         self._listData.append([self.__varNumDeLaSemaine, "Numéro de la semaine", False])
@@ -233,6 +233,13 @@ class PageCalendrier(AbstractPage):
             self.__cbStyleNumDeLaSemaine.config(state = "disabled")
             self.__cbCompteurNumDeLaSemaine.config(state = "disabled")
 
+    def changeLien(self):
+        """
+        Méthode qui change le combo des style en fonction du lien
+        """
+        self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, lien))
+        self.__oldLien = lien
+
     def __chargerStyle(self):
         """
         Permet de mettre toutes les possibilités de configuration d'affichage des jours dans self.__comboStyleFinal.
@@ -251,41 +258,63 @@ class PageCalendrier(AbstractPage):
         jourSemaine = str(jour[toudai.weekday()])
         mois        = str(mois[toudai.month])
 
-        listAffichage = [] # liste des affichages disponible
-        listAffichage.append( lien.join([jourSemaine, numJour, mois]))                  # Lundi 1 Janvier
-        listAffichage.append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
-        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
-        listAffichage.append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
+        self.listAffichage = [] # liste des affichages disponible
+        self.listAffichage.append([]) # liste des affichages disponible
+        self.listAffichage.append([]) # liste des variables pour l'enregistrement
+        self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois]))                  # Lundi 1 Janvier
+        self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
+        self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
+        self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
+        self.listAffichage[1].append("JS_NJ_M")
+        self.listAffichage[1].append("JS_NJ_M_NA")
+        self.listAffichage[1].append("JS_NJ_M3")
+        self.listAffichage[1].append("JS_NJ_M3_NA")
 
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois]))               # L 1 Janvier
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
-        listAffichage.append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
+        self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois]))               # L 1 Janvier
+        self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
+        self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
+        self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
+        self.listAffichage[1].append("JS0_NJ_M")
+        self.listAffichage[1].append("JS0_NJ_M_NA")
+        self.listAffichage[1].append("JS0_NJ_M3")
+        self.listAffichage[1].append("JS0_NJ_M3_NA")
 
-        listAffichage.append( lien.join([numJour, mois]))                               # 1 Janvier
-        listAffichage.append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
-        listAffichage.append( lien.join([numJour, mois[:3]]))                           # 1 Jan
-        listAffichage.append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
+        self.listAffichage[0].append( lien.join([numJour, mois]))                               # 1 Janvier
+        self.listAffichage[0].append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
+        self.listAffichage[0].append( lien.join([numJour, mois[:3]]))                           # 1 Jan
+        self.listAffichage[0].append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
+        self.listAffichage[1].append("NJ_M")
+        self.listAffichage[1].append("NJ_M_NA")
+        self.listAffichage[1].append("NJ_M3")
+        self.listAffichage[1].append("NJ_M3_NA")
 
-        listAffichage.append( lien.join([numJour2C, numMois2C]))                           # 01 01
-        listAffichage.append( lien.join([numJour2C, numMois2C, numAnnee]))                 # 01 01 2020
-        listAffichage.append( lien.join([numAnnee,  numMois2C, numJour2C]))                  # 2020 01 01
+        self.listAffichage[0].append( lien.join([numJour2C, numMois2C]))                        # 01 01
+        self.listAffichage[0].append( lien.join([numJour2C, numMois2C, numAnnee]))              # 01 01 2020
+        self.listAffichage[0].append( lien.join([numAnnee,  numMois2C, numJour2C]))             # 2020 01 01
+        self.listAffichage[1].append("NJ2_NM2")
+        self.listAffichage[1].append("NJ2_NM2_NA")
+        self.listAffichage[1].append("NA_NM2_NJ2")
 
 
-        self.__comboStyleFinal.config(value = listAffichage)
+        self.__comboStyleFinal.config(value = self.listAffichage[0])
         ## Réafectation de la valeur d'avant (si on change le lien/première affectation)
         # Première affectation
-        if self.__varComboStyleFinal.get() == "None":
-            self.__varComboStyleFinal.set(listAffichage[0]) # Lundi 1 Janvier
-        # Changement du combo en cours
-        else:
-            self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, lien))
-            self.__oldLien = lien
+
+        self.__varComboStyleFinal.set(self.listAffichage[0][self.listAffichage[1].index(self.__varComboStyleFinal.get())]) # Lundi 1 Janvier
 
     ""
     ###################################
     # Méthodes liées à la fermeture : #
     ###################################
     ""
+    def _makeDictAndSave(self):
+        """
+        Méthode qui fait un dictionnaire et sauvegarde les valeurs de la page courrante
+        @override : besoin de traiter le format de l'affichage des jours
+        """
+        ## on traite la valeur self.__varComboStyleFinal
+        self.__varComboStyleFinal.set(self.listAffichage[1][self.listAffichage[0].index(self.__varComboStyleFinal.get())])
+        super()._makeDictAndSave()
+
     def appliqueEffet(self, application):
         self._makeDictAndSave()
