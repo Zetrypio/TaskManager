@@ -22,7 +22,11 @@ class TextWidget(Canvas):
             text = "ERROR"
         self.__text.insert(END, text)
         self.__text.config(state = DISABLED)
-        self.create_window(0, 0, width = width, height = height, anchor = "nw", window = self.__text)
+        self.__idText = self.create_window(0, 0, width = width, height = height, anchor = "nw", window = self.__text)
+        self.__width = width
+        self.__height = height
+        self.after(1, self.__resize)
+        super().bind("<Configure>", lambda e: self.__resize(), 1)
 
     "" # Marque pour le repli de code
     ##############
@@ -32,6 +36,19 @@ class TextWidget(Canvas):
     def bind(self, *args, **kwargs):
         super().bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
+
+    def resize(self, width = None, height = None):
+        """
+        Permet de changer la taille
+        @param width : None: change pas. 0: adapte largeur. autre : taille fixe.
+        @param height: None: change pas. 0: adapte hauteur. autre : taille fixe.
+        """
+        self.__width  = width  if width  is not None else self.__width
+        self.__height = height if height is not None else self.__height
+        self.resize(width, height)
+
+    def __resize(self):
+        self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.__height or self.winfo_height())
 
     ""
     #############################
