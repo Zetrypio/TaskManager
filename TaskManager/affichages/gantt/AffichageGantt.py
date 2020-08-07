@@ -456,7 +456,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
         """
         self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
-        self.updateAffichage()
+#        self.updateAffichage()
 
     def identify_region(self, x, y):
         """

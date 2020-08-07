@@ -203,7 +203,7 @@ class AbstractDisplayedCalendar(Frame):
         @return None si l'objet n'est pas visible du tout.
         """
         # Test du jour :
-        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin()  + datetime.timedelta(days=1):
+        if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin() + datetime.timedelta(days=1):
             return None
 
         # Test de l'intégrité :
@@ -269,7 +269,6 @@ class AbstractDisplayedCalendar(Frame):
         @param valeur: Le datetime.time() à mettre
         """
         self.jourDebut = valeur + datetime.timedelta()
-        self.updateAffichage()
 
     def setJourFin(self, valeur):
         """

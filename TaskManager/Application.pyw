@@ -57,18 +57,18 @@ class Application(Frame):
         """
         super().__init__(master, **kwargs)
 
-        # Liste de clés qui permettent de référé à une tache précise
+        # Liste de clés qui permettent de référer à une tache précise, permet de distinguer les UUID
         self.listKey = []
+        
         os.makedirs(os.path.expanduser("~/.taskManager/"), exist_ok = True)
-
         self.__data = Data()
 
         # Début de l'instanciation
         self.winfo_toplevel().title("Gestionnaire de calendrier")
         self.periodManager = PeriodManager(self)
 
-        ## Preferences
-        # À mettre près la création de la fenêtre car le ProfilManagera besoin de la fenêtre pour en changer le titre
+        ## Préférences
+        # À mettre près la création de la fenêtre car le ProfilManager a besoin de la fenêtre pour en changer le titre
         self.__profilManager  = ProfilManager(self)
         self.__BindingManager = BindingManager(self) # À mettre après le ProfilManager car il faut savoir quel fichier de binding charger
         self.menu = MenuBar(self.winfo_toplevel(), self) # Il faut le mettre après le BindingManagerpour les accelerator
@@ -94,6 +94,7 @@ class Application(Frame):
         for binding in self.getBindingIn("Application"):
             for key in self.getBindingIn("Application")[binding]["bindings"]:
                 self.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
+
         if not CHARGERPRECONFIG:
             self.__load()
 
@@ -198,13 +199,12 @@ class Application(Frame):
         """
         Fonction qui va enregistrer toutes les données
         """
-        d = {}
-        d["periodes"] = {}
+        d = {"periodes": {}}
         for periode in self.getPeriodManager().getPeriodes():
             d["periodes"][periode.getNom()] = periode.saveByDict()
 
         with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
-            json.dump(d, f, indent=4)
+            json.dump(d, f, indent=4) # indent pour pouvoir plus facilement lire le fichier avec nos yeux d'humains.
 
     ""
     #####################
@@ -251,7 +251,7 @@ def main():
     """Fonction main, principale du programme."""
     app = Application()
 
-
+    # Taille de la fenêtre :
     w = app.winfo_toplevel().winfo_screenwidth()
     h = app.winfo_toplevel().winfo_screenheight()
     app.winfo_toplevel().geometry("%sx%s+%s+%s"%(int(0.9*w), int(0.8*h), int(0.05*w), int(0.05*h)))
@@ -295,8 +295,8 @@ def main():
         # Update :
         app.getTaskEditor().redessiner()
         app.getDonneeCalendrier().switchPeriode()
-    
-    
+
+
     try:
         app.mainloop()
         try:

@@ -68,12 +68,11 @@ class PeriodManager:
         if not isinstance(periode, (Periode, None.__class__)):
             raise ValueError("La période ne peut pas être %s")
         self.activePeriode = periode
-        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None) # TODO : Désactiver l'affichage période (faire en sorte que ca bug pas).
-        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)     # TODO : idem.
+        self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None)
+        self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)
 
         # Configuration du combobox en fonction de la durée de la période
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().switchPeriode()
-
         self.app.getDonneeCalendrier().switchPeriode()
         self.app.getTaskEditor().redessiner()
 
@@ -125,14 +124,14 @@ class PeriodManager:
         # On ajoute la période :
         self.periodes.append(periode)
         self.periodes.sort(key = lambda p: p.getDebut())
-        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
-        self.app.getTaskEditor().ajouter(periode)
+#        self.app.getTaskEditor().ajouter(periode)
         
         # Si il n'y a pas de période active, alors on dit
         # que c'est automatiquement celle-ci par défaut.
         if self.activePeriode is None:
             self.setActivePeriode(periode)
 
+#        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
         # On met le combobox des périodes à jour
         self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
     

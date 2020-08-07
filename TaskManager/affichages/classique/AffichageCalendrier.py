@@ -143,7 +143,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         @return la tâche qui à peut-être été changé pour des raisons d'affichage.
         """
         self.listeDisplayableItem.append(ObjetClassique(self, schedulable))
-        self.updateAffichage()
+#        self.updateAffichage()
 
     def identify_region(self, x, y):
         """

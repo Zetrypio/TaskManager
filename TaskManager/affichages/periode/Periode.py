@@ -332,7 +332,7 @@ class Periode(ITaskEditorDisplayableObject):
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
 
-#        self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+        self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
 
     def addPrimitiveSchedulable(self, schedulable):
         """
@@ -343,7 +343,6 @@ class Periode(ITaskEditorDisplayableObject):
         if not isinstance(schedulable, AbstractSchedulableObject):
             raise RuntimeError("Seul des objets planifiables peuvent aller dans la liste des objets planifiables primitifs.")
         self.__primitivesSchedulables.append(schedulable)
-
 
     def iterateDisplayContent(self):
         """
