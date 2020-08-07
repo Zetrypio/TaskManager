@@ -237,7 +237,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.getToutLesPanneaux():
             panneau.resetSchedulable()
 
+        # Sur la nouvelle période
         periode = self.getPeriodeActive()
+        periode.resetInstanciatedSchedulables()
+        
+        # On instancie tout :
+        for schedulable in periode.getPrimitivesSchedulables():
+            schedulable.instantiate()
+
         # On rajoute tout
         for schedulable in periode.getInstanciatedSchedulables():
             # Pour chaque panneau

@@ -192,6 +192,9 @@ class Groupe(AbstractSchedulableObject):
             i += 1
         yield from parts
 
+    def instantiate(self):
+        self.getPeriode().addInstanciatedSchedulable(self)
+
     def setSelected(self, selected):
         """
         Permet de sélectionner ou désélectionner cet objet.

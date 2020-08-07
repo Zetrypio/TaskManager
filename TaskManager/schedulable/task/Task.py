@@ -282,7 +282,16 @@ class Task(AbstractSchedulableObject):
                 yield from addRepartition(instance)
         else:
             yield from addRepartition(self)
-            
+
+    def instantiate(self):
+        periode = self.getPeriode()
+        
+        # Si on est une tâche container:
+        if self.isContainer():
+            for subTask in self.__subtasks:
+                subTask.instantiate()
+        else:
+            periode.addInstanciatedSchedulable(self)
 
     def updateStatut(self):
         """
@@ -341,8 +350,8 @@ class Task(AbstractSchedulableObject):
         @return True si la tâche est une tâche conteneur, False sinon.
         """
         self.updateStatut()
-        if self._statut == "Inconnu" and not hasattr(self, "subtasks"):
-            self.subtasks = []
+#        if self._statut == "Inconnu" and not hasattr(self, "__subtasks"):
+#            self.__subtasks = []
         return self._statut == "Inconnu"
 
     def removeSubTask(self, task):
@@ -475,18 +484,6 @@ class Task(AbstractSchedulableObject):
          #Sinon : autorisé par le filtre, mais pas prioritaire.
        #return 0
 
-    #def getGroupes(self):
-    #    """
-    #    Retourne une liste ? de groupe auxquelles appartient la tache.
-    #    """
-    #    import warnings
-    #    warnings.warn(DeprecationWarning("getGroupes ?"))
-    #    listeGroupe = []
-    #    for groupe in self.getPeriode().getGroupe-Manager().getGroupes():
-    #        if tache in groupe.getListTasks():
-    #            listeGroupe.append(groupe)
-    #    return listeGroupes
-
     def getUniqueID(self):
         """
         Permet d'obtenir l'ID de la tache
@@ -519,7 +516,6 @@ class Task(AbstractSchedulableObject):
             while str(ID) in self.getPeriode().getApplication().listKey:
                 ID += 1
         return str(ID)
-
 
     def transformToDnd(self, taskEditor, rmenu):
         """

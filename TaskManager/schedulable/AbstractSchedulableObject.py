@@ -243,6 +243,15 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     # Clone and delete: #
     #####################
     ""
+    def instantiate(self):
+        """
+        Permet d'ajouter la version instanciée de l'objet à la période.
+        L'idée est d'appeler la méthode self.getPeriode().addInstantitatedSchedulable()
+        pour y ajouter ce que doivent afficher les calendriers (en tâches séparées contrairement
+        à #getRepartition() ou #getRawRepartition()).
+        """
+        raise NotImplementedError
+
     def copy(self):
         """
         Permet de copier cet objet.

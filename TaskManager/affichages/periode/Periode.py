@@ -376,6 +376,12 @@ class Periode(ITaskEditorDisplayableObject):
         """
         self.__primitivesSchedulables.remove(schedulable)
 
+    def resetInstanciatedSchedulables(self):
+        """
+        Permet de reset les schedulables instanciés.
+        """
+        self.__instanciatedSchedulables.clear()
+
     ""
     ####################################
     # Méthodes pour l'enregistrement : #

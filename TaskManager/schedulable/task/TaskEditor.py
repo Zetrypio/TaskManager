@@ -215,6 +215,7 @@ class TaskEditor(Frame):
 
     def supprimer(self, schedulable):
         """
+        MÉTHODE À EXÉCUTER PAR LE RMENU DE SUPPRESSION DU TaskEditor() UNIQUEMENT !
         Permet de supprimer un objet planifiable de la liste.
         @param schedulable: l'objet à enlever.
         """

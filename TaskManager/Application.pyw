@@ -221,7 +221,7 @@ class Application(Frame):
         try:
             self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
         except BaseException as e:
-            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :/n%s : %s"%(e.__class__.__name__, e))
+            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
         else:
             if sys.platform.startswith("win"):
                 command = "start pyw -3.8 "
@@ -292,7 +292,9 @@ def main():
         # Et une autre tâche
         periodeSemaine.addPrimitiveSchedulable(Task("D",  periodeSemaine, "", "#B97CF7", datetime.datetime(2020, 7, 12,  8, 0, 0), datetime.timedelta(0,0,0, 0, 0, 1)))
 
-
+        # Update :
+        app.getTaskEditor().redessiner()
+        app.getDonneeCalendrier().switchPeriode()
     
     
     try:
