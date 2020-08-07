@@ -27,6 +27,7 @@ class TextWidget(Canvas):
         self.__height = height
         self.after(1, self.__resize)
         super().bind("<Configure>", lambda e: self.__resize(), 1)
+        #print(self.__text.index(END))
 
     "" # Marque pour le repli de code
     ##############

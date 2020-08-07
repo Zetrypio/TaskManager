@@ -299,7 +299,6 @@ class PageCalendrier(AbstractPage):
         self.__comboStyleFinal.config(value = self.listAffichage[0])
         ## Réafectation de la valeur d'avant (si on change le lien/première affectation)
         # Première affectation
-
         self.__varComboStyleFinal.set(self.listAffichage[0][self.listAffichage[1].index(self.__varComboStyleFinal.get())]) # Lundi 1 Janvier
 
     ""
@@ -315,6 +314,7 @@ class PageCalendrier(AbstractPage):
         ## on traite la valeur self.__varComboStyleFinal
         self.__varComboStyleFinal.set(self.listAffichage[1][self.listAffichage[0].index(self.__varComboStyleFinal.get())])
         super()._makeDictAndSave()
+        self.__varComboStyleFinal.set(self.listAffichage[0][self.listAffichage[1].index(self.__varComboStyleFinal.get())])
 
     def appliqueEffet(self, application):
         self._makeDictAndSave()

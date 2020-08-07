@@ -253,8 +253,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             # Est-ce que le jour est sélectionné ?
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
 
-#            self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "#91C9F7" if jourSelectionne else "light grey"))
-            self.__listeLabelJour.append(TextWidget(self.__frame, height=40, text=JOUR[jour.weekday()]))
+           # self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "#91C9F7" if jourSelectionne else "light grey"))
+            self.__listeLabelJour.append(TextWidget(self.__frame, height=None, text=JOUR[jour.weekday()]+"jnsjnfjnlksjnflknelfk"))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
             self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))
             self.__listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")
