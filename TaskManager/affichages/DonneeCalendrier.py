@@ -194,10 +194,9 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     ""
     def addSchedulable(self, schedulable):
         """
-        Permet d'ajouter une tâche.
-        @param tache: la Task à mettre -> à changer en Schedulable.
+        Permet d'ajouter un objet planifiable, répercute l'appel sur tout les différents calendriers.
+        @param schedulable: l'objet planifiable à ajouter.
         @param region: correspond au début de la tâche si celle-ci n'en a pas.
-        @deprecated: task va devenir un schedulable et le nom de la fonction va alors changer.
         """
         ####################
         # Ajout graphique. #

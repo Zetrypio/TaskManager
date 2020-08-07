@@ -50,7 +50,7 @@ class Groupe(AbstractSchedulableObject):
 
         # Ajout des sous-tâches :
         for t in data["listTasks"]:
-            g.addTask(Task.load(t, periode, add=False))
+            g.addTask(Task.load(t, periode))
 
         return g
 

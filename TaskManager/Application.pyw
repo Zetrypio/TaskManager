@@ -176,25 +176,11 @@ class Application(Frame):
         """
         Permet de charger les périodes enregistrées dans periode.json
         """
-
-        def chercheTask(id, p):
-            """
-            Fonction embarquée qui recherche la tache lié à l'id
-            Pour l'instant seule les task ont un attribut uniqueID
-            @param id : <str> id de la tache qu'on cherche
-            @param p  : <periode> celle qui contient la tache
-            @return <task> recherché, None si non trouvé
-            """
-            for t in p.getPrimitivesSchedulables():
-                if isinstance(t, Task) and id == t.getUniqueID():
-                    return t
-            return None
-
-        # Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
+        ## Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
         if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
             return
 
-        # Chargement du fichier
+        ## Chargement du fichier
         with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
             data = load(f)
 
@@ -205,28 +191,9 @@ class Application(Frame):
             p = Periode.load(dataPeriode, self.getPeriodManager())
             # On l'ajoute
             self.getPeriodManager().ajouter(p)
-
-            ## On crée ses schedulables standards
-            for dataSchedulable in dataPeriode["schedulables"]:
-                # Si c'est un groupe :
-                if "listTasks" in dataSchedulable:
-                    g = Groupe.load(dataSchedulable, p)
-
-                    # On ajoute le groupe à la période car il ne le fait pas tout seul.
-                    # (auto ajoute au TaskEditor aussi)
-                    p.getGroupeManager().ajouter(g)
-
-                # Sinon c'est une tâche standard :
-                else :
-                    myTache = Task.load(dataSchedulable, p)
-#                    self.getTaskEditor().ajouter(myTache)
-
-            ## Maintenant on passe au lien dépendances/dépendantes de la période
-            for s in dataPeriode["schedulables"]:
-                # S'il y a une dépendance ou plus
-                if "dependance" in s and s["dependance"] is not None:
-                    for dep in s["dependance"]:
-                        chercheTask(s['id'], p).addDependance(chercheTask(dep, p))
+        
+        ## On active une période.
+        self.getDonneeCalendrier().switchPeriode()
 
     def save(self):
         """

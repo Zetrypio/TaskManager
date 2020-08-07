@@ -53,8 +53,9 @@ class GroupeManager():
         @param groupe: le groupe à ajouter.
         """
         self.__groupes.add(groupe)
-        self.getApplication().getDonneeCalendrier().updateAffichage()
-        self.getApplication().getTaskEditor().ajouter(groupe)
+        self.__periode.addPrimitiveSchedulable(groupe)
+#        self.getApplication().getDonneeCalendrier().updateAffichage()
+#        self.getApplication().getTaskEditor().ajouter(groupe)
 
     def supprimer(self, groupe):
         """

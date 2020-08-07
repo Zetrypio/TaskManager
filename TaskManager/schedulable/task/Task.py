@@ -77,13 +77,12 @@ class Task(AbstractSchedulableObject):
     ###############################
     ""
     @staticmethod
-    def load(d, p, add = True):
+    def load(d, p):
         """
         Constructeur alternatif (en tant que méthode statique) qui crée une tache
         à partir des informations d'enregistrement que cette tâche aurait pu produire.
         @param d : dictionnaire qu'aurait créé cette tâche si on lui demandait d'enregistrer...
         @param p : période de la tâche.
-        @param add: True si on ajoute la tâche aux période, TaskEditor et autre, False sinon.
         @return la tâche nouvellement créée.
         """
         t = Task(nom     = d["nom"],
@@ -96,16 +95,11 @@ class Task(AbstractSchedulableObject):
             nbrep   = d["nbrep"],
             done    = d["done"],
             id      = d["id"])
-        # On crée les sous tâches
-        if add:
-            p.addPrimitiveSchedulable(t)
+        # On crée les sous tâches si elles existent :
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
-                subTask = Task.load(dataSubTask, p, False)
-                p.addInstanciatedSchedulable(subTask)
+                subTask = Task.load(dataSubTask, p)
                 t.addSubTask(subTask)
-        elif add:
-            p.addInstanciatedSchedulable(t)
         return t
     ""
     #######################################################
@@ -485,6 +479,8 @@ class Task(AbstractSchedulableObject):
         """
         Retourne une liste ? de groupe auxquelles appartient la tache.
         """
+        import warnings
+        warnings.warn(DeprecationWarning("getGroupes ?"))
         listeGroupe = []
         for groupe in self.getPeriode().getGroupeManager().getGroupes():
             if tache in groupe.getListTasks():

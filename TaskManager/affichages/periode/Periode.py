@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import datetime
 
+from schedulable.groupe.Groupe import *
 from schedulable.groupe.GroupeManager import *
 from schedulable.task.ITaskEditorDisplayableObject import *
 from schedulable.task.Task import *
@@ -54,12 +55,48 @@ class Periode(ITaskEditorDisplayableObject):
     ""
     @staticmethod
     def load(data, periodManager):
-        return Periode(periodManager,
-                       data["nom"],
-                       strToDate(data["debut"]),
-                       strToDate(data["fin"]),
-                       data["desc"],
-                       data["color"])
+
+        def chercheTask(id, p):
+            """
+            Fonction embarquée qui recherche la tache lié à l'id
+            Pour l'instant seule les task ont un UUID
+            @param id : <str> id de la tache qu'on cherche
+            @param p  : <periode> celle qui contient la tache
+            @return <task> recherché, None si non trouvé
+            """
+            for t in p.getPrimitivesSchedulables():
+                if isinstance(t, Task) and id == t.getUniqueID():
+                    return t
+
+        ## On crée la période.
+        p = Periode(periodManager,
+                    data["nom"],
+                    strToDate(data["debut"]),
+                    strToDate(data["fin"]),
+                    data["desc"],
+                    data["color"])
+
+        ## On crée ses schedulables standards
+        for dataSchedulable in data["schedulables"]:
+            # Si c'est un groupe :
+            if "listTasks" in dataSchedulable:
+                g = Groupe.load(dataSchedulable, p)
+                p.addPrimitiveSchedulable(g)
+#                p.getGroupeManager().ajouter(g) # On ajoute le groupe à la période car il ne le fait pas tout seul.
+
+            # Sinon c'est une tâche standard :
+            else :
+                t = Task.load(dataSchedulable, p)
+                p.addPrimitiveSchedulable(t)
+
+        ## Maintenant on passe au lien de dépendances :
+        for s in data["schedulables"]:
+            # S'il y a des dépendances :
+            if "dependance" in s and s["dependance"] is not None:
+                for dep in s["dependance"]:
+                    chercheTask(s['id'], p).addDependance(chercheTask(dep, p))
+
+        return p
 
     ""
     #############
@@ -306,7 +343,8 @@ class Periode(ITaskEditorDisplayableObject):
         # FIXME : revoir pour être certain : OK il faut gérer la région, ailleurs.
         # On l'ajoute à tous le monde
         # Important pour les calendriers, car enfaite c'est un (schedulable OK)
-        self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
+
+#        self.getApplication().getDonneeCalendrier().addSchedulable(schedulable)
 
     def addPrimitiveSchedulable(self, schedulable):
         """
