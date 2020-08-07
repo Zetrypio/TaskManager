@@ -181,10 +181,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Retire un schedulable de la liste
         @param obj : <schedulable> celui qu'il faut retirer
         """
+        print("removing :", obj)
         for item in reversed(self.listeDisplayableItem):
             if isinstance(item, ObjetClassique):
                 if item.getSchedulable() == obj:
                     self.listeDisplayableItem.remove(item)
+                    print ("removed")
 
         self.updateAffichage(True)
 
