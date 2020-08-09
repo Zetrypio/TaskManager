@@ -224,7 +224,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         for textwidget in self.__listeLabelJour:
             textwidget.resize(height = textwidget.MINHEIGHT)
-            print("resized")
 
     def __afficherLesHeures(self):
         """
@@ -262,7 +261,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
 
             #self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()]+"\nfisefoijsoifjsoiejfiosef\njofijesoifjosiejfoi", bg = "#91C9F7" if jourSelectionne else "light grey", font = ("TkFixedFont")))
-            self.__listeLabelJour.append(TextWidget(self.__frame, height = 18*6, text=JOUR[jour.weekday()] + "", nbJour = self.getNbJour()))
+            self.__listeLabelJour.append(self._makeTextWidget(jour, self.getNbJour(), master = self.__frame))
+            #self.__listeLabelJour.append(TextWidget(self.__frame, text=JOUR[jour.weekday()] + "", nbJour = self.getNbJour()))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
             self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))
             self.__listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")

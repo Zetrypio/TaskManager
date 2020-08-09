@@ -233,12 +233,12 @@ class PageCalendrier(AbstractPage):
             self.__cbStyleNumDeLaSemaine.config(state = "disabled")
             self.__cbCompteurNumDeLaSemaine.config(state = "disabled")
 
-    def changeLien(self):
+    def __changeLien(self):
         """
         Méthode qui change le combo des style en fonction du lien
         """
-        self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, lien))
-        self.__oldLien = lien
+        self.__varComboStyleFinal.set(self.__varComboStyleFinal.get().replace(self.__oldLien, self.__varLienStyle.get()))
+        self.__oldLien = self.__varLienStyle.get()
 
     def __chargerStyle(self):
         """
@@ -256,7 +256,7 @@ class PageCalendrier(AbstractPage):
         numMois2C   = "%02i"%toudai.month
         numAnnee    = str(toudai.year)
         jourSemaine = str(jour[toudai.weekday()])
-        mois        = str(mois[toudai.month])
+        mois        = str(mois[toudai.month-1])
 
         self.listAffichage = [] # liste des affichages disponible
         self.listAffichage.append([]) # liste des affichages disponible
@@ -265,8 +265,8 @@ class PageCalendrier(AbstractPage):
         self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois, numAnnee]))        # Lundi 1 Janvier 2020
         self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois[:3]]))              # Lundi 1 Jan
         self.listAffichage[0].append( lien.join([jourSemaine, numJour, mois[:3], numAnnee]))    # Lundi 1 Jan 2020
-        self.listAffichage[1].append("JS_NJ_M")
-        self.listAffichage[1].append("JS_NJ_M_NA")
+        self.listAffichage[1].append("JS_NJ_MO")
+        self.listAffichage[1].append("JS_NJ_MO_NA")
         self.listAffichage[1].append("JS_NJ_M3")
         self.listAffichage[1].append("JS_NJ_M3_NA")
 
@@ -274,8 +274,8 @@ class PageCalendrier(AbstractPage):
         self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois, numAnnee]))     # L 1 Janvier 2020
         self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois[:3]]))           # L 1 Jan
         self.listAffichage[0].append( lien.join([jourSemaine[0], numJour, mois[:3], numAnnee])) # L 1 Jan 2020
-        self.listAffichage[1].append("JS0_NJ_M")
-        self.listAffichage[1].append("JS0_NJ_M_NA")
+        self.listAffichage[1].append("JS0_NJ_MO")
+        self.listAffichage[1].append("JS0_NJ_MO_NA")
         self.listAffichage[1].append("JS0_NJ_M3")
         self.listAffichage[1].append("JS0_NJ_M3_NA")
 
@@ -283,8 +283,8 @@ class PageCalendrier(AbstractPage):
         self.listAffichage[0].append( lien.join([numJour, mois, numAnnee]))                     # 1 Janvier 2020
         self.listAffichage[0].append( lien.join([numJour, mois[:3]]))                           # 1 Jan
         self.listAffichage[0].append( lien.join([numJour, mois[:3], numAnnee]))                 # 1 Jan 2020
-        self.listAffichage[1].append("NJ_M")
-        self.listAffichage[1].append("NJ_M_NA")
+        self.listAffichage[1].append("NJ_MO")
+        self.listAffichage[1].append("NJ_MO_NA")
         self.listAffichage[1].append("NJ_M3")
         self.listAffichage[1].append("NJ_M3_NA")
 

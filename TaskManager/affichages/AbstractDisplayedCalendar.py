@@ -8,6 +8,7 @@ import datetime
 from .items.DatetimeItemPart import *
 
 from util.widgets.Dialog import *
+from util.widgets.TextWidget import *
 
 from schedulable.task.Task import *
 from schedulable.task.dialog.askDureeTache import *
@@ -53,6 +54,13 @@ class AbstractDisplayedCalendar(Frame):
         @return l'application.
         """
         return self.getDonneeCalendrier().getApplication()
+
+    def getData(self):
+        """
+        Getter pour le Data
+        @return <Data>
+        """
+        return self.getApplication().getData()
 
     def getDebutPeriode(self):
         """
@@ -422,6 +430,52 @@ class AbstractDisplayedCalendar(Frame):
     #   l'affichage    #
     ####################
     ""
+    def _makeTextWidget(self, dt, nbJour ,master = None):
+        """
+        Méthode qui permet d'obtenir un textWidget avec toutes les options qu'il faut (couleur + texte)
+        @param dt     : <datetime.date> le jour du TextWidget
+        @param master : <container> ce sur quoi est le TextWidget
+        @return <TextWidget> tout beau, tout bien fait
+        """
+        ## Gestion du texte
+        # Le fichier existe ?
+        if not self.getData().testDataExist("Calendrier"):
+            texte = dt.year + " " + dt.month + " " + dt.day
+        # On cherche le lien
+        if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
+            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")
+        else :
+            lien = "."
+        # On cherche le style
+        if self.getData().testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
+            ## Traitement du texte
+            # Constantes
+            jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
+            texte = self.getData().getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
+
+            numJour     = str(dt.day)
+            numMois     = str(dt.month)
+            numJour2C   = "%02i"%dt.day
+            numMois2C   = "%02i"%dt.month
+            numAnnee    = str(dt.year)
+            jourSemaine = str(jour[dt.weekday()])
+            mois        = str(mois[dt.month-1])
+
+            texte = texte.replace("NJ2", numJour2C)
+            texte = texte.replace("JS0", numJour[0])
+            texte = texte.replace("MN2", numMois2C)
+            texte = texte.replace("NA", numAnnee)
+            texte = texte.replace("JS", jourSemaine)
+            texte = texte.replace("M3", mois[:3])
+            texte = texte.replace("NJ", numJour)
+            texte = texte.replace("MO", mois)
+
+            texte = texte.replace("_", lien)
+
+        return TextWidget(master, text = texte, nbJour = nbJour)
+
     def doConfiguration(self, paramAffichage):
         """
         Méthode pour éventuellement changer la barre d'outil secondaire + taskEditor + parametreAffichage

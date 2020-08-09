@@ -60,7 +60,7 @@ class Data(ConfigParser):
        if not isinstance(value, bool):
            raise TypeError("Exptected a boolean")
 
-    def testDataExist(self, nomFichier, nomSection, nomCle):
+    def testDataExist(self, nomFichier, nomSection = None, nomCle = None):
         """
         Méthode qui True si la valeur existe dans le fichier et la section indiqué
         @param nomFichier : <str> contient le nom du fichier dans lequel se trouve notre valeur
@@ -69,7 +69,18 @@ class Data(ConfigParser):
         @return : True = la clé exsite, False = la clé, la section ou le fichier n'existe pas
         """
         self.readFile(nomFichier)
-        return True if nomSection in self.sections() and nomCle in self[nomSection] else False
+        # Le fichier existe ?
+        if nomSection is None and nomCle is None:
+            return True if self.sections() != [] else False
+        # La section du fichier existe ?
+        elif nomSection is not None and nomCle is None:
+            return True if nomSection in self.sections() else False
+        # J'ai mis la clé mais pas la section, c'est grave ? (ERROR)
+        elif nomSection is None and nomCle is not None:
+            raise ValueError("Une clé doit être lié a une section pour être trouvé")
+        # La clé existe dans la section du fichier spécifié ?
+        else :
+            return True if nomSection in self.sections() and nomCle in self[nomSection] else False
 
     def testString(self, value):
        """ Test pour savoir si value est un String """
