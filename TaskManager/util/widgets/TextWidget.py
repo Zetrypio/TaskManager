@@ -12,7 +12,7 @@ class TextWidget(Canvas):
     L'astuce consite à mettre un Text dans un Frame.
     De plus on peux ainsi obtenir sa taille
     """
-    def __init__(self, master, width = None, height = None, text = None, nbJour = None, **kw):
+    def __init__(self, master, width = None, height = None, text = None, nbJour = None, bg = "#d3d3d3", select = False,  **kw):
         """
         @param master : <conteneur> sur lequel va se poser notre Text
         @param width  : <int> longueur en pixel
@@ -29,9 +29,9 @@ class TextWidget(Canvas):
             if height > TextWidget.MINHEIGHT:
                 TextWidget.MINHEIGHT = height
 
-        Canvas.__init__(self, master, width = width, height = height)
+        Canvas.__init__(self, master, width = width, height = height, bg = bg)
 
-        self.__text = Text(self, height = 0, width = 0, **kw)
+        self.__text = Text(self, height = 0, width = 0, bg = bg, **kw)
         if text is None:
             text = "ERROR"
         self.__text.insert(END, text)
@@ -39,6 +39,8 @@ class TextWidget(Canvas):
         self.__idText = self.create_window(0, 0, width = width, height = height, anchor = "nw", window = self.__text)
         self.__width = width
         self.__height = height
+
+        self.setColor(select)
         self.after(1, self.__resize)
         super().bind("<Configure>", lambda e: self.__resize(), 1)
 
@@ -63,6 +65,21 @@ class TextWidget(Canvas):
 
     def __resize(self):
         self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.__height or self.winfo_height())
+
+    def setColor(self, selected):
+        """
+        Permet de mettre la couleur sur le canvas et le texte
+        + avoir les couleurs du thèmes
+        @param selected : <bool> True : jour selectionné, False : couleur classique
+        """
+        self.selectedColor = "#91C9F7"
+        self.basicColor =   "#d3d3d3"
+        if selected:
+            self.config(bg = self.selectedColor)
+            self.__text.config(bg = self.selectedColor)
+        else :
+            self.config(bg = self.basicColor)
+            self.__text.config(bg = self.basicColor)
 
     ""
     #############################

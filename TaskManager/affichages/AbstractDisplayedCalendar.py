@@ -474,7 +474,7 @@ class AbstractDisplayedCalendar(Frame):
 
             texte = texte.replace("_", lien)
 
-        return TextWidget(master, text = texte, nbJour = nbJour)
+        return TextWidget(master, text = texte, nbJour = nbJour, select = self.getDonneeCalendrier().isJourSelected(dt))
 
     def doConfiguration(self, paramAffichage):
         """
