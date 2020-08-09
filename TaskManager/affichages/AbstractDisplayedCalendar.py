@@ -443,7 +443,7 @@ class AbstractDisplayedCalendar(Frame):
             texte = dt.year + " " + dt.month + " " + dt.day
         # On cherche le lien
         if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
-            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")
+            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")[1]
         else :
             lien = "."
         # On cherche le style

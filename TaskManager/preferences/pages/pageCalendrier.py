@@ -45,9 +45,9 @@ class PageCalendrier(AbstractPage):
         self._listData.append([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_M"])
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
-        self._listData.append([self.__varLienStyle, "Lien", " "])
+        self._listData.append([self.__varLienStyle, "Lien", "\" \""])
         self.__oldLien = self._listData[-1][-1] # pour le retrouver lorsqu'on change le lien et refaire l'affichage du combobox
-        self.__comboLienStyle = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varLienStyle, value = [" ", "/", "-", "."])
+        self.__comboLienStyle = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varLienStyle, value = ["\" \"", "\"/\"", "\"-\"", "\".\""])
         self.__comboLienStyle.bind("<<ComboboxSelected>>", lambda e=None : self.__changeLien())
         # Affichage numéro de la semaine
         self.__varNumDeLaSemaine = BooleanVar()
@@ -247,7 +247,7 @@ class PageCalendrier(AbstractPage):
         # Constantes
         jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
         mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-        lien        = self.__varLienStyle.get()
+        lien        = self.__varLienStyle.get()[1]
         toudai      = datetime.datetime.today() # Pour la blague je le laisse, permet d'avoir un affichage joli
 
         numJour     = str(toudai.day)
