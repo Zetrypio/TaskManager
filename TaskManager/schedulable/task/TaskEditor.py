@@ -167,7 +167,7 @@ class TaskEditor(Frame):
                 return
 
             # On insère la ligne d'entête :
-            self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
+            a = self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
 
             # On insère les éléments supplémentaires :
             args = {} # *args sont pour la prochaine récursion. **kwargs sont pour l'actuelle.

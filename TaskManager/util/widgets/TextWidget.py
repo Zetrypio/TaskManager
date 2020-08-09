@@ -3,18 +3,28 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+
 class TextWidget(Canvas):
     """
     Classe qui permet de faire des widgets de texte avec une taille fixée en pixel
     L'astuce consite à mettre un Text dans un Frame.
     De plus on peux ainsi obtenir sa taille
     """
-    def __init__(self, master, width = None, height = None, text = None, **kw):
+    def __init__(self, master, width = None, height = None, text = None, nbJour = None, **kw):
         """
         @param master : <conteneur> sur lequel va se poser notre Text
         @param width  : <int> longueur en pixel
         @param height : <int> hauteur en pixel
         """
+        # Calcul pour la hauteur des widget Texts
+        # Pour l'instant basé sur mon écran et ma résolution (1080x1920)
+        if nbJour is not None and text is not None:
+            # Fonction défini par une approximation de fonction
+            # Ce qui donne quelques erreurs, parfoir 1 de trop (arrondi)
+            j = 193.72*pow(nbJour,-1.074)
+            Ligne = (len(text)//j) +1
+            height = Ligne*18
+
         Canvas.__init__(self, master, width = width, height = height)
 
         self.__text = Text(self, height = 0, width = 0, **kw)
@@ -27,7 +37,6 @@ class TextWidget(Canvas):
         self.__height = height
         self.after(1, self.__resize)
         super().bind("<Configure>", lambda e: self.__resize(), 1)
-        #print(self.__text.index(END))
 
     "" # Marque pour le repli de code
     ##############

@@ -144,7 +144,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         @return la tâche qui à peut-être été changé pour des raisons d'affichage.
         """
         self.listeDisplayableItem.append(ObjetClassique(self, schedulable))
-#        self.updateAffichage()
+        #self.updateAffichage()
 
     def identify_region(self, x, y):
         """
@@ -253,14 +253,15 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             # Est-ce que le jour est sélectionné ?
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
 
-           # self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()], bg = "#91C9F7" if jourSelectionne else "light grey"))
-            self.__listeLabelJour.append(TextWidget(self.__frame, height=None, text=JOUR[jour.weekday()] + "ifuhsefuihsesefsefse<ff"))
+            #self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()]+"\nfisefoijsoifjsoiejfiosef\njofijesoifjosiejfoi", bg = "#91C9F7" if jourSelectionne else "light grey", font = ("TkFixedFont")))
+            self.__listeLabelJour.append(TextWidget(self.__frame, height = 18*6, text=JOUR[jour.weekday()] + "", nbJour = self.getNbJour()))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
             self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))
             self.__listeLabelJour[-1].grid(row=0, column=1 + ((jour-self.getJourDebut()).days)*(self.__nbColonneParJour+1), columnspan = self.__nbColonneParJour, sticky="NSWE")
             if jour < self.getJourFin():
                 self.__listeSeparateurJour.append(Separator(self.__frame, orient=VERTICAL))
                 self.__listeSeparateurJour[-1].grid(row=0, column=(self.__nbColonneParJour+1)*(1+(jour-self.getJourDebut()).days), rowspan = 60*(self.getHeureFin().hour+1-self.getHeureDebut().hour)+1, sticky="NS")
+
 
             jour += datetime.timedelta(days = 1)
 
