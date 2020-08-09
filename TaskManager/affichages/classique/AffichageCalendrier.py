@@ -218,6 +218,14 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__frame.rowconfigure(ALL,weight=1)
         self.__frame.rowconfigure(0, weight=0)
 
+    def __adapterLesJours(self):
+        """
+        Méthode qui adapte la taille des TextWidgets
+        """
+        for textwidget in self.__listeLabelJour:
+            textwidget.resize(height = textwidget.MINHEIGHT)
+            print("resized")
+
     def __afficherLesHeures(self):
         """
         Permet de mettre à jour les labels des heures.
@@ -332,6 +340,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
+        self.__adapterLesJours()
 
     def updateColor(self):
         """

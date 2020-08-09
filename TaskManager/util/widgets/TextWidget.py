@@ -5,6 +5,8 @@ from tkinter import Frame, Label
 
 
 class TextWidget(Canvas):
+    # C'est la hauteur minimum pour après reset un truc beau
+    MINHEIGHT = 0
     """
     Classe qui permet de faire des widgets de texte avec une taille fixée en pixel
     L'astuce consite à mettre un Text dans un Frame.
@@ -24,6 +26,8 @@ class TextWidget(Canvas):
             j = 193.72*pow(nbJour,-1.074)
             Ligne = (len(text)//j) +1
             height = Ligne*18
+            if height > TextWidget.MINHEIGHT:
+                TextWidget.MINHEIGHT = height
 
         Canvas.__init__(self, master, width = width, height = height)
 
