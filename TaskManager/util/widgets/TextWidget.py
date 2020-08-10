@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
 
+from util.util import adaptTextColor
 
 class TextWidget(Canvas):
     # C'est la hauteur minimum pour après reset un truc beau
@@ -97,6 +98,8 @@ class TextWidget(Canvas):
         if mode == "jour" or mode == "selected" or mode == "normal":
             self.config(bg = TextWidget.PALETTE[mode])
             self.__text.config(bg = TextWidget.PALETTE[mode])
+            self.__text.config(foreground =adaptTextColor(TextWidget.PALETTE[mode]))
+
         else :
             raise ValueError('mode (="%s") must be "selected", "jour" or "normal"'%mode)
 
