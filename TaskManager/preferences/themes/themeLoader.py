@@ -24,7 +24,6 @@ def themeUse(tcl, name, widget, app):
         color = tcl.eval("source " + DIR + fileName + ".tcl")
 
     sty.theme_use(name)
-    app.getTaskEditor().redessiner()
 
 
     if color is not None:

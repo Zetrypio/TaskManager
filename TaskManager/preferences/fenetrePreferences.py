@@ -156,3 +156,7 @@ class FenetrePreferences(Dialog):
                     self.mustRestart = False
                     if askRestart():
                         self.getApplication().restart()
+
+            # Et on update Affichage
+            self.getApplication().getDonneeCalendrier().updateAffichage()
+            self.getApplication().getTaskEditor().redessiner()

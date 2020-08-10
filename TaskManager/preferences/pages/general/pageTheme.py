@@ -63,7 +63,6 @@ class PageTheme(AbstractPage):
         self._listData.append([self.__varTheme, "theme", "default"])
         self.__cbRealTheme = Combobox(self._mFrame, value = getThemes(), textvariable = self.__varTheme)
         self.__cbRealTheme.bind("<<ComboboxSelected>>", lambda e = None : self.prevent())
-        self.__btnApply = Button(self._mFrame, text = "Appliquer", command=self.apply)
         # Text mettant en garde sur l'utilisation de certains thèmes
         self.__varPerf = StringVar()
         self.__lbPerf = Label(self._mFrame, textvariable = self.__varPerf, anchor = W)
@@ -73,7 +72,6 @@ class PageTheme(AbstractPage):
         self.__caseAdaptTexteTache.grid(row = 0, column = 0, columnspan = 2)
         Label(self._mFrame, text = "Thème :").grid(row = 1, column = 0)
         self.__cbRealTheme.grid(row = 1, column = 1, sticky = "we")
-        self.__btnApply.grid(row = 2, column = 1, sticky = "e")
         self.__lbPerf.grid(row = 2, column = 0, sticky = "w")
 
 
@@ -86,14 +84,6 @@ class PageTheme(AbstractPage):
     # Setters : #
     #############
     ""
-    def apply(self):
-        """
-        Méthode qui applique le thème
-        """
-        # self.tk = interprêteur TCL
-        themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
-
-
     def prevent(self):
         """
         Méthode qui gère le label sur les performances en fonction des thèmes
@@ -108,4 +98,8 @@ class PageTheme(AbstractPage):
             self.__varPerf.set("")
 
     def appliqueEffet(self, application):
+        # Si on a changé le thème
+        if self.getData().dataExist("General", "Thème", "theme") and self.__varTheme.get() != self.getData().getOneValue("General", "Thème", "theme"):
+            themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
+
         self._makeDictAndSave()

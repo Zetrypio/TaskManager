@@ -62,11 +62,11 @@ class TextWidget(Canvas):
     def changeColor(color, value):
         """
         Permet de changer la couleur de la palette
+        Méthode *statique* car on change un attribut *statique*
         @param color : <str> correspond à la clé du dictionnaire à changer
         @param value : <str> couleur au format tkinter
         """
         if color in TextWidget.PALETTE:
-            print("changé")
             TextWidget.PALETTE[color] = value
         else:
             raise ValueError("\"%s\" not in TextWidget#__palette"%color)
