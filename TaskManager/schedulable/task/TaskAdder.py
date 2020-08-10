@@ -178,7 +178,6 @@ class TaskAdder(Frame):
         self.debut = date
         self.champDebut.config(text = date if date is not None else "")
         self.autoSetDuree()
-        self.updatePossiblePeriods()
 
     def askDateFin(self):
         """
@@ -193,7 +192,6 @@ class TaskAdder(Frame):
             self.fin = date
         self.champFin.config(text = date if date is not None else "")
         self.autoSetDuree()
-        self.updatePossiblePeriods()
 
     ""
     #####################
