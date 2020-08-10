@@ -77,7 +77,7 @@ class PeriodAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate(self.getApplication().getData())
+        date = askdate()
         if date is not None:
             self.debut = date
         self.champDebut.config(text = date)
@@ -91,7 +91,7 @@ class PeriodAdder(Frame):
         self.master.redessiner()
 
         # demande de la date
-        date = askdate(self.getApplication().getData())
+        date = askdate()
         if date is not None:
             self.fin = date
         self.champFin.config(text = date)

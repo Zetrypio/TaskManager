@@ -21,9 +21,8 @@ def rangeMois(debut, fin):
 def tailleMois(mois, annee):
     return (datetime.datetime(annee + mois//12, (mois)%12+1, 1) - datetime.timedelta(days = 1)).day
 
-def askScinderPeriode(periodManager, taskEditor, data, periode = None):
+def askScinderPeriode(periodManager, taskEditor, periode = None):
     """
-    @param data : <Data> pour la couleur du bandeau du calendrier
     """
     # Vérifications :
     if periode.getDebut() == periode.getFin():
@@ -127,7 +126,7 @@ def askScinderPeriode(periodManager, taskEditor, data, periode = None):
     fen = Dialog(title = "Scinder une période", buttons = ("Ok", "Annuler", "Aujourd'hui") if hasAujourdhui else ("Ok", "Annuler"), command=onClose)
     
     # Widgets :
-    cal = Calendar(master = fen, data = data)
+    cal = Calendar(master = fen)
     cal.pack(expand = YES, fill = BOTH, side = TOP)
     cal._calendar.bind("<Button-1>", lambda e: setJourCalendrier(), add = True)
 
