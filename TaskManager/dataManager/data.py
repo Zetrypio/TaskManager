@@ -16,8 +16,12 @@ class Data(ConfigParser):
         """
         Méthode qui doit être appelé pour finir la construction de l'appli
         """
-        TextWidget.changeColor("jour", self.getOneValue("General", "Thème", "today's color"))
-        print(self.getOneValue("General", "Thème", "today's color"))
+        if self.testDataExist("General", "Thème", "today's color"):
+            couleur = self.getOneValue("General", "Thème", "today's color")
+        else :
+            couleur = "#ffffa0"
+        TextWidget.changeColor("jour", couleur)
+
 
     "" # Marque pour le repli
     ################

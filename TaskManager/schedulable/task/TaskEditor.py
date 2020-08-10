@@ -157,7 +157,8 @@ class TaskEditor(Frame):
 
             self.tree.tag_configure("Couleur%s"%displayable.getColor(), background = displayable.getColor())
             # + celle de la ligne
-            if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
+            if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
+                and self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
                 self.tree.tag_configure("Couleur%s"%displayable.getColor(), foreground = adaptTextColor(displayable.getColor()))
 
 

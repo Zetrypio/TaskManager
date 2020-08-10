@@ -24,7 +24,8 @@ class DisplayableGroup(AbstractItemContent):
         super().__init__(master, schedulable, bg = schedulable.getColor(), **kwargs)
         
         # Création des widgets :
-        if self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
+        if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
+            and self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
             self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), fg=self._schedulable.getTextColor(), width=0, height=0)
         else :
             self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
