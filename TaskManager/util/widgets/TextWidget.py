@@ -84,12 +84,16 @@ class TextWidget(Canvas):
     def __resize(self):
         self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.__height or self.winfo_height())
 
-    def setColor(self, mode = "normal"):
+    def setColor(self, mode = None):
         """
         Permet de mettre la couleur sur le canvas et le texte
         + avoir les couleurs du thèmes
         @param mode : <str> clé pour acceder à la couleur de TextWidget.PALETTE
+                    Si None, il ne se passe rien
         """
+        if mode is None:
+            return
+
         if mode == "jour" or mode == "selected" or mode == "normal":
             self.config(bg = TextWidget.PALETTE[mode])
             self.__text.config(bg = TextWidget.PALETTE[mode])

@@ -10,7 +10,7 @@ class ColorButton(TkButton):
     Classe qui permet de faire un bouton demandant une couleur à l'utilisateur.
     La couleur est récupérable avec la méthode get().
     """
-    def __init__(self, master = None, command = None, **kwargs):
+    def __init__(self, master = None, command = None, bg = "#ffffff",  **kwargs):
         """
         Constructeur du ColorButton.
         @param master: master du tkinter.Button() que ce widget est.
@@ -28,7 +28,7 @@ class ColorButton(TkButton):
             compound, default,
             overrelief, state.
         """
-        super().__init__(master, command = self.invoke, width = 4, height = 1, relief = GROOVE, bd = 2, bg = "white", activebackground = "white", **kwargs)
+        super().__init__(master, command = self.invoke, width = 4, height = 1, relief = GROOVE, bd = 2, bg = bg, activebackground = "white", **kwargs)
         self.command = command
 
     "" # Marque pour le repli de code

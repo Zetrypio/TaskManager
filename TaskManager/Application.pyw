@@ -95,8 +95,12 @@ class Application(Frame):
             for key in self.getBindingIn("Application")[binding]["bindings"]:
                 self.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
 
+        # Final
+        self.getData().endInit()
         if not CHARGERPRECONFIG:
             self.__load()
+
+
 
 
     "" # Marque pour que le repli de code fasse ce que je veux

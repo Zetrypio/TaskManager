@@ -40,7 +40,7 @@ class PageTheme(AbstractPage):
     def __init__(self, master, **kwargs):
          # Note : self.master renvoie a ParametrageZone
          # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
-         # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
+         # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self._addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
         super().__init__(master, nom = "Thème", iid_parent ="-General", **kwargs)
 
@@ -67,16 +67,25 @@ class PageTheme(AbstractPage):
         self.__varPerf = StringVar()
         self.__lbPerf = Label(self._mFrame, textvariable = self.__varPerf, anchor = W)
 
+        # Couleur du jour actuel
+        self.__lbTodayColor = Label(self._mFrame, text ="Couleur du jour actuel")
+        self.__varTodayColor = StringVar()
+        self._addDataNeedRestart([self.__varTodayColor, "today's color", "#ffffa0"])
+        self.__colButToday = ColorButton(master = self._mFrame, command = self.updateTodayColor)
+
 
         ## Affichage
         self.__caseAdaptTexteTache.grid(row = 0, column = 0, columnspan = 2)
         Label(self._mFrame, text = "Thème :").grid(row = 1, column = 0)
         self.__cbRealTheme.grid(row = 1, column = 1, sticky = "we")
         self.__lbPerf.grid(row = 2, column = 0, sticky = "w")
+        self.__lbTodayColor.grid(row = 3, column = 0, sticky = "w")
+        self.__colButToday.grid(row = 3, column = 1, sticky = "w")
 
 
         # Final
         self._loadDataFile() # Pour les prefs standards
+        self.__colButToday.config(bg = self.__varTodayColor.get())
         themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
 
     ""
@@ -84,6 +93,12 @@ class PageTheme(AbstractPage):
     # Setters : #
     #############
     ""
+    def updateTodayColor(self, col):
+        """
+        Permet de mettre a jour self.__varTodayColor
+        """
+        self.__varTodayColor.set(col)
+
     def prevent(self):
         """
         Méthode qui gère le label sur les performances en fonction des thèmes
@@ -99,7 +114,7 @@ class PageTheme(AbstractPage):
 
     def appliqueEffet(self, application):
         # Si on a changé le thème
-        if self.getData().dataExist("General", "Thème", "theme") and self.__varTheme.get() != self.getData().getOneValue("General", "Thème", "theme"):
+        if self.getData().testDataExist("General", "Thème", "theme") and self.__varTheme.get() != self.getData().getOneValue("General", "Thème", "theme"):
             themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
 
         self._makeDictAndSave()

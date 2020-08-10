@@ -136,7 +136,7 @@ class AbstractPage(Frame):
         i = 0
         while not self.getFenetrePreferences().getRestartMode() and i < len(self._listDataRestart):
             donnee = self._listDataRestart[i]
-            if donnee[1].get() != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
+            if self.getData().testDataExist(donnee[0][0], donnee[0][1], donnee[0][2]) and donnee[1].get() != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
                 self.getFenetrePreferences().setRestartMode()
             i+=1
 

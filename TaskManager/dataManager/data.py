@@ -12,6 +12,13 @@ class Data(ConfigParser):
         self.__currentThemeBg = None
         self.__profilFolder = None
 
+    def endInit(self):
+        """
+        Méthode qui doit être appelé pour finir la construction de l'appli
+        """
+        TextWidget.changeColor("jour", self.getOneValue("General", "Thème", "today's color"))
+        print(self.getOneValue("General", "Thème", "today's color"))
+
     "" # Marque pour le repli
     ################
     # Utilitaire : #
