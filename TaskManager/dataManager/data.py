@@ -2,6 +2,9 @@
 from configparser import *
 import os
 
+from util.widgets.TextWidget import *
+from util.util import adaptTextColor
+
 class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
@@ -118,10 +121,19 @@ class Data(ConfigParser):
     def setCurrentThemeBg(self, value):
         """
         Setter de la couleur de background de la palette Tk
+        + Met à jour les TextWidget
         @param value : <str> code couleur pour tk
         """
         self.testString(value)
         self.__currentThemeBg = value
+
+        ## Pour les TextWidget
+        # Si c'est clair
+        if adaptTextColor(value) == "#000000":
+            TextWidget.changeColor("normal", "#" + hex(int(value[1:], 16) - int("121212", 16))[2:])
+        # Si c'es foncé
+        else :
+            TextWidget.changeColor("normal", "#" + hex(int(value[1:], 16) + int("121212", 16))[2:])
         return
 
     def setProfilFolder(self, value):

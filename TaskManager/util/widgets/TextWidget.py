@@ -59,13 +59,14 @@ class TextWidget(Canvas):
         super().bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
 
-    def changeColor(self, color, value):
+    def changeColor(color, value):
         """
         Permet de changer la couleur de la palette
         @param color : <str> correspond à la clé du dictionnaire à changer
         @param value : <str> couleur au format tkinter
         """
         if color in TextWidget.PALETTE:
+            print("changé")
             TextWidget.PALETTE[color] = value
         else:
             raise ValueError("\"%s\" not in TextWidget#__palette"%color)
