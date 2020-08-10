@@ -355,9 +355,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         jour = self.getJourDebut()
         for compteur in range(self.getNbJour()):
             # Est-ce que le jour est sélectionné ?
-            jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
+            jourSelectionne = "selected" if self.getDonneeCalendrier().isJourSelected(jour) else "normal"
 
-            self.__listeLabelJour[compteur].setColor(jourSelectionne)
+            self.__listeLabelJour[compteur].setColor(mode = jourSelectionne)
 
             # On incrémente le jour, car on a pas rangeDate, comme indiqué plus haut.
             jour += datetime.timedelta(days = 1)

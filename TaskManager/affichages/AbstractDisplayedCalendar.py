@@ -474,7 +474,16 @@ class AbstractDisplayedCalendar(Frame):
 
             texte = texte.replace("_", lien)
 
-        return TextWidget(master, text = texte, nbJour = nbJour, select = self.getDonneeCalendrier().isJourSelected(dt))
+        ## gestion du mode
+        # Si c'est aujourd'hui
+        if datetime.date.today() == dt:
+            mode = 'jour'
+        else :
+            mode = "normal"
+        # S'il est sélectionné
+        mode = "selected" if self.getDonneeCalendrier().isJourSelected(dt) else mode
+
+        return TextWidget(master, text = texte, nbJour = nbJour, mode = mode)
 
     def doConfiguration(self, paramAffichage):
         """
