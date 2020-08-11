@@ -22,6 +22,9 @@ class AbstractDisplayedCalendar(Frame):
     ces affichages de calendrier qui hérite aussi de cette classe
     (je parle ici de DonneeCalendrier).
     """
+    # Dictionnaire de palette
+    PALETTE = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "normal" : "#d3d3d3", "jour" : "#ffffff"}
+
     def __init__(self, master = None, **kwargs):
         """
         Constructeur d'un calendrier quelconque.
@@ -31,7 +34,7 @@ class AbstractDisplayedCalendar(Frame):
         celui de tkinter.Frame().
         """
         assert self.__class__ != AbstractDisplayedCalendar # interdire instanciation direct (classe abstraite version simple)
-        kwargs["bg"] = "light gray"
+        kwargs["bg"] = AbstractDisplayedCalendar.PALETTE["background"]
         super().__init__(master, **kwargs)
         # Note : self.master est référence vers DonneeCalendrier.
 
@@ -236,6 +239,18 @@ class AbstractDisplayedCalendar(Frame):
     # Setters :  #
     ##############
     ""
+    def changeColor(color, value):
+        """
+        Permet de changer la couleur de la palette
+        Méthode *statique* car on change un attribut *statique*
+        @param color : <str> correspond à la clé du dictionnaire à changer
+        @param value : <str> couleur au format tkinter
+        """
+        if color in AbstractDisplayedCalendar.PALETTE:
+            AbstractDisplayedCalendar.PALETTE[color] = value
+        else:
+            raise ValueError("\"%s\" not in AbstractDisplayedCalendar#PALETTE"%color)
+
     def setDureeJour(self, valeur):
         """
         Setter pour le nombre de jours affichés, via un timedelta.

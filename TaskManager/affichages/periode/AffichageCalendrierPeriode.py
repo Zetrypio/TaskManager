@@ -32,7 +32,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.__listeHauteur = {}
 
         # tkinter.Canvas() sur lequel tout s'affiche.
-        self.can = Canvas(self, width = 1, height = 1, bd = 0)
+        self.can = Canvas(self, width = 1, height = 1, bd = 0, bg = AbstractDisplayedCalendar.PALETTE["background"])
         self.can.pack(expand = YES, fill = BOTH)
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
         self.can.bind("<Button-1>", self.clic)
@@ -122,7 +122,6 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         Méthode qui permet de se balader entre les mois
         @param value : <int> +/- 1 nombre à rajouter a self.mois pour obtenir celui qu'on veut afficher
         """
-        print("changeMoisAffiche :", self.mois)
         self.mois += value
         # On change l'année si besoin (+ gestion du dépassement)
         if self.mois > 12:
@@ -163,7 +162,6 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             self.can.create_line(0, hh+(h-hh)/5*(i+1), w, hh+(h-hh)/5*(i+1))
         jour = self.getJourDebut()
         semaine = 1
-        print("updateAffichage",self.mois)
         while jour.month == self.mois:
             self.can.create_text(int(jour.weekday())*w/7+5, semaine*(h-hh)/5+hh, anchor = "sw", text = jour.day)
             if jour.isoweekday()%7 == 0:
