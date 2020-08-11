@@ -261,7 +261,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
 
             #self.__listeLabelJour.append(Label(self.__frame, text=JOUR[jour.weekday()]+"\nfisefoijsoifjsoiejfiosef\njofijesoifjosiejfoi", bg = "#91C9F7" if jourSelectionne else "light grey", font = ("TkFixedFont")))
-            self.__listeLabelJour.append(self._makeTextWidget(jour, self.getNbJour(), master = self.__frame))
+            self.__listeLabelJour.append(self._makeTextWidget(jour, master = self.__frame))
             #self.__listeLabelJour.append(TextWidget(self.__frame, text=JOUR[jour.weekday()] + "", nbJour = self.getNbJour()))
             self.__listeLabelJour[-1].bind("<Button-1>",        lambda e, jour=jour: self.selectJour(jour))
             self.__listeLabelJour[-1].bind("<Control-Button-1>",lambda e, jour=jour: self.selectJour(jour, control=True))

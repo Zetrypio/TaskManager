@@ -430,7 +430,7 @@ class AbstractDisplayedCalendar(Frame):
     #   l'affichage    #
     ####################
     ""
-    def _makeTextWidget(self, dt, nbJour ,master = None):
+    def _makeTextWidget(self, dt ,master = None):
         """
         Méthode qui permet d'obtenir un textWidget avec toutes les options qu'il faut (couleur + texte)
         @param dt     : <datetime.date> le jour du TextWidget
@@ -483,7 +483,7 @@ class AbstractDisplayedCalendar(Frame):
         # S'il est sélectionné
         mode = "selected" if self.getDonneeCalendrier().isJourSelected(dt) else mode
 
-        return TextWidget(master, text = texte, nbJour = nbJour, mode = mode)
+        return TextWidget(master, text = texte, nbJour = self.getNbJour(), mode = mode)
 
     def doConfiguration(self, paramAffichage):
         """

@@ -9,6 +9,7 @@ from util.geom.Rectangle import *
 from util.widgets.Dialog import *
 from util.widgets.infobulle import *
 from util.widgets.RMenu import *
+from util.widgets.TextWidget import *
 from util.util import *
 
 from ..AbstractDisplayedCalendar import *
@@ -227,11 +228,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         # création de bandeau pour les jours
         #self.can.create_rectangle(0, 0, self.can.winfo_width(), AffichageGantt.TAILLE_BANDEAU_JOUR, fill="#BBBBBB", outline="")
-        self.__rectangleSelection = {}
+        self.__textwidgets = []
 
         # Pour chaques jours :
         for jour in range(self.getNbJour()):
-
             # Position X :
             x = int(jour * w)
 
@@ -240,16 +240,25 @@ class AffichageGantt(AbstractDisplayedCalendar):
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
 
             # Fond coloré si c'est sélectionné :
-            self.__rectangleSelection[leJour] = self.can.create_rectangle(x, 0, x+w, AffichageGantt.TAILLE_BANDEAU_JOUR, width=0, fill="#91C9F7" if jourSelectionne else "light grey")
+            self.__textwidgets.append(self._makeTextWidget(leJour, master = self.can))
 
             # Séparateurs :
             if jour !=0:
                 self.can.create_line(x, 0, x, self.getScrollableHeight())
 
             # Texte des jours :
-            self.can.create_text(x + w/2, AffichageGantt.TAILLE_BANDEAU_JOUR//2,
-                                 width = w,
-                                 text=JOUR[(jour+self.getJourDebut().weekday())%7])
+            self.can.create_window(x + w/2, 0,
+                                    width = w,
+                                    window = self.__textwidgets[-1], tag = "bandeauJour")
+
+
+        # Ajustement des TextWidgets
+        AffichageGantt.TAILLE_BANDEAU_JOUR = int(TextWidget.MINHEIGHT)
+        for tw, idTw in zip(self.__textwidgets, self.can.find_withtag("bandeauJour")):
+            tw.resize(height = TextWidget.MINHEIGHT) # La taille du widget
+            self.can.itemconfigure(idTw, height = TextWidget.MINHEIGHT) # La taille alloué au widget
+        self.can.move("bandeauJour", 0, AffichageGantt.TAILLE_BANDEAU_JOUR//2)
+        TextWidget.MINHEIGHT = 0
 
     def __afficherLesTaches(self, force = False):
         """
@@ -456,7 +465,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet d'ajouter une tâche OU AUTRE SCHEDULABLE, region correspond au début de la tâche si celle-ci n'en a pas.
         """
         self.listeDisplayableItem.append(ObjetGantt(self, schedulable))
-#        self.updateAffichage()
+        #self.updateAffichage()
 
     def identify_region(self, x, y):
         """
