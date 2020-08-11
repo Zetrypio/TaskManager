@@ -21,7 +21,7 @@ def infobulle(event, text=""):
     INFOBULLE.overrideredirect(1)
     for w in INFOBULLE.slaves():
         w.destroy()
-    Label(INFOBULLE, text = text, bg = "white", bd = 1, relief = SOLID).pack(expand = YES, fill = BOTH)
+    Label(INFOBULLE, text = text, bd = 1, relief = SOLID).pack(expand = YES, fill = BOTH)
     INFOBULLE.update()
     x = event.x_root+10
     y = event.y_root+10
