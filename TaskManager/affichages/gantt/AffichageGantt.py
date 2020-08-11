@@ -239,8 +239,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
             leJour = self.getJourDebut()+datetime.timedelta(days=jour)
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
 
-            # Fond coloré si c'est sélectionné :
             self.__textwidgets.append(self._makeTextWidget(leJour, master = self.can))
+            self.__textwidgets[-1].bind("<Button-1>", lambda e = None, leJour = leJour: self.selectJour(leJour))
+            self.__textwidgets[-1].bind("<Control-Button-1>", lambda e = None, leJour = leJour: self.selectJour(leJour, control = True), add = 1)
 
             # Séparateurs :
             if jour !=0:
@@ -357,8 +358,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         if not self.__eventCanceled:
             if self.__activeGanttObject is not None:
                 self.__endLinkingLine()
-            elif pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
+
+            # Avec les TextWidget, on ne clique plus sur le canvas, donc ne sert à rien
+            #elif pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                #self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne))
             else:
                 self.deselectEverything()
         self.__highlightLinks(None)
@@ -370,9 +373,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Méthode exécutée quand on appuie sur Control-Clic.
         @param pos: Event avec la position de la souris par rapport au Canvas().
         """
-        if not self.__eventCanceled:
-            if pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
-                self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
+        #if not self.__eventCanceled:
+            # Avec les TextWidget, on ne clique plus sur le canvas, donc ne sert à rien
+            #if pos is not None and pos.y <= AffichageGantt.TAILLE_BANDEAU_JOUR:
+                #self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
         self.__eventCanceled = False
         self.can.focus_set()
 
