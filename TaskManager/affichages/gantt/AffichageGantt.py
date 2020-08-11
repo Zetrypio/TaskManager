@@ -240,8 +240,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(leJour)
 
             self.__textwidgets.append(self._makeTextWidget(leJour, master = self.can))
-            self.__textwidgets[-1].bind("<Button-1>", lambda e = None, leJour = leJour: self.selectJour(leJour))
-            self.__textwidgets[-1].bind("<Control-Button-1>", lambda e = None, leJour = leJour: self.selectJour(leJour, control = True), add = 1)
+            self.__textwidgets[-1].bind("<Button-1>", lambda e = None, leJour = leJour: self.__onSelectJour(leJour))
+            self.__textwidgets[-1].bind("<Control-Button-1>", lambda e = None, leJour = leJour: self.__onSelectJour(leJour, crtl = True), add = 1)
 
             # Séparateurs :
             if jour !=0:
@@ -379,6 +379,16 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 #self.selectJour(self.getJourDebut()+datetime.timedelta(days=pos.x/self.tailleColonne), control=True)
         self.__eventCanceled = False
         self.can.focus_set()
+
+    def __onSelectJour(self, jour, crtl = False):
+        """
+        Méthode qui permet de sélectionner un jour
+        (elle est là, car il y a besoin d'un self.updateAffichage())
+        @param jour : <datetime.date> correspond au jour sélectionné
+        @param crtl : <bool> la touche "control" est appuyé ?
+        """
+        self.selectJour(jour, crtl)
+        self.updateAffichage()
 
     def __precalculer(self):
         """
@@ -639,7 +649,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for item in self.listeDisplayableItem:
             if isinstance(item, DependanceLink):
                 item.setSelected(False)
-                item.updateColor(self.can)
+                #item.updateColor(self.can)
+
+        self.updateAffichage()
 
     def onIntervertir(self):
         """
