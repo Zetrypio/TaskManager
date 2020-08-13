@@ -62,7 +62,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.facteurW = 0.8
         
         # Canvas de l'affichage (et scrollbar) :
-        self.can = Canvas(self, width=1, height=1, scrollregion = (0, 0, 1, 1))
+        self.can = Canvas(self, width=1, height=1, scrollregion = (0, 0, 1, 1), bg = self.getPalette()["background"])
         self.can.pack(fill=BOTH, expand=YES, side = LEFT)
         self.can.bind("<Configure>", lambda e:self.updateAffichage()) # Faire en sorte que la fenêtre se redessine si on redimensionne la fenêtre
         self.scrollbar = Scrollbar(self, command = self.can.yview) # Premier reliage de la scrollbar
@@ -245,7 +245,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
             # Séparateurs :
             if jour !=0:
-                self.can.create_line(x, 0, x, self.getScrollableHeight())
+                self.can.create_line(x, 0, x, self.getScrollableHeight(), fill = self.getPalette()["foreground"])
 
             # Texte des jours :
             self.can.create_window(x + w/2, 0,
@@ -343,7 +343,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         Cette méthode gère l'ordre des plans d'affichage.
         """
-
         # Ordre d'affichage
         self.can.tag_raise("line")
         self.can.tag_raise("highlight")
