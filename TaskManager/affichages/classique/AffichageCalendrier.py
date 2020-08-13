@@ -218,13 +218,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__frame.rowconfigure(ALL,weight=1)
         self.__frame.rowconfigure(0, weight=0)
 
-    def __adapterLesJours(self):
-        """
-        Méthode qui adapte la taille des TextWidgets
-        """
-        for textwidget in self.__listeLabelJour:
-            textwidget.resize(height = textwidget.MINHEIGHT)
-
     def __afficherLesHeures(self):
         """
         Permet de mettre à jour les labels des heures.
@@ -234,7 +227,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         # et on les recrées :
         for heure in range(self.getHeureDebut().hour, self.getHeureFin().hour+1): # le +1 pour compter Début ET Fin.
-            self.__listeLabelHeure.append(Label(self.__frame, text=heure, bd = 1, relief = SOLID))
+            self.__listeLabelHeure.append(Label(self.__frame, text=heure, bd = 1, relief = SOLID, bg = self.getPalette()["highlightedWidget"]))
             # Note : Un détail à la minute près va être fait,
             # donc on compte 60 lignes pour une heure.
             # La ligne 0 étant la ligne des labels des jours,
@@ -243,8 +236,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
                                           column=0,      # Les labels des heures sont réservés à la colonne de gauche.
                                           rowspan=60,    # Mais ils prennent 60 minutes et lignes.
                                           sticky="NSWE") # Permet de centrer le label et d'en remplir les bords par la couleur du fond.
-        # Cela permet de réadapter les lignes et colonnes qui sont en expand pour le grid.
-        self.__adapteGrid()
+
+        #self.__adapteGrid()
 
     def __afficherLesJours(self):
         """
@@ -273,6 +266,11 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
             jour += datetime.timedelta(days = 1)
 
+        #Méthode qui adapte la taille des TextWidgets
+        for textwidget in self.__listeLabelJour:
+            textwidget.resize(height = textwidget.MINHEIGHT)
+
+        # Cela permet de réadapter les lignes et colonnes qui sont en expand pour le grid.
         self.__adapteGrid()
 
     def __afficherLesTaches(self):
@@ -329,7 +327,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # On détruit et recrée le Frame
         self.__frame.destroy()
         self.__parts = []
-        self.__frame = Frame(self)
+        self.__frame = Frame(self, bg = self.getPalette()["background"])
         self.__frame.pack(expand = YES, fill = BOTH)
         self.__frame.bind("<Button-1>", lambda e: self.__onClicSurFrame(), add = True)
 
@@ -340,7 +338,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__afficherLesHeures()
         self.__afficherLesJours()
         self.__afficherLesTaches()
-        self.__adapterLesJours()
 
     def updateColor(self):
         """
