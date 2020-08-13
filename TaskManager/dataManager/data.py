@@ -9,18 +9,20 @@ class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
         # Création des attributs
-        self.__currentThemeBg = None
+        self.__currentTheme = None
         self.__profilFolder = None
+        self.__palette = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "normal" : "#d3d3d3", "jour" : "#ffffa0", "highlightedWidget" : "#cccccc"}
 
     def endInit(self):
         """
         Méthode qui doit être appelé pour finir la construction de l'appli
         """
+        ## Couleur du jour sélectionné
         if self.testDataExist("General", "Thème", "today's color"):
             couleur = self.getOneValue("General", "Thème", "today's color")
         else :
             couleur = "#ffffa0"
-        TextWidget.changeColor("jour", couleur)
+        self.changePalette("jour", couleur)
 
 
     "" # Marque pour le repli
@@ -106,8 +108,8 @@ class Data(ConfigParser):
     # Getters #
     ###########
     ""
-    def getCurrentThemeBg(self):
-        return self.__currentThemeBg
+    def getCurrentTheme(self):
+        return self.__currentTheme
 
     def getOneValue(self, nomFichier, nomSection, nomCle):
         """
@@ -121,6 +123,13 @@ class Data(ConfigParser):
             raise ValueError("%s n'existe pas dans %s du fichier %s.\n utiliser la méthode data.testDataExist() pour éviter l'erreur"%(nomCle, nomSection, nomFichier))
         return self[nomSection][nomCle]
 
+    def getPalette(self):
+        """
+        Méthode qui retourne une copie de la palette de couleur
+        @return <dict> self.__palette.copy()
+        """
+        return self.__palette.copy()
+
     def getProfilFolder(self):
         return self.__profilFolder
 
@@ -129,22 +138,30 @@ class Data(ConfigParser):
     # Setters #
     ###########
     ""
-    def setCurrentThemeBg(self, value):
+    def changePalette(self, cle, value):
         """
-        Setter de la couleur de background de la palette Tk
-        + Met à jour les TextWidget
-        @param value : <str> code couleur pour tk
+        Permet de changer une valeur de la palette
+        @param cle   : <str> contient le nom de la clé
+        @param value : <str> couleur au format tkinter
         """
-        self.testString(value)
-        self.__currentThemeBg = value
+        if cle in self.getPalette():
+            self.__palette[cle] = value
+        else:
+            raise ValueError('"%s" not in data#__palette')
+    def setCurrentTheme(self, value):
+        """
+        Setter pour un nouveau thème et donc change la palette
+        @param value : <ttk.style> pour récuperer toutees les valeurs adéquates
+        """
+        self.__currentTheme = value
 
         ## Pour les TextWidget
         # Si c'est clair
         if adaptTextColor(value) == "#000000":
-            TextWidget.changeColor("normal", "#" + hex(int(value[1:], 16) - int("121212", 16))[2:])
+            self.changePalette("highlightedWidget", "#" + hex(int(value[1:], 16) - int("121212", 16))[2:])
         # Si c'es foncé
         else :
-            TextWidget.changeColor("normal", "#" + hex(int(value[1:], 16) + int("121212", 16))[2:])
+            self.changePalette("highlightedWidget", "#" + hex(int(value[1:], 16) + int("121212", 16))[2:])
         return
 
     def setProfilFolder(self, value):

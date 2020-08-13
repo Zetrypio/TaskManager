@@ -598,7 +598,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
             elif self.__mode_LinkingLine == "-":
                 # Si les liens sont normalement possibles :
                 if self.__activeGanttObject.getSchedulable().acceptLinkTo(objGantt.getSchedulable()):
-
                     print("Suppression du lien entre %s et %s"%(self.__activeGanttObject.getSchedulable(), objGantt.getSchedulable()))
 
                     # Il faut trouver le lien :

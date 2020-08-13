@@ -22,8 +22,6 @@ class AbstractDisplayedCalendar(Frame):
     ces affichages de calendrier qui hérite aussi de cette classe
     (je parle ici de DonneeCalendrier).
     """
-    # Dictionnaire de palette
-    PALETTE = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "normal" : "#d3d3d3", "jour" : "#ffffff"}
 
     def __init__(self, master = None, **kwargs):
         """
@@ -34,8 +32,9 @@ class AbstractDisplayedCalendar(Frame):
         celui de tkinter.Frame().
         """
         assert self.__class__ != AbstractDisplayedCalendar # interdire instanciation direct (classe abstraite version simple)
-        kwargs["bg"] = AbstractDisplayedCalendar.PALETTE["background"]
         super().__init__(master, **kwargs)
+        # Forcement après le constructeur parent à cause d'un self.master requis pour le getPalette()
+        super().config(bg = self.getPalette()["background"])
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
@@ -147,6 +146,13 @@ class AbstractDisplayedCalendar(Frame):
         """
         return self.getDureeJour().days
 
+    def getPalette(self):
+        """
+        Getter pour la palette du couleur qui ne sont pas toutes dans ttk.Style
+        @return <dict> data.palette
+        """
+        return self.getData().getPalette()
+
     def getParametreAffichage(self):
         """
         Getter du frame ParametreAffichage
@@ -239,18 +245,6 @@ class AbstractDisplayedCalendar(Frame):
     # Setters :  #
     ##############
     ""
-    def changeColor(color, value):
-        """
-        Permet de changer la couleur de la palette
-        Méthode *statique* car on change un attribut *statique*
-        @param color : <str> correspond à la clé du dictionnaire à changer
-        @param value : <str> couleur au format tkinter
-        """
-        if color in AbstractDisplayedCalendar.PALETTE:
-            AbstractDisplayedCalendar.PALETTE[color] = value
-        else:
-            raise ValueError("\"%s\" not in AbstractDisplayedCalendar#PALETTE"%color)
-
     def setDureeJour(self, valeur):
         """
         Setter pour le nombre de jours affichés, via un timedelta.
@@ -452,6 +446,9 @@ class AbstractDisplayedCalendar(Frame):
         @param master : <container> ce sur quoi est le TextWidget
         @return <TextWidget> tout beau, tout bien fait
         """
+        # On donne une référence à data pour qu'elle est la Palette, comme c'est statique on regarde si elle en a une d'abord
+        TextWidget.giveData(self.getData())
+
         ## Gestion du texte
         # Le fichier existe ?
         if not self.getData().testDataExist("Calendrier"):
@@ -494,7 +491,7 @@ class AbstractDisplayedCalendar(Frame):
         if datetime.date.today() == dt:
             mode = 'jour'
         else :
-            mode = "normal"
+            mode = "highlightedWidget"
         # S'il est sélectionné
         mode = "selected" if self.getDonneeCalendrier().isJourSelected(dt) else mode
 

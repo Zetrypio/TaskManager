@@ -32,7 +32,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.__listeHauteur = {}
 
         # tkinter.Canvas() sur lequel tout s'affiche.
-        self.can = Canvas(self, width = 1, height = 1, bd = 0, bg = AbstractDisplayedCalendar.PALETTE["background"])
+        self.can = Canvas(self, width = 1, height = 1, bd = 0, bg = self.getPalette()["background"])
         self.can.pack(expand = YES, fill = BOTH)
         self.can.bind("<Configure>", lambda e: self.updateAffichage())
         self.can.bind("<Button-1>", self.clic)

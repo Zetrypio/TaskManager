@@ -8,14 +8,14 @@ from util.util import adaptTextColor
 class TextWidget(Canvas):
     # C'est la hauteur minimum pour après reset un truc beau
     MINHEIGHT = 0
-    # Dictionnaire de palette
-    PALETTE = {"selected" : "#91C9F7", "normal" : "#d3d3d3", "jour" : "#ffffff"}
+    # Référence pour avoir accès à la palette
+    data = None
     """
     Classe qui permet de faire des widgets de texte avec une taille fixée en pixel
     L'astuce consite à mettre un Text dans un Frame.
     De plus on peux ainsi obtenir sa taille
     """
-    def __init__(self, master, width = None, height = None, text = None, nbJour = None, bg = "#d3d3d3", mode = "normal",  **kw):
+    def __init__(self, master, width = None, height = None, text = None, nbJour = None, bg = "#d3d3d3", mode = "highlightedWidget",  **kw):
         """
         @param master : <conteneur> sur lequel va se poser notre Text
         @param width  : <int> longueur en pixel
@@ -60,17 +60,16 @@ class TextWidget(Canvas):
         super().bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
 
-    def changeColor(color, value):
+    def giveData(d):
         """
         Permet de changer la couleur de la palette
         Méthode *statique* car on change un attribut *statique*
-        @param color : <str> correspond à la clé du dictionnaire à changer
-        @param value : <str> couleur au format tkinter
+        @param d : <Data> référence à Data
         """
-        if color in TextWidget.PALETTE:
-            TextWidget.PALETTE[color] = value
+        if TextWidget.data is None:
+            TextWidget.data = d
         else:
-            raise ValueError("\"%s\" not in TextWidget#__palette"%color)
+            pass
 
     def resize(self, width = None, height = None):
         """
@@ -89,19 +88,19 @@ class TextWidget(Canvas):
         """
         Permet de mettre la couleur sur le canvas et le texte
         + avoir les couleurs du thèmes
-        @param mode : <str> clé pour acceder à la couleur de TextWidget.PALETTE
+        @param mode : <str> clé pour acceder à la couleur de TextWidget.data.getPalette()
                     Si None, il ne se passe rien
         """
         if mode is None:
             return
 
-        if mode == "jour" or mode == "selected" or mode == "normal":
-            self.config(bg = TextWidget.PALETTE[mode])
-            self.__text.config(bg = TextWidget.PALETTE[mode])
-            self.__text.config(foreground =adaptTextColor(TextWidget.PALETTE[mode]))
+        elif mode == "jour" or mode == "selected" or mode == "highlightedWidget":
+            self.config(bg = TextWidget.data.getPalette()[mode])
+            self.__text.config(bg = TextWidget.data.getPalette()[mode])
+            self.__text.config(foreground =adaptTextColor(TextWidget.data.getPalette()[mode]))
 
         else :
-            raise ValueError('mode (="%s") must be "selected", "jour" or "normal"'%mode)
+            raise ValueError('mode (="%s") must be "selected", "jour" or "highlightedWidget"'%mode)
 
     ""
     #############################

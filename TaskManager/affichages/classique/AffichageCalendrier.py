@@ -21,7 +21,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         @param master: NoteBook du DonneeCalendrier, master du tkinter.Frame() que cet objet est.
         @param **kwargs: Options de configuration du tkinter.Frame() que cet objet est.
         """
-        super().__init__(master, bg="violet")
+        super().__init__(master)
         # Note : self.master est référence vers Notebook.
  
         self.__listeLabelHeure = []       # \
@@ -31,7 +31,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # Vaudrait-il mieux pas utiliser la liste héritée self.listeTaskAffichees ?
         self.listeDisplayableItem = []  # Liste de la variante affichée de ces tâches.
 
-        self.__frame = Frame(self)        # Frame dans lequel tout s'affiche.
+        self.__frame = Frame(self, bg = self.getPalette()["background"])        # Frame dans lequel tout s'affiche.
         self.__frame.pack(expand = YES, fill = BOTH)
 
         # Mise à jour de l'affichage.
@@ -355,7 +355,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         jour = self.getJourDebut()
         for compteur in range(self.getNbJour()):
             # Est-ce que le jour est sélectionné ?
-            jourSelectionne = "jour" if jour == datetime.date.today() else "normal"
+            jourSelectionne = "jour" if jour == datetime.date.today() else "highlightedWidget"
             jourSelectionne = "selected" if self.getDonneeCalendrier().isJourSelected(jour) else jourSelectionne
 
             self.__listeLabelJour[compteur].setColor(mode = jourSelectionne)

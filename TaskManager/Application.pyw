@@ -72,6 +72,7 @@ class Application(Frame):
         self.__profilManager  = ProfilManager(self)
         self.__BindingManager = BindingManager(self) # À mettre après le ProfilManager car il faut savoir quel fichier de binding charger
         self.menu = MenuBar(self.winfo_toplevel(), self) # Il faut le mettre après le BindingManagerpour les accelerator
+        self.prefFen = FenetrePreferences(self)
 
         # Continuation de l'instanciation
         self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
@@ -79,7 +80,6 @@ class Application(Frame):
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
-        self.prefFen = FenetrePreferences(self)
         ## Bindings
         self.bind_all("<<preferences>>", lambda e=None:self.preferences())
         self.bind_all("<<save-file>>"  , lambda e=None:self.save())
