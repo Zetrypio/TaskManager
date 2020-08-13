@@ -5,13 +5,16 @@ import os
 from util.widgets.TextWidget import *
 from util.util import adaptTextColor
 
+# Dictionnaires de couleurs
+from preferences.themes.themeLoader import WIN_COLORS
+from PIL.ImageColor import colormap
+
 class Data(ConfigParser):
     def __init__(self):
         super().__init__(self)
         # Création des attributs
-        self.__currentTheme = None
         self.__profilFolder = None
-        self.__palette = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "normal" : "#d3d3d3", "jour" : "#ffffa0", "highlightedWidget" : "#cccccc"}
+        self.__palette = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "jour" : "#ffffa0", "highlightedWidget" : "#cccccc"}
 
     def endInit(self):
         """
@@ -20,10 +23,7 @@ class Data(ConfigParser):
         ## Couleur du jour sélectionné
         if self.testDataExist("General", "Thème", "today's color"):
             couleur = self.getOneValue("General", "Thème", "today's color")
-        else :
-            couleur = "#ffffa0"
         self.changePalette("jour", couleur)
-
 
     "" # Marque pour le repli
     ################
@@ -108,9 +108,6 @@ class Data(ConfigParser):
     # Getters #
     ###########
     ""
-    def getCurrentTheme(self):
-        return self.__currentTheme
-
     def getOneValue(self, nomFichier, nomSection, nomCle):
         """
         Méthode qui renvoie une valeur précise
@@ -145,23 +142,31 @@ class Data(ConfigParser):
         @param value : <str> couleur au format tkinter
         """
         if cle in self.getPalette():
-            self.__palette[cle] = value
+            if value.startswith("System"):
+                self.__palette[cle] = WIN_COLORS[value]
+            elif value[0] != "#":
+                self.__palette[cle] = colormap[value]
+            else:
+                self.__palette[cle] = value
         else:
             raise ValueError('"%s" not in data#__palette')
-    def setCurrentTheme(self, value):
+    def setCurrentTheme(self, style):
         """
         Setter pour un nouveau thème et donc change la palette
         @param value : <ttk.style> pour récuperer toutees les valeurs adéquates
         """
-        self.__currentTheme = value
+        # On récup les valeurs pour les mettre dans le dico __palette
+        self.changePalette("background", style.lookup(".", "background"))
+        self.changePalette("foreground", style.lookup(".", "foreground"))
+        self.changePalette("selected", style.lookup(".", "selectbackground"))
 
         ## Pour les TextWidget
         # Si c'est clair
-        if adaptTextColor(value) == "#000000":
-            self.changePalette("highlightedWidget", "#" + hex(int(value[1:], 16) - int("121212", 16))[2:])
+        if adaptTextColor(self.getPalette()["background"]) == "#000000":
+            self.changePalette("highlightedWidget", "#" + hex(int(self.getPalette()["background"][1:], 16) - int("121212", 16))[2:])
         # Si c'es foncé
         else :
-            self.changePalette("highlightedWidget", "#" + hex(int(value[1:], 16) + int("121212", 16))[2:])
+            self.changePalette("highlightedWidget", "#" + hex(int(self.getPalette()["background"][1:], 16) + int("121212", 16))[2:])
         return
 
     def setProfilFolder(self, value):

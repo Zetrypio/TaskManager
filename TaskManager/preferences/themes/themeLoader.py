@@ -37,18 +37,8 @@ def themeUse(tcl, name, widget, app):
 
     sty.theme_use(name)
 
-
-    if color is not None:
-        # Traitement des couleurs pour le setPalette
-        bg , fg = color.split(" ")
-        widget.tk_setPalette(background=bg[1:-1], foreground = fg)
-        app.getData().setCurrentTheme(bg[1:-1])
-    else:
-        widget.tk_setPalette(background=sty.lookup(".", "background"), foreground = sty.lookup(".", "foreground"))
-        if sty.lookup(".", "background").startswith("System"):
-            app.getData().setCurrentTheme(WIN_COLORS[sty.lookup(".", "background")])
-        else :
-            app.getData().setCurrentTheme(sty.lookup(".", "background"))
+    widget.tk_setPalette(background=sty.lookup(".", "background"), foreground = sty.lookup(".", "foreground"))
+    app.getData().setCurrentTheme(sty)
 
 
 def getThemes():
