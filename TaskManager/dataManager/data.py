@@ -145,7 +145,7 @@ class Data(ConfigParser):
             if value.startswith("System"):
                 self.__palette[cle] = WIN_COLORS[value]
             elif value[0] != "#":
-                self.__palette[cle] = colormap[value]
+                self.__palette[cle] = colormap[value.lower()]
             else:
                 self.__palette[cle] = value
         else:
@@ -158,7 +158,10 @@ class Data(ConfigParser):
         # On récup les valeurs pour les mettre dans le dico __palette
         self.changePalette("background", style.lookup(".", "background"))
         self.changePalette("foreground", style.lookup(".", "foreground"))
-        self.changePalette("selected", style.lookup(".", "selectbackground"))
+        if style.lookup(".", "selectbackground") != "":
+            self.changePalette("selected", style.lookup(".", "selectbackground"))
+        else: # Aquativo n'a pas de couleur de sélection
+            self.changePalette("selected", "#85cafc")
 
         ## Pour les TextWidget
         # Si c'est clair

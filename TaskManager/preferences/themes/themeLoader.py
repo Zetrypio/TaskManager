@@ -5,7 +5,7 @@ from tkinter.ttk import *
 sty = Style()
 
 THEMES = list(sty.theme_names())
-NEWTHEMES = ["black", "aquativo", "equilux", "scidblue", "scidmint", "scidgreen", "scidpurple", "scidsand", "scidpink", "scidgrey"]
+NEWTHEMES = ["black", "aquativo", "equilux", "scidblue", "scidmint", "scidgreen", "scidpurple", "scidsand", "scidpink", "scidgrey", "altbis"]
 DIR = "preferences/themes/"
 
 # Variables de couleurs liées à windows
@@ -39,6 +39,12 @@ def themeUse(tcl, name, widget, app):
 
     widget.tk_setPalette(background=sty.lookup(".", "background"), foreground = sty.lookup(".", "foreground"))
     app.getData().setCurrentTheme(sty)
+
+    tcl.eval("""
+    ttk::style map Treeview \
+        -background [list selected [ttk::style lookup . -selectbackground]] \
+        -foreground [list selected [ttk::style lookup . -selectforeground]]
+    """)
 
 
 def getThemes():

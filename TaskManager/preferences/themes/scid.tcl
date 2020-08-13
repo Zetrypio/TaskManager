@@ -347,10 +347,6 @@ foreach { t } { blue mint green purple sand pink grey } {
     }
     }
 }
-variable mainColor
-foreach val [list frame foreground] {
-    lappend mainColor $colours(-$val)
-    }
-return $mainColor
+
 unset ::tks
 

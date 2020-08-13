@@ -26,24 +26,22 @@ from dataManager.BindingManager import *
 
 CHARGERPRECONFIG = False
 
-# CECI est la CORRECTION d'un BUG :
-style = Style()
-
-def fixed_map(option):
-    """
-    Returns the style map for 'option' with any styles starting with
-    ("!disabled", "!selected", ...) filtered out
-
-    style.map() returns an empty list for missing options, so this should
-    be future-safe
-    """
-    return [elm for elm in style.map("Treeview", query_opt=option)
-            if elm[:2] != ("!disabled", "!selected")]
-
-style.map("Treeview",
-          foreground=fixed_map("foreground"),
-          background=fixed_map("background"))
-
+## CECI était la CORRECTION d'un BUG :
+    # A garder si jamais mon code ne fonctionne finalement pas
+    # Code : preferences.themes.themesLoader.themesUse
+#style = Style()
+#def fixed_map(option):
+#    """
+#    Returns the style map for 'option' with any styles starting with
+#    ("!disabled", "!selected", ...) filtered out
+#    style.map() returns an empty list for missing options, so this should
+#    be future-safe
+#    """
+#    return [elm for elm in style.map("Treeview", query_opt=option)
+#            if elm[:2] != ("!disabled", "!selected")]
+#style.map("Treeview",
+#          foreground=fixed_map("foreground"),
+#          background=fixed_map("background"))
 
 class Application(Frame):
     """

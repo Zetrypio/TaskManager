@@ -90,15 +90,6 @@ if {[info commands ::ttk::style] ne ""} {
 
   $styleCmd configure Treeview -fieldbackground $colors(-lighter);
 
-variable e
-foreach val [list background foreground] {
-lappend e [$styleCmd lookup . -$val]
-}
-
-  return $e
 }
 
 
-proc getBackgroundColor {} {
-    return "#424242"
-    }

@@ -195,7 +195,6 @@ namespace eval ttk::theme::aquativo {
         -background [list selected #85cafc] \
         -foreground [list selected #000000]
   }
-  return [list "#fafafa" "#000000"]; # Pas de variable couleur ici
 }
 
 namespace eval ::tablelist:: {
