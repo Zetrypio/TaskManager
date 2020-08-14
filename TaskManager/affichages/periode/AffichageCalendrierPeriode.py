@@ -154,16 +154,16 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         hh = 20
         w = self.can.winfo_width()
         h = self.can.winfo_height()
-        self.can.create_rectangle(0, 0, w, hh, fill = "light grey")
+        self.can.create_rectangle(0, 0, w, hh, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
         for i, j in enumerate(JOUR):
-            self.can.create_text(int(i*w/7+w/14), int(hh/2), width = w, text = j)
-            self.can.create_line(int(i*w/7), hh+1, int(i*w/7), h, fill = "light grey")
+            self.can.create_text(int(i*w/7+w/14), int(hh/2), width = w, text = j, fill = self.getPalette()["foreground"])
+            self.can.create_line(int(i*w/7), hh+1, int(i*w/7), h, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
         for i in range(5):
-            self.can.create_line(0, hh+(h-hh)/5*(i+1), w, hh+(h-hh)/5*(i+1))
+            self.can.create_line(0, hh+(h-hh)/5*(i+1), w, hh+(h-hh)/5*(i+1), fill = self.getPalette()["foreground"])
         jour = self.getJourDebut()
         semaine = 1
         while jour.month == self.mois:
-            self.can.create_text(int(jour.weekday())*w/7+5, semaine*(h-hh)/5+hh, anchor = "sw", text = jour.day)
+            self.can.create_text(int(jour.weekday())*w/7+5, semaine*(h-hh)/5+hh, anchor = "sw", text = jour.day, fill = self.getPalette()["foreground"])
             if jour.isoweekday()%7 == 0:
                 semaine += 1
             jour += datetime.timedelta(days = 1)
@@ -174,7 +174,6 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         
         NEW_TAG_ID = 0
         for p in self.getApplication().getPeriodManager().getPeriodes():
-
             if (p.getDebut().month != self.mois and p.getFin().month != self.mois) or p.getDebut().year != self.annee:
                 continue
 
@@ -195,7 +194,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p),
                                               w,
                                               semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p)+self.getPeriodHeight(),
-                                              fill = p.getColor() if not p.isSelected() else "#0078FF", tags = [p.getUniqueID(), "DoubleForSet"])
+                                              fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"], tags = [p.getUniqueID(), "DoubleForSet"])
                     isFirst = 0
                     semaine += 1
                     jourDebutSemaine = jour
@@ -203,7 +202,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh,
                                       int(jour.weekday()+1)*w/7 -3,
                                       semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
-                                      fill = p.getColor() if not p.isSelected() else "#0078FF", tags = [p.getUniqueID(), "DoubleForSet"])
+                                      fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"], tags = [p.getUniqueID(), "DoubleForSet"])
 
             NEW_TAG_ID += 1
             self.can.tag_bind("DoubleForSet", '<Double-Button-1>', lambda e : self.getApplication().getPeriodManager().setActivePeriode(self.findItem(e)))
