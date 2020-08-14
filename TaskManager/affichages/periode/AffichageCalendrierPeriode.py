@@ -175,7 +175,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         nbSemaine = getNumberOfWeek()
         self.can.create_rectangle(0, 0, w, hh, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
         # Le carré du jour actuel
-        if self.mois == time.localtime().tm_mon:
+        if self.mois == time.localtime().tm_mon and self.annee == time.localtime().tm_year:
             today = datetime.datetime.today()
             x = int((today.weekday())*w/7)
             ligne = today.isocalendar()[1] - premierJour.isocalendar()[1] if premierJour.isocalendar()[1] < dernierJour.isocalendar()[1] else today.isocalendar()[1]
