@@ -153,30 +153,38 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             """
             Fonction embarqué qui permet de compter le nombre de semaine dans 1 mois
             @return nb   : <int> nombre de semaine
-            """
-            # Calcul du nombre de jour dans le mois
-            premierJour = datetime.date(year = self.annee, month = self.mois, day = 1)
-            nextYear = self.annee if self.mois + 1 <= 12 else self.annee + 1
-            nextMois = self.mois + 1 if self.mois + 1 <= 12 else 1
-            dernierJour = datetime.date(year = nextYear, month = nextMois, day = 1)
-            nbJour = (dernierJour - premierJour).days
-            # Calcul du nombre de semaine
-            dernierJour = datetime.date(year = self.annee, month = self.mois, day = nbJour)
             # datetime.date.isocalendar()[1] = week number
             # C'est possible que le 1 janvier soit semaine 53
+            """
+            nonlocal dernierJour, premierJour
             return dernierJour.isocalendar()[1] - premierJour.isocalendar()[1] + 1 if premierJour.isocalendar()[1] < dernierJour.isocalendar()[1] else dernierJour.isocalendar()[1] + 1
+
+        # Calcul du nombre de jour dans le mois
+        premierJour = datetime.date(year = self.annee, month = self.mois, day = 1)
+        nextYear = self.annee if self.mois + 1 <= 12 else self.annee + 1
+        nextMois = self.mois + 1 if self.mois + 1 <= 12 else 1
+        dernierJour = datetime.date(year = nextYear, month = nextMois, day = 1)
+        nbJour = (dernierJour - premierJour).days
+        dernierJour = datetime.date(year = self.annee, month = self.mois, day = nbJour)
 
         self.can.delete(ALL)
         self.__listeHauteur = {}
         hh = 20
         w = self.can.winfo_width()
         h = self.can.winfo_height()
+        nbSemaine = getNumberOfWeek()
         self.can.create_rectangle(0, 0, w, hh, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
+        # Le carré du jour actuel
+        if self.mois == time.localtime().tm_mon:
+            today = datetime.datetime.today()
+            x = int((today.weekday())*w/7)
+            ligne = today.isocalendar()[1] - premierJour.isocalendar()[1] if premierJour.isocalendar()[1] < dernierJour.isocalendar()[1] else today.isocalendar()[1]
+            y = int(hh + (h-hh)*ligne/nbSemaine*1)+1
+            self.can.create_rectangle(x, y, x+w/7, y + (h-hh)/nbSemaine, fill = self.getPalette()["jour"], width = 0)
         for i, j in enumerate(JOUR):
             self.can.create_text(int(i*w/7+w/14), int(hh/2), width = w, text = j, fill = self.getPalette()["foreground"])
-            self.can.create_line(int(i*w/7), hh+1, int(i*w/7), h, fill = self.getPalette()["foreground"]) # old : "light gray"
+            self.can.create_line(int(i*w/7), hh+1 if premierJour.weekday()<i+1 else hh+(h-hh)/nbSemaine, int(i*w/7), h if dernierJour.weekday()+1>i-1 else h-(h-hh)/nbSemaine , fill = self.getPalette()["foreground"]) # old : "light gray"
 
-        nbSemaine = getNumberOfWeek()
         for i in range(nbSemaine):
             self.can.create_line(0, hh+(h-hh)/nbSemaine*(i+1), w, hh+(h-hh)/nbSemaine*(i+1), fill = self.getPalette()["foreground"])
         jour = self.getJourDebut()
