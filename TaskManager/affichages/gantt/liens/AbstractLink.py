@@ -12,6 +12,8 @@ class AbstractLink(IDisplayableItem):
     Classe abstraite permettant de dessiner un lien depuis
     un AbstractItemContent[via DatetimeItemPart] vers un autre.
     """
+    # Référence vers Data (pour la palette)
+    data = None
     def __init__(self, affichageGantt, partA, partB):
         """
         Constructeur du AbstractLink.
@@ -31,7 +33,7 @@ class AbstractLink(IDisplayableItem):
         self.__affichageGantt = affichageGantt
         self.__partA = partA
         self.__partB = partB
-        self.__color = "black"
+        self.__color = self.getPalette()["foreground"]
         self.__highlight = None
         self.__strokeWeight = 2
         self.__points = []
@@ -59,6 +61,13 @@ class AbstractLink(IDisplayableItem):
         @return la couleur.
         """
         return self.__color
+
+    def getPalette(self):
+        """
+        Getter pour la palette de couleur
+        @return <dict> une copy de la palette de Data
+        """
+        return AbstractLink.data.getPalette()
 
     def getPartA(self):
         """
@@ -90,6 +99,17 @@ class AbstractLink(IDisplayableItem):
     # Setters : #
     #############
     ""
+    def giveData(d):
+        """
+        Permet de changer la couleur de la palette
+        Méthode *statique* car on change un attribut *statique*
+        @param d : <Data> référence à Data
+        """
+        if AbstractLink.data is None:
+            AbstractLink.data = d
+        else:
+            pass
+
     def setColor(self, color):
         """
         Setter pour la couleur.

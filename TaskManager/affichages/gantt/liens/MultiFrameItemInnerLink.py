@@ -48,10 +48,10 @@ class MultiFrameItemInnerLink(AbstractLink):
         """
         # TODO : Couleur lors Ajout et Suppression.
         if self.isSelected():
-            self.setColor("#0078FF")
+            self.setColor(self.getPalette()["selected"]) # old : "#0078FF"
             self.setStrokeWeight(3)
         else:
-            self.setColor("grey")
+            self.setColor(self.getPalette()["normalInnerLink"]) # old : "grey"
             self.setStrokeWeight(2)
 
     ""

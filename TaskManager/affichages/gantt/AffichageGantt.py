@@ -299,6 +299,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Pour le moment ne gère que les liens, mais gèrera à terme
         les autres schedulables aussi.
         """
+        print("on m'ap")
         for item in reversed(self.listeDisplayableItem):
             if isinstance(item, AbstractLink):
                 if item.isSelected():
@@ -330,10 +331,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if isinstance(l, DependanceLink):
                 if mode == "+" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
                                  or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
-                    l.highlight("#FFAF00")
+                    l.highlight(self.getPalette()["addLink"])
                 elif mode == "-" and (self.__activeGanttObject.getSchedulable() is l.getPartA().getSchedulable()
                                    or self.__activeGanttObject.getSchedulable() is l.getPartB().getSchedulable()):
-                    l.highlight("#FF3F3F")
+                    l.highlight(self.getPalette()["deleteLink"])
                 else:
                     l.highlight(None)
         self.updateColor()
@@ -568,7 +569,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
         """
         # Si on est en mode ajout ou suppression de lien :
         if objGantt is not self.__activeGanttObject and self.__activeGanttObject is not None and objGantt is not None:
-
             # Pour le mode d'ajout :
             if self.__mode_LinkingLine == "+":
                 # Si le lien est accepté :

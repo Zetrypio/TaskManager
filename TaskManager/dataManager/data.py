@@ -4,6 +4,7 @@ import os
 
 from util.widgets.TextWidget import *
 from util.util import adaptTextColor
+from affichages.gantt.liens.AbstractLink import *
 
 # Dictionnaires de couleurs
 from preferences.themes.themeLoader import WIN_COLORS
@@ -14,12 +15,24 @@ class Data(ConfigParser):
         super().__init__(self)
         # Création des attributs
         self.__profilFolder = None
-        self.__palette = {"background" : "#dedede", "foreground" : "#000000", "selected" : "#91C9F7", "jour" : "#ffffa0", "highlightedWidget" : "#cccccc"}
+        self.__palette = {"background"        : "#dedede",
+                          "foreground"        : "#000000",
+                          "selected"          : "#91c9f7",
+                          "jour"              : "#ffffa0",
+                          "highlightedWidget" : "#cccccc",
+                          "normalInnerLink"   : "#808080", # (= "grey" = "gray")
+                          "addLink"           : "#ffaf00",
+                          "deleteLink"        : "#ff3f3f"
+                          }
 
     def endInit(self):
         """
         Méthode qui doit être appelé pour finir la construction de l'appli
         """
+        # Donner une référence à data
+        TextWidget.giveData(self)
+        AbstractLink.giveData(self)
+
         ## Couleur du jour sélectionné
         if self.testDataExist("General", "Thème", "today's color"):
             couleur = self.getOneValue("General", "Thème", "today's color")
@@ -153,8 +166,23 @@ class Data(ConfigParser):
     def setCurrentTheme(self, style):
         """
         Setter pour un nouveau thème et donc change la palette
-        @param value : <ttk.style> pour récuperer toutees les valeurs adéquates
+        @param style : <ttk.style> pour récuperer toutes les valeurs adéquates
         """
+        def couleurAdaptative(native, accentuation, cle):
+            """
+            Fonction embarqué qui permet de mettre une couleur asé sur une autre
+            avec une acctentuation différence
+            @param native       : <str> couleur a tester (clair/foncé) et à modifier
+            @param accentuation : <str> valeur de l'acctentuation en hexa. exemple : "121212"
+            @param cle          : <str> nom de la clé de la nouvelle couleur
+            """
+            # Si c'est clair
+            if adaptTextColor(native) == "#000000":
+                self.changePalette(cle, "#" + hex(int(native[1:], 16) - int(accentuation, 16))[2:])
+            # Si c'es foncé
+            else :
+                self.changePalette(cle, "#" + hex(int(native[1:], 16) + int(accentuation, 16))[2:])
+
         # On récup les valeurs pour les mettre dans le dico __palette
         self.changePalette("background", style.lookup(".", "background"))
         self.changePalette("foreground", style.lookup(".", "foreground"))
@@ -163,13 +191,11 @@ class Data(ConfigParser):
         else: # Aquativo n'a pas de couleur de sélection
             self.changePalette("selected", "#85cafc")
 
-        ## Pour les TextWidget
-        # Si c'est clair
-        if adaptTextColor(self.getPalette()["background"]) == "#000000":
-            self.changePalette("highlightedWidget", "#" + hex(int(self.getPalette()["background"][1:], 16) - int("121212", 16))[2:])
-        # Si c'es foncé
-        else :
-            self.changePalette("highlightedWidget", "#" + hex(int(self.getPalette()["background"][1:], 16) + int("121212", 16))[2:])
+        # Pour les TextWidget
+        couleurAdaptative(self.getPalette()["background"], "121212", "highlightedWidget")
+        # Pour les liens
+        couleurAdaptative(self.getPalette()["background"], "555555", "normalInnerLink")
+
         return
 
     def setProfilFolder(self, value):

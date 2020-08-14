@@ -91,7 +91,7 @@ class DependanceLink(AbstractLink):
         if color is not None:
             super().highlight(color)
         elif self.__selected:
-            super().highlight("#0078FF")
+            super().highlight(self.getPalette()["selected"]) # old : "#0078FF"
         else:
             super().highlight(None)
 
@@ -126,6 +126,7 @@ class DependanceLink(AbstractLink):
         self._getAffichageGantt().deselectEverything()
         self.__selected = True
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
+        #self._getAffichageGantt().clicSurObjet(self)
 
     def _onControlClic(self):
         self._getAffichageGantt().cancelEvent()
