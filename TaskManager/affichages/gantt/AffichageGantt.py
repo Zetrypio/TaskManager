@@ -541,7 +541,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
             elif isinstance(item, AbstractLink):
                 if item.getPartA().getSchedulable() == obj or item.getPartB().getSchedulable() == obj:
                     if isinstance(item, DependanceLink):
-                        item.getPartB().getSchedulable().removeDepedance(item.getPartA().getSchedulable())
+                        item.getPartB().getSchedulable().removeDependance(item.getPartA().getSchedulable())
                     self.listeDisplayableItem.remove(item)
             elif isinstance(item, ItemButtonPlus):
                 if item.getSchedulable() == obj:
