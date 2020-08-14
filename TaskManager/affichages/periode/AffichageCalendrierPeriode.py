@@ -149,6 +149,23 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         """
         Permet de mettre à jour l'affichage.
         """
+        def getNumberOfWeek():
+            """
+            Fonction embarqué qui permet de compter le nombre de semaine dans 1 mois
+            @return nb   : <int> nombre de semaine
+            """
+            # Calcul du nombre de jour dans le mois
+            premierJour = datetime.date(year = self.annee, month = self.mois, day = 1)
+            nextYear = self.annee if self.mois + 1 <= 12 else self.annee + 1
+            nextMois = self.mois + 1 if self.mois + 1 <= 12 else 1
+            dernierJour = datetime.date(year = nextYear, month = nextMois, day = 1)
+            nbJour = (dernierJour - premierJour).days
+            # Calcul du nombre de semaine
+            dernierJour = datetime.date(year = self.annee, month = self.mois, day = nbJour)
+            # datetime.date.isocalendar()[1] = week number
+            # C'est possible que le 1 janvier soit semaine 53
+            return dernierJour.isocalendar()[1] - premierJour.isocalendar()[1] + 1 if premierJour.isocalendar()[1] < dernierJour.isocalendar()[1] else dernierJour.isocalendar()[1] + 1
+
         self.can.delete(ALL)
         self.__listeHauteur = {}
         hh = 20
@@ -157,13 +174,15 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         self.can.create_rectangle(0, 0, w, hh, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
         for i, j in enumerate(JOUR):
             self.can.create_text(int(i*w/7+w/14), int(hh/2), width = w, text = j, fill = self.getPalette()["foreground"])
-            self.can.create_line(int(i*w/7), hh+1, int(i*w/7), h, fill = self.getPalette()["highlightedWidget"]) # old : "light gray"
-        for i in range(5):
-            self.can.create_line(0, hh+(h-hh)/5*(i+1), w, hh+(h-hh)/5*(i+1), fill = self.getPalette()["foreground"])
+            self.can.create_line(int(i*w/7), hh+1, int(i*w/7), h, fill = self.getPalette()["foreground"]) # old : "light gray"
+
+        nbSemaine = getNumberOfWeek()
+        for i in range(nbSemaine):
+            self.can.create_line(0, hh+(h-hh)/nbSemaine*(i+1), w, hh+(h-hh)/nbSemaine*(i+1), fill = self.getPalette()["foreground"])
         jour = self.getJourDebut()
         semaine = 1
         while jour.month == self.mois:
-            self.can.create_text(int(jour.weekday())*w/7+5, semaine*(h-hh)/5+hh, anchor = "sw", text = jour.day, fill = self.getPalette()["foreground"])
+            self.can.create_text(int(jour.weekday())*w/7+5, semaine*(h-hh)/nbSemaine+hh, anchor = "sw", text = jour.day, fill = self.getPalette()["foreground"])
             if jour.isoweekday()%7 == 0:
                 semaine += 1
             jour += datetime.timedelta(days = 1)
