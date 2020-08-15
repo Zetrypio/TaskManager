@@ -42,7 +42,7 @@ class PageCalendrier(AbstractPage):
         self.__frameStyle = LabelFrame(self._mFrame, text = "Style d'affichage des jours")
 
         self.__varComboStyleFinal = StringVar()
-        self._listData.append([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_M"])
+        self._listData.append([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_MO"])
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
         self._listData.append([self.__varLienStyle, "Lien", "\" \""])
