@@ -51,7 +51,6 @@ class Periode(ITaskEditorDisplayableObject):
     ""
     @staticmethod
     def load(data, periodManager):
-
         def chercheTask(id, p):
             """
             Fonction embarquée qui recherche la tache lié à l'id
@@ -61,8 +60,13 @@ class Periode(ITaskEditorDisplayableObject):
             @return <task> recherché, None si non trouvé
             """
             for t in p.getPrimitivesSchedulables():
-                if isinstance(t, Task) and id == t.getUniqueID():
-                    return t
+                if isinstance(t, Task):
+                    if id == t.getUniqueID():
+                        return t
+                    elif t.isContainer():
+                        for st in t.getSubTasks():
+                            if st.getUniqueID() == id:
+                                return st
 
         ## On crée la période.
         p = Periode(periodManager,
