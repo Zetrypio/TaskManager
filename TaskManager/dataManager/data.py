@@ -37,7 +37,7 @@ class Data(ConfigParser):
         if self.testDataExist("General", "Thème", "today's color"):
             couleur = self.getOneValue("General", "Thème", "today's color")
         else :
-            couleur = self.getPalette()["selected"]
+            couleur = self.getPalette()["jour"]
         self.changePalette("jour", couleur)
 
     "" # Marque pour le repli
