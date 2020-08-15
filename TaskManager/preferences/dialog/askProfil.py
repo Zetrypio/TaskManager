@@ -7,7 +7,6 @@ from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showerror
 import os
 
-
 from util.widgets.Dialog import *
 from .askFolder import *
 

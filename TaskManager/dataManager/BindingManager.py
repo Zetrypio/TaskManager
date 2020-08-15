@@ -35,10 +35,10 @@ class BindingManager:
 
         @return bind : <str> contient le bind
         """
-        with open(path + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
-            donnee = load(f)
+#        with open(path + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
+#            donnee = load(f)
 
-        return donnee[section][bindingVirtuel]["bindings"]
+        return self.__donnee[section][bindingVirtuel]["bindings"]
 
     def getBindings(self):
         """
