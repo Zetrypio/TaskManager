@@ -25,20 +25,11 @@ class TextWidget(Canvas):
         @param nbJour : <int> nombre de jour au total a afficher (pour avoir le nombre de ligne)
         @param mode : <str> pour la couleur, la valeur doit est une clé de self.__palette
         """
-        # Calcul pour la hauteur des widget Texts
-        # Pour l'instant basé sur mon écran et ma résolution (1080x1920)
-        if nbJour is not None and text is not None:
-            # Fonction défini par une approximation de fonction
-            # Ce qui donne quelques erreurs, parfoir 1 de trop (arrondi)
-            j = 193.72*pow(nbJour,-1.074)
-            Ligne = (len(text)//j) +1
-            height = Ligne*18
-            if height > TextWidget.MINHEIGHT:
-                TextWidget.MINHEIGHT = height
+        height = 2
 
         Canvas.__init__(self, master, width = width, height = height, bg = bg)
 
-        self.__text = Text(self, height = 0, width = 0, bg = bg, **kw)
+        self.__text = Text(self, height = 0, width = 0, bg = bg, yscrollcommand = self.__calculerHauteur, **kw)
         if text is None:
             text = "ERROR"
         self.__text.insert(END, text)
@@ -60,6 +51,7 @@ class TextWidget(Canvas):
         super().bind(*args, **kwargs)
         self.__text.bind(*args, **kwargs)
 
+    @staticmethod
     def giveData(d):
         """
         Permet de changer la couleur de la palette
@@ -82,7 +74,14 @@ class TextWidget(Canvas):
         self.__resize()
 
     def __resize(self):
-        self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.__height or self.winfo_height())
+        self.itemconfigure(self.__idText, width = self.__width or self.winfo_width(), height = self.winfo_height())
+
+    def __calculerHauteur(self, pos, taille):
+        taille = float(taille)
+        if abs(taille - 1) > 0.01 : # Veut dire est à peu près égale
+            self.config(height = 1/taille * self.__height) # On remet la bonne taille.
+            self.__height = 1/taille * self.__height
+            self.__resize() # du texte aussi.
 
     def setColor(self, mode = None):
         """

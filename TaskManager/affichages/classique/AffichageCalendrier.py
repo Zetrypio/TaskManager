@@ -266,10 +266,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
             jour += datetime.timedelta(days = 1)
 
-        #Méthode qui adapte la taille des TextWidgets
-        for textwidget in self.__listeLabelJour:
-            textwidget.resize(height = textwidget.MINHEIGHT)
-
         # Cela permet de réadapter les lignes et colonnes qui sont en expand pour le grid.
         self.__adapteGrid()
 
