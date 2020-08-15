@@ -26,6 +26,19 @@ class AbstractMultiFrameItem(IDisplayableItem):
     # Getters : #
     #############
     ""
+    def getApplication(self):
+        """
+        Getter pour l'Application
+        @return <Application>
+        """
+        return self.getSchedulable().getApplication()
+
+    def getData(self):
+        """
+        Getter pour le data
+        @return <Data>
+        """
+        return self.getApplication().getData()
     def getFirstPart(self):
         """
         Getter pour obtenir la première part affichée de #getRepartition(displayedCalendar).

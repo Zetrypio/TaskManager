@@ -83,7 +83,7 @@ class DisplayableGroup(AbstractItemContent):
         Getter pour savoir la véritable couleur d'affichage,
         suivant que le groupe soit sélectionné ou non.
         """
-        return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
+        return self.getApplication().getData().getPalette()["selected"] if self._schedulable.isSelected() else self._schedulable.getColor()
 
     def needButtonPlus(self, affichageGantt):
         return False

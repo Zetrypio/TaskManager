@@ -57,7 +57,7 @@ class DisplayableTask(AbstractItemContent):
         Getter pour savoir la véritable couleur d'affichage,
         suivant que la tâche soit sélectionnée ou non.
         """
-        return "#0078FF" if self._schedulable.isSelected() else self._schedulable.getColor()
+        return self.getApplication().getData().getPalette()["selected"] if self._schedulable.isSelected() else self._schedulable.getColor()
 
     def needButtonPlus(self, affichageGantt):
         if affichageGantt.getVisiblePart(self._schedulable.getLastPart(affichageGantt)) == self.__part and len(self._schedulable.getDependantes()) == 0:

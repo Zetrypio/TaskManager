@@ -31,6 +31,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     # Getters: #
     ############
     ""
+    def getApplication(self):
+        """
+        Getter pour l'Application
+        @return <Application>
+        """
+        return self.getPeriode().getApplication()
+
     def getColor(self):
         """
         Getter pour la couleur de cet objet pour l'affichage.
@@ -39,6 +46,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @return la couleur de cet objet.
         """
         return self.__color
+
+    def getData(self):
+        """
+        Getter pour le data
+        @return <Data>
+        """
+        return self.getApplication().getData()
 
     def getDescription(self):
         """
