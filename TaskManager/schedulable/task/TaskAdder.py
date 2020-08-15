@@ -8,6 +8,7 @@ import time
 
 from affichages.periode.Periode import *
 from util.widgets.ColorButton import *
+from util.widgets.Dialog import askyesnowarning
 
 from .dialog.datetimeDialog import *
 from .Task import *
@@ -212,12 +213,16 @@ class TaskAdder(Frame):
         Méthode quand on valide la création d'une tâche.
         @return la nouvelle tâche juste créée.
         """
-        nom = self.champNom.get()
         debut = self.getDebut()
         duree = self.getDuree()
         rep   = self.getRepetitionTime()
+        periode = self.getApplication().getPeriodManager().getActivePeriode()
+        # On check si on est dans la période
+        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin())):
+            if not askyesnowarning(title = "Tache hors période", message = "Vous voulez créer une tache qui n'est pas entièrement dans la période actuelle.\nVoulez-vous vraiment créer cette tache ?"):
+                return
+        nom = self.champNom.get()
         nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.get()
-        periode = self.getApplication().getPeriodManager().getActivePeriode()
         self.getTaskEditor().ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
