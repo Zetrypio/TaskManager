@@ -5,7 +5,7 @@ from tkinter.ttk import *
 sty = Style()
 
 THEMES = list(sty.theme_names())
-NEWTHEMES = ["black", "aquativo", "equilux", "scidblue", "scidmint", "scidgreen", "scidpurple", "scidsand", "scidpink", "scidgrey", "altbis"]
+NEWTHEMES = ["black", "aquativo", "equilux", "scidblue", "scidmint", "scidgreen", "scidpurple", "scidsand", "scidpink", "scidgrey"]
 DIR = "preferences/themes/"
 
 # Variables de couleurs liées à windows
