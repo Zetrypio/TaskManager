@@ -26,7 +26,7 @@ class DisplayableGroup(AbstractItemContent):
         # Création des widgets :
         if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
             and self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
-            self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), fg=self._schedulable.getTextColor(), width=0, height=0)
+            self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()), width=0, height=0)
         else :
             self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
         self.__scrollbar = Scrollbar(self, orient = VERTICAL, command = self.__texte.yview)
@@ -97,7 +97,7 @@ class DisplayableGroup(AbstractItemContent):
         """
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
         """
-        self.__texte.config(bg=self.__getDisplayColor())
+        self.__texte.config(bg=self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()))
         for t in self.__taskFrame:
             t.updateColor()
 

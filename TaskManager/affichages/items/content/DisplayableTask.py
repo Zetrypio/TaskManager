@@ -5,6 +5,8 @@ from tkinter import Frame, Label
 
 from .AbstractItemContent import *
 
+from util.util import adaptTextColor
+
 class DisplayableTask(AbstractItemContent):
     """
     Permet d'afficher une tâche.
@@ -22,7 +24,7 @@ class DisplayableTask(AbstractItemContent):
         # Création des widgets :
         if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
         and self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
-            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), fg=self._schedulable.getTextColor(), width=0, height=0)
+            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()), width=0, height=0)
         else:
             self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), width=0, height=0)
 
@@ -79,7 +81,7 @@ class DisplayableTask(AbstractItemContent):
         """
         Permet de mettre à jour la couleur de l'objet, suivant sa sélection etc.
         """
-        self.__texte.config(bg=self.__getDisplayColor())
+        self.__texte.config(bg=self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()))
 
     ""
     #####################
