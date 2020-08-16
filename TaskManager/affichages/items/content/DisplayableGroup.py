@@ -29,6 +29,7 @@ class DisplayableGroup(AbstractItemContent):
             self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()), width=0, height=0)
         else :
             self.__texte = Text(self, wrap = "word", bg = self.__getDisplayColor(), width=0, height=0)
+
         self.__scrollbar = Scrollbar(self, orient = VERTICAL, command = self.__texte.yview)
         self.__texte.configure(yscrollcommand = self.__scrollbar.set)
 
@@ -37,25 +38,26 @@ class DisplayableGroup(AbstractItemContent):
         self.__texte.tag_config("corps", font="Arial 10")
 
         # Texte : 
-        self.__texte.insert(INSERT, self._schedulable.getNom())
-        self.__texte.insert(INSERT, "\n")
-        self.__texte.insert(INSERT, self._schedulable.getDescription())
+        self.__texte.insert(INSERT, self._schedulable.getNom() + "\n" + self._schedulable.getDescription())
+        #self.__texte.insert(INSERT, "\n")
+        #self.__texte.insert(INSERT, self._schedulable.getDescription())
 
         self.__taskFrame = []
 
         # Ajout des tâches à l'intérieur :
         for t in self._schedulable.getListTasks() :
-            self.__texte.insert(INSERT, "\n")
-            f = Frame(self.__texte)
-            tache = t.createDisplayableInstance(f, part)
-            tache.pack_propagate(True)
-            tache.pack(expand = YES, fill = BOTH)
-            tache.configSize(width = 10, height = 2)
-            tache.bindTo("<Button-1>",         lambda e, task=tache: self.__onTaskSelected(task, False))
-            tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
-            self.__taskFrame.append(tache)
-            self.__texte.window_create(INSERT, window = f)#, stretch = 1)
-        # TODO : filtrer selon la part.
+            if part.getDebut() <= t.getDebut() and t.getFin() <= part.getFin():
+                self.__texte.insert(INSERT, "\n")
+                f = Frame(self.__texte)
+                tache = t.createDisplayableInstance(f, part)
+                tache.pack_propagate(True)
+                tache.pack(expand = YES, fill = BOTH)
+                tache.configSize(width = 10, height = 2)
+                tache.bindTo("<Button-1>",         lambda e, task=tache: self.__onTaskSelected(task, False))
+                tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
+                self.__taskFrame.append(tache)
+                self.__texte.window_create(INSERT, window = f)#, stretch = 1)
+        # TODO : filtrer selon la position (si 2 taches ont 1 heure de décalage, que ça ce voie sur Classique).
         
         # Ajout des tags
         self.__texte.tag_add("titre", "0.0", "1.0")#%int(len(task.getNom())))
