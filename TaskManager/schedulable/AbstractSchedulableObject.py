@@ -19,8 +19,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self.__desc      = desc
         self.__color     = color
 
-        self.__textColor = adaptTextColor(color)
-        
         self.__selected  = False
         self.__visible   = True
 
@@ -168,13 +166,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self.updateStatut()
         return self._statut
 
-    def getTextColor(self):
-        """
-        Getter de la couleur du texte
-        @return self.__textColor
-        """
-        return self.__textColor
-
     def isSelected(self):
         """
         Permet de savoir si cet objet est sélectionné
@@ -212,7 +203,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         au format tkinter.
         """
         self.__color = color
-        self.__textColor = adaptTextColor(color)
 
     def setDescription(self, desc):
         """
