@@ -437,6 +437,20 @@ class Task(AbstractSchedulableObject):
         """
         return (self.__debut + self.__duree) if self.__debut is not None else None
 
+    def getNbRep(self):
+        """
+        Getter pour le nombre de répétition de la tache
+        @return <int>
+        """
+        return self.__nbrep
+
+    def getRep(self):
+        """
+        Getter pour la durée entre 2 répétitions
+        @return <datetime.timedelta>
+        """
+        return self.__rep
+
     def setDebut(self, debut, change = "fin"):
         """
         Permet de mettre le début de la période.
