@@ -187,7 +187,7 @@ class Task(AbstractSchedulableObject):
         de la destination pour le moment encore inconnu.
         @return True si l'objet est en capacité de faire des liens, False sinon.
         """
-        return self._statut != "Inconnu" and self.getParent() is None
+        return self._statut != "Inconnu" # and self.getParent() is None
 
     def acceptLinkTo(self, schedulable):
         """

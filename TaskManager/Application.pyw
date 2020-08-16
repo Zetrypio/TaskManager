@@ -99,8 +99,6 @@ class Application(Frame):
             self.__load()
 
 
-
-
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
     # Getters : #

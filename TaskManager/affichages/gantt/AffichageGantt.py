@@ -573,7 +573,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
             if self.__mode_LinkingLine == "+":
                 # Si le lien est accepté :
                 if objGantt.getSchedulable().acceptLinkTo(self.__activeGanttObject.getSchedulable()):
-
                     # On inverse le lien si il est à l'envers.
                     if objGantt.getSchedulable().getDebut() < self.__activeGanttObject.getSchedulable().getDebut():
                         self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
@@ -584,13 +583,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
                     ## Check si le lien existe déjà
                     if self.__getLien(objB.getSchedulable(), objA.getSchedulable()):
-                       raise RuntimeError("Lien déjà existant.")
+                       raise RuntimeError("Lien déjà existant.") # On garde l'erreur ?
 
                     # On crée le lien et met donc à jour l'affichage.
                     self.createLink(objB, objA)
 
                     # Création de la dépendance :
                     objA.getSchedulable().addDependance(objB.getSchedulable())
+                    self.getApplication().getTaskEditor().redessiner()
                     self.updateAffichage()
 
             # Pour le mode de suppression de liens :
