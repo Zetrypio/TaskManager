@@ -94,6 +94,10 @@ class Periode(ITaskEditorDisplayableObject):
             if "dependance" in s and s["dependance"] is not None:
                 for dep in s["dependance"]:
                     chercheTask(s['id'], p).addDependance(chercheTask(dep, p))
+            if "subtasks" in s and s["subtasks"] is not None:
+                for st in s["subtasks"]:
+                    for dep in st["dependance"]:
+                        chercheTask(st['id'], p).addDependance(chercheTask(dep, p))
 
         return p
 
