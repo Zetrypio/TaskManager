@@ -218,18 +218,20 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
                 jour += datetime.timedelta(days = 1)
                 if jour.weekday()%7 == 0:
                     self.can.create_rectangle(int(jourDebutSemaine.weekday())*w/7 + isFirst,
-                                              semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p),
+                                              semaine*(h-hh)/nbSemaine + hh+self.getPeriodeYPosition(p),
                                               w,
-                                              semaine*(h-hh)/5+hh+self.getPeriodeYPosition(p)+self.getPeriodHeight(),
-                                              fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"], tags = [p.getUniqueID(), "DoubleForSet"])
+                                              semaine*(h-hh)/nbSemaine + hh + self.getPeriodeYPosition(p) + self.getPeriodHeight(),
+                                              fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"],
+                                              tags = [p.getUniqueID(), "DoubleForSet"])
                     isFirst = 0
                     semaine += 1
                     jourDebutSemaine = jour
             self.can.create_rectangle(int(jourDebutSemaine.weekday())*w/7 + isFirst,
-                                      semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh,
+                                      semaine*(h-hh)/nbSemaine+self.getPeriodeYPosition(p)+hh,
                                       int(jour.weekday()+1)*w/7 -3,
-                                      semaine*(h-hh)/5+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
-                                      fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"], tags = [p.getUniqueID(), "DoubleForSet"])
+                                      semaine*(h-hh)/nbSemaine+self.getPeriodeYPosition(p)+hh+self.getPeriodHeight(),
+                                      fill = p.getColor() if not p.isSelected() else self.getPalette()["selected"],
+                                      tags = [p.getUniqueID(), "DoubleForSet"])
 
             NEW_TAG_ID += 1
             self.can.tag_bind("DoubleForSet", '<Double-Button-1>', lambda e : self.getApplication().getPeriodManager().setActivePeriode(self.findItem(e)))
