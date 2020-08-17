@@ -66,17 +66,25 @@ def askEditTask(task):
 
     fen = Dialog(title = "Édition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), command = onClose)
 
-    def getListTask(list):
+    def getListTask(list, StringV = False):
         """
         Fonction qui retourne un texte avec toutes les taches de la liste
         @format : Task -- uniqueId (+\n)
         @param list : <list> de task
+        @param StringV : <bool> doit-on retourner un stringVar de listbox ?
         @return <str>
         """
         text = ""
+        print(list)
         for task in list:
-            text += str(task) + "\n\tID : " + task.getUniqueID() + "\n"
-        return text
+            text += str(task) + "\n\tID : " + task.getUniqueID() + "\n\\"
+        if not StringV:
+            return text.replace("\\", "")
+        else:
+            sv = StringVar()
+            text = text.replace("\n", "")
+            sv.set(text.replace("\t", "   ").split("\\")[:-1])
+            return sv
 
 
     # Variable modifiable
@@ -94,6 +102,7 @@ def askEditTask(task):
     varRepTimedelta = None
     varRep = IntVar()
     varUnitRep = StringVar()
+    varID = StringVar()
 
 
     # Affectation des variables
@@ -118,6 +127,7 @@ def askEditTask(task):
         varUnitRep.set("semaines")
     else:
         varUnitRep.set("jours")
+    varID.set(task.getUniqueID())
 
     ## Notebook
     nb = Notebook(fen)
@@ -162,13 +172,13 @@ def askEditTask(task):
     ## Attributs avancés
     frameAdvanced = LabelFrame(pageAvancee, text = "Options avancées")
     lbId = Label(frameAdvanced, text = "ID :")
-    entryId = Entry(frameAdvanced, text = task.getUniqueID(), state = DISABLED)
+    entryId = Entry(frameAdvanced, textvariable = varID, state = DISABLED)
     lbSubtask = Label(frameAdvanced, text = "Sous-tâches :")
     lbListSub = Label(frameAdvanced, text = getListTask(task.getSubTasks()) if task.isContainer() else "Tache non conteneur", anchor = "nw")
     lbDepces = Label(frameAdvanced, text = "Dépendances :")
-    lbListDepces = Label(frameAdvanced, text = getListTask(task.getDependances()), anchor = "nw")
+    lbListDepces = Listbox(frameAdvanced, listvariable = getListTask(task.getDependances(), StringV = True), selectmode = "single", height = len(getListTask(task.getDependances(), StringV = True).get().split("\\")))
     lbDeptes = Label(frameAdvanced, text = "Dépendantes :")
-    lbListDeptes = Label(frameAdvanced, text = getListTask(task.getDependantes()), anchor = "nw")
+    lbListDeptes = Listbox(frameAdvanced, listvariable = getListTask(task.getDependantes(), StringV = True), selectmode = "single", height = len(getListTask(task.getDependantes(), StringV = True).get().split("\\")))
 
 
     
@@ -210,9 +220,12 @@ def askEditTask(task):
     lbSubtask.grid(row = 1, column = 0, sticky = "e")
     lbListSub.grid(row = 1, column = 1, sticky = "w")
     lbDepces.grid(row = 2, column = 0, sticky = "ne")
-    lbListDepces.grid(row = 2, column = 1, sticky = "w")
+    lbListDepces.grid(row = 2, column = 1, sticky = "we")
     lbDeptes.grid(row = 3, column = 0, sticky = "ne")
-    lbListDeptes.grid(row = 3, column = 1, sticky = "w")
+    lbListDeptes.grid(row = 3, column = 1, sticky = "we")
+
+    # Config grid
+    frameAdvanced.columnconfigure(1, weight = 1)
 
 
 
