@@ -238,12 +238,12 @@ class Task(AbstractSchedulableObject):
             app.getTaskEditor().redessiner()
             app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
 
-            def getRawRepartition(self, displayedCalendar):
-                """
-                @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-                @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-                """
-                return self.getRepartition(displayedCalendar)
+    def getRawRepartition(self, displayedCalendar):
+        """
+        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        """
+        return self.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
         """

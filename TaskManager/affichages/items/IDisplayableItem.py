@@ -14,15 +14,6 @@ class IDisplayableItem:
         """
         if self.__class__ == IDisplayableItem: raise RuntimeError("Can't instantiate interface IDisplayableItem directly.")
 
-    def __del__(self):
-        """
-        Le destructeur appel la méthode self#delete() si elle fonctionne.
-        """
-        try:
-            self.delete()
-        except:
-            pass
-
     "" # Marque pour que le repli de code fasse ce que je veux
     ##################################
     # Méthodes liées à l'affichage : #
