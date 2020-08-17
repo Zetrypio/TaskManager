@@ -469,7 +469,14 @@ class CalendarZone(Frame):
         # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
         for t in taches:
             periode.removeInstanciatedSchedulable(t)
-            periode.removePrimitiveSchedulable(t)
+            try:
+                periode.removePrimitiveSchedulable(t)
+            except:
+                for ta in periode.getPrimitivesSchedulables():
+                    if ta.isContainer() and ta.getSubTasks() is not []:
+                        if t in ta.getSubTasks():
+                            ta.removeSubTask(t)
+                            break
 
         if ajout:
             periode.addPrimitiveSchedulable(groupe)
