@@ -224,10 +224,11 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         Cette méthode ne change rien dans la période en question.
         @param periode: la période à mettre.
         """
-        self.getPeriode().removePrimitiveSchedulable(self)
-        self.getPeriode().removeInstanciatedSchedulable(self)
-        self.__periode = periode
-        periode.addPrimitiveSchedulable(self)
+        if self.getPeriode() != periode:
+            self.getPeriode().removePrimitiveSchedulable(self)
+            self.getPeriode().removeInstanciatedSchedulable(self)
+            self.__periode = periode
+            periode.addPrimitiveSchedulable(self)
 
     def setPeriodeWithName(self, name):
         """
