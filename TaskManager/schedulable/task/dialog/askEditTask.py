@@ -10,6 +10,7 @@ from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
 
 from .datetimeDialog import *
+from schedulable.task.Task import *
 
 
 def askEditTask(task):
@@ -86,6 +87,49 @@ def askEditTask(task):
             sv.set(text.replace("\t", "   ").split("\\")[:-1])
             return sv
 
+    def supprimeLien(mode):
+        """
+        Fonction qui supprime un lien
+        @param mode : <str> sert a savoir si c'est dépendances ou dépendantes
+        """
+        def chercheTask(id):
+            """
+            Fonction embarquée qui recherche la tache lié à l'id
+            Pour l'instant seule les task ont un UUID
+            @param id : <str> id de la tache qu'on cherche
+            @param p  : <periode> celle qui contient la tache
+            @return <task> recherché, None si non trouvé
+            """
+            for t in task.getPeriode().getPrimitivesSchedulables():
+                if isinstance(t, Task):
+                    if id == t.getUniqueID():
+                        return t
+                    elif t.isContainer():
+                        for st in t.getSubTasks():
+                            if st.getUniqueID() == id:
+                                return st
+        if mode == "depces":
+            t = lbListDepces.get(ACTIVE)
+            id = t.split("ID")[-1]
+            id = id[id.rfind(" ")+1:]
+            depces = chercheTask(id)
+            deptes = task
+        elif mode == "deptes":
+            t = lbListDeptes.get(ACTIVE)
+            id = t.split("ID")[-1]
+            id = id[id.rfind(" ")+1:]
+            deptes = chercheTask(id)
+            depces = task
+        else:
+            return
+        # On retire la dépendances
+        deptes.removeDependance(depces)
+        # On met à jour l'affichage
+        if mode == "depces":
+            lbListDepces.config(listvariable = getListTask(task.getDependances(), StringV = True))
+        elif mode == "deptes":
+            lbListDeptes.config(listvariable = getListTask(task.getDependantes(), StringV = True))
+
 
     # Variable modifiable
     varNom = StringVar()
@@ -103,6 +147,7 @@ def askEditTask(task):
     varRep = IntVar()
     varUnitRep = StringVar()
     varID = StringVar()
+    varDone = BooleanVar()
 
 
     # Affectation des variables
@@ -128,6 +173,7 @@ def askEditTask(task):
     else:
         varUnitRep.set("jours")
     varID.set(task.getUniqueID())
+    varDone.set(task.isDone())
 
     ## Notebook
     nb = Notebook(fen)
@@ -177,8 +223,14 @@ def askEditTask(task):
     lbListSub = Label(frameAdvanced, text = getListTask(task.getSubTasks()) if task.isContainer() else "Tache non conteneur", anchor = "nw")
     lbDepces = Label(frameAdvanced, text = "Dépendances :")
     lbListDepces = Listbox(frameAdvanced, listvariable = getListTask(task.getDependances(), StringV = True), selectmode = "single", height = len(getListTask(task.getDependances(), StringV = True).get().split("\\")))
+    btnSupprDepces = Button(frameAdvanced, text = "Supprimer", command = lambda : supprimeLien("depces"))
     lbDeptes = Label(frameAdvanced, text = "Dépendantes :")
     lbListDeptes = Listbox(frameAdvanced, listvariable = getListTask(task.getDependantes(), StringV = True), selectmode = "single", height = len(getListTask(task.getDependantes(), StringV = True).get().split("\\")))
+    btnSupprDeptes = Button(frameAdvanced, text = "Supprimer", command = lambda : supprimeLien("deptes"))
+    lbDone = Label(frameAdvanced, text = "Fait :")
+    cbDone = Checkbutton(frameAdvanced, variable = varDone)
+    lbParent = Label(frameAdvanced, text = "Parent :")
+    lbResultParent = Label(frameAdvanced, text = task.getParent() if task.getParent() else "")
 
 
     
@@ -215,14 +267,20 @@ def askEditTask(task):
     cbUnit.pack(side = LEFT, fill = BOTH, expand = YES)
     # Avancée
     frameAdvanced.pack(side = TOP, fill = BOTH, expand = YES)
-    lbId.grid(row = 0, column = 0, sticky = "e")
-    entryId.grid(row = 0, column = 1, sticky = "we")
-    lbSubtask.grid(row = 1, column = 0, sticky = "e")
-    lbListSub.grid(row = 1, column = 1, sticky = "w")
-    lbDepces.grid(row = 2, column = 0, sticky = "ne")
-    lbListDepces.grid(row = 2, column = 1, sticky = "we")
-    lbDeptes.grid(row = 3, column = 0, sticky = "ne")
-    lbListDeptes.grid(row = 3, column = 1, sticky = "we")
+    lbId.grid(        row = 0, column = 0, sticky = "e")
+    entryId.grid(     row = 0, column = 1, sticky = "we")
+    lbSubtask.grid(   row = 1, column = 0, sticky = "e")
+    lbListSub.grid(   row = 1, column = 1, sticky = "w")
+    lbDepces.grid(    row = 2, column = 0, sticky = "ne")
+    lbListDepces.grid(row = 2, column = 1, sticky = "nswe", rowspan = 2)
+    btnSupprDepces.grid( row = 3, column = 0, sticky = "e")
+    lbDeptes.grid(    row = 4, column = 0, sticky = "ne")
+    lbListDeptes.grid(row = 4, column = 1, sticky = "nswe", rowspan = 2)
+    btnSupprDeptes.grid( row = 5, column = 0, sticky = "e")
+    lbDone.grid(row = 6, column = 0, sticky = "e")
+    cbDone.grid(row = 6, column = 1, sticky = "we")
+    lbParent.grid(row = 7, column = 0, sticky = "e")
+    lbResultParent.grid(row = 7, column = 1, sticky = "w")
 
     # Config grid
     frameAdvanced.columnconfigure(1, weight = 1)

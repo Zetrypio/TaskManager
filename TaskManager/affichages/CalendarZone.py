@@ -167,7 +167,7 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        for tache in self.getPeriodeActive().getSchedulables():
+        for tache in self.getPeriodeActive().getPrimitivesSchedulables():
             if tache.isSelected():
                 tache.setDone(True)
         self.getApplication().getTaskEditor().redessiner()
