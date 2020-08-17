@@ -22,7 +22,7 @@ def askEditTask(task):
         if button == "Ok":
             task.setNom(varNom.get())
             task.setPeriodeWithName(varPeriode.get())
-#            task.setColor(varCouleur.get())
+            #task.setColor(varCouleur.get())
             task.setColor(colbut.get())
             task.setDescription(textDesc.get("0.0", END))
             task.setDebut(varDebut, change = "duree")
@@ -145,7 +145,7 @@ def askEditTask(task):
     # Variable modifiable
     varNom = StringVar()
     varPeriode = StringVar()
-#    varCouleur = StringVar()
+    #varCouleur = StringVar()
     # textDesc (je le met ici pour ne pas l'oublier)
     varDebut = "" # Initialisation, affectation après
     varFin = ""
@@ -164,7 +164,7 @@ def askEditTask(task):
     # Affectation des variables
     varNom.set(task.getNom())
     varPeriode.set(task.getPeriode().getNom())
-#    varCouleur.set(task.getColor())
+   #varCouleur.set(task.getColor())
     # textDesc (je le met ici pour ne pas l'oublier)
     varDebut = task.getDebut()
     varFin = task.getFin()
@@ -200,7 +200,7 @@ def askEditTask(task):
     lbPeriode    = Label(      frameGeneral, text = "Période :")
     comboPeriode = Combobox(   frameGeneral, textvariable = varPeriode, value = [p.getNom() for p in task.getApplication().getPeriodManager().getPeriodes()], state = "readonly")
     lbColor      = Label(      frameGeneral, text = "Couleur :")
-#    colbut       = ColorButton(frameGeneral, bg = varCouleur.get())
+    #colbut       = ColorButton(frameGeneral, bg = varCouleur.get())
     colbut       = ColorButton(frameGeneral, bg = task.getColor())
     lbDesc       = Label(      frameGeneral, text = "Description :")
     textDesc     = Text(       frameGeneral, wrap = "word", height = 3, width = 30)
