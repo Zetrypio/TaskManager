@@ -5,7 +5,7 @@ from tkinter import Frame, Label
 
 import datetime
 
-from ...task.Task import *
+
 from util.widgets.ColorButton import *
 from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
@@ -263,6 +263,7 @@ class TaskParametre(Notebook):
         Fonction qui supprime un lien
         @param mode : <str> sert a savoir si c'est dépendances ou dépendantes
         """
+        from schedulable.task.Task import Task
         def chercheTask(id):
             """
             Fonction embarquée qui recherche la tache lié à l'id
@@ -297,6 +298,6 @@ class TaskParametre(Notebook):
         deptes.removeDependance(depces)
         # On met à jour l'affichage
         if mode == "depces":
-            self.lbListDepces.config(listvariable = self.getListTask(task.getDependances(), StringV = True))
+            self.lbListDepces.config(listvariable = self.getListTask(self.task.getDependances(), StringV = True))
         elif mode == "deptes":
-            self.lbListDeptes.config(listvariable = self.getListTask(task.getDependantes(), StringV = True))
+            self.lbListDeptes.config(listvariable = self.getListTask(self.task.getDependantes(), StringV = True))
