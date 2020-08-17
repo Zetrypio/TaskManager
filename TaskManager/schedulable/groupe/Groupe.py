@@ -164,18 +164,18 @@ class Groupe(AbstractSchedulableObject):
         """
         pass # TODO
 
-    def getRawRerpartition(self, displayedCalendar):
+    def getRawRepartition(self, displayedCalendar):
         """
-        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        @see AbstractSchedulableObject#getRawRepartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRawRepartition(displayedCalendar)
         """
         for task in self.__listTasks:
             yield from task.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
         """
-        @see AbstractSchedulableObject#getRerpartition(displayedCalendar)
-        @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        @see AbstractSchedulableObject#getRepartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
         parts = []
         for task in self.__listTasks:

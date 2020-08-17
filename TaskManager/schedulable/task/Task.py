@@ -240,16 +240,16 @@ class Task(AbstractSchedulableObject):
 
     def getRawRepartition(self, displayedCalendar):
         """
-        @see AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
-        @override AbstractSchedulableObject#getRawRerpartition(displayedCalendar)
+        @see AbstractSchedulableObject#getRawRepartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRawRepartition(displayedCalendar)
         """
         return self.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
         """
         TODO : Gère également les tâches à répétition. 
-        @see AbstractSchedulableObject#getRerpartition(displayedCalendar)
-        @override AbstractSchedulableObject#getRerpartition(displayedCalendar)
+        @see AbstractSchedulableObject#getRepartition(displayedCalendar)
+        @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
         def addRepartition(instance):
             if not instance.isContainer():
