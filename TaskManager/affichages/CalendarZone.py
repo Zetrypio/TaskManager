@@ -177,7 +177,7 @@ class CalendarZone(Frame):
         Valide TOUTES les tâches qui sont avant maintenant.
         """
         now = datetime.datetime.now()
-        for schedulable in self.getDonneeCalendrier().getSchedulables():
+        for schedulable in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.getFin() <= now:
                 schedulable.setDone(True)
             schedulable.updateStatut()
@@ -188,7 +188,7 @@ class CalendarZone(Frame):
         Valide toutes les tâches qui sont terminées aujourd'hui.
         """
         now = datetime.date.today()
-        for tache in self.getDonneeCalendrier().getSchedulables():
+        for tache in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if tache.getFin().date() == now:
                 tache.setDone(True)
             tache.updateStatut()
@@ -379,9 +379,10 @@ class CalendarZone(Frame):
         # Petite vérification :
         if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
             return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
-
+        print("b", schedulables, set(schedulables))
         # Pour chaque groupes sélectionnés :
         for groupe in set(schedulables):
+            print(groupe)
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
                 periode.addPrimitiveSchedulable(t)

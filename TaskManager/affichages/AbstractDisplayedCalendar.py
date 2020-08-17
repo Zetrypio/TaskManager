@@ -201,13 +201,6 @@ class AbstractDisplayedCalendar(Frame):
         """
         return self.getApplication().getPeriodManager().getActivePeriode()
 
-    def getSchedulables(self):
-        """
-        Permet d'obtenir la liste des objets planifiables.
-        @return: la liste des objets planifiables, comme des groupes ou des tâches.
-        """
-        return self.getPeriodeActive().getListSchedulables()
-
     def getSelectedSchedulable(self):
         return (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
 
