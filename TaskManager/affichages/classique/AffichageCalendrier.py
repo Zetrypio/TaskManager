@@ -307,6 +307,14 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(displayable.getRepartition())
+        
+        parts = []
+        for i in range(len(self.__parts)):
+            part = self.getVisiblePart(self.__parts[i])
+            if part is not None:
+                parts.append(part)
+        self.__parts = parts
+
         jour = self.getJourDebut()
         self.__nbColonneParJour = 1
         self.__partsParColonnes = []
