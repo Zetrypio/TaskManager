@@ -248,18 +248,20 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 self.can.create_line(x, 0, x, self.getScrollableHeight(), fill = self.getPalette()["foreground"])
 
             # Texte des jours :
-            self.can.create_window(x + w/2, 0,
+            self.can.create_window(x, 0,
                                     width = w,
-                                    window = self.__textwidgets[-1], tag = "bandeauJour")
+                                    window = self.__textwidgets[-1], tag = "bandeauJour",
+                                    anchor = "nw")
 
 
         # Ajustement des TextWidgets
-        AffichageGantt.TAILLE_BANDEAU_JOUR = int(TextWidget.MINHEIGHT)
-        for tw, idTw in zip(self.__textwidgets, self.can.find_withtag("bandeauJour")):
-            tw.resize(height = TextWidget.MINHEIGHT) # La taille du widget
-            self.can.itemconfigure(idTw, height = TextWidget.MINHEIGHT) # La taille alloué au widget
-        self.can.move("bandeauJour", 0, AffichageGantt.TAILLE_BANDEAU_JOUR//2)
-        TextWidget.MINHEIGHT = 0
+        self.update()
+        AffichageGantt.TAILLE_BANDEAU_JOUR = max(t.winfo_height() for t in self.__textwidgets)#int(TextWidget.MINHEIGHT)
+#        for tw, idTw in zip(self.__textwidgets, self.can.find_withtag("bandeauJour")):
+#            tw.resize(height = TextWidget.MINHEIGHT) # La taille du widget
+#            self.can.itemconfigure(idTw, height = TextWidget.MINHEIGHT) # La taille alloué au widget
+#        self.can.move("bandeauJour", 0, AffichageGantt.TAILLE_BANDEAU_JOUR//2)
+#        TextWidget.MINHEIGHT = 0
 
     def __afficherLesTaches(self, force = False):
         """
