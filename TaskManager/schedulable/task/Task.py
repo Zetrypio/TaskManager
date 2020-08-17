@@ -10,6 +10,7 @@ from ..AbstractSchedulableObject import *
 
 from util.util import *
 from .dialog.datetimeDialog import *
+from .dialog.askEditTask import *
 from .TaskInDnd import *
 
 from affichages.items.DatetimeItemPart import *
@@ -172,6 +173,7 @@ class Task(AbstractSchedulableObject):
             rmenu.add_command(label="Transformer en une tâche déplaçable", command=lambda: self.transformToDnd(taskEditor, rmenu))
             rmenu.add_separator()
         # Dans tout les cas :
+        rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditTask(self))
         rmenu.add_command(label="Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
         return True
 
