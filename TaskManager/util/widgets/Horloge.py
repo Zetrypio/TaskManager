@@ -42,6 +42,12 @@ class Horloge(Canvas):
         """
         self.heure = heure
         self.minute = minute
+        self.redraw()
+
+    def redraw(self):
+        """
+        Permet de redessiner l'horloge et de la mettre à jour selon ses attributs.
+        """
         self.delete(ALL)
         self.create_oval(10, 10, 190, 190, fill = self.__clockBackground, width = 2)
         sin = math.sin
@@ -102,6 +108,7 @@ class Horloge(Canvas):
 
     def setClockBackground(self, clockBackground):
         self.__clockBackground = clockBackground
+        self.redraw()
 
     def getclockBackground(self):
         return self.__clockBackground
