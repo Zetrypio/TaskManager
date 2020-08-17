@@ -5,9 +5,7 @@ from tkinter import Frame, Label
 
 import datetime
 
-
 from util.widgets.ColorButton import *
-from util.widgets.Dialog import *
 from util.widgets.ttkcalendar import *
 
 from .datetimeDialog import *
@@ -17,7 +15,6 @@ class TaskParametre(Notebook):
     Notebook qui contient tous les paramètres de la tache
     fournis dans le constructeur.
     Permet aussi de changer ses attributs (à la tache)
-    class
     """
     def __init__(self, master, task, **kw):
         """
