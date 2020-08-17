@@ -11,6 +11,7 @@ from util.widgets.Dialog import *
 from util.widgets.TextWidget import *
 
 from schedulable.task.Task import *
+from schedulable.groupe.Groupe import *
 from schedulable.task.dialog.askDureeTache import *
 
 JOUR = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
@@ -202,7 +203,15 @@ class AbstractDisplayedCalendar(Frame):
         return self.getApplication().getPeriodManager().getActivePeriode()
 
     def getSelectedSchedulable(self):
-        return (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
+        s = set()
+        for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
+            if schedulable.isSelected():
+                s.add(schedulable)
+            if isinstance(schedulable, Groupe):
+                for task in schedulable.getSelectedTask():
+                    s.add(schedulable)
+
+        return s # old : (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
 
     def getVisiblePart(self, part):
         """
