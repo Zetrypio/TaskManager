@@ -385,11 +385,21 @@ class CalendarZone(Frame):
             print(groupe)
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
-                periode.addPrimitiveSchedulable(t)
-                t.instantiate()
-            # Suppression du groupe :
-            periode.removeInstanciatedSchedulable(groupe)
-            periode.removePrimitiveSchedulable(groupe)
+                if t in groupe.getSelectedTask():
+                    periode.addPrimitiveSchedulable(t)
+                    t.instantiate()
+                    groupe.removeTask(t)
+
+            # Suppression du groupe , s'il n'y a plus qu'une ou 0 tache :
+            if len(groupe.getListTasks()) <= 1:
+                if groupe.getListTasks() != set():
+                    lastTache = list(groupe.getListTasks())[-1]
+                    periode.addPrimitiveSchedulable(lastTache)
+                    lastTache.instantiate()
+                    groupe.removeTask(lastTache)
+
+                periode.removeInstanciatedSchedulable(groupe)
+                periode.removePrimitiveSchedulable(groupe)
 
         # Mise à jour de l'affichage qu'à la fin :
         self.getApplication().getTaskEditor().redessiner()
