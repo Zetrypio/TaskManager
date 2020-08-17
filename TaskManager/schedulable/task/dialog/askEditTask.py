@@ -19,8 +19,16 @@ def askEditTask(task):
     @param task : <Task> la tache à modifier
     """
     def onClose(button):
-        if button == "OK":
-            print("ok")
+        if button == "Ok":
+            task.setNom(varNom.get())
+            task.setPeriodeWithName(varPeriode.get())
+            task.setColor(varCouleur.get())
+            task.setDescription(textDesc.get("0.0", END))
+            task.setDebut(varDebut, change = "duree")
+            task.setDuree(datetime.timedelta(days = varJour.get(), hours = varHour.get(), minutes = varMin.get()))
+            #task.setRep
+            task.setDone(varDone.get())
+
             return
         fen.destroy()
 
@@ -76,7 +84,6 @@ def askEditTask(task):
         @return <str>
         """
         text = ""
-        print(list)
         for task in list:
             text += str(task) + "\n\tID : " + task.getUniqueID() + "\n\\"
         if not StringV:
