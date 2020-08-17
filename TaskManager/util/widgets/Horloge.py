@@ -9,7 +9,7 @@ class Horloge(Canvas):
     """
     Widget avec une horloge.
     """
-    def __init__(self, master = None, number = True, width = 200, height = 200, **kwargs):
+    def __init__(self, master = None, number = True, width = 200, height = 200, clockBackground="white", **kwargs):
         """
         Constructeur de l'horloge.
         Par défaut, l'horloge se met automatiquement à jour.
@@ -23,6 +23,7 @@ class Horloge(Canvas):
         Canvas.__init__(self, master, width=width, height=height, **kwargs)
         self.number = number
         self.auto = True
+        self.__clockBackground = clockBackground
         self.__after = None
         self.setnow()
 
@@ -42,7 +43,7 @@ class Horloge(Canvas):
         self.heure = heure
         self.minute = minute
         self.delete(ALL)
-        self.create_oval(10, 10, 190, 190, fill = "white", width = 2)
+        self.create_oval(10, 10, 190, 190, fill = self.__clockBackground, width = 2)
         sin = math.sin
         cos = math.cos
         pi = math.pi
@@ -98,6 +99,12 @@ class Horloge(Canvas):
         self.set(time.localtime().tm_hour, time.localtime().tm_min)
         if self.auto:
             self.__after = self.after(1000, self.setnow)
+
+    def setClockBackground(self, clockBackground):
+        self.__clockBackground = clockBackground
+
+    def getclockBackground(self):
+        return self.__clockBackground
 
 # Main
 def main():
