@@ -97,4 +97,4 @@ class AbstractSchedulableParametre(Notebook):
         self.getSchedulable().setPeriodeWithName(self.__varPeriode.get())
         #self.getSchedulable().setColor(varCouleur.get())
         self.getSchedulable().setColor(         self.__colbut.get())
-        self.getSchedulable().setDescription(   self.__textDesc.get("0.0", END))
+        self.getSchedulable().setDescription(   self.__textDesc.get("0.0", END)[:-1]) # [:-1] sinon il y a les retours à la ligne
