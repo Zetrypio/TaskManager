@@ -554,7 +554,8 @@ class Task(AbstractSchedulableObject):
         
         # On s'enlève du TaskEditor, mais on ne se supprime pas
         # attention. On va juste se réajouter ailleurs...
-        taskEditor.supprimer(self)
+#        taskEditor.supprimer(self)
+        self.getPeriode().removePrimitiveSchedulable(self) # N'enlève pas des instanciées.
         
         # On crée une tâche qui nous ressemble, mais dont le début
         # n'est pas présent. Et pour cause : c'est ce qui fait que
@@ -566,7 +567,9 @@ class Task(AbstractSchedulableObject):
         
         # Le fait de rajouter cette nouvelle tâche va nous rajouter
         # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
-        taskEditor.ajouter(newTask)
+#        taskEditor.ajouter(newTask)
+        self.getPeriode().addPrimitiveSchedulable(newTask)
+        taskEditor.redessiner()
 
     ""
     #######################################
