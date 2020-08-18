@@ -201,9 +201,13 @@ class TaskParametre(AbstractSchedulableParametre):
         """
         try:
             ecart = self.varFin - self.varDebut
-            self.varJour.set(ecart.days)
-            self.varHour.set(ecart.seconds//3600)
-            self.varMin.set(ecart.seconds//60%60)
+            if ecart < datetime.timedelta(0) : # Si durée négative, on remet la fin en vue de la durée
+                self.__autoSetFin()
+                return
+            else:
+                self.varJour.set(ecart.days)
+                self.varHour.set(ecart.seconds//3600)
+                self.varMin.set(ecart.seconds//60%60)
         except:pass
 
     def __autoSetFin(self):

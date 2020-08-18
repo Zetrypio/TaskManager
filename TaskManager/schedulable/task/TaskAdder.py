@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label, Button as TkButton
 from tkinter.colorchooser import askcolor
+from tkinter.messagebox import showerror
 import datetime
 import time
 
@@ -215,6 +216,8 @@ class TaskAdder(Frame):
         """
         debut = self.getDebut()
         duree = self.getDuree()
+        if duree < datetime.timedelta(0):
+            return showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative")
         rep   = self.getRepetitionTime()
         periode = self.getApplication().getPeriodManager().getActivePeriode()
         # On check si on est dans la période
