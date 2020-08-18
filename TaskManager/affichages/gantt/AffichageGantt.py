@@ -276,7 +276,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         None si celui-ci n'a pas été trouvé
             """
             for s in self.listeDisplayableItem:
-                if isinstance(s.getSchedulable(), Task) and s.getSchedulable() is schedulable:
+                if isinstance(s, ObjetGantt) and isinstance(s.getSchedulable(), Task) and s.getSchedulable() is schedulable:
                     return s
             else :
                 return None
