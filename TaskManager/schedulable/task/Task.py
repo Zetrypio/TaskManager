@@ -175,7 +175,7 @@ class Task(AbstractSchedulableObject):
             rmenu.add_separator()
         # Dans tout les cas :
         rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditTask(self))
-        rmenu.add_command(label="Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
+        rmenu.add_command(label = "Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
         return True
 
     ""

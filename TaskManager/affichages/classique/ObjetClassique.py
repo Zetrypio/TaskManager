@@ -77,11 +77,7 @@ class ObjetClassique(AbstractMultiFrameItem):
 
                 # RMenu :
                 rmenu = RMenu(widget, False)
-                if isinstance(self.getSchedulable(), Task):
-                    rmenu.add_command(label = "Éditer %s"%self._schedulable.getNom(), command = lambda s = self.getSchedulable() : askEditTask(s))
-                elif isinstance(self.getSchedulable(), Groupe):
-                    rmenu.add_command(label = "Éditer %s"%self._schedulable.getNom(), command = lambda s = self.getSchedulable() : askEditGroupe(s))
-                rmenu.add_command(label = "Supprimer %s"%self._schedulable, command = lambda : self._schedulable.delete(self.master.getApplication()))
+                self.getSchedulable().setRMenuContent(self.getSchedulable().getApplication().getTaskEditor(), rmenu)
 
                 # On le place :
                 rect = self.master.getPartRectangle(part)

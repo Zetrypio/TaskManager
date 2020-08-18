@@ -201,10 +201,7 @@ class ObjetGantt(AbstractMultiFrameItem):
                             rmenu.add_command(label = "Supprimer un lien", command = lambda : self.beginLinkingLine(rect.getCenterPoint(), mode = "-"))
 
                         rmenu.add_separator()
-                    if isinstance(self.getSchedulable(), Task):
-                        rmenu.add_command(label = "Éditer %s"%self.getSchedulable().getNom(), command = lambda : askEditTask(self.getSchedulable()))
-
-                    rmenu.add_command(label = "Supprimer %s"%self._schedulable, command = lambda : self._schedulable.delete(self.master.getApplication()))
+                    self.getSchedulable().setRMenuContent(self.getSchedulable().getApplication().getTaskEditor(), rmenu)
                 except:
                     pass
 

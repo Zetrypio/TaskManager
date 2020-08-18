@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
-
 from affichages.items.DatetimeItemPart import *
 
 from ..AbstractSchedulableObject import *
 from ..task.Task import *
+from .dialog.askEditGroupe import askEditGroupe
 
 class Groupe(AbstractSchedulableObject):
     def __init__(self, nom, periode, desc, color, *listTasks):
@@ -116,10 +116,12 @@ class Groupe(AbstractSchedulableObject):
         que cette méthode retourne False
         @param taskEditor : permet de faire des interactions avec le TaskEditor().
         @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
-        @return False car le RMenu() n'existe pas.
+        @return True car le RMenu() existe.
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
-        return False # TODO
+        rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditGroupe(self))
+        rmenu.add_command(label = "Supprimer %s"%self, command = lambda : self.delete(self.getApplication()))
+        return True
 
     ""
     #######################################
