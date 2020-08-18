@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
+from tkinter.messagebox import showerror
 
 from schedulable.groupe.dialog.groupDialog import *
 
@@ -12,6 +13,7 @@ from toolbar.dialog.decalageJourDialog import *
 from toolbar.dialog.gestionHeureCalendrierDialog import *
 from toolbar.dialog.gestionJourDialog import *
 
+from .periode.dialog.dateDialog import *
 from .ZoneAffichage import *
 
 class CalendarZone(Frame):
@@ -497,15 +499,26 @@ class CalendarZone(Frame):
 
     def selectionnerJour(self):
         """
-        Méthode pour sélectionner les jours correspondants aux tâches sélectionnées.
+        Méthode pour demander un jour à sélectionner à l'utilisateur, pour le sélectionner ensuite où qu'il soit.
         """
-        self.getDonneeCalendrier().deselectJours()
-        jours = set()
-        for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
-            for jour in rangeDate(schedulable.getDebut().date(), schedulable.getFin().date()):
-                jours.add(jour)
-        for jour in jours:
-            self.getDonneeCalendrier().selectJour(jour)
+        jour = askdate()
+        if jour is not None:
+            donneeCalendrier = self.getDonneeCalendrier()
+            if jour >= donneeCalendrier.getDebutPeriode() and jour <= donneeCalendrier.getFinPeriode():
+                donneeCalendrier.deselectJours()
+                donneeCalendrier.selectJour(jour)
+                dureeJours = donneeCalendrier.getDureeJour()
+                if donneeCalendrier.getJourDebut() > jour:
+                    donneeCalendrier.setJourDebut(jour)
+                    donneeCalendrier.setDureeJour(dureeJours)
+                    donneeCalendrier.updateAffichage()
+                elif donneeCalendrier.getJourFin() < jour:
+                    donneeCalendrier.setJourFin(jour)
+                    donneeCalendrier.setJourDebut(jour - dureeJours + datetime.timedelta(days=1))
+                    donneeCalendrier.updateAffichage()
+            else:
+                # TODO : mettre dans le dialogue lui-même
+                showerror("Date invalide", "La date que vous avez choisie est en dehors des limites de la période.")
 
     ""
     ########################################
