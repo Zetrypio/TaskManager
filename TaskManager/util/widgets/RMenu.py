@@ -68,5 +68,20 @@ class RMenu(Menu):
         souris trouvée dans le
         @param event: événement avec la position de la souris.
         """
-        self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
-        self.tk_popup(event.x_root, event.y_root)
+        ## Note de Zetrypio :
+        # Le try-except ici est nécessaire, car lors de la suppression
+        # de cet objet, si le RMenu était bind sur un tag, il ne peut
+        # pas se débind (ou alors je n'ai pas trouvé la méthode,
+        # pourtant j'ai pas mal cherché), et donc cette méthode est
+        # tout de même exécutée. Mais comme ce RMenu est destroyed,
+        # les lignes suivantes causent une erreur dans la console.
+        # Pour moi, il s'agit d'un bug (pas de méthode d'unbind de tags),
+        # mais je ne vois pas comment le régler autrement.
+        # Le binding est censé réellement se supprimer quand le master
+        # de ce widget se supprime, mais ce n'est pas normal qu'on ne puisse
+        # pas enlever un bind sur un item ou un tag sans supprimer l'item/ le tag/ le binder.
+        try:
+            self.event_generate("<<RMenu-Opened>>", x = event.x, y = event.y, rootx = event.x_root, rooty = event.y_root)
+            self.tk_popup(event.x_root, event.y_root)
+        except:
+            pass
