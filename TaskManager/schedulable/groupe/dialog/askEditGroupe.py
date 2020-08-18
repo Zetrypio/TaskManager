@@ -5,7 +5,7 @@ from tkinter import Frame, Label
 
 from util.widgets.Dialog import *
 
-from schedulable.group.dialog.GroupParametre import *
+from schedulable.groupe.dialog.GroupeParametre import *
 
 def askEditGroupe(groupe):
     """
@@ -14,11 +14,11 @@ def askEditGroupe(groupe):
     """
     def onClose(button):
         if button == "Ok":
-            print("ok.")
+            paramGroupe.onClose()
         fen.destroy()
 
     fen = Dialog(title = "Édition de \"%s\""%groupe.getNom(), buttons = ("Ok", "Annuler"), command = onClose) # Ajouter un supprimer
-    paramGroupe = ParametreGroupe(groupe)
+    paramGroupe = GroupeParametre(fen, groupe)
     paramGroupe.pack(fill = BOTH, expand = YES)
     fen.activateandwait()
 

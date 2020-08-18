@@ -6,6 +6,8 @@ from tkinter import Frame, Label
 from util.widgets.RMenu import *
 from schedulable.task.Task import *
 from schedulable.task.dialog.askEditTask import askEditTask
+from schedulable.groupe.Groupe import *
+from schedulable.groupe.dialog.askEditGroupe import askEditGroupe
 
 from ..items.AbstractMultiFrameItem import *
 
@@ -77,6 +79,8 @@ class ObjetClassique(AbstractMultiFrameItem):
                 rmenu = RMenu(widget, False)
                 if isinstance(self.getSchedulable(), Task):
                     rmenu.add_command(label = "Éditer %s"%self._schedulable.getNom(), command = lambda s = self.getSchedulable() : askEditTask(s))
+                elif isinstance(self.getSchedulable(), Groupe):
+                    rmenu.add_command(label = "Éditer %s"%self._schedulable.getNom(), command = lambda s = self.getSchedulable() : askEditGroupe(s))
                 rmenu.add_command(label = "Supprimer %s"%self._schedulable, command = lambda : self._schedulable.delete(self.master.getApplication()))
 
                 # On le place :
