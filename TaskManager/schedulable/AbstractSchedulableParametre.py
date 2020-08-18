@@ -31,9 +31,9 @@ class AbstractSchedulableParametre(Notebook):
         # textDesc (je le met ici pour ne pas l'oublier)
 
         # Affectation des variables
-        self.__varNom.set(self.getSchedulable().getNom())
-        self.__varPeriode.set(self.getSchedulable().getPeriode().getNom())
-        #varCouleur.set(self.getSchedulable().getColor())
+        self.__varNom.set(self._getSchedulable().getNom())
+        self.__varPeriode.set(self._getSchedulable().getPeriode().getNom())
+        #varCouleur.set(self._getSchedulable().getColor())
         # textDesc (je le met ici pour ne pas l'oublier)
 
         # Attributs généraux :
@@ -41,13 +41,13 @@ class AbstractSchedulableParametre(Notebook):
         self.__lbNom        = Label(      self._frameGeneral, text = "Nom :")
         self.__entryNom     = Entry(      self._frameGeneral, textvariable = self.__varNom)
         self.__lbPeriode    = Label(      self._frameGeneral, text = "Période :")
-        self.__comboPeriode = Combobox(   self._frameGeneral, textvariable = self.__varPeriode, value = [p.getNom() for p in self.getSchedulable().getApplication().getPeriodManager().getPeriodes()], state = "readonly")
+        self.__comboPeriode = Combobox(   self._frameGeneral, textvariable = self.__varPeriode, value = [p.getNom() for p in self._getSchedulable().getApplication().getPeriodManager().getPeriodes()], state = "readonly")
         self.__lbColor      = Label(      self._frameGeneral, text = "Couleur :")
         #colbut       = ColorButton(_frameGeneral, bg = varCouleur.get())
-        self.__colbut       = ColorButton(self._frameGeneral, bg = self.getSchedulable().getColor())
+        self.__colbut       = ColorButton(self._frameGeneral, bg = self._getSchedulable().getColor())
         self.__lbDesc       = Label(      self._frameGeneral, text = "Description :")
         self.__textDesc     = Text(       self._frameGeneral, wrap = "word", height = 3, width = 30)
-        self.__textDesc.insert(END, self.getSchedulable().getDescription()) # Car on peut pas mettre de variable
+        self.__textDesc.insert(END, self._getSchedulable().getDescription()) # Car on peut pas mettre de variable
         self.__sep = Separator(           self._frameGeneral, orient = HORIZONTAL)
 
         # Attributs avancées :
@@ -73,12 +73,29 @@ class AbstractSchedulableParametre(Notebook):
     # Getters : #
     #############
     ""
-    def getSchedulable(self):
+    def _getSchedulable(self):
         """
         Getter pour le schedulable
         @return <AbstractSchedulableObject> l'objet en question
         """
         return self.__schedulable
+
+    def _getSchedulableWithID(self, id):
+        """
+        Fonction embarquée qui recherche la tache lié à l'id
+        Pour l'instant seule les task ont un UUID
+        @param id : <str> id de la tache qu'on cherche
+        @return <task> recherché, None si non trouvé
+        """
+        from schedulable.task.Task import Task
+        for t in self._getSchedulable().getPeriode().getPrimitivesSchedulables():
+            if isinstance(t, Task):
+                if id == t.getUniqueID():
+                    return t
+                elif t.isContainer():
+                    for st in t.getSubTasks():
+                        if st.getUniqueID() == id:
+                            return st
 
     ""
     #############
@@ -93,8 +110,8 @@ class AbstractSchedulableParametre(Notebook):
         @change color
         @change description
         """
-        self.getSchedulable().setNom(            self.__varNom.get())
-        self.getSchedulable().setPeriodeWithName(self.__varPeriode.get())
-        #self.getSchedulable().setColor(varCouleur.get())
-        self.getSchedulable().setColor(         self.__colbut.get())
-        self.getSchedulable().setDescription(   self.__textDesc.get("0.0", END)[:-1]) # [:-1] sinon il y a les retours à la ligne
+        self._getSchedulable().setNom(            self.__varNom.get())
+        self._getSchedulable().setPeriodeWithName(self.__varPeriode.get())
+        #self._getSchedulable().setColor(varCouleur.get())
+        self._getSchedulable().setColor(         self.__colbut.get())
+        self._getSchedulable().setDescription(   self.__textDesc.get("0.0", END)[:-1]) # [:-1] sinon il y a les retours à la ligne

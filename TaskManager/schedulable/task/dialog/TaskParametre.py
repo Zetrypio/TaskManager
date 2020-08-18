@@ -45,14 +45,14 @@ class TaskParametre(AbstractSchedulableParametre):
 
 
         # Affectation des variables
-        self.varDebut = self.getSchedulable().getDebut()
-        self.varFin = self.getSchedulable().getFin()
-        self.varDuree = self.getSchedulable().getDuree()
+        self.varDebut = self._getSchedulable().getDebut()
+        self.varFin = self._getSchedulable().getFin()
+        self.varDuree = self._getSchedulable().getDuree()
         self.varJour.set(self.varDuree.days)
         self.varHour.set(self.varDuree.seconds//3600)
         self.varMin.set(self.varDuree.seconds//60%60)
         self.varNbRep.set(8)
-        self.varRepTimedelta = self.getSchedulable().getRep() if self.getSchedulable().getRep() is not None else datetime.timedelta()
+        self.varRepTimedelta = self._getSchedulable().getRep() if self._getSchedulable().getRep() is not None else datetime.timedelta()
         self.varRep = self.varRepTimedelta.seconds//3600 if self.varRepTimedelta.days == 0 else self.varRepTimedelta.days
         if self.varRep == 0: # ici les heures valent 0
             self.varUnitRep.set("jours")
@@ -62,8 +62,8 @@ class TaskParametre(AbstractSchedulableParametre):
             self.varUnitRep.set("semaines")
         else:
             self.varUnitRep.set("jours")
-        self.varID.set(self.getSchedulable().getUniqueID())
-        self.varDone.set(self.getSchedulable().isDone())
+        self.varID.set(self._getSchedulable().getUniqueID())
+        self.varDone.set(self._getSchedulable().isDone())
 
 
         ## Attributs généraux
@@ -93,17 +93,17 @@ class TaskParametre(AbstractSchedulableParametre):
         self.lbId = Label(           self._frameAdvanced, text = "ID :")
         self.entryId = Entry(        self._frameAdvanced, textvariable = self.varID, state = DISABLED)
         self.lbSubtask = Label(      self._frameAdvanced, text = "Sous-tâches :")
-        self.lbListSub = Label(      self._frameAdvanced, text = self.__getListTask(self.getSchedulable().getSubTasks()) if self.getSchedulable().isContainer() else "Tache non conteneur", anchor = "nw")
+        self.lbListSub = Label(      self._frameAdvanced, text = self.__getListTask(self._getSchedulable().getSubTasks()) if self._getSchedulable().isContainer() else "Tache non conteneur", anchor = "nw")
         self.lbDepces = Label(       self._frameAdvanced, text = "Dépendances :")
-        self.lbListDepces = Listbox( self._frameAdvanced, listvariable = self.__getListTask(self.getSchedulable().getDependances(), StringV = True), selectmode = "single", height = len(self.getSchedulable().getDependances()) if len(self.getSchedulable().getDependances()) > 0 else 1 )
+        self.lbListDepces = Listbox( self._frameAdvanced, listvariable = self.__getListTask(self._getSchedulable().getDependances(), StringV = True), selectmode = "single", height = len(self._getSchedulable().getDependances()) if len(self._getSchedulable().getDependances()) > 0 else 1 )
         self.btnSupprDepces = Button(self._frameAdvanced, text = "Supprimer", command = lambda : self.__supprimeLien("depces"))
         self.lbDeptes = Label(       self._frameAdvanced, text = "Dépendantes :")
-        self.lbListDeptes = Listbox( self._frameAdvanced, listvariable = self.__getListTask(self.getSchedulable().getDependantes(), StringV = True), selectmode = "single", height = len(self.getSchedulable().getDependantes()) if len(self.getSchedulable().getDependantes()) > 0 else 1 )
+        self.lbListDeptes = Listbox( self._frameAdvanced, listvariable = self.__getListTask(self._getSchedulable().getDependantes(), StringV = True), selectmode = "single", height = len(self._getSchedulable().getDependantes()) if len(self._getSchedulable().getDependantes()) > 0 else 1 )
         self.btnSupprDeptes = Button(self._frameAdvanced, text = "Supprimer", command = lambda : self.__supprimeLien("deptes"))
         self.lbDone = Label(         self._frameAdvanced, text = "Fait :")
         self.cbDone = Checkbutton(   self._frameAdvanced, variable = self.varDone)
         self.lbParent = Label(       self._frameAdvanced, text = "Parent :")
-        self.lbResultParent = Label( self._frameAdvanced, text = self.getSchedulable().getParent() if self.getSchedulable().getParent() else "")
+        self.lbResultParent = Label( self._frameAdvanced, text = self._getSchedulable().getParent() if self._getSchedulable().getParent() else "")
 
 
 
@@ -157,13 +157,13 @@ class TaskParametre(AbstractSchedulableParametre):
         # Géré par le parent : nom, période, couleur, desc
         super().onClose()
 
-        self.getSchedulable().setDebut(         self.varDebut, change = "duree")
-        self.getSchedulable().setDuree(datetime.timedelta(days = self.varJour.get(), hours = self.varHour.get(), minutes = self.varMin.get()))
-        #self.getSchedulable().setRep # TODO
-        self.getSchedulable().setDone(          self.varDone.get())
+        self._getSchedulable().setDebut(         self.varDebut, change = "duree")
+        self._getSchedulable().setDuree(datetime.timedelta(days = self.varJour.get(), hours = self.varHour.get(), minutes = self.varMin.get()))
+        #self._getSchedulable().setRep # TODO
+        self._getSchedulable().setDone(          self.varDone.get())
 
-        self.getSchedulable().getApplication().getTaskEditor().redessiner()
-        self.getSchedulable().getApplication().getDonneeCalendrier().updateColor()
+        self._getSchedulable().getApplication().getTaskEditor().redessiner()
+        self._getSchedulable().getApplication().getDonneeCalendrier().updateColor()
         return
 
     def __askDebut(self):
@@ -230,41 +230,24 @@ class TaskParametre(AbstractSchedulableParametre):
         Fonction qui supprime un lien
         @param mode : <str> sert a savoir si c'est dépendances ou dépendantes
         """
-        from schedulable.task.Task import Task
-        def chercheTask(id):
-            """
-            Fonction embarquée qui recherche la tache lié à l'id
-            Pour l'instant seule les task ont un UUID
-            @param id : <str> id de la tache qu'on cherche
-            @param p  : <periode> celle qui contient la tache
-            @return <task> recherché, None si non trouvé
-            """
-            for t in self.getSchedulable().getPeriode().getPrimitivesSchedulables():
-                if isinstance(t, Task):
-                    if id == t.getUniqueID():
-                        return t
-                    elif t.isContainer():
-                        for st in t.getSubTasks():
-                            if st.getUniqueID() == id:
-                                return st
         if mode == "depces":
             t = self.lbListDepces.get(ACTIVE)
             id = t.split("ID")[-1]
             id = id[id.rfind(" ")+1:]
-            depces = chercheTask(id)
-            deptes = self.getSchedulable()
+            depces = self._getSchedulableWithID(id)
+            deptes = self._getSchedulable()
         elif mode == "deptes":
             t = self.lbListDeptes.get(ACTIVE)
             id = t.split("ID")[-1]
             id = id[id.rfind(" ")+1:]
-            deptes = chercheTask(id)
-            depces = self.getSchedulable()
+            deptes = self._getSchedulableWithID(id)
+            depces = self._getSchedulable()
         else:
             return
         # On retire la dépendances
         deptes.removeDependance(depces)
         # On met à jour l'affichage
         if mode == "depces":
-            self.lbListDepces.config(listvariable = self.__getListTask(self.getSchedulable().getDependances(), StringV = True))
+            self.lbListDepces.config(listvariable = self.__getListTask(self._getSchedulable().getDependances(), StringV = True))
         elif mode == "deptes":
-            self.lbListDeptes.config(listvariable = self.__getListTask(self.getSchedulable().getDependantes(), StringV = True))
+            self.lbListDeptes.config(listvariable = self.__getListTask(self._getSchedulable().getDependantes(), StringV = True))
