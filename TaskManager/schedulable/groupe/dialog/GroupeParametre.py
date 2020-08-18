@@ -4,9 +4,11 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.ColorButton import *
+from ...AbstractSchedulableParametre import *
 
 
-class GroupeParametre(Notebook):
+
+class GroupeParametre(AbstractSchedulableParametre):
     """
     Notebook qui contient tous les paramètres du groupe
     fournis dans le constructeur.
@@ -17,5 +19,4 @@ class GroupeParametre(Notebook):
         @param master : <tkinter.frame>
         @param groupe   : <Groupe> ceux qui sont à afficher
         """
-        super().__init__(master, **kw)
-        self.groupe = groupe
+        super().__init__(master, groupe, **kw)
