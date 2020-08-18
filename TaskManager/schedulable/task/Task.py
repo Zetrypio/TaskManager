@@ -280,9 +280,9 @@ class Task(AbstractSchedulableObject):
             instance = self.copy()
             count = self.__nbrep
             while count > 0 and instance.getDebut().date() < self.getPeriode().getFin():
+                yield from addRepartition(instance)
                 instance.setDebut(instance.getDebut() + instance.__rep)
                 count -= 1
-                yield from addRepartition(instance)
         else:
             yield from addRepartition(self)
 
