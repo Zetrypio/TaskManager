@@ -24,6 +24,11 @@ class TaskParametre(AbstractSchedulableParametre):
         """
         super().__init__(master, task, **kw)
 
+        if task.getParent():
+            # page du parent
+            self.__frameSchedu = TaskParametre(self, task.getParent())
+            super().add(self.__frameSchedu, text = "Parent")
+
         # Variable modifiable
         """ Géré par le parent
         self.varNom = StringVar()
@@ -194,10 +199,12 @@ class TaskParametre(AbstractSchedulableParametre):
         """
         Permet de mettre à jour les widgets de durée de tâche.
         """
-        ecart = self.varFin - self.varDebut
-        self.varJour.set(ecart.days)
-        self.varHour.set(ecart.seconds//3600)
-        self.varMin.set(ecart.seconds//60%60)
+        try:
+            ecart = self.varFin - self.varDebut
+            self.varJour.set(ecart.days)
+            self.varHour.set(ecart.seconds//3600)
+            self.varMin.set(ecart.seconds//60%60)
+        except:pass
 
     def __autoSetFin(self):
         """
