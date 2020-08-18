@@ -7,6 +7,7 @@ import tkinter.messagebox
 
 from preferences.themes.themeLoader import *
 from ..AbstractPage import *
+from util.importPIL import getImage
 from util.widgets.ColorButton import *
 from util.widgets.Dialog import askstring, askyesnowarning
 
@@ -62,7 +63,8 @@ class PageTheme(AbstractPage):
         self.__varTheme = StringVar()
         self._listData.append([self.__varTheme, "theme", "default"])
         self.__cbRealTheme = Combobox(self._mFrame, value = getThemes(), textvariable = self.__varTheme)
-        self.__cbRealTheme.bind("<<ComboboxSelected>>", lambda e = None : self.prevent())
+        self.__cbRealTheme.bind("<<ComboboxSelected>>", lambda e = None : self.prevent(), add=1)
+        self.__cbRealTheme.bind("<<ComboboxSelected>>", lambda e = None : self.apercuTheme(), add=1)
         # Text mettant en garde sur l'utilisation de certains thèmes
         self.__varPerf = StringVar()
         self.__lbPerf = Label(self._mFrame, textvariable = self.__varPerf, anchor = W)
@@ -73,6 +75,9 @@ class PageTheme(AbstractPage):
         self._addDataNeedRestart([self.__varTodayColor, "today's color", "#ffffa0"])
         self.__colButToday = ColorButton(master = self._mFrame, command = self.updateTodayColor)
 
+        # Pré-aperçu des thèmes :
+        self.__frameApercuTheme = LabelFrame(self._mFrame, text = "Aperçu")
+        self.__imageApercuTheme = Label(self.__frameApercuTheme)
 
         ## Affichage
         self.__caseAdaptTexteTache.grid(row = 0, column = 0, columnspan = 2)
@@ -81,12 +86,14 @@ class PageTheme(AbstractPage):
         self.__lbPerf.grid(row = 2, column = 0, sticky = "w")
         self.__lbTodayColor.grid(row = 3, column = 0, sticky = "w")
         self.__colButToday.grid(row = 3, column = 1, sticky = "w")
-
+        self.__frameApercuTheme.grid(row = 4, column = 0, columnspan = 2, sticky = "w")
+        self.__imageApercuTheme.pack(expand = YES, fill = BOTH)
 
         # Final
         self._loadDataFile() # Pour les prefs standards
         self.__colButToday.config(bg = self.__varTodayColor.get())
         themeUse(self.tk, self.__varTheme.get(), self, self.getApplication())
+        self.apercuTheme()
 
     ""
     #############
@@ -111,6 +118,14 @@ class PageTheme(AbstractPage):
             self.__varPerf.set("Ce thème affecte légèrement les performance de l'application")
         else :
             self.__varPerf.set("")
+
+    def apercuTheme(self):
+        try:
+            self.__imageApercuTheme.config(image = getImage("Ressources/textures/themes/"+self.__varTheme.get()+".png"))
+        except:
+            self.__imageApercuTheme._report_exception()
+            self.__imageApercuTheme.config(image = None, text = "Impossible de charger l'aperçu du thème.")
+            
 
     def appliqueEffet(self, application):
         # Si on a changé le thème
