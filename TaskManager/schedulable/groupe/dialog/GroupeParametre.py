@@ -23,7 +23,7 @@ class GroupeParametre(AbstractSchedulableParametre):
 
         # page des schedulables in
         self.__frameSchedu = Frame(self)
-        super().add(self.__frameSchedu, text = "Taches")
+        super().add(self.__frameSchedu, text = "Tâches")
 
         # Initialisation des variables
         self.__listParamTask = [] # Liste des TaskParametres dont il faudra appeler onClose
