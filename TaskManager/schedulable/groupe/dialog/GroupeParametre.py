@@ -27,16 +27,37 @@ class GroupeParametre(AbstractSchedulableParametre):
 
         # Initialisation des variables
         self.__listParamTask = [] # Liste des TaskParametres dont il faudra appeler onClose
+        self.__varNbTask = IntVar()
+        self.__varListTasks = StringVar()
+
         # Affectation des variables
+        self.__varNbTask.set(len(self.getSchedulable().getListTasks()))
+        self.__varListTasks.set([(str(s) + "   ID : " + s.getUniqueID()) for s in self.getSchedulable().getListTasks()])
+
+
         # Attributs généraux
+        self.__lbTaskNb = Label(self._frameGeneral, text = "Nombre de taches :")
+        self.__lbResultTaskNb = Label(self._frameGeneral, textvariable = self.__varNbTask)
+        self.__lbTask = Label(self._frameGeneral, text = "Taches :")
+        self.__lbListTask = Listbox(self._frameGeneral, listvariable = self.__varListTasks, height = len(self.getSchedulable().getListTasks()))
+
         # Attributs avancées
+
         # Attributs taches
         self.__cbSchedu = Combobox(self.__frameSchedu, value = [s for s in self.getSchedulable().getListTasks()], state = "readonly")
         self.__cbSchedu.bind("<<ComboboxSelected>>", self.__updateTask)
 
         ## Affichage
-        # Taches
+        # Générale (grid Obligé)
+        self.__lbTaskNb.grid(row = 6, column = 0, sticky = "e")
+        self.__lbResultTaskNb.grid(row = 6, column = 1)
+        self.__lbTask.grid(row = 7, column = 0, sticky = "e")
+        self.__lbListTask.grid(row = 7, column = 1, sticky = NSEW)
+        # Taches (libre)
         self.__cbSchedu.pack(side = TOP, fill = X, expand = NO)
+
+        # Final
+        self._frameGeneral.columnconfigure(1, weight = 1)
 
     def __updateTask(self, e = None):
         """
