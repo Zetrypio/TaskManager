@@ -153,6 +153,9 @@ class PeriodAdder(Frame):
         nom   = self.champNom.get().strip()
         debut = self.debut + datetime.timedelta()       # Faire une copie de la date
         fin   = self.fin  +  datetime.timedelta()       # Ici aussi
+        if debut > fin:
+            showerror("Durée incorrect", "Vous ne pouvez pas faire une période avec une durée négative")
+            return
         desc  = self.champDescription.get("0.0", END)   # Du début jusqu'à la fin !
         color = self.boutonColor.get()
 
@@ -164,6 +167,6 @@ class PeriodAdder(Frame):
         Méthode exécutée quand on appuie sur le bouton validé, pour créer la nouvelle période et l'ajouter au PeriodManager.
         """
         periode = self.createPeriode()
-        self.periodManager.ajouter(periode)
+        self.periodManager.ajouter(periode) if periode is not None else None
 
 
