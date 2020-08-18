@@ -379,7 +379,13 @@ class Periode(ITaskEditorDisplayableObject):
         Permet d'enlever un objet planifiable de la liste des schedulables primitifs.
         @param obj: L'objet à enlever.
         """
-        self.__primitivesSchedulables.remove(schedulable)
+        if schedulable in self.getPrimitivesSchedulables():
+            self.__primitivesSchedulables.remove(schedulable)
+        else: # On gere aussi les taches D&D
+            for t in self.getPrimitivesSchedulables():
+                if isinstance(t, Task) and t.isContainer() and schedulable in t.getSubTasks():
+                    t.removeSubTask(schedulable)
+                    break
 
     def resetInstanciatedSchedulables(self):
         """

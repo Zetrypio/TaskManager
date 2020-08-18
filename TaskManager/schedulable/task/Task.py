@@ -46,6 +46,7 @@ class Task(AbstractSchedulableObject):
         self.__duree = (duree + datetime.timedelta()) if duree is not None else None
         
         # Informations des répétitions :
+
         self.__rep   = rep    # répétition
         self.__nbrep = nbrep  # nombre de répétitions
         
