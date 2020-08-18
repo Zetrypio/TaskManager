@@ -80,11 +80,9 @@ class GroupeParametre(AbstractSchedulableParametre):
         if strTask is None:
             return
         # On cherche l'ID
-        print("pre Str", strTask)
         id = strTask.split("ID")[-1]
         id = id[id.rfind(" ")+1:]
         # On retire le schedulable
-        print('tout :', strTask, id, self.__varComboLT.get())
         task = [s for s in self._getSchedulable().getListTasks() if s.getUniqueID() == id][0]
         self._getSchedulable().removeTask(task)
         self._getSchedulable().getPeriode().addPrimitiveSchedulable(task)
@@ -104,9 +102,9 @@ class GroupeParametre(AbstractSchedulableParametre):
         """
         t = [task for task in self._getSchedulable().getListTasks() if (str(task) + "   ID : " + task.getUniqueID()) == self.__cbSchedu.get()]
         # Si rien de correspond on grid_forget et on annule tout (c'est si on retire la tache en question)
-        if t == []:
-            self.__listParamTask[-1].grid_forget() if  self.__listParamTask != [] else None
-            self.__listParamTask.pop(-1)
+        if t == []: # ne pas mettre if self.__listParamTask != []
+            self.__listParamTask[-1].grid_forget() if self.__listParamTask != [] else None
+            self.__listParamTask.pop(-1) if  self.__listParamTask != [] else None
             return
         else :
             t = t[0]
