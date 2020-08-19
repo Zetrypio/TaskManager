@@ -408,7 +408,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
-    def onIntervertir(self): # Todo ?
+    def onIntervertir(self):
         pass # Juste pour qu'elle existe # Sera considérablement changé
 
     def removeSchedulable(self, obj):
