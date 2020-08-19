@@ -176,53 +176,67 @@ class Application(Frame):
         """
         Permet de charger les périodes enregistrées dans periode.json
         """
-        ## Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
-        if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
-            return
-
-        ## Chargement du fichier
-        with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
-            data = load(f)
-
-        ## Création des périodes
-        for periode in data["periodes"]:
-            dataPeriode = data["periodes"][periode]
-            # On crée la période
-            p = Periode.load(dataPeriode, self.getPeriodManager())
-            # On l'ajoute
-            self.getPeriodManager().ajouter(p)
-
-        ## On met en place une période active adéquate :
-        # Si la value existe :
-        if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
-            # Si on doit charger la dernière période
-            lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
-            self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
-        else:
-            # On va faire un code qui prend la période dont le début se rapproche le plus d'aujourd'hui
-            # et dont la fin est après aujourd'hui
-            # Sinon la période dont le début se trouve le plus proche d'aujourd'hui
-            # Sinon la période dont la fin se trouve la plus proche d'aujourd'hui
-            # Else c'est la première période chargé
-            now = datetime.date.today()
-            listPeriodeOK = [] # Pour le else
-            # On cherche ce qu'on peut faire
-            if (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() < now and p.getFin() > now]) != []:
-                listPeriodeOK.sort(key = lambda p : p.getDebut())
-            elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() > now]) != []:
-                listPeriodeOK.sort(key = lambda p : p.getDebut())
-            elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getFin() < now]) != []:
-                listPeriodeOK.sort(key = lambda p : p.getFin(), reverse = True)
-
-            # On applique s'il y a quelque chose dans listPeriodeOK
-            if listPeriodeOK != []:
-                self.getPeriodManager().setActivePeriode(listPeriodeOK[0])
-            else:
-                # Enfaite la première période que l'on rajoute est automatiquement la période active
-                # Donc si on a rien trouvé plus haut, on a rien à faire
-                pass
-        ## On active une période.
-        self.getDonneeCalendrier().switchPeriode()
+        # On met le titre :
+        try:
+            titre = self.winfo_toplevel().title()
+            self.winfo_toplevel().title(titre + " - chargement")
+        except:
+            pass
+        try:
+            ## Si le fichier n'existe pas, on ne fait rien. Il sera créé lors de la prochaine sauvegarde.
+            if not os.path.exists(self.getData().getProfilFolder() + "periodes.json"):
+                return
+    
+            ## Chargement du fichier
+            with open(self.getData().getProfilFolder() + "periodes.json", "r", encoding="utf-8") as f:
+                data = load(f)
+    
+            ## Création des périodes
+            for periode in data["periodes"]:
+                dataPeriode = data["periodes"][periode]
+                # On crée la période
+                p = Periode.load(dataPeriode, self.getPeriodManager())
+                # On l'ajoute
+                self.getPeriodManager().ajouter(p)
+    
+            ## On met en place une période active adéquate :
+            # Si la value existe :
+            if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+                # Si on doit charger la dernière période
+                lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
+                self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
+            else: # Sinon :
+                # On va faire un code qui prend la période dont le début se rapproche le plus d'aujourd'hui
+                # et dont la fin est après aujourd'hui
+                # Sinon la période dont le début se trouve le plus proche d'aujourd'hui
+                # Sinon la période dont la fin se trouve la plus proche d'aujourd'hui
+                # Else c'est la première période chargé
+                now = datetime.date.today()
+                listPeriodeOK = [] # Pour le else
+                # On cherche ce qu'on peut faire
+                if (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() < now and p.getFin() > now]) != []:
+                    listPeriodeOK.sort(key = lambda p : p.getDebut())
+                elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() > now]) != []:
+                    listPeriodeOK.sort(key = lambda p : p.getDebut())
+                elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getFin() < now]) != []:
+                    listPeriodeOK.sort(key = lambda p : p.getFin(), reverse = True)
+    
+                # On applique s'il y a quelque chose dans listPeriodeOK
+                if listPeriodeOK != []:
+                    self.getPeriodManager().setActivePeriode(listPeriodeOK[0])
+                else:
+                    # Enfaite la première période que l'on rajoute est automatiquement la période active
+                    # Donc si on a rien trouvé plus haut, on a rien à faire
+                    pass
+            ## On active une période.
+            self.getDonneeCalendrier().switchPeriode()
+        except Exception as e:
+            showerror("Erreur", "Erreur lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+        # On enlève le titre :
+        try:
+            self.winfo_toplevel().title(titre)
+        except:
+            pass
 
     def save(self):
         """
