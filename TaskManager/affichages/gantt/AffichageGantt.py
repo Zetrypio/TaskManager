@@ -284,10 +284,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Va changer :
         #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
 
+        if force is True:
+            self.listeDisplayableItem = [i for i in self.listeDisplayableItem if isinstance(i, ObjetGantt)] # efface les liens de la liste.
+
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)
             # Si le displayable a une dépendance
-            if isinstance(displayable, ObjetGantt) and isinstance(displayable.getSchedulable(), Task) and displayable.getSchedulable().getDependantes() is not []:
+            if isinstance(displayable, ObjetGantt) and displayable.getSchedulable().acceptLink() and displayable.getSchedulable().getDependantes():
                 for dep in displayable.getSchedulable().getDependantes():
                     # Recherche des liens
                     if not self.__getLien(displayable.getSchedulable(), dep):

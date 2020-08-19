@@ -292,7 +292,7 @@ class CalendarZone(Frame):
                         addApres = timeApres.hour - heureFin.hour
                         self.gestionHeure(addApres, "Apres")
 
-        self.getDonneeCalendrier().updateAffichage()
+        self.getDonneeCalendrier().updateAffichage(True)
 
     def decalerJour(self):
         """
@@ -375,7 +375,7 @@ class CalendarZone(Frame):
                     elif choix =="changer":
                         tache.setPeriode(periode)
 
-        self.getDonneeCalendrier().updateAffichage()
+        self.getDonneeCalendrier().updateAffichage(True)
 
     def degrouper(self):
         """

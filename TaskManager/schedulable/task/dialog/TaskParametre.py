@@ -168,7 +168,7 @@ class TaskParametre(AbstractSchedulableParametre):
         self._getSchedulable().setDone(          self.varDone.get())
 
         self._getSchedulable().getApplication().getTaskEditor().redessiner()
-        self._getSchedulable().getApplication().getDonneeCalendrier().updateColor()
+        self._getSchedulable().getApplication().getDonneeCalendrier().updateAffichage(True) # Le True pour les liens de l'issue 92
         return
 
     def __askDebut(self):
