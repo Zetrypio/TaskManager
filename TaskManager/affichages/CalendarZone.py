@@ -387,27 +387,18 @@ class CalendarZone(Frame):
         # Petite vérification :
         if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
             return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
-        print("b", schedulables, set(schedulables))
         # Pour chaque groupes sélectionnés :
         for groupe in set(schedulables):
-            print(groupe)
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
                 if t in groupe.getSelectedTask():
-                    periode.addPrimitiveSchedulable(t)
-                    t.instantiate()
-                    groupe.removeTask(t)
+                    groupe.removeTask(t, testDelete = True)
 
-            # Suppression du groupe , s'il n'y a plus qu'une ou 0 tache :
-            if len(groupe.getListTasks()) <= 1:
-                if groupe.getListTasks() != set():
-                    lastTache = list(groupe.getListTasks())[-1]
-                    periode.addPrimitiveSchedulable(lastTache)
-                    lastTache.instantiate()
-                    groupe.removeTask(lastTache)
-
-                periode.removeInstanciatedSchedulable(groupe)
-                periode.removePrimitiveSchedulable(groupe)
+            # Suppression du groupe , s'il n'y a plus de tache :
+            if len(groupe.getListTasks()) == 1:
+                if askyesnowarning(title = "Édition du groupe", message = 'Le groupe "%s" ne possède plus qu\'une tache :\n\t- %s\nVoulez-vous supprimer le groupe ?'%(groupe.getNom(), list(groupe.getListTasks())[0].getNom())):
+                    groupe.removeTask(list(groupe.getListTasks())[0])
+                    groupe.delete()
 
         # Mise à jour de l'affichage qu'à la fin :
         self.getApplication().getTaskEditor().redessiner()
@@ -484,18 +475,6 @@ class CalendarZone(Frame):
         
         for t in taches:
             groupe.addTask(t)
-        
-        # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
-        for t in taches:
-            periode.removeInstanciatedSchedulable(t)
-            try:
-                periode.removePrimitiveSchedulable(t)
-            except:
-                for ta in periode.getPrimitivesSchedulables():
-                    if ta.isContainer() and ta.getSubTasks() is not []:
-                        if t in ta.getSubTasks():
-                            ta.removeSubTask(t)
-                            break
 
         if ajout:
             periode.addPrimitiveSchedulable(groupe)

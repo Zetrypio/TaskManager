@@ -50,8 +50,9 @@ class Task(AbstractSchedulableObject):
         self.__rep   = rep    # répétition
         self.__nbrep = nbrep  # nombre de répétitions
         
-        # Parent : L'utilise-t-on pour les groupes aussi ?
+        # Parent :
         self.__parent = parent
+        self.__groupe = None # Toujours au début
 
         # Est-ce que la tâche est faite ?
         self.__done = done or False
@@ -175,7 +176,7 @@ class Task(AbstractSchedulableObject):
             rmenu.add_separator()
         # Dans tout les cas :
         rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditTask(self))
-        rmenu.add_command(label = "Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
+        rmenu.add_command(label = "Supprimer %s"%self, command=lambda: self.delete())
         return True
 
     ""
@@ -222,22 +223,23 @@ class Task(AbstractSchedulableObject):
         # On retourne la copie :
         return t
 
-    def delete(self, app):
+    def delete(self):
         """
         Permet de supprimer définitivement cette tâche.
-        @param app: Application(), nécessaire pour la suppression d'une tâche.
         """
-        if self.__parent is None and not self.isContainer():
-            app.getTaskEditor().supprimer(self)
-            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+        if self.hasGroupe():
+            self.getGroupe().removeTask(self, testDelete = True)
+        elif self.__parent is None and not self.isContainer():
+            self.getApplication().getTaskEditor().supprimer(self)
+            self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
         elif self.isContainer():
-            app.getTaskEditor().supprimer(self)
+            self.getApplication().getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
+                self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
-            app.getTaskEditor().redessiner()
-            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getApplication().getTaskEditor().redessiner()
+            self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
 
     def getRawRepartition(self, displayedCalendar):
         """
@@ -488,6 +490,51 @@ class Task(AbstractSchedulableObject):
         return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
 
     ""
+    ############
+    # Groupe : #
+    ############
+    ""
+    def hasGroupe(self):
+        """
+        Méthode qui retourne si oui ou non la tache à un groupe
+        @return : <bool> True -> il y a un groupe | False -> pas de groupe
+        """
+        return self.getGroupe() is not None
+
+    def getGroupe(self):
+        """
+        Méthode qui retourne le groupe on None s'il n'y en a pas
+        @return <Groupe> ou None
+        """
+        return self.__groupe
+
+    def setGroupe(self, groupe):
+        """
+        Méthode qui met en place le groupe et qui va retirer la tache des
+        calendriers et taskEditor
+        """
+        self.__groupe = groupe
+        # On se retire des insctanciated
+        self.getPeriode().removeInstanciatedSchedulable(self) if self in self.getPeriode().getInstanciatedSchedulables() else None
+        # On retire des primitive
+        if self.getParent() is None:
+            self.getPeriode().removePrimitiveSchedulable(self)
+        else:
+            for t in self.getPeriode().getPrimitivesSchedulables():
+                if t.isContainer() and t.getSubTasks() != [] and self in t.getSubTasks():
+                    t.removeSubTask(self)
+                    break
+
+    def removeGroupe(self):
+        """
+        Méthode qui permet de retirer le groupe actuelle de la tache
+        et de la ré-instancier dans la période
+        """
+        self.getPeriode().addPrimitiveSchedulable(self)
+        self.instantiate()
+        self.__groupe = None
+
+    ""
     ####################
     # Autre méthodes : #
     ####################
@@ -555,7 +602,7 @@ class Task(AbstractSchedulableObject):
         
         # On s'enlève du TaskEditor, mais on ne se supprime pas
         # attention. On va juste se réajouter ailleurs...
-#        taskEditor.supprimer(self)
+       #taskEditor.supprimer(self)
         self.getPeriode().removePrimitiveSchedulable(self) # N'enlève pas des instanciées.
         
         # On crée une tâche qui nous ressemble, mais dont le début
@@ -568,7 +615,7 @@ class Task(AbstractSchedulableObject):
         
         # Le fait de rajouter cette nouvelle tâche va nous rajouter
         # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
-#        taskEditor.ajouter(newTask)
+        #taskEditor.ajouter(newTask)
         self.getPeriode().addPrimitiveSchedulable(newTask)
         taskEditor.redessiner()
 
