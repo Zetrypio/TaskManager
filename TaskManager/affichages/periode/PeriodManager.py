@@ -132,6 +132,7 @@ class PeriodManager:
 
         # On met le combobox des périodes à jour
         self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
+        self.getApplication().listKey.append(periode.getUniqueID())
     
     def supprimer(self, periode):
         """
@@ -146,6 +147,7 @@ class PeriodManager:
                 self.setActivePeriode(self.periodes[0]) # TODO : Trouver la première période actuelle, ou prochaine le cas échéant.
             else:
                 self.setActivePeriode(None)
+        self.getApplication().listKey.remove(periode.getUniqueID())
 
     ""
     ######################################################
