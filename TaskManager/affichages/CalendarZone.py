@@ -310,9 +310,15 @@ class CalendarZone(Frame):
         debut = self.getPeriodeActive().getDebut() # Date de début
         fin   = self.getPeriodeActive().getFin()   # Date de fin
 
+        # Les variables ci-dessous calculent le nombre max de jours pour le décalage
+        # si il y a un bloquage dans un sens ou dans l'autre. Cependant, quand on
+        # bloque, on peut bouger jusqu'à ce que la fin de la tâche la plus tôt
+        # atteigne la fin de la période ; ou que le début de la tâche la plus tard
+        # atteigne le début de la période.
+        jourRetireBloque = (last.getDebut().date() - debut).days
+        jourAjoutBloque  = (fin - first.getFin().date()).days
 
-        jourRetireBloque = (first.getFin().date() - debut).days
-        jourAjoutBloque = (fin - last.getDebut().date()).days
+        # Appel du dialogue à l'utilisateur :
         nb, pos, param = askDecalJour(debut, fin, jourRetireBloque, jourAjoutBloque)
 
         if nb is None or pos is None or param is None or nb == 0:
