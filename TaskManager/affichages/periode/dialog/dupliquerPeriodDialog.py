@@ -29,6 +29,7 @@ def askDupliquerPeriode(periodManager, taskEditor, from_ = None):
             newPeriode.setFin(periode.getFin())
             newPeriode.setDescription(periode.getDescription())
             newPeriode.setColor(periode.getColor())
+            newPeriode.setUniqueID()
             periodManager.ajouter(newPeriode)
             
 

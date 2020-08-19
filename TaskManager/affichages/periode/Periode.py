@@ -39,7 +39,9 @@ class Periode(ITaskEditorDisplayableObject):
         self.__primitivesSchedulables = []   # Liste des objets primitifs | natifs
         self.__instanciatedSchedulables = [] # Liste des objets instanciés
 
-        self.uniqueID = self.setUniqueID() if id is None else id# Pour le calendrier des périodes sinon ça bug
+        self.uniqueID = id # Pour le calendrier des périodes sinon ça bug
+        if id is None:
+            self.setUniqueID()
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
@@ -304,23 +306,11 @@ class Periode(ITaskEditorDisplayableObject):
         """
         Permet d'ajouter un uniqueID à une période et de le mettre dans la liste
         qui vérifie s'il est bien unique
-        @raise AttributeError si toute les possibilités ont été faites
         """
-        id = str(self.__init__)[-12:-2]
-        i = 0 # Stopper si on fait trop de boucles
+        ID = id(self)
         while id in self.getApplication().listKey:
-            l = list(id)
-            r = random.shuffle(l)
-            id = ''.join(r)
-            i+=1
-            if i == 30:
-                id += "htcfjgvkkjgyftcgvhbh"
-
-            if i == 100:
-                raise AttributeError
-
-        self.getApplication().listKey.append(id)
-        return id
+            ID += 1
+        self.uniqueID = str(ID)
 
     ""
     ######################
