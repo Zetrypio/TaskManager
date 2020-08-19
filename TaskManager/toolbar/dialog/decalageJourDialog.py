@@ -80,12 +80,8 @@ def askDecalJour(debut, fin, totBloque, tarBloque):
     frameJour.pack(  side = TOP, expand = YES, fill = BOTH)
     frameParametre.pack(  side = TOP, expand = YES, fill = BOTH)
 
-
-
     varRadioGestion.set("tard")
     varRadioParam.set("duree")
-
-
 
     # Active et attend (un peu comme une mainloop)
     fen.activateandwait()
@@ -111,21 +107,23 @@ def askComplicationjour(tache, periodeManager):
             combo.config(state=ACTIVE)
         else:
             combo.config(state=DISABLED)
-    fen = Dialog(title = "%s n'est pas dans la période active"%tache.nom,
+    fen = Dialog(title = "%s n'est pas dans la période active"%tache.getNom(),
         buttons = ("Ok", "Annuler"), command = onClose, exitButton = ('Ok', 'Annuler', "WM_DELETE_WINDOW"))
 
     # Binding des touches
     fen.bind_all("<Return>", lambda e: fen.execute("Ok"))
     fen.bind_all("<Escape>", lambda e: fen.execute("Annuler"))
 
-    l = Label(fen, text="La tache \"%s\" se trouve maintenant hors de la période. Que voulez-vous faire ?"%tache.nom)
+    l = Label(fen, text="La tache \"%s\" se trouve maintenant hors de la période. Que voulez-vous faire ?"%tache.getNom())
 
     frameRadio = LabelFrame(fen, text="Options")
     varRadio = StringVar()
     r1 = Radiobutton(frameRadio, text="Agrandir la période", value = "agrandir", variable = varRadio, command = stateCombobox)
-    r2 = Radiobutton(frameRadio, text="Faire de %s une tache indépendante"%tache.nom, value = "independante", variable = varRadio, command = stateCombobox)
-    r3 = Radiobutton(frameRadio, text="Supprimer %s."%tache.nom, value = "supprimer", variable = varRadio, command = stateCombobox)
-    r4 = Radiobutton(frameRadio, text="Changer la période de %s."%tache.nom, value = "changer", variable = varRadio, command = stateCombobox)
+    r2 = Radiobutton(frameRadio, text="Faire de %s une tache indépendante"%tache.getNom(), value = "independante", variable = varRadio, command = stateCombobox)
+    r3 = Radiobutton(frameRadio, text="Supprimer %s."%tache.getNom(), value = "supprimer", variable = varRadio, command = stateCombobox)
+    r4 = Radiobutton(frameRadio, text="Changer la période de %s."%tache.getNom(), value = "changer", variable = varRadio, command = stateCombobox)
+    # valeur par défaut :
+    varRadio.set("agrandir")
 
     r1.grid(sticky="w")
     r2.grid(row=1, sticky="w")
@@ -133,7 +131,7 @@ def askComplicationjour(tache, periodeManager):
     r4.grid(row=3, sticky="w")
 
     periodesExistantes = periodeManager.getPeriodes()
-    pp = Periode("", tache.getDebut().date(), tache.getFin().date(), "")
+    pp = Periode(periodeManager, "", tache.getDebut().date(), tache.getFin().date(), "")
     periodesExistantes = [p.nom for p in periodesExistantes if p.intersectWith(pp)]
     combo = Combobox(frameRadio, values = periodesExistantes)
 
