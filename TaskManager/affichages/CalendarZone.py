@@ -387,10 +387,8 @@ class CalendarZone(Frame):
         # Petite vérification :
         if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
             return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
-        print("b", schedulables, set(schedulables))
         # Pour chaque groupes sélectionnés :
         for groupe in set(schedulables):
-            print(groupe)
             # Ré-ajout des tâches qui étaient dans le groupe :
             for t in groupe.getListTasks():
                 if t in groupe.getSelectedTask():
@@ -484,18 +482,6 @@ class CalendarZone(Frame):
         
         for t in taches:
             groupe.addTask(t)
-        
-        # "Suppression" des tâches de l'affichage global étant donné qu'elles sont dans le groupe.
-        for t in taches:
-            periode.removeInstanciatedSchedulable(t)
-            try:
-                periode.removePrimitiveSchedulable(t)
-            except:
-                for ta in periode.getPrimitivesSchedulables():
-                    if ta.isContainer() and ta.getSubTasks() is not []:
-                        if t in ta.getSubTasks():
-                            ta.removeSubTask(t)
-                            break
 
         if ajout:
             periode.addPrimitiveSchedulable(groupe)
