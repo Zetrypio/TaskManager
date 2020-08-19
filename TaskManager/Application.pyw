@@ -196,8 +196,8 @@ class Application(Frame):
         # Si la value existe :
         if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
             # Si on doit charger la dernière période
-            lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")][0]
-            self.getPeriodManager().setActivePeriode(lastPeriode)
+            lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
+            self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
 
         ## On active une période.
         self.getDonneeCalendrier().switchPeriode()
