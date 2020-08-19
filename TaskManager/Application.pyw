@@ -83,7 +83,7 @@ class Application(Frame):
         self.bind_all("<<save-file>>"  , lambda e=None:self.save())
         self.bind_all("<<restart>>"    , lambda e=None:self.restart())
         self.bind_all("<<open-file>>"  , lambda e=None:self.open())
-        self.bind_all("<<quit>>"       , lambda e=None:self.quitter())
+        self.bind_all("<<quit>>"       , lambda e=None:self.quit())
 
         # Set des bindings mécanique en lien avec le bindingManager
 
