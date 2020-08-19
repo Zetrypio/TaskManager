@@ -228,19 +228,31 @@ class Application(Frame):
         """
         Fonction qui va enregistrer toutes les données
         """
-        d = {"periodes": {}}
-        for periode in self.getPeriodManager().getPeriodes():
-            d["periodes"][periode.getNom()] = periode.saveByDict()
-
-        with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
-            json.dump(d, f, indent=4) # indent pour pouvoir plus facilement lire le fichier avec nos yeux d'humains.
-
-        # Doit - on enregistrer la période active ?
-        if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
-            # Si on doit enregistrer la dernière période
-            self.getData().readFile("General", lireDef = False, lireCfg = True) # de toute il n'y a pas de def, qu'un cfg
-            self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
-            self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
+        try:
+            titre = self.winfo_toplevel().title()
+            self.winfo_toplevel().title(titre + " - sauvegarde")
+        except:
+            pass
+        try:
+            d = {"periodes": {}}
+            for periode in self.getPeriodManager().getPeriodes():
+                d["periodes"][periode.getNom()] = periode.saveByDict()
+    
+            with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
+                json.dump(d, f, indent=4) # indent pour pouvoir plus facilement lire le fichier avec nos yeux d'humains.
+    
+            # Doit - on enregistrer la période active ?
+            if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+                # Si on doit enregistrer la dernière période
+                self.getData().readFile("General", lireDef = False, lireCfg = True) # de toute il n'y a pas de def, qu'un cfg
+                self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
+                self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
+        except Exception as e:
+            showerror("Erreur", "Erreur lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+        try:
+            self.winfo_toplevel().title(titre)
+        except:
+            pass
 
     ""
     #####################
