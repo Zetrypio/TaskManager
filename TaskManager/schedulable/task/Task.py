@@ -227,17 +227,19 @@ class Task(AbstractSchedulableObject):
         """
         Permet de supprimer définitivement cette tâche.
         """
-        if self.__parent is None and not self.isContainer():
+        if self.hasGroupe():
+            self.getGroupe().removeTask(self, testDelete = True)
+        elif self.__parent is None and not self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
-            self.getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
         elif self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                self.getActivePeriode().removeInstanciatedSchedulable(t)
+                self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
             self.getApplication().getTaskEditor().redessiner()
-            self.getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
 
     def getRawRepartition(self, displayedCalendar):
         """
@@ -518,8 +520,8 @@ class Task(AbstractSchedulableObject):
         if self.getParent() is None:
             self.getPeriode().removePrimitiveSchedulable(self)
         else:
-            for t in self.getPrimitivesSchedulables():
-                if t.isContainer() and t.getSubTasks() != [] and self in t.getSubTask():
+            for t in self.getPeriode().getPrimitivesSchedulables():
+                if t.isContainer() and t.getSubTasks() != [] and self in t.getSubTasks():
                     t.removeSubTask(self)
                     break
 

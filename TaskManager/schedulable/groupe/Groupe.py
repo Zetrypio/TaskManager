@@ -161,15 +161,15 @@ class Groupe(AbstractSchedulableObject):
 
     def delete(self):
         """
-        Permet de supprimer ce groupe.
+        Permet de supprimer définitievement ce groupe et ses taches
         """
         # On comence par supprimer toutes les taches
         for tache in self.getListTasks():
             tache.delete()
-            self.removeTask(tache)
         # Et on se supprime
         self.getPeriode().removeInstanciatedSchedulable(self)
         self.getPeriode().removePrimitiveSchedulable(self)
+        self.getApplication().getTaskEditor().redessiner()
 
     def getRawRepartition(self, displayedCalendar):
         """
