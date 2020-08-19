@@ -83,7 +83,6 @@ class GroupeParametre(AbstractSchedulableParametre):
         id = strTask.split("ID")[-1]
         id = id[id.rfind(" ")+1:]
         # On retire le schedulable
-        print(id, [s.getUniqueID() for s in self._getSchedulable().getListTasks()])
         task = [s for s in self._getSchedulable().getListTasks() if s.getUniqueID() == id][0]
         self._getSchedulable().removeTask(task, testDelete = True)
         #self._getSchedulable().getPeriode().addPrimitiveSchedulable(task)
