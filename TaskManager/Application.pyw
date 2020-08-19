@@ -191,7 +191,14 @@ class Application(Frame):
             p = Periode.load(dataPeriode, self.getPeriodManager())
             # On l'ajoute
             self.getPeriodManager().ajouter(p)
-        
+
+        ## On met en place une période active adéquate :
+        # Si la value existe :
+        if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+            # Si on doit charger la dernière période
+            lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")][0]
+            self.getPeriodManager().setActivePeriode(lastPeriode)
+
         ## On active une période.
         self.getDonneeCalendrier().switchPeriode()
 
@@ -205,6 +212,13 @@ class Application(Frame):
 
         with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
             json.dump(d, f, indent=4) # indent pour pouvoir plus facilement lire le fichier avec nos yeux d'humains.
+
+        # Doit - on enregistrer la période active ?
+        if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+            # Si on doit enregistrer la dernière période
+            self.getData().readFile("General", lireDef = False, lireCfg = True) # de toute il n'y a pas de def, qu'un cfg
+            self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
+            self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
 
     ""
     #####################

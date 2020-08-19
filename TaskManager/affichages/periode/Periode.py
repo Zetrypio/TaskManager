@@ -16,7 +16,7 @@ class Periode(ITaskEditorDisplayableObject):
     """
     Classe représentant une période.
     """
-    def __init__(self, periodManager, nom, debut, fin, desc, color = "white"):
+    def __init__(self, periodManager, nom, debut, fin, desc, color = "white", id = None):
         """
         Constructeur de la période.
         @param periodManager: Gestionnaire de période.
@@ -25,6 +25,7 @@ class Periode(ITaskEditorDisplayableObject):
         @param fin: datetime.date() de fin de la période.
         @param desc: Description de la période.
         @param color = "white": Couleur d'affichage de la période.
+        @param id : <str> id de la période, si None en génère un
         """
         self.periodManager = periodManager
         self.nom = nom
@@ -38,7 +39,7 @@ class Periode(ITaskEditorDisplayableObject):
         self.__primitivesSchedulables = []   # Liste des objets primitifs | natifs
         self.__instanciatedSchedulables = [] # Liste des objets instanciés
 
-        self.uniqueID = self.setUniqueID() # Pour le calendrier des périodes sinon ça bug
+        self.uniqueID = self.setUniqueID() if id is None else id# Pour le calendrier des périodes sinon ça bug
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
@@ -74,7 +75,8 @@ class Periode(ITaskEditorDisplayableObject):
                     strToDate(data["debut"]),
                     strToDate(data["fin"]),
                     data["desc"],
-                    data["color"])
+                    data["color"],
+                    id = data["id"])
 
         ## On crée ses schedulables standards
         for dataSchedulable in data["schedulables"]:
@@ -408,6 +410,7 @@ class Periode(ITaskEditorDisplayableObject):
         @save desc  : <str> contient la description de la période
         @save color : <str> contient la couleur de la période
         @save group : <task> contient les tack du groupe
+        @save       : <int> l'id de la péridoe
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
@@ -417,5 +420,6 @@ class Periode(ITaskEditorDisplayableObject):
             "fin"             : dateToStr(self.getFin()),
             "desc"            : self.desc,
             "color"           : self.getColor(),
+            "id"              : self.getUniqueID(),
             "schedulables"    : [schedulable.saveByDict() for schedulable in self.getPrimitivesSchedulables()]
             }
