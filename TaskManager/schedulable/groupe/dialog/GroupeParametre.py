@@ -41,7 +41,7 @@ class GroupeParametre(AbstractSchedulableParametre):
         self.__lbResultTaskNb = Label(self._frameGeneral, textvariable = self.__varNbTask)
         self.__lbTask = Label(self._frameGeneral, text = "Taches :")
         self.__lbListTask = Listbox(self._frameGeneral, listvariable = self.__varListTasks, height = len(self._getSchedulable().getListTasks()), selectmode = "extended")
-        self.__btnRetireGen = Button(self._frameGeneral, text = "Retirer", command = lambda lt = self.__lbListTask.get(ACTIVE) : self.__removeTask(strTask = lt))
+        self.__btnRetireGen = Button(self._frameGeneral, text = "Retirer", command = lambda : self.__removeTask(strTask = self.__lbListTask.get(ACTIVE)))
 
         # Attributs avancées
 
@@ -83,10 +83,11 @@ class GroupeParametre(AbstractSchedulableParametre):
         id = strTask.split("ID")[-1]
         id = id[id.rfind(" ")+1:]
         # On retire le schedulable
+        print(id, [s.getUniqueID() for s in self._getSchedulable().getListTasks()])
         task = [s for s in self._getSchedulable().getListTasks() if s.getUniqueID() == id][0]
-        self._getSchedulable().removeTask(task)
-        self._getSchedulable().getPeriode().addPrimitiveSchedulable(task)
-        task.instantiate()
+        self._getSchedulable().removeTask(task, testDelete = True)
+        #self._getSchedulable().getPeriode().addPrimitiveSchedulable(task)
+        #task.instantiate()
         # On remet à jour tout le monde
         self.__cbSchedu.config(value = [(str(s) + "   ID : " + s.getUniqueID()) for s in self._getSchedulable().getListTasks()])
         self.__varComboLT.set("")

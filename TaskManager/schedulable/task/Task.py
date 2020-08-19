@@ -525,6 +525,15 @@ class Task(AbstractSchedulableObject):
                     t.removeSubTask(self)
                     break
 
+    def removeGroupe(self):
+        """
+        Méthode qui permet de retirer le groupe actuelle de la tache
+        et de la ré-instancier dans la période
+        """
+        self.getPeriode().addPrimitiveSchedulable(self)
+        self.instantiate()
+        self.__groupe = None
+
     ""
     ####################
     # Autre méthodes : #

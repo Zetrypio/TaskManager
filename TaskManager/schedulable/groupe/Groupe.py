@@ -281,6 +281,9 @@ class Groupe(AbstractSchedulableObject):
         @param testDelete : <bool> Doit-on vérifier si on veux supprimer le groupe
         """
         self.__listTasks.remove(task)
+        task.removeGroupe()
+        if testDelete and self.getListTasks() == set():
+            self.delete()
 
     def setPeriode(self, periode):
         """
