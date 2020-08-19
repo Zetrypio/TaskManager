@@ -176,7 +176,7 @@ class Task(AbstractSchedulableObject):
             rmenu.add_separator()
         # Dans tout les cas :
         rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditTask(self))
-        rmenu.add_command(label = "Supprimer %s"%self, command=lambda: self.delete(taskEditor.getApplication()))
+        rmenu.add_command(label = "Supprimer %s"%self, command=lambda: self.delete())
         return True
 
     ""
@@ -223,22 +223,21 @@ class Task(AbstractSchedulableObject):
         # On retourne la copie :
         return t
 
-    def delete(self, app):
+    def delete(self):
         """
         Permet de supprimer définitivement cette tâche.
-        @param app: Application(), nécessaire pour la suppression d'une tâche.
         """
         if self.__parent is None and not self.isContainer():
-            app.getTaskEditor().supprimer(self)
-            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getApplication().getTaskEditor().supprimer(self)
+            self.getActivePeriode().removeInstanciatedSchedulable(self)
         elif self.isContainer():
-            app.getTaskEditor().supprimer(self)
+            self.getApplication().getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
+                self.getActivePeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
-            app.getTaskEditor().redessiner()
-            app.getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getApplication().getTaskEditor().redessiner()
+            self.getActivePeriode().removeInstanciatedSchedulable(self)
 
     def getRawRepartition(self, displayedCalendar):
         """

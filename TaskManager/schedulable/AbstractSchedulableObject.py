@@ -277,11 +277,9 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         raise NotImplementedError
 
-    def delete(self, app):
+    def delete(self):
         """
         Permet de supprimer l'objet.
-        @param app: Référence vers l'application pour obtenir les différents
-        endroits qui doivent être au courant que cet objet est supprimé.
         """
         raise NotImplementedError
 

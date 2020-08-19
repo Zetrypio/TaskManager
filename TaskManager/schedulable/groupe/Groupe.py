@@ -120,7 +120,7 @@ class Groupe(AbstractSchedulableObject):
         @specified by getRMenuContent() in ITaskEditorDisplayableObject().
         """
         rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditGroupe(self))
-        rmenu.add_command(label = "Supprimer %s"%self, command = lambda : self.delete(self.getApplication()))
+        rmenu.add_command(label = "Supprimer %s"%self, command = lambda : self.delete())
         return True
 
     ""
@@ -159,14 +159,13 @@ class Groupe(AbstractSchedulableObject):
         """
         pass # TODO
 
-    def delete(self, app):
+    def delete(self):
         """
         Permet de supprimer ce groupe.
-        @param app : <Application> nécéssaire pour la suppression
         """
         # On comence par supprimer toutes les taches
         for tache in self.getListTasks():
-            tache.delete(app)
+            tache.delete()
             self.removeTask(tache)
         # Et on se supprime
         self.getPeriode().removeInstanciatedSchedulable(self)
