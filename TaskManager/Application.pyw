@@ -237,6 +237,7 @@ class Application(Frame):
             self.winfo_toplevel().title(titre)
         except:
             pass
+        self.save() # Pour l'auto save et puis voilà c'est cool
 
     def save(self):
         """
@@ -267,6 +268,16 @@ class Application(Frame):
             self.winfo_toplevel().title(titre)
         except:
             pass
+        # On remet un after de l'autoSave
+        if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "auto-save"):
+            # Recherche de l'intervalle
+            unit = self.getData().getOneValue("General", "General", "unité de l'interval") if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "unité de l'interval") else None
+            nb = self.getData().getOneValue("General", "General", "intervalle auto-save") if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "intervalle auto-save") else None
+
+            if nb is None or unit is None:
+                return
+            else:
+                self.after(int(nb)*1000*60, self.save) if unit == "minutes" else self.after(int(nb)*60*60*1000)
 
     ""
     #####################
