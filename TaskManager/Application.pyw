@@ -198,7 +198,29 @@ class Application(Frame):
             # Si on doit charger la dernière période
             lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
             self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
+        else:
+            # On va faire un code qui prend la période dont le début se rapproche le plus d'aujourd'hui
+            # et dont la fin est après aujourd'hui
+            # Sinon la période dont le début se trouve le plus proche d'aujourd'hui
+            # Sinon la période dont la fin se trouve la plus proche d'aujourd'hui
+            # Else c'est la première période chargé
+            now = datetime.date.today()
+            listPeriodeOK = [] # Pour le else
+            # On cherche ce qu'on peut faire
+            if (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() < now and p.getFin() > now]) != []:
+                listPeriodeOK.sort(key = lambda p : p.getDebut())
+            elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() > now]) != []:
+                listPeriodeOK.sort(key = lambda p : p.getDebut())
+            elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getFin() < now]) != []:
+                listPeriodeOK.sort(key = lambda p : p.getFin(), reverse = True)
 
+            # On applique s'il y a quelque chose dans listPeriodeOK
+            if listPeriodeOK != []:
+                self.getPeriodManager().setActivePeriode(listPeriodeOK[0])
+            else:
+                # Enfaite la première période que l'on rajoute est automatiquement la période active
+                # Donc si on a rien trouvé plus haut, on a rien à faire
+                pass
         ## On active une période.
         self.getDonneeCalendrier().switchPeriode()
 
