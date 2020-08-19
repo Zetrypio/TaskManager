@@ -223,7 +223,7 @@ class Periode(ITaskEditorDisplayableObject):
         c'est à dire que le Maintenant est entre le début et la fin de cette période.
         @return True si la période est actuellement en cours, False sinon.
         """
-        return self.debut >= datetime.datetime.now().date() and self.debut <= datetime.datetime.now().date()
+        return self.fin >= datetime.datetime.now().date() and self.debut <= datetime.datetime.now().date()
 
     def isSelected(self):
         """
