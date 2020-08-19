@@ -320,14 +320,14 @@ class CalendarZone(Frame):
 
         # Ajustement des jours
         horsChamp = False
+        duree = datetime.timedelta(days = nb)
 
         for tache in self.getDonneeCalendrier().getSelectedSchedulable():
             if isinstance(tache, Task): # TODO avec groupe.
                 # Si tout va bien
-                if  tache.getDebut().date() == tache.getFin().date()\
-                and debut <= (tache.getDebut()+datetime.timedelta(days=nb)).date()\
-                and fin   >= (tache.getFin()+datetime.timedelta(days=nb)).date():
-                    tache.setDebut(tache.getDebut()+datetime.timedelta(days=nb))
+                if  debut <= (tache.getDebut()+duree).date()\
+                and fin   >= (tache.getFin()+duree).date():
+                    tache.setDebut(tache.getDebut()+duree)
 
                 # Si on dépasse, on cadre selon les limites et mode bloquer
                 elif param == "bloquer":
