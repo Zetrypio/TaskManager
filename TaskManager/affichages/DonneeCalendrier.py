@@ -235,7 +235,10 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for panneau in self.getToutLesPanneaux():
             panneau.resetSchedulable()
 
-        # Sur la nouvelle période
+        ## Sur la nouvelle période
+        # Quand on charge pas de période via Application#load(), self.getPeriodeActive() is None
+        if self.getPeriodeActive() is None:
+            return
         periode = self.getPeriodeActive()
         periode.resetInstanciatedSchedulables()
 
