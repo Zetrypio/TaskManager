@@ -84,7 +84,6 @@ class Application(Frame):
         self.bind_all("<<restart>>"    , lambda e=None:self.restart())
         self.bind_all("<<open-file>>"  , lambda e=None:self.open())
         self.bind_all("<<quit>>"       , lambda e=None:self.quit())
-
         # Set des bindings mécanique en lien avec le bindingManager
 
         #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
@@ -251,14 +250,14 @@ class Application(Frame):
         try:
             d = {"periodes": {}}
             # On check l'auto delete des périodes trop vielles
-            if self.getData().testDataExist("General", "General", "auto-delete") and self.getData().getOneValue("General", "General", "auto-delete") == True:
+            if self.getData().testDataExist("General", "General", "auto-delete") and self.getData().getOneValue("General", "General", "auto-delete") == "True":
                 nb = self.getData().getOneValue("General", "General", "duree auto-delete") if self.getData().testDataExist("General", "General", "duree auto-delete") else None
                 unit = self.getData().getOneValue("General", "General", "unité de l'auto del") if self.getData().testDataExist("General", "General", "unité de l'auto del") else None
                 if nb is not None and unit is not None:
                     nb = nb*30 if unit == "mois" else nb
                     nb = nb*7 if unit == "semaine" else nb
                     nb = nb*1 if unit == "jours" else nb
-                    deldate = datetime.date.today() - datetime.timedelta(days = nb)
+                    deldate = datetime.date.today() - datetime.timedelta(days = int(nb))
                 else :
                     deldate = None
             else:
@@ -266,6 +265,7 @@ class Application(Frame):
             for periode in self.getPeriodManager().getPeriodes():
                 if deldate is not None and periode.getFin() < deldate:
                     # Si c'est vieux on enregistre pas
+                    print("euh")
                     continue
                 d["periodes"][periode.getNom()] = periode.saveByDict()
     
@@ -287,13 +287,11 @@ class Application(Frame):
         # On remet un after de l'autoSave
         if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "auto-save"):
             # Recherche de l'intervalle
-            unit = self.getData().getOneValue("General", "General", "unité de l'interval") if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "unité de l'interval") else None
             nb = self.getData().getOneValue("General", "General", "intervalle auto-save") if self.getData().testDataExist("General", "General", "auto-save") and self.getData().getOneValue("General", "General", "intervalle auto-save") else None
-
-            if nb is None or unit is None:
+            if nb is None:
                 return
             else:
-                self.after(int(nb)*1000*60, self.save) if unit == "minutes" else self.after(int(nb)*60*60*1000)
+                self.after(int(nb)*1000*60, self.save)
 
     ""
     #####################
