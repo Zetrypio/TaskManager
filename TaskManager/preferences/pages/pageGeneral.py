@@ -26,6 +26,12 @@ class PageGeneral(AbstractPage):
         self._listData.append([self.__varNbAutoSave, "intervalle auto-save", 5])
         self.__varUnitAutoSave = StringVar()
         self._listData.append([self.__varUnitAutoSave, "unité de l'interval", "minutes"])
+        self.__varAllowAutoDelete = BooleanVar()
+        self._listData.append([self.__varAllowAutoDelete, "auto-delete", True])
+        self.__varNbAutoDelete = StringVar()
+        self._listData.append([self.__varNbAutoDelete, "duree auto-delete", 3])
+        self.__varUnitAutoDelete = StringVar()
+        self._listData.append([self.__varUnitAutoDelete, "unité de l'auto del", "mois"])
 
         ## LabelFrame Horloge
         self.__horlogeLabelFrame = LabelFrame(self._mFrame, text="Horloge")
@@ -37,32 +43,47 @@ class PageGeneral(AbstractPage):
         self.__caseAllowAutoSave = Checkbutton(self.__saveAndLoad, text = "Sauvegarde automatique", variable = self.__varAllowAutoSave, command = self.__allowChangeAutosave)
         self.__sbIntervalle = Spinbox(self.__saveAndLoad, from_ = 1, to = 100, textvariable = self.__varNbAutoSave)
         self.__cbUnitAutoSave = Combobox(self.__saveAndLoad, value = ["heures", "minutes"], textvariable = self.__varUnitAutoSave)
+        self.__caseAllowAutoDelete = Checkbutton(self.__saveAndLoad, text = "Suppression automatique", variable = self.__varAllowAutoDelete, command = self.__allowChangeAutoDelete)
+        self.__sbIntervalleDel = Spinbox(self.__saveAndLoad, from_ = 0, to = 100, textvariable = self.__varNbAutoDelete)
+        self.__cbUnitAutoSaveDel = Combobox(self.__saveAndLoad, value = ["mois", "semaines", "jours"], textvariable = self.__varUnitAutoDelete)
 
 
         ## Affichage
-        self.__horlogeLabelFrame.grid( row = 0, column = 0, sticky="NWES")
-        self.__caseTypeHorloge.pack(   side = TOP, expand = NO, fill = X)
-        self.__saveAndLoad.grid(       row = 1, column = 0)
+        self.__horlogeLabelFrame.grid(  row = 0, column = 0, sticky="NWES")
+        self.__caseTypeHorloge.pack(    side = TOP, expand = NO, fill = X)
+        self.__saveAndLoad.grid(        row = 1, column = 0)
 
-        self.__caseChargerPeriode.grid(row = 0, column = 0, sticky = "nsew")
-        self.__caseAllowAutoSave.grid( row = 1, column = 0, sticky = "we")
-        self.__sbIntervalle.grid(      row = 1, column = 1)
-        self.__cbUnitAutoSave.grid(    row = 1, column = 2)
+        self.__caseChargerPeriode.grid( row = 0, column = 0, sticky = "nsew")
+        self.__caseAllowAutoSave.grid(  row = 1, column = 0, sticky = "we")
+        self.__sbIntervalle.grid(       row = 1, column = 1)
+        self.__cbUnitAutoSave.grid(     row = 1, column = 2)
+        self.__caseAllowAutoDelete.grid(row = 2, column = 0, sticky = "we")
+        self.__sbIntervalleDel.grid(    row = 2, column = 1)
+        self.__cbUnitAutoSaveDel.grid(  row = 2, column = 2)
 
         # Initialisation
         self._loadDataFile()
         self.__allowChangeAutosave()
+        self.__allowChangeAutoDelete()
 
     "" # Marque pour le repli de code
     ##############
     # Méthodes : #
     ##############
     ""
+    def __allowChangeAutoDelete(self):
+        """
+        Méthode qui gère l'état des widget de l'intervelle de l'autoSave
+        """
+        mode = "normal" if self.__varAllowAutoDelete.get() else "disabled"
+        self.__sbIntervalleDel.config( state = mode)
+        self.__cbUnitAutoSaveDel.config(state = mode)
+
     def __allowChangeAutosave(self):
         """
         Méthode qui gère l'état des widget de l'intervelle de l'autoSave
         """
-        mode = "normal" if self.__varAllowAutoSave else "disabled"
+        mode = "normal" if self.__varAllowAutoSave.get() else "disabled"
         self.__sbIntervalle.config( state = mode)
         self.__cbUnitAutoSave.config(state = mode)
 
