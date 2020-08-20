@@ -139,7 +139,6 @@ class AbstractPage(Frame):
             donnee = self._listDataRestart[i]
             if self.getData().testDataExist(donnee[0][0], donnee[0][1], donnee[0][2]) and str(donnee[1].get()) != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
                 self.getFenetrePreferences().setRestartMode()
-                print("setted")
             i+=1
 
         # On créer le dico

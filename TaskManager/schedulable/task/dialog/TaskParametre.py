@@ -35,12 +35,13 @@ class TaskParametre(AbstractSchedulableParametre):
         self.varPeriode = StringVar()
         #varCouleur = StringVar()
         # textDesc (je le met ici pour ne pas l'oublier)"""
-        self.varDebut = "" # Initialisation, affectation après
-        self.varFin = ""
-        self.varDuree = None
-        self.varJour = IntVar()
-        self.varHour = IntVar()
-        self.varMin = IntVar()
+        if not self._getSchedulable().isContainer():
+            self.varDebut = "" # Initialisation, affectation après
+            self.varFin = ""
+            self.varDuree = None
+            self.varJour = IntVar()
+            self.varHour = IntVar()
+            self.varMin = IntVar()
         self.varNbRep = IntVar()
         self.varRepTimedelta = None
         self.varRep = IntVar()
@@ -50,15 +51,17 @@ class TaskParametre(AbstractSchedulableParametre):
 
 
         # Affectation des variables
-        self.varDebut = self._getSchedulable().getDebut()
-        self.varFin = self._getSchedulable().getFin()
-        self.varDuree = self._getSchedulable().getDuree()
-        self.varJour.set(self.varDuree.days)
-        self.varHour.set(self.varDuree.seconds//3600)
-        self.varMin.set(self.varDuree.seconds//60%60)
-        self.varNbRep.set(8)
+        if not self._getSchedulable().isContainer():
+            self.varDebut = self._getSchedulable().getDebut()
+            self.varFin = self._getSchedulable().getFin()
+            self.varDuree = self._getSchedulable().getDuree()
+            self.varJour.set(self.varDuree.days)
+            self.varHour.set(self.varDuree.seconds//3600)
+            self.varMin.set(self.varDuree.seconds//60%60)
+        self.varNbRep.set(self._getSchedulable().getNbRep())
         self.varRepTimedelta = self._getSchedulable().getRep() if self._getSchedulable().getRep() is not None else datetime.timedelta()
         self.varRep = self.varRepTimedelta.seconds//3600 if self.varRepTimedelta.days == 0 else self.varRepTimedelta.days
+        self.varDone.set(self._getSchedulable().isDone())
         if self.varRep == 0: # ici les heures valent 0
             self.varUnitRep.set("jours")
         elif self.varRepTimedelta.days == 0 and self.varRep != 0:
@@ -68,23 +71,23 @@ class TaskParametre(AbstractSchedulableParametre):
         else:
             self.varUnitRep.set("jours")
         self.varID.set(self._getSchedulable().getUniqueID())
-        self.varDone.set(self._getSchedulable().isDone())
 
 
         ## Attributs généraux
-        self.lbDebut = Label(           self._frameGeneral, text = "Début :")
-        self.btnDebut = Button(         self._frameGeneral, text = self.varDebut, command = self.__askDebut)
-        self.lbFin = Label(             self._frameGeneral, text = "Fin :")
-        self.btnFin = Button(           self._frameGeneral, text = self.varFin, command = self.__askFin)
-        self.lbDuree = Label(           self._frameGeneral, text = "Durée :")
-        # Duree
-        self.frameDuree = Frame(        self._frameGeneral)
-        self.sbJour = Spinbox(          self.frameDuree, from_ = 0, to=31, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varJour)
-        self.lbJour = Label(            self.frameDuree, text = "jours")
-        self.sbHour = Spinbox(          self.frameDuree, from_ = 0, to=23, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varHour)
-        self.lbHour = Label(            self.frameDuree, text = "heures")
-        self.sbMin = Spinbox(           self.frameDuree, from_ = 0, to=59, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varMin)
-        self.lbMin= Label(              self.frameDuree, text = "minutes")
+        if not self._getSchedulable().isContainer():
+            self.lbDebut = Label(           self._frameGeneral, text = "Début :")
+            self.btnDebut = Button(         self._frameGeneral, text = self.varDebut, command = self.__askDebut)
+            self.lbFin = Label(             self._frameGeneral, text = "Fin :")
+            self.btnFin = Button(           self._frameGeneral, text = self.varFin, command = self.__askFin)
+            self.lbDuree = Label(           self._frameGeneral, text = "Durée :")
+            # Duree
+            self.frameDuree = Frame(        self._frameGeneral)
+            self.sbJour = Spinbox(          self.frameDuree, from_ = 0, to=31, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varJour)
+            self.lbJour = Label(            self.frameDuree, text = "jours")
+            self.sbHour = Spinbox(          self.frameDuree, from_ = 0, to=23, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varHour)
+            self.lbHour = Label(            self.frameDuree, text = "heures")
+            self.sbMin = Spinbox(           self.frameDuree, from_ = 0, to=59, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.varMin)
+            self.lbMin= Label(              self.frameDuree, text = "minutes")
         # Répétition
         self.lbNbRep = Label(           self._frameGeneral, text = "Nombre de répétitions :")
         self.sbNbRep = Spinbox(         self._frameGeneral, from_ = -1, to = 100, increment = 1, width = 4, textvariable = self.varNbRep)
@@ -116,21 +119,23 @@ class TaskParametre(AbstractSchedulableParametre):
         ## Affichage
         # Général
         # grid obligatoire
-        self.lbDebut.grid(     row = 6, column = 0, sticky = "e" )
-        self.btnDebut.grid(    row = 6, column = 1, sticky = "we")
-        self.lbFin.grid(       row = 7, column = 0, sticky = "e" )
-        self.btnFin.grid(      row = 7, column = 1, sticky = "we")
-        # Duree
-        self.lbDuree.grid(     row = 8, column = 0, sticky = "e" )
-        self.frameDuree.grid(  row = 8, column = 1, sticky = "we")
-        self.sbJour.grid(      row = 0, column = 0)
-        self.lbJour.grid(      row = 0, column = 1)
-        self.sbHour.grid(      row = 0, column = 2)
-        self.lbHour.grid(      row = 0, column = 3)
-        self.sbMin.grid(       row = 0, column = 4)
-        self.lbMin.grid(       row = 0, column = 5)
-        self.lbNbRep.grid(     row = 9, column = 0, sticky = "e" )
-        self.frameRepet.grid(  row = 9, column = 1, sticky = "we")
+        if not self._getSchedulable().isContainer():
+            self.lbDebut.grid(     row = 6,  column = 0, sticky = "e" )
+            self.btnDebut.grid(    row = 6,  column = 1, sticky = "we")
+            self.lbFin.grid(       row = 7,  column = 0, sticky = "e" )
+            self.btnFin.grid(      row = 7,  column = 1, sticky = "we")
+            # Duree
+            self.lbDuree.grid(     row = 8,  column = 0, sticky = "e" )
+            self.frameDuree.grid(  row = 8,  column = 1, sticky = "we")
+            self.sbJour.grid(      row = 0,  column = 0)
+            self.lbJour.grid(      row = 0,  column = 1)
+            self.sbHour.grid(      row = 0,  column = 2)
+            self.lbHour.grid(      row = 0,  column = 3)
+            self.sbMin.grid(       row = 0,  column = 4)
+            self.lbMin.grid(       row = 0,  column = 5)
+        self.lbNbRep.grid(         row = 9,  column = 0, sticky = "e" )
+        self.sbNbRep.grid(         row = 9,  column = 1, sticky = "w")
+        self.frameRepet.grid(      row = 10, column = 1, sticky = "we")
         self.sbRep.pack( side = LEFT, fill = BOTH)
         self.cbUnit.pack(side = LEFT, fill = BOTH, expand = YES)
         # Avancée
@@ -161,9 +166,9 @@ class TaskParametre(AbstractSchedulableParametre):
         """
         # Géré par le parent : nom, période, couleur, desc
         super().onClose()
-
-        self._getSchedulable().setDebut(         self.varDebut, change = "duree")
-        self._getSchedulable().setDuree(datetime.timedelta(days = self.varJour.get(), hours = self.varHour.get(), minutes = self.varMin.get()))
+        if not self._getSchedulable().isContainer():
+            self._getSchedulable().setDebut(         self.varDebut, change = "duree")
+            self._getSchedulable().setDuree(datetime.timedelta(days = self.varJour.get(), hours = self.varHour.get(), minutes = self.varMin.get()))
         #self._getSchedulable().setRep # TODO
         self._getSchedulable().setDone(          self.varDone.get())
 
