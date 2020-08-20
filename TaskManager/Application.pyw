@@ -265,7 +265,6 @@ class Application(Frame):
             for periode in self.getPeriodManager().getPeriodes():
                 if deldate is not None and periode.getFin() < deldate:
                     # Si c'est vieux on enregistre pas
-                    print("euh")
                     continue
                 d["periodes"][periode.getNom()] = periode.saveByDict()
     

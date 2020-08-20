@@ -4,11 +4,12 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 import os
 
+
 class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
         # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
-        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
+        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self._addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
         super().__init__(master, **kwargs)
         self.nom = nom
@@ -136,8 +137,9 @@ class AbstractPage(Frame):
         i = 0
         while not self.getFenetrePreferences().getRestartMode() and i < len(self._listDataRestart):
             donnee = self._listDataRestart[i]
-            if self.getData().testDataExist(donnee[0][0], donnee[0][1], donnee[0][2]) and donnee[1].get() != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
+            if self.getData().testDataExist(donnee[0][0], donnee[0][1], donnee[0][2]) and str(donnee[1].get()) != self.getData().getOneValue(donnee[0][0], donnee[0][1], donnee[0][2]):
                 self.getFenetrePreferences().setRestartMode()
+                print("setted")
             i+=1
 
         # On créer le dico
