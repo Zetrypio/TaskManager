@@ -16,11 +16,12 @@ def askEditTask(task):
     def onClose(button):
         if button == "Ok":
             parametrage.onClose()
-            return
+        elif button == "Supprimer":
+            task.delete()
         fen.destroy()
 
 
-    fen = Dialog(title = "Édition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), command = onClose) # Ajouter un supprimer
+    fen = Dialog(title = "Édition de \"%s\""%task.getNom(), buttons = ("Ok", "Supprimer", "Annuler"), exitButton = ("Ok", "Supprimer", "Annuler"), command = onClose) # Ajouter un supprimer
     parametrage = TaskParametre(fen, task)
     parametrage.pack(fill = BOTH, expand = YES)
     fen.activateandwait()
