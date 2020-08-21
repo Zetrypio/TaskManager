@@ -165,6 +165,14 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             # C'est possible que le 1 janvier soit semaine 53
             """
             nonlocal dernierJour, premierJour
+            # Les conditions c'est parce que des fois le 1er luni de l'année n'est pas la même année
+            if dernierJour.isocalendar()[0] == premierJour.isocalendar()[0] and premierJour.isocalendar()[1] < dernierJour.isocalendar()[1]:
+                return dernierJour.isocalendar()[1] - premierJour.isocalendar()[1] + 1
+            elif dernierJour.isocalendar()[0] > premierJour.isocalendar()[0]:
+                return (dernierJour - datetime.timedelta(days = dernierJour.isocalendar()[2])).isocalendar()[1] - premierJour.isocalendar()[1] + 2
+            elif premierJour.isocalendar()[0] > dernierJour.isocalendar()[0] :
+                return dernierJour.isocalendar()[1] + 1
+
             return dernierJour.isocalendar()[1] - premierJour.isocalendar()[1] + 1 if premierJour.isocalendar()[1] < dernierJour.isocalendar()[1] else dernierJour.isocalendar()[1] + 1
 
         # Calcul du nombre de jour dans le mois
