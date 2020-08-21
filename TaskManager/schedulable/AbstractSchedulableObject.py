@@ -7,7 +7,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     """
     Classe permettant la généralisation de Task et Group.
     """
-    def __init__(self, nom, periode, desc="", color="white"):
+    def __init__(self, nom, periode, desc="", color="white", id = None):
         """
         @param nom     : nom de l'objet.
         @param periode : période de l'objet.
@@ -23,6 +23,9 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self.__visible   = True
 
         self._statut     = ""
+
+        # Pour reconnaître un objet parmi tous :
+        self.__uniqueID = id if id is not None else self.setUniqueID()
 
     "" # Marque pour que le repli de code fasse ce que je veux
     ############
@@ -166,6 +169,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self.updateStatut()
         return self._statut
 
+    def getUniqueID(self):
+        """
+        Permet d'obtenir l'ID de la tache
+        @return : <str> self.__uniqueID
+        """
+        return self.__uniqueID
+
     def isSelected(self):
         """
         Permet de savoir si cet objet est sélectionné
@@ -211,6 +221,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         @param desc: la description à mettre, sous forme de texte.
         """
         self.__desc = desc
+
     def setNom(self, nom):
         """
         Setter pour le nom donné par l'utilisateur de cet objet.
@@ -255,6 +266,17 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         if not isinstance(visible, bool): raise TypeError("Exptected a boolean")
         self.__visible = visible
+
+    def setUniqueID(self):
+        """
+        Permet d'ajouter un uniqueID à la tache et de le mettre dans la liste
+        qui vérifie s'il est bien unique
+        """
+        ID = id(self)
+        if self.getPeriode():
+            while str(ID) in self.getApplication().listKey:
+                ID += 1
+        return str(ID)
 
     ""
     #####################
