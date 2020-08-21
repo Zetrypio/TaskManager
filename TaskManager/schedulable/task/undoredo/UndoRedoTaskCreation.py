@@ -17,9 +17,6 @@ class UndoRedoTaskCreation(UndoRedo):
         self.periodeManager = self.app.getPeriodManager()
 
     def _undo(self):
-        # Debug :
-        print("undo creation task")
-
         # Get Period & Task :
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
         task    = periode.getByUniqueID(self.ID_task)
@@ -32,9 +29,6 @@ class UndoRedoTaskCreation(UndoRedo):
         self.app.getDonneeCalendrier().updateAffichage(True)
 
     def _redo(self):
-        # Debug :
-        print("redo creation task")
-
         # Get Period :
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
 

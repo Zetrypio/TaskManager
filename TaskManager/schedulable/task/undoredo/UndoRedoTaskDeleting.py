@@ -16,9 +16,8 @@ class UndoRedoTaskDeleting(UndoRedo):
         self.periodeManager = self.app.getPeriodManager()
 
     def _undo(self):
-        # Debug & Import :
+        # Import :
         from ..Task import Task
-        print("undo deleting task")
 
         # Get Period :
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
@@ -30,9 +29,6 @@ class UndoRedoTaskDeleting(UndoRedo):
         self.app.getTaskEditor().ajouter(task)
 
     def _redo(self):
-        # Debug :
-        print("undo creation task")
-
         # Get Period & Task :
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
         task    = periode.getByUniqueID(self.ID_task)
