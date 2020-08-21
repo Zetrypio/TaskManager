@@ -238,11 +238,11 @@ class Task(AbstractSchedulableObject):
         elif self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
-                self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(t)
+                self.getPeriode().removeInstanciatedSchedulable(t)
         else:
             self.__parent.removeSubTask(self)
             self.getApplication().getTaskEditor().redessiner()
-            self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+            self.getPeriode().removeInstanciatedSchedulable(self)
 
     def getRawRepartition(self, displayedCalendar):
         """

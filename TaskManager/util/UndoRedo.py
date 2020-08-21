@@ -12,15 +12,13 @@ class UndoRedo:
     REDO = []
     __blocked = False
 
-    def __init__(self, action = None, autoAdd = True, **info):
+    def __init__(self, action = None, autoAdd = True):
         """
         Constructeur d'un élément du stack de l'Undo-Redo.
         @param action: Nom de l'action pour l'affichage.
         @param autoAdd = True: Si sur True, rajoute automatiquement cet objet au gestionnaire d'undo-redo.
-        @param **info: Autres informations nécessaire pour le undo-redo.
         """
         self.action = action
-        self.info = info
         if autoAdd:
             self.addToStack()
 
@@ -90,8 +88,8 @@ class UndoRedo:
         @param **info: Autres informations nécessaire pour le undo-redo.
         """
         ur = UndoRedo(action, True, **info)
-        ur._undo = undoFunc
-        ur._redo = redoFunc
+        ur._undo = lambda : undoFunc(ur.action, info)
+        ur._redo = lambda : redoFunc(ur.action, info)
 
     @staticmethod
     def reset():

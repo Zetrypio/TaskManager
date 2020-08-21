@@ -8,6 +8,7 @@ from affichages.periode.PeriodAdder import *
 from util.widgets.RMenu import *
 
 from .dialog.askHeureExacteDialog import *
+from .undoredo.UndoRedoTaskCreation import *
 from .Task import *
 from .TaskAdder import *
 from util.util import adaptTextColor
@@ -207,6 +208,9 @@ class TaskEditor(Frame):
             schedulable.getPeriode().addPrimitiveSchedulable(schedulable)   # Ajout primitif
             schedulable.instantiate()                                       # Ajout instancié selon la tâche
             self.getApplication().getDonneeCalendrier().updateAffichage()   # Update
+            if isinstance(schedulable, Task):
+                task = schedulable
+                UndoRedoTaskCreation(self, task)
 
         self.redessiner()
 
