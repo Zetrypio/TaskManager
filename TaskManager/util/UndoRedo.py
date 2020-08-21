@@ -90,3 +90,8 @@ class UndoRedo:
         ur = UndoRedo(action, autoAdd, **info)
         ur._undo = undoFunc
         ur._redo = redoFunc
+
+    @staticmethod
+    def reset():
+        UndoRedo.UNDO = []
+        UndoRedo.REDO = []
