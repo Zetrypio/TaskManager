@@ -35,11 +35,13 @@ class TaskEditor(Frame):
         self.taches = [] # Pourra aussi contenir des Périodes.
         self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
 
+        self.__periodManager = periodManager
+
         # Zone pour l'ajouteur des tâches.
-        self.frameInput = TaskAdder(self, menubar)
+        self.frameInput = TaskAdder(self)
         self.frameInput.pack(side = TOP, fill = X)
         
-        self.frameInputPeriode = PeriodAdder(periodManager, self)
+        self.frameInputPeriode = PeriodAdder(self.getPeriodManager(), self)
 
         # Pour pouvoir filtrer l'affichage :
         self.FILTRE = {}
@@ -85,7 +87,7 @@ class TaskEditor(Frame):
         Getter pour l'application.
         @return l'Application.
         """
-        return self.master
+        return self.getPeriodManager().getApplication()
 
     def getPeriodActive(self):
         """
@@ -99,7 +101,7 @@ class TaskEditor(Frame):
         Getter pour le periode manager
         @return le PeriodManager
         """
-        return self.getApplication().getPeriodManager()
+        return self.__periodManager
 
     def getTaskInTaskEditor(self):
         """
