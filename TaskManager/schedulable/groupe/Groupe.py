@@ -167,8 +167,8 @@ class Groupe(AbstractSchedulableObject):
         for tache in self.getListTasks():
             tache.delete()
         # Et on se supprime
-        self.getPeriode().removeInstanciatedSchedulable(self)
-        self.getPeriode().removePrimitiveSchedulable(self)
+        self.getPeriode().removeInstanciatedSchedulable(self) if self in self.getPeriode().getInstanciatedSchedulables() else None
+        self.getPeriode().removePrimitiveSchedulable(self) if self in self.getPeriode().getPrimitivesSchedulables() else None
         self.getApplication().getTaskEditor().redessiner()
 
     def getRawRepartition(self, displayedCalendar):
@@ -274,7 +274,7 @@ class Groupe(AbstractSchedulableObject):
         """
         return (t for t in self.__listTasks if t.isSelected())
 
-    def removeTask(self, task, testDelete = False):
+    def removeTask(self, task, testDelete = True):
         """
         Permet de retirer une tâche de la liste du groupe.
         @param task: la tâche à enlever de la liste.

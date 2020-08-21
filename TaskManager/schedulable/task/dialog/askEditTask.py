@@ -21,7 +21,7 @@ def askEditTask(task):
         fen.destroy()
 
 
-    fen = Dialog(title = "Édition de \"%s\""%task.getNom(), buttons = ("Ok", "Supprimer", "Annuler"), exitButton = ("Ok", "Supprimer", "Annuler"), command = onClose) # Ajouter un supprimer
+    fen = Dialog(title = "Édition de \"%s\""%task.getNom(), buttons = ("Ok", "Supprimer", "Annuler"), exitButton = ("Ok", "Supprimer", "Annuler"), command = onClose)
     parametrage = TaskParametre(fen, task)
     parametrage.pack(fill = BOTH, expand = YES)
     fen.activateandwait()

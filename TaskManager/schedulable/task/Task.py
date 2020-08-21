@@ -229,6 +229,9 @@ class Task(AbstractSchedulableObject):
         """
         if self.hasGroupe():
             self.getGroupe().removeTask(self, testDelete = True)
+            self.getPeriode().removeInstanciatedSchedulable(self) if self in self.getPeriode().getInstanciatedSchedulables() else None
+            self.getPeriode().removePrimitiveSchedulable(self) if self in self.getPeriode().getPrimitivesSchedulables() else None
+
         elif self.__parent is None and not self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
             self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)

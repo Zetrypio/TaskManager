@@ -397,8 +397,8 @@ class CalendarZone(Frame):
             # Suppression du groupe , s'il n'y a plus de tache :
             if len(groupe.getListTasks()) == 1:
                 if askyesnowarning(title = "Édition du groupe", message = 'Le groupe "%s" ne possède plus qu\'une tache :\n\t- %s\nVoulez-vous supprimer le groupe ?'%(groupe.getNom(), list(groupe.getListTasks())[0].getNom())):
-                    groupe.removeTask(list(groupe.getListTasks())[0])
-                    groupe.delete()
+                    groupe.removeTask(list(groupe.getListTasks())[0], testDelete = True)
+                    #groupe.delete(), vu qu'on testDelete = True, inutile de le re-delete après
 
         # Mise à jour de l'affichage qu'à la fin :
         self.getApplication().getTaskEditor().redessiner()
