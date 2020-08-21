@@ -18,6 +18,9 @@ def askEditTask(task):
             parametrage.onClose()
         elif button == "Supprimer":
             task.delete()
+
+        # Pendant qu'on a encore le droit de l'utiliser
+        task.getApplication().getDonneeCalendrier().updateAffichage(True)
         fen.destroy()
 
 

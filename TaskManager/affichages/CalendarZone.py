@@ -402,7 +402,7 @@ class CalendarZone(Frame):
 
         # Mise à jour de l'affichage qu'à la fin :
         self.getApplication().getTaskEditor().redessiner()
-        self.getDonneeCalendrier().updateAffichage()
+        self.getDonneeCalendrier().updateAffichage(True)
 
     def deplacerIntervertir(self):
         """

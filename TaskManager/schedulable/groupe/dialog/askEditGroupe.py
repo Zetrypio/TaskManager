@@ -17,6 +17,8 @@ def askEditGroupe(groupe):
             paramGroupe.onClose()
         elif button == "Supprimer":
             groupe.delete()
+        # Pendant qu'on a encore le droit de l'utiliser
+        groupe.getApplication().getDonneeCalendrier().updateAffichage(True)
         fen.destroy()
 
     fen = Dialog(title = "Édition de \"%s\""%groupe.getNom(), buttons = ("Ok", "Supprimer",  "Annuler"), exitButton = ("Ok", "Supprimer",  "Annuler"), command = onClose)
