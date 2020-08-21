@@ -215,8 +215,14 @@ class TaskAdder(Frame):
         Méthode qui met à jour la fin si on change les durée
         """
         ecart = datetime.timedelta(days = int(self.champJour.get()), hours = int(self.champHeure.get()), minutes = int(self.champMinute.get()))
-        self.fin = self.debut + ecart
-        self.champFin.config(text = self.fin)
+        if self.debut is not None:
+            self.fin = self.debut + ecart
+            self.champFin.config(text = self.fin)
+        elif self.debut is None and self.fin is not None:
+            self.debut = self.fin - ecart
+            self.champDebut.config(text = self.debut)
+        else:
+            return # Pour ne pas faire le test Durée
         # On met le text en rouge si l'écart est négatif
         self.verifyDuree()
 
@@ -237,9 +243,8 @@ class TaskAdder(Frame):
         """
         debut = self.getDebut()
         duree = self.getDuree()
-        print(duree)
-        if duree < datetime.timedelta(0):
-            return showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative")
+        if duree < datetime.timedelta(0) or (debut is not None and duree <= datetime.timedelta(0)):
+            return showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative ou nulle")
         rep   = self.getRepetitionTime()
         periode = self.getApplication().getPeriodManager().getActivePeriode()
         # On check si on est dans la période
