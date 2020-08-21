@@ -41,6 +41,14 @@ class PeriodManager:
         """
         return self.app
 
+    def getByUniqueID(self, id):
+        """
+        Permet d'obtenir une période à partir de son unique ID.
+        """
+        for p in self.periodes:
+            if p.getUniqueID() == id:
+                return p
+
     def getPeriodes(self):
         """
         Getter pour les périodes.

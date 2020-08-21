@@ -178,6 +178,13 @@ class Periode(ITaskEditorDisplayableObject):
                     else "Prochainement" if self.debut > datetime.datetime.now().date()\
                     else "Finie"
 
+    def getPeriodeManager(self):
+        """
+        Getter pour le periodeManager.
+        @return le PeriodeManager.
+        """
+        return self.periodManager
+
     def getPrimitivesSchedulables(self):
         """
         Getter pour la liste des objets planifiables primitifs, c'est-à-dire y compris ceux qui ne sont que dans le TaskEditor (dnd).
