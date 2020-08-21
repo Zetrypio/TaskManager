@@ -124,6 +124,13 @@ class ZoneAffichage(Frame):
         """
         self.getPanneauActif().setMois(valeur+1)
 
+    def envoyerChangementAnnee(self, annee):
+        """
+        Permet de changer l'année a afficher dans le calendrier des périodes
+        @param valeur : int correspond à l'année a afficher.
+        """
+        self.getPanneauActif().setAnnee(annee)
+
     def envoyerChangementNbJour(self, event):
         """
         Méthode callback du combobox qui gère le nombre de jours à afficher.

@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
+import datetime
 
 MOIS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
         "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
@@ -20,7 +21,6 @@ class ParametreAffichage(Frame):
         @param master: master du tkinter.Frame() que cet objet est.
         @param **kwargs: configurations d'affichage du tkinter.Frame() que cet objet est.
         """
-        #kwargs["bg"] = "yellow" # on en a pas besoin en vrai
         super().__init__(master, **kwargs)
         # Note : self.master est référence vers ZoneAffichage.
 
@@ -59,13 +59,14 @@ class ParametreAffichage(Frame):
         ## Config Calendrier des périodes
         self.midFramePeriode = Frame(self)
         self.comboMoisPeriode = Combobox(self.midFramePeriode, value = MOIS, state = "readonly")
-        self.comboMoisPeriode.bind("<<ComboboxSelected>>",lambda e, MOIS=MOIS : master.envoyerChangementMois(MOIS.index(e.widget.get())))
-        self.varAnnee = StringVar()
-        self.lbAnnee = Label(self.midFramePeriode, textvariable = self.varAnnee)
+        self.comboMoisPeriode.bind("<<ComboboxSelected>>", lambda e : master.envoyerChangementMois(MOIS.index(e.widget.get())))
+        self.varAnnee = IntVar()
+        self.spinAnnee = Spinbox(self.midFramePeriode, from_ =1970, to=9999, textvariable = self.varAnnee, command = lambda : master.envoyerChangementAnnee(int(self.spinAnnee.get())))
+        self.spinAnnee.bind("<Key>", lambda e : self.after(1, lambda : self.__anneeChangee()))
+
         # Affichage
         self.comboMoisPeriode.pack(side=LEFT)
-        self.lbAnnee.pack(side = LEFT)
-
+        self.spinAnnee.pack(side = LEFT)
 
         # Affichage
         self.midFrame.pack(side=TOP, fill=Y)
@@ -123,6 +124,18 @@ class ParametreAffichage(Frame):
     # Setters : #
     #############
     ""
+
+    def __anneeChangee(self):
+        try:
+            annee = int(self.spinAnnee.get())
+        except:
+            annee = datetime.date.today().year
+            self.varAnnee.set(annee)
+        if annee == 0:
+            annee = datetime.date.today().year
+            self.varAnnee.set(annee)
+        self.master.envoyerChangementAnnee(annee)
+
     def configPossibiliteListe(self):
         """
         Permet de mettre des choix en fonction du nombre de jour dans le combobox

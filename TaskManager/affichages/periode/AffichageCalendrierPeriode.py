@@ -95,6 +95,14 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
     # Setters : #
     #############
     ""
+    def setAnnee(self, annee):
+        """
+        Permet de changer l'année de l'affichage.
+        @param annee: int correspondant à l'année, en nombre entier (je veux dire année à 4 chiffres)
+        """
+        self.annee = annee
+        self.updateAffichage()
+
     def setMois(self, mois):
         """
         Permet de changer le mois d'affichage
