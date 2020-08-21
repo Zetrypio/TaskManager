@@ -93,7 +93,7 @@ class AfficherMasquer(TaskEditor):
         self.tree.destroy()
         self.scrollbar.destroy()
         # On recrée tout :
-        self.tree = Treeview(self, columns = ('Statut',), height = 0)
+        self.tree = Treeview(self, columns = ("visible", "nom"), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
 
@@ -106,16 +106,11 @@ class AfficherMasquer(TaskEditor):
         # configuration des colonnes
         self.tree.column("#0", width = 0)
         self.tree.column(0,    width = 0)
+        self.tree.column(1,    width = 0)
 
-        # On modifie le nom des colonnes
-        if "type" in self.FILTRE and "Tâche" in self.FILTRE["type"]:
-            tHeaderFirst = "Tâche"
-            tHeaderSecon = "Statut"
-        else :
-            tHeaderFirst = tHeaderSecon = ""
-
-        self.tree.heading("#0", text=tHeaderFirst, command = self.tri_alphabetique)
-        self.tree.heading(0,    text=tHeaderSecon, command = self.tri_statut)
+        self.tree.heading("#0", text="Visible")
+        self.tree.heading(0,    text="Tache", command = self.tri_statut)
+        self.tree.heading(1,    text="Statut", command = self.tri_statut)
 
         # Position d'insertion (utilisé pour les filtres prioritaires)
         insertPos = 0
@@ -134,8 +129,17 @@ class AfficherMasquer(TaskEditor):
         Méthode qui reagit au clic pour activer/désactiver
         l'attribut visible des schedulables
         """
-        a = self.tree.identify_element(event.x, event.y)
+        print("focus")
+        a = self.tree.focus()
         print(a)
+        #if self.tree.identify_column(event.x) == "#0":
+        for t in self.getTaskInTaskEditor():
+            print(t.id)
+            if t.id == a:
+                t.setVisible(not t.isVisible())
+                print("setted")
+                break
+        #self.redessiner()
         return
 
     def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
@@ -165,7 +169,7 @@ class AfficherMasquer(TaskEditor):
                     return
 
                 # On insère la ligne d'entête :
-                a = self.tree.insert(parent, pos, text = displayable.getHeader()[0], values = [displayable.getHeader()[1]], iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
+                a = self.tree.insert(parent, pos, text = displayable.isVisible(), values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
 
                 # On insère les éléments supplémentaires :
                 args = {} # *args sont pour la prochaine récursion. **kwargs sont pour l'actuelle.
