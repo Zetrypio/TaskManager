@@ -534,6 +534,7 @@ class Task(AbstractSchedulableObject):
                 if t.isContainer() and t.getSubTasks() != [] and self in t.getSubTasks():
                     t.removeSubTask(self)
                     break
+            self.__parent = None
 
     def removeGroupe(self):
         """
