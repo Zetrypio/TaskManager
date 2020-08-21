@@ -37,19 +37,19 @@ class PeriodAdder(Frame):
         
         # Widgets :
         # Nom :
-        self.champNom           = Entry(self)
+        self.champNom         = Entry(self)
         # Début :
-        self.champDebut         = Button(self, command = self.askDateDebut)
+        self.champDebut       = Button(self, text = "Aujourd'hui", command = self.askDateDebut)
         # Fin :
-        self.champFin           = Button(self, command = self.askDateFin)
+        self.champFin         = Button(self, text = "Aujourd'hui", command = self.askDateFin)
         # Durée
-        self.champJour          = Spinbox(self, from_ = 0, to=9999, increment = 1, width = 4)
+        self.champJour        = Spinbox(self, from_ = 0, to=9999, increment = 1, width = 4, command = self.setAutoFin)
         
         # Autres :
-        self.champDescription   = Text(self, height = 3, width = 10, wrap = "word")
-        self.boutonColor        = ColorButton(self)
+        self.champDescription = Text(self, height = 3, width = 10, wrap = "word")
+        self.boutonColor      = ColorButton(self)
         # Valider
-        self.boutonValider      =   Button(self, command = self.valider, text = "Ajouter")
+        self.boutonValider    = Button(self, command = self.valider, text = "Ajouter")
 
         # Placement :
         # Ligne 0 :
@@ -128,6 +128,21 @@ class PeriodAdder(Frame):
         """
         ecart = self.getDuree()
         self.champJour.set(ecart.days)
+        self.verifyDuree()
+
+    def setAutoFin(self):
+        """
+        Méthode qui permet de fixer la fin en éditant la durée
+        """
+        self.fin = self.debut + datetime.timedelta(days = int(self.champJour.get()))
+        self.champFin.config(text = self.fin)
+        self.verifyDuree()
+
+    def verifyDuree(self):
+        """
+        Méthode qui vérifie si la durée est correct
+        """
+        self.champJour.config(foreground = "#FF0000") if self.getDuree() < datetime.timedelta(0) else self.champJour.config(foreground = self.getApplication().getData().getPalette()["foreground"])
 
     ""
     #####################
