@@ -8,6 +8,7 @@ from schedulable.groupe.dialog.groupDialog import *
 
 from toolbar.ToolBar import *
 from toolbar.PeriodToolBar import *
+from toolbar.dialog.askAfficherMasquerDialog import *
 from toolbar.dialog.decalageHeureDialog import *
 from toolbar.dialog.decalageJourDialog import *
 from toolbar.dialog.gestionHeureCalendrierDialog import *
@@ -139,9 +140,9 @@ class CalendarZone(Frame):
     ""
     def afficherMasquerJour(self):
         """
-        Permet d'afficher ou masquer un jour... TODO
+        Permet d'afficher ou masquer un jour...
         """
-        pass # TODO
+        askAfficherMasquer(self.getApplication().getPeriodManager())
 
     def ajouterHeure(self):
         """

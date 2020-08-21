@@ -141,7 +141,7 @@ class TaskEditor(Frame):
     # Méthodes liées aux schedulables #
     ###################################
     ""
-    def __ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
+    def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
         """
         Ajouter une tâche dans l'arbre.
         @param displayable: le ITaskEditorDisplayable à rajouter
@@ -176,7 +176,7 @@ class TaskEditor(Frame):
             for indice, ligne in enumerate(displayable.iterateDisplayContent(**kwargs)):
                 # Si c'est de la récursion : on récursionne.
                 if isinstance(ligne, ITaskEditorDisplayableObject):
-                    self.__ajouterTache(ligne, indice, parentNew+"e%s"%lastParentIndex, END, recursionLevel+1, **args)
+                    self._ajouterTache(ligne, indice, parentNew+"e%s"%lastParentIndex, END, recursionLevel+1, **args)
                 # Sinon c'est un élément
                 elif isinstance(ligne, dict):
                     args = ligne
@@ -449,7 +449,7 @@ class TaskEditor(Frame):
             else:
                 pos = END
             # Ajout de la tâche :
-            self.__ajouterTache(t, indice, "", pos)
+            self._ajouterTache(t, indice, "", pos)
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
