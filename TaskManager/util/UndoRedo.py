@@ -10,6 +10,7 @@ class UndoRedo:
     """
     UNDO = []
     REDO = []
+    __blocked = False
 
     def __init__(self, action = None, autoAdd = True, **info):
         """
@@ -28,7 +29,7 @@ class UndoRedo:
         Permet d'ajouter l'undoRedo à la pile d'UndoRedo s'il n'est pas déjà présent.
         Il se rajoute automatiquement au constructeur si non explicitement précisé qu'il ne faut pas.
         """
-        if not self in UndoRedo.UNDO + UndoRedo.REDO:
+        if not self in UndoRedo.UNDO + UndoRedo.REDO and not UndoRedo.__blocked:
             UndoRedo.UNDO.append(self)
             UndoRedo.REDO = []
 
@@ -48,6 +49,7 @@ class UndoRedo:
         """
         Méthode qui exécute Undo ou Redo en conséquence de ce qui est demandé.
         """
+        UndoRedo.__blocked = True
         try:
             if mode == "undo":
                 self._undo()
@@ -56,6 +58,7 @@ class UndoRedo:
         except:
             sys.stderr.write("Exception in %s callback :\n"%mode)
             traceback.print_exc()
+        UndoRedo.__blocked = False
 
     @staticmethod
     def undo():
@@ -78,16 +81,15 @@ class UndoRedo:
             UndoRedo.UNDO.append(r)
 
     @staticmethod
-    def addSimple(undoFunc, redoFunc, action, autoAdd = True, **info):
+    def addSimple(undoFunc, redoFunc, action, **info):
         """
         Permet de rajouter un couple de fonctions simplement pour l'undo redo.
         @param undoFunc: la fonction à exécuter pour undo.
         @param redoFunc: la fonction à exécuter pour redo.
         @param action: Nom de l'action pour l'affichage.
-        @param autoAdd = True: Si sur True, rajoute automatiquement cet objet au gestionnaire d'undo-redo.
         @param **info: Autres informations nécessaire pour le undo-redo.
         """
-        ur = UndoRedo(action, autoAdd, **info)
+        ur = UndoRedo(action, True, **info)
         ur._undo = undoFunc
         ur._redo = redoFunc
 
