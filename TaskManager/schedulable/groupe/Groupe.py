@@ -176,28 +176,30 @@ class Groupe(AbstractSchedulableObject):
         @see AbstractSchedulableObject#getRawRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRawRepartition(displayedCalendar)
         """
-        for task in self.__listTasks:
-            yield from task.getRepartition(displayedCalendar)
+        if self.isVisible():
+            for task in self.__listTasks:
+                yield from task.getRepartition(displayedCalendar)
 
     def getRepartition(self, displayedCalendar):
         """
         @see AbstractSchedulableObject#getRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
-        parts = []
-        for task in self.__listTasks:
-            parts += task.getRepartition(displayedCalendar)
-        parts.sort(key = lambda p: p.getDebut())
-        i = 0
-        while i < len(parts)-1:
-            if self.__canPartsBeOne(displayedCalendar, parts[i], parts[i+1]):
-                parts[i:i+2] = [DatetimeItemPart(parts[i+0].getJour(),
-                                                 parts[i+0].getHeureDebut(),
-                                                 parts[i+1].getHeureFin(),
-                                                 self)]
-                i-=1
-            i += 1
-        yield from parts
+        if self.isVisible():
+            parts = []
+            for task in self.__listTasks:
+                parts += task.getRepartition(displayedCalendar)
+            parts.sort(key = lambda p: p.getDebut())
+            i = 0
+            while i < len(parts)-1:
+                if self.__canPartsBeOne(displayedCalendar, parts[i], parts[i+1]):
+                    parts[i:i+2] = [DatetimeItemPart(parts[i+0].getJour(),
+                                                     parts[i+0].getHeureDebut(),
+                                                     parts[i+1].getHeureFin(),
+                                                     self)]
+                    i-=1
+                i += 1
+            yield from parts
 
     def instantiate(self):
         self.getPeriode().addInstanciatedSchedulable(self)
