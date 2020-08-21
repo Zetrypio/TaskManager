@@ -18,17 +18,14 @@ class TaskAdder(Frame):
     """
     Classe permettant d'ajouter des tâches (widget de gauche de l'Application).
     """
-    def __init__(self, master = None, menubar = None, **kwargs):
+    def __init__(self, master = None, **kwargs):
         """
         Constructeur du TaskAdder.
         @param master : TaskEditor.
-        @param menubar : MenuBar.
         @param **kwargs : options de configuration du Frame, voir Frame.config() et Frame.keys()
         """
         Frame.__init__(self, master, **kwargs)
         # Note : self.master est une référence vers TaskEditor
-
-        self.menu = menubar
 
         # Attributs normaux:
         date = time.localtime()

@@ -19,18 +19,16 @@ class TaskEditor(Frame):
     Zone à gauche de la fenêtre, dans laquelle sont listée les tâches.
     Contient aussi le widget qui permet d'en rajouter (TaskAdder).
     """
-    def __init__(self, master, menubar, periodManager):
+    def __init__(self, master, periodManager):
         """
         Constructeur du TaskEditor.
         @param master : Référence vers le widget sur lequel on veut le placer.
-        @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
         @param periodManager: Gestionnaire de périodes, pour l'ajouteur de période.
         """
         Frame.__init__(self, master)
         # Note : master est une référence vers Application
         
         # Attributs normaux :
-        self.menu = menubar
         self.mousepress = False
         self.MODE_TRI = "None"
 
