@@ -258,7 +258,7 @@ class Task(AbstractSchedulableObject):
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
         def addRepartition(instance):
-            if not instance.isContainer():
+            if not instance.isContainer() and instance.isVisible():
                 if instance.getDebut().date() == instance.getFin().date():
                     yield DatetimeItemPart(instance.getDebut().date(),
                                            instance.getDebut().time(),
