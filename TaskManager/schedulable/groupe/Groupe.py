@@ -202,6 +202,9 @@ class Groupe(AbstractSchedulableObject):
             yield from parts
 
     def instantiate(self):
+        """
+        Permet de se rajouter aux objets instanciés de la période.
+        """
         self.getPeriode().addInstanciatedSchedulable(self)
 
     def setSelected(self, selected):

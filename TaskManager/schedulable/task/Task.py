@@ -31,7 +31,7 @@ class Task(AbstractSchedulableObject):
         @param desc        : description.
         @param color       : couleur avec un nom compatible avec les noms de couleurs tkinter.
         @param debut       : datetime. du début.
-        @param duree       : datetime.
+        @param duree       : timedelta.
         @param rep         : temps entre répétition.
         @param nbrep       : nombre de répétitions.
         @param dependances : <list Task>
@@ -267,7 +267,7 @@ class Task(AbstractSchedulableObject):
                 else:
                     debutJour = datetime.time(0, 0, 0)
                     finJour   = datetime.time(23, 59, 59)
-        
+
                     date = instance.getDebut().date()
                     heure1 = instance.getDebut().time()
                     heure2 = finJour
@@ -293,6 +293,13 @@ class Task(AbstractSchedulableObject):
             yield from addRepartition(self)
 
     def instantiate(self):
+        """
+        Permet de mettre la version instanciée de l'objet dans la période.
+        Attention, ce n'est pas parce que l'objet n'est pas visible qu'il n'est pas ajouté.
+        (Ça c'est géré ailleurs, voir #getRepartition() pour ce point).
+        Les sous-tâches dans le cas des tâches conteneurs sont gérés en tant que tâches
+        séparés, mais pas dans le cas des tâches à répétition.
+        """
         periode = self.getPeriode()
         
         # Si on est une tâche container:
