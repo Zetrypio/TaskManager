@@ -52,9 +52,9 @@ class TaskAdder(Frame):
         # Fin :
         self.champFin           = Button(self, command = self.askDateFin)
         # Durée
-        self.champJour          = Spinbox(self, from_ = 0, to=31, increment = 1, width = 4)
-        self.champHeure         = Spinbox(self, from_ = 0, to=23, increment = 1, width = 4)
-        self.champMinute        = Spinbox(self, from_ = 0, to=59, increment = 1, width = 4)
+        self.champJour          = Spinbox(self, from_ = 0, to=31, increment = 1, width = 4, command = self.setAutoFin)
+        self.champHeure         = Spinbox(self, from_ = 0, to=23, increment = 1, width = 4, command = self.setAutoFin)
+        self.champMinute        = Spinbox(self, from_ = 0, to=59, increment = 1, width = 4, command = self.setAutoFin)
         # Répétitions :
         self.champNbRepetition  = Spinbox(self, from_ = -1, to=100, increment = 1, width = 4) # Nombre de répétition
         self.champRepetition    = Spinbox(self, from_ = 1, to=100, increment = 1, width = 4) # quantitée d'unitée de temps entre 2 répétition.
@@ -208,6 +208,27 @@ class TaskAdder(Frame):
         self.champJour.set(ecart.days)
         self.champHeure.set(ecart.seconds//3600)
         self.champMinute.set(ecart.seconds//60%60)
+        self.verifyDuree()
+
+    def setAutoFin(self):
+        """
+        Méthode qui met à jour la fin si on change les durée
+        """
+        ecart = datetime.timedelta(days = int(self.champJour.get()), hours = int(self.champHeure.get()), minutes = int(self.champMinute.get()))
+        self.fin = self.debut + ecart
+        self.champFin.config(text = self.fin)
+        # On met le text en rouge si l'écart est négatif
+        self.verifyDuree()
+
+    def verifyDuree(self):
+        """
+        Méthode qui change la couleur du text des widgets de la durée si ecart est négatif
+        """
+        ecart = self.getDuree()
+        self.champJour.config(foreground = "#FF0000") if ecart < datetime.timedelta(0) else self.champJour.config(foreground = self.getApplication().getData().getPalette()["foreground"])
+        self.champHeure.config(foreground = "#FF0000") if ecart < datetime.timedelta(0) else self.champHeure.config(foreground = self.getApplication().getData().getPalette()["foreground"])
+        self.champMinute.config(foreground = "#FF0000") if ecart < datetime.timedelta(0) else self.champMinute.config(foreground = self.getApplication().getData().getPalette()["foreground"])
+
 
     def valider(self):
         """
@@ -216,6 +237,7 @@ class TaskAdder(Frame):
         """
         debut = self.getDebut()
         duree = self.getDuree()
+        print(duree)
         if duree < datetime.timedelta(0):
             return showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative")
         rep   = self.getRepetitionTime()
