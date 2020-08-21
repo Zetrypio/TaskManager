@@ -1,11 +1,10 @@
 # -*- coding:utf-8 -*-
 from util.UndoRedo import *
-from ..Task import *
 
-class UndoRedoTaskCreation(UndoRedo):
+class UndoRedoTaskDeleting(UndoRedo):
     def __init__(self, task):
         # Super Constructor and Action Info :
-        super().__init__("Créer une tâche")
+        super().__init__("Supprimer une tâche")
 
         # Data :
         self.data       = task.saveByDict()
@@ -17,6 +16,20 @@ class UndoRedoTaskCreation(UndoRedo):
         self.periodeManager = self.app.getPeriodManager()
 
     def _undo(self):
+        # Debug & Import :
+        from ..Task import Task
+        print("undo deleting task")
+
+        # Get Period :
+        periode = self.periodeManager.getByUniqueID(self.ID_periode)
+
+        # Operate :
+        task = Task.load(self.data, periode)
+
+        # Update :
+        self.app.getTaskEditor().ajouter(task)
+
+    def _redo(self):
         # Debug :
         print("undo creation task")
 
@@ -30,16 +43,3 @@ class UndoRedoTaskCreation(UndoRedo):
         # Update :
         self.app.getTaskEditor().redessiner()
         self.app.getDonneeCalendrier().updateAffichage(True)
-
-    def _redo(self):
-        # Debug :
-        print("redo creation task")
-
-        # Get Period :
-        periode = self.periodeManager.getByUniqueID(self.ID_periode)
-
-        # Operate :
-        task = Task.load(self.data, periode)
-
-        # Update :
-        self.app.getTaskEditor().ajouter(task)

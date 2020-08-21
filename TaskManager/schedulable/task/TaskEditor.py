@@ -210,7 +210,7 @@ class TaskEditor(Frame):
             self.getApplication().getDonneeCalendrier().updateAffichage()   # Update
             if isinstance(schedulable, Task):
                 task = schedulable
-                UndoRedoTaskCreation(self, task)
+                UndoRedoTaskCreation(task)
 
         self.redessiner()
 

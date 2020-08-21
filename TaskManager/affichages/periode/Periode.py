@@ -117,6 +117,16 @@ class Periode(ITaskEditorDisplayableObject):
         """
         return self.periodManager.getApplication()
 
+    def getByUniqueID(self, id):
+        """
+        Permet d'obtenir un AbstractSchedulableObject par son Unique ID.
+        @param id: l'UniqueID de l'objet à retrouver.
+        @return l'objet trouvé.
+        """
+        for o in self.__primitivesSchedulables:
+            if o.getUniqueID() == id:
+                return o
+
     def getColor(self):
         """
         Getter pour la couleur native d'affichage de l'objet.

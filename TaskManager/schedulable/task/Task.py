@@ -8,13 +8,14 @@ import random
 
 from ..AbstractSchedulableObject import *
 
-from util.util import *
 from .dialog.datetimeDialog import *
 from .dialog.askEditTask import *
+from .undoredo.UndoRedoTaskDeleting import *
 from .TaskInDnd import *
 
 from affichages.items.DatetimeItemPart import *
 from affichages.items.content.DisplayableTask import *
+from util.util import *
 
 class Task(AbstractSchedulableObject):
     """Classe définissant une tâche."""
@@ -227,18 +228,23 @@ class Task(AbstractSchedulableObject):
         """
         Permet de supprimer définitivement cette tâche.
         """
+        # QUOI SI : groupe + sous-tâche ?
+        # Dans groupe ?
         if self.hasGroupe():
             self.getGroupe().removeTask(self, testDelete = True)
             self.getPeriode().removeInstanciatedSchedulable(self) if self in self.getPeriode().getInstanciatedSchedulables() else None
             self.getPeriode().removePrimitiveSchedulable(self) if self in self.getPeriode().getPrimitivesSchedulables() else None
-
+        # tâche normale ?
         elif self.__parent is None and not self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
             self.getApplication().getPeriodManager().getActivePeriode().removeInstanciatedSchedulable(self)
+            UndoRedoTaskDeleting(self)
+        # Tâche conteneur ?
         elif self.isContainer():
             self.getApplication().getTaskEditor().supprimer(self)
             for t in self.getSubTasks():
                 self.getPeriode().removeInstanciatedSchedulable(t)
+        # Sous-tâche ?
         else:
             self.__parent.removeSubTask(self)
             self.getApplication().getTaskEditor().redessiner()
