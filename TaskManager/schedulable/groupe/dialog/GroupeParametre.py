@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.ColorButton import *
+from util.widgets.Dialog import askyesnowarning
 from ...AbstractSchedulableParametre import *
 
 from ...task.dialog.TaskParametre import *
@@ -77,22 +78,30 @@ class GroupeParametre(AbstractSchedulableParametre):
         @param task     : <str> de la tache AVEC son UID
         """
         # S'il n'y a rien
-        if strTask is None:
+        if strTask is None or strTask == "":
             return
         # On cherche l'ID
         id = strTask.split("ID")[-1]
         id = id[id.rfind(" ")+1:]
         # On retire le schedulable
         task = [s for s in self._getSchedulable().getListTasks() if s.getUniqueID() == id][0]
-        self._getSchedulable().removeTask(task, testDelete = True)
-        #self._getSchedulable().getPeriode().addPrimitiveSchedulable(task)
-        #task.instantiate()
-        # On remet à jour tout le monde
-        self.__cbSchedu.config(value = [(str(s) + "   ID : " + s.getUniqueID()) for s in self._getSchedulable().getListTasks()])
-        self.__varComboLT.set("")
-        self.__updateTask()
-        self.__varNbTask.set(len(self._getSchedulable().getListTasks()))
-        self.__varListTasks.set([(str(s) + "   ID : " + s.getUniqueID()) for s in self._getSchedulable().getListTasks()])
+        ## Test de si on supprime le groupe
+        # S'il reste plein de taches :
+        if len(self._getSchedulable().getListTasks()) > 1:
+            self._getSchedulable().removeTask(task, testDelete = True)
+            # On remet à jour tout le monde
+            self.__cbSchedu.config(value = [(str(s) + "   ID : " + s.getUniqueID()) for s in self._getSchedulable().getListTasks()])
+            self.__varComboLT.set("")
+            self.__updateTask()
+            self.__varNbTask.set(len(self._getSchedulable().getListTasks()))
+            self.__varListTasks.set([(str(s) + "   ID : " + s.getUniqueID()) for s in self._getSchedulable().getListTasks()])
+        # Si c'est notre dernier Schedulable
+        elif len(self._getSchedulable().getListTasks()) == 1 and askyesnowarning("Retrait de la dernière tache", "Vous êtes sur le point de retirer du groupe sa dernière tache.\nSi vous continuez, cela supprimera le groupe, êtes vous sur de vouloir retirer la tache ?"):
+             self._getSchedulable().removeTask(task, testDelete = True)
+             self.master.execute("Supprimer") # On fait comme si on cliquait sur le bouton suppr
+        else:
+            return
+
 
 
     def __updateTask(self, e = None):
