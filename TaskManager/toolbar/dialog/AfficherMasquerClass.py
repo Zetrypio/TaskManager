@@ -181,8 +181,9 @@ class AfficherMasquer(TaskEditor):
                 # Si on est la tache ou une sous ligne de cette tache
                 elif itemId.startswith(t.id):
                     # Si le parent est visible, alors on peut choirir à l'individuel
-                    if (t in self.iterScheduModify and self.listeModify[self.iterScheduModify.index(t)]) \
+                    if (t in self.iterScheduModify and self.listeModify[self.iterScheduModify.index(t)][1]) \
                         or (t not in self.iterScheduModify and t.isVisible()):
+                        print("passé le test", (t not in self.iterScheduModify and t.isVisible()), (t in self.iterScheduModify and self.listeModify[self.iterScheduModify.index(t)]))
                         # On regarde les sousTaches
                         for st in t.getSubTasks():
                             if st.id == itemId:
