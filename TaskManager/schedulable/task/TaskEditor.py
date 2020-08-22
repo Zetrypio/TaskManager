@@ -20,29 +20,29 @@ class TaskEditor(Frame):
     Zone à gauche de la fenêtre, dans laquelle sont listée les tâches.
     Contient aussi le widget qui permet d'en rajouter (TaskAdder).
     """
-    def __init__(self, master, menubar, periodManager):
+    def __init__(self, master, periodManager):
         """
         Constructeur du TaskEditor.
         @param master : Référence vers le widget sur lequel on veut le placer.
-        @param menubar: Référence vers la barre de menus, pour les design de l'horloge dans TaskAdder.
         @param periodManager: Gestionnaire de périodes, pour l'ajouteur de période.
         """
         Frame.__init__(self, master)
         # Note : master est une référence vers Application
         
         # Attributs normaux :
-        self.menu = menubar
         self.mousepress = False
         self.MODE_TRI = "None"
 
         self.taches = [] # Pourra aussi contenir des Périodes.
         self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
 
+        self.__periodManager = periodManager
+
         # Zone pour l'ajouteur des tâches.
-        self.frameInput = TaskAdder(self, menubar)
+        self.frameInput = TaskAdder(self)
         self.frameInput.pack(side = TOP, fill = X)
         
-        self.frameInputPeriode = PeriodAdder(periodManager, self)
+        self.frameInputPeriode = PeriodAdder(self.getPeriodManager(), self)
 
         # Pour pouvoir filtrer l'affichage :
         self.FILTRE = {}
@@ -88,7 +88,7 @@ class TaskEditor(Frame):
         Getter pour l'application.
         @return l'Application.
         """
-        return self.master
+        return self.getPeriodManager().getApplication()
 
     def getPeriodActive(self):
         """
@@ -102,7 +102,7 @@ class TaskEditor(Frame):
         Getter pour le periode manager
         @return le PeriodManager
         """
-        return self.getApplication().getPeriodManager()
+        return self.__periodManager
 
     def getTaskInTaskEditor(self):
         """
@@ -142,7 +142,7 @@ class TaskEditor(Frame):
     # Méthodes liées aux schedulables #
     ###################################
     ""
-    def __ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
+    def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
         """
         Ajouter une tâche dans l'arbre.
         @param displayable: le ITaskEditorDisplayable à rajouter
@@ -177,7 +177,7 @@ class TaskEditor(Frame):
             for indice, ligne in enumerate(displayable.iterateDisplayContent(**kwargs)):
                 # Si c'est de la récursion : on récursionne.
                 if isinstance(ligne, ITaskEditorDisplayableObject):
-                    self.__ajouterTache(ligne, indice, parentNew+"e%s"%lastParentIndex, END, recursionLevel+1, **args)
+                    self._ajouterTache(ligne, indice, parentNew+"e%s"%lastParentIndex, END, recursionLevel+1, **args)
                 # Sinon c'est un élément
                 elif isinstance(ligne, dict):
                     args = ligne
@@ -453,7 +453,7 @@ class TaskEditor(Frame):
             else:
                 pos = END
             # Ajout de la tâche :
-            self.__ajouterTache(t, indice, "", pos)
+            self._ajouterTache(t, indice, "", pos)
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)

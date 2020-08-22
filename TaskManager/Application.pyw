@@ -74,7 +74,7 @@ class Application(Frame):
         self.prefFen = FenetrePreferences(self)
 
         # Continuation de l'instanciation
-        self.taskEditor = TaskEditor(self, self.menu, self.periodManager)
+        self.taskEditor = TaskEditor(self, self.periodManager)
         self.taskEditor.pack(side=LEFT, fill = BOTH, expand = NO)
         self.calendar = CalendarZone(self, self.periodManager)
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
