@@ -55,16 +55,16 @@ class TaskEditor(Frame):
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
         
         # Liste des 10 dernières recherches:
-        self.__dernieresRecherches = deque(maxlen=10)
+        self._dernieresRecherches = deque(maxlen=10)
         
         # Ajout du binding
         # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
         self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
         self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
-        self.barreRecherche.bind("<FocusOut>", lambda e: self.__chercher(e.widget.get()))
-        self.barreRecherche.bind("<Return>", lambda e: self.__chercher(e.widget.get()))
+        self.barreRecherche.bind("<FocusOut>", lambda e: self._chercher(e.widget.get()))
+        self.barreRecherche.bind("<Return>", lambda e: self._chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self.__chercher(e.widget.get()))
+        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self._chercher(e.widget.get()))
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -233,7 +233,7 @@ class TaskEditor(Frame):
     # Méthodes liées au tri : #
     ###########################
     ""
-    def __chercher(self, text):
+    def _chercher(self, text):
         """
         Méthode pour rechercher un texte
         (normalement via la barre de recherche).
@@ -242,10 +242,10 @@ class TaskEditor(Frame):
         text = text.lower().strip()
         self.filter(name = text)
         if text:
-            if text in self.__dernieresRecherches:
-                self.__dernieresRecherches.remove(text)
-            self.__dernieresRecherches.appendleft(text)
-        self.barreRecherche.config(values = list(self.__dernieresRecherches))
+            if text in self._dernieresRecherches:
+                self._dernieresRecherches.remove(text)
+            self._dernieresRecherches.appendleft(text)
+        self.barreRecherche.config(values = list(self._dernieresRecherches))
 
     def __filterStateOf(self, t):
         """

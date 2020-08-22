@@ -46,16 +46,16 @@ class AfficherMasquer(TaskEditor):
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
 
         # Liste des 10 dernières recherches:
-        self.__dernieresRecherches = deque(maxlen=10)
+        self._dernieresRecherches = deque(maxlen=10)
 
-        ## Ajout du binding
-        ## On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
-        #self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
-        #self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
-        #self.barreRecherche.bind("<FocusOut>", lambda e: self.__chercher(e.widget.get()))
-        #self.barreRecherche.bind("<Return>", lambda e: self.__chercher(e.widget.get()))
+        # Ajout du binding
+        # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
+        self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
+        self.barreRecherche.bind("<<ComboboxSelected>>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
+        self.barreRecherche.bind("<FocusOut>", lambda e: self._chercher(e.widget.get()))
+        self.barreRecherche.bind("<Return>", lambda e: self._chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self.__chercher(e.widget.get()))
+        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self._chercher(e.widget.get()))
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -150,9 +150,7 @@ class AfficherMasquer(TaskEditor):
 
         x = self.tree.winfo_pointerx() - self.tree.winfo_rootx()
         y = self.tree.winfo_pointery() - self.tree.winfo_rooty()
-        item = self.tree.item(self.tree.identify_row(y))
         itemId = self.tree.identify_row(y)
-        print("event :", mode, x, y, itemId, self.tree.identify_column(x))
         if mode != "select":
             #for t in self.getTaskInTaskEditor():
                 #if t.id == itemId:
