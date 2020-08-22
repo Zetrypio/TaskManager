@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.Dialog import *
+from util.importPIL import getImage
 
 from schedulable.task.Task import Task
 from schedulable.groupe.Groupe import Groupe
@@ -133,16 +134,17 @@ class AfficherMasquer(TaskEditor):
         l'attribut visible des schedulables
         @param mode : <str> Permet de savoir le type de l'event
         """
-        def addIt(tache):
+        def addIt(tache, mode = None):
             """
             Fonction embarqué qui permet d'ajouter la tache à la liste
             des taches dont la visibilité change. Ce qui permet d'enregistrer ça en local
             @param tache : <Task> tache qu'il faut ajouter
+            @param mode  : <bool> si on veut set un truc spécial
             """
             if tache in self.iterScheduModify:
-                self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]]
+                self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]] if mode is None else [tache, mode]
             else:
-                self.listeModify.append([tache, not tache.isVisible()])
+                self.listeModify.append([tache, not tache.isVisible()]) if mode is None else self.listeModify.append([tache, mode])
                 self.iterScheduModify.append(tache)
 
 
@@ -168,14 +170,24 @@ class AfficherMasquer(TaskEditor):
                 # Si on est la tache et l'id
                 if t.id == itemId:
                     addIt(t)
+                    # On met à jour toutes les soustaches
+                    if isinstance(t, Task) and t.isContainer():
+                        for st in t.getSubTasks():
+                            addIt(st, self.listeModify[self.iterScheduModify.index(t)][1])
+                    elif isinstance(t, Groupe):
+                        for tache in t.getListTasks():
+                            addIt(tache, self.listeModify[self.iterScheduModify.index(t)][1])
                     break
                 # Si on est la tache ou une sous ligne de cette tache
                 elif itemId.startswith(t.id):
-                    # On regarde les sousTaches
-                    for st in t.getSubTasks():
-                        if st.id == itemId:
-                            addIt(st)
-                            break
+                    # Si le parent est visible, alors on peut choirir à l'individuel
+                    if (t in self.iterScheduModify and self.listeModify[self.iterScheduModify.index(t)]) \
+                        or (t not in self.iterScheduModify and t.isVisible()):
+                        # On regarde les sousTaches
+                        for st in t.getSubTasks():
+                            if st.id == itemId:
+                                addIt(st)
+                                break
                     break
             self.redessiner()
 
