@@ -24,9 +24,9 @@ class AfficherMasquer(TaskEditor):
         Frame.__init__(self, master, **kw)
 
         self.listeModify = [] # Liste de tache a changer [tache][visible ?]
-        self.iterScheduModify = []
-        self.listOpen = []
-        self.listTreeItem = []
+        self.iterScheduModify = [] # Liste de tache affecté par un changement depuis le lancement du dialog
+        self.listOpen = [] # Liste de lignes (item de Treeview) ouverte
+        self.listTreeItem = [] # Liste d'item de Treeview
 
         # Attributs normaux :
         #self.mousepress = False
@@ -40,7 +40,7 @@ class AfficherMasquer(TaskEditor):
 
         # Zone des recherche :
         self.frameRecherche = Frame(self)
-        self.frameRecherche.pack(side = BOTTOM, fill = X)
+        self.frameRecherche.pack(side = TOP, fill = X, pady = 5)
         Label(self.frameRecherche, text = "Rechercher :").pack(side = LEFT)
         self.barreRecherche = Combobox(self.frameRecherche)
         self.barreRecherche.pack(side = LEFT, fill = X, expand = YES)
@@ -121,7 +121,8 @@ class AfficherMasquer(TaskEditor):
             # Ajout de la tâche :
             self._ajouterTache(t, indice, "", pos)
 
-        # Add binding :
+        ## Add binding :
+        # Le fait d'avoir lesTreeview open/close permet de détecter si on clique sur le '+' ou 'visible'
         self.tree.bind('<<TreeviewOpen>>', lambda e : self.__onClic(e, mode = "open"))
         self.tree.bind('<<TreeviewClose>>', lambda e : self.__onClic(e, mode = "close"))
         self.tree.bind('<<TreeviewSelect>>', lambda e : self.__onClic(e, mode = "select"))
@@ -140,8 +141,10 @@ class AfficherMasquer(TaskEditor):
             @param tache : <Task> tache qu'il faut ajouter
             @param mode  : <bool> si on veut set un truc spécial
             """
+            # Si ça fait partie de ceux qu'on a déjà modifié
             if tache in self.iterScheduModify:
                 self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]] if mode is None else [tache, mode]
+            # Sinon on rajoute à ceux qu'on a modifié
             else:
                 self.listeModify.append([tache, not tache.isVisible()]) if mode is None else self.listeModify.append([tache, mode])
                 self.iterScheduModify.append(tache)
@@ -151,13 +154,14 @@ class AfficherMasquer(TaskEditor):
         x = self.tree.winfo_pointerx() - self.tree.winfo_rootx()
         y = self.tree.winfo_pointery() - self.tree.winfo_rooty()
         itemId = self.tree.identify_row(y)
+        # Si on est pas en "select"
         if mode != "select":
-            #for t in self.getTaskInTaskEditor():
-                #if t.id == itemId:
+            # On ouvre/ferme et c'est tout
             if mode == "open":
                 self.listOpen.append(itemId)
             elif mode == "close":
                 self.listOpen.remove(itemId)
+            # Redessiner permet de détuire le Treeview et donc d'annuler l'event de selection qui arriverait normalement après
             self.redessiner()
             return
         # Si on clique sur la colone des trucs visibles
@@ -241,6 +245,7 @@ class AfficherMasquer(TaskEditor):
                     else:
                         self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew], open = parentNew+"e%s"%indice in self.listOpen )
                         lastParentIndex = indice
+                        # On rajoute l'iid à la liste
                         self.listTreeItem.append(parentNew+"e%s"%indice)
     ""
     ###########
