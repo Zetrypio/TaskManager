@@ -11,10 +11,17 @@ def askAfficherMasquer(periodManager):
     """
     Dialogue qui permet de gérer la visibilitée des schedulables
     @param periodManager : <PeriodManager> celui de l'app
+    @return masquage : <bool> True si au moins une tache n'est pas visible
     """
+    masquage = False
     def onClose(b):
+        nonlocal masquage
         if b == "Ok":
-            print("ok.")
+            gestion.onClose(b)
+        if any(not t.isVisible() for t in periodManager.getActivePeriode().getPrimitivesSchedulables()):
+            masquage = True
+        else:
+            masquage = False
         fen.destroy()
 
     fen = Dialog(title = "Afficher ou masquer des taches", buttons = ("Ok", "Annuler"), command = onClose)
@@ -22,4 +29,5 @@ def askAfficherMasquer(periodManager):
     gestion.pack(fill = BOTH, expand = YES)
 
     fen.activateandwait()
+    return masquage
 
