@@ -4,7 +4,6 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.Dialog import *
-from util.importPIL import getImage
 
 from schedulable.task.Task import Task
 from schedulable.groupe.Groupe import Groupe
