@@ -11,28 +11,6 @@ from util.importPIL import getImage
 from util.widgets.ColorButton import *
 from util.widgets.Dialog import askstring, askyesnowarning
 
-"""
-{"Name" : nomTheme,
-            "Couleur principale": self.__lbColor1.cget("text") or "#ffffff",
-            "Couleur secondaire": self.__lbColor2.cget("text") or "#ffffff",
-            "Couleur tertiaire" : self.__lbColor3.cget("text") or "#ffffff",
-            "# Couleur par élément" : "",
-            "General-Couleur du texte" : self.__varGCDT or "Couleur principale",
-            "Liste des tâches-Couleur de fond" : self.__varLDTCDF or "Couleur principale",
-            "Ajout des tâches-Couleur de fond" : self.__varADTCDF or "Couleur principale",
-            "Zone des onglets-Couleur de fond" : self.__varZDOCDF or "Couleur principale",
-            "Zone des onglets-Couleur de fond du calendrier" : self.__varZDOCDFDC or "Couleur principale",
-            "Zone des onglets-Couleur de fond de l'affichage Gantt" : self.__varZDOCDFDAG or "Couleur principale",
-            "Zone des onglets-Couleur de fond de l'affichage des périodes" : self.__varZDOCDFDADP or "Couleur principale",
-            "Zone des onglets-Couleur de fond de l'affichage des tâches suivantes" : self.__varZDOCDFDADTS or "Couleur principale",
-            "Zone de l'affichage-Couleur de fond" : self.__varZDACDF or "Couleur principale",
-            "Barre d'outils principale-Couleur de fond" : self.__varBOPCDF or "Couleur principale",
-            "Barre d'outils principale-Couleur des boutons" : self.__varBOPCDB or "Couleur principale",
-            "Barre d'outils secondaire-Couleur de fond" : self.__varBOSCDF or "Couleur principale",
-            "Barre d'outils secondaire-Couleur des boutons" : self.__varBOSCDB or "Couleur principale",
-            "# Autre que les couleurs" : "",
-            "Boutons de ttk" : self.__varTtkButton.get()}
-"""
 
 NOMFICHIER = os.sep + "theme"
 
