@@ -24,6 +24,8 @@ class AfficherMasquer(TaskEditor):
 
         self.listeModify = [] # Liste de tache a changer [tache][visible ?]
         self.iterScheduModify = []
+        self.listOpen = []
+        self.listTreeItem = []
 
         # Attributs normaux :
         #self.mousepress = False
@@ -88,6 +90,7 @@ class AfficherMasquer(TaskEditor):
         # On efface tout :
         self.tree.destroy()
         self.scrollbar.destroy()
+        self.listTreeItem = []
         # On recrée tout :
         self.tree = Treeview(self, columns = ("visible", "nom"), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
@@ -118,24 +121,38 @@ class AfficherMasquer(TaskEditor):
             self._ajouterTache(t, indice, "", pos)
 
         # Add binding :
-        self.tree.bind("<Button-1>", self.__onClic)
+        self.tree.bind('<<TreeviewOpen>>', lambda e : self.__onClic(e, mode = "open"))
+        self.tree.bind('<<TreeviewClose>>', lambda e : self.__onClic(e, mode = "close"))
+        self.tree.bind('<<TreeviewSelect>>', lambda e : self.__onClic(e, mode = "select"))
+        #self.tree.bind("<Button-1>", self.__onClic)
 
-    def __onClic(self, event):
+    def __onClic(self, event = None, mode = None):
         """
         Méthode qui reagit au clic pour activer/désactiver
         l'attribut visible des schedulables
+        @param mode : <str> Permet de savoir le type de l'event
         """
-        item = self.tree.item(self.tree.identify_row(event.y))
-        itemId = self.tree.identify_row(event.y)
+        x = self.tree.winfo_pointerx() - self.tree.winfo_rootx()
+        y = self.tree.winfo_pointery() - self.tree.winfo_rooty()
+        item = self.tree.item(self.tree.identify_row(y))
+        itemId = self.tree.identify_row(y)
+        print("event :", mode, x, y, itemId)
+        if mode != "select":
+            #for t in self.getTaskInTaskEditor():
+                #if t.id == itemId:
+            if mode == "open":
+                self.listOpen.append(itemId)
+            elif mode == "close":
+                self.listOpen.remove(itemId)
+
+            return
         # Si on clique sur la colone des trucs visibles
-        if self.tree.identify_column(event.x) == "#0":
+        if self.tree.identify_column(x) == "#0":
             for t in self.getTaskInTaskEditor():
                 if t.id == itemId:
                     if t in self.iterScheduModify:
-                        print("t in")
                         self.listeModify[self.iterScheduModify.index(t)] = [t, not self.listeModify[self.iterScheduModify.index(t)][1]]
                     else:
-                        print("t not in")
                         self.listeModify.append([t, not t.isVisible()])
                         self.iterScheduModify.append(t)
                     break
@@ -171,7 +188,10 @@ class AfficherMasquer(TaskEditor):
                 # On insère la ligne d'entête :
                 # S'il n'y a pas de changements locaux on prends la valeur de l'attribut
                 texte = displayable.isVisible() if displayable not in self.iterScheduModify else self.listeModify[self.iterScheduModify.index(displayable)][1]
-                a = self.tree.insert(parent, pos, text = texte, values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew])
+                a = self.tree.insert(parent, pos, text = texte, values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew], open = parentNew in self.listOpen)
+                # On rajoute l'iid à la liste
+                print(parentNew,self.listOpen, parentNew in self.listOpen)
+                self.listTreeItem.append(parentNew)
 
                 # On insère les éléments supplémentaires :
                 args = {} # *args sont pour la prochaine récursion. **kwargs sont pour l'actuelle.
@@ -184,7 +204,7 @@ class AfficherMasquer(TaskEditor):
                     elif isinstance(ligne, dict):
                         args = ligne
                     else:
-                        self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew])
+                        self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew], open = parentNew+"e%s"%indice in self.listOpen )
                         lastParentIndex = indice
     ""
     ###########
@@ -195,5 +215,4 @@ class AfficherMasquer(TaskEditor):
         if button == "Ok":
             # On cherche s'il y a des changements
             for i in range(len(self.iterScheduModify)):
-                print(self.listeModify[i][0], self.listeModify[i][1])
                 self.listeModify[i][0].setVisible(self.listeModify[i][1])
