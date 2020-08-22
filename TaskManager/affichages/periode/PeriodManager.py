@@ -6,6 +6,7 @@ from util.widgets.Dialog import *
 from .dialog.dupliquerPeriodDialog import *
 from .dialog.modifierPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
+from .undoredo.UndoRedoPeriodCreation import *
 from .Periode import *
 
 class PeriodManager:
@@ -141,6 +142,9 @@ class PeriodManager:
         # On met le combobox des périodes à jour
         self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
         self.getApplication().listKey.append(periode.getUniqueID())
+
+        # Undo-redo :
+        UndoRedoPeriodCreation(periode)
     
     def supprimer(self, periode):
         """
@@ -148,7 +152,7 @@ class PeriodManager:
         @param periode: la période à supprimer.
         """
         self.periodes.remove(periode)
-        self.app.getDonneeCalendrier().getPanneauActif().updateAffichage()
+        self.app.getDonneeCalendrier().updateAffichage()
         self.app.getTaskEditor().supprimer(periode)
         if self.activePeriode == periode:
             if len(self.periodes) > 0:
