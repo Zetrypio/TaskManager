@@ -2,13 +2,13 @@
 
 from util.UndoRedo import *
 
-class UndoRedoLinkCreation(UndoRedo):
+class UndoRedoLinkDeleting(UndoRedo):
     """
-    Undo-Redo de création de lien.
+    Undo-Redo de suppression de lien.
     """
     def __init__(self, taskA, taskB):
         # Super Constructor and Action Info :
-        super().__init__("Créer un lien")
+        super().__init__("Supprimer un lien")
 
         # Data :
         self.ID_taskA   = taskA.getUniqueID()
@@ -26,11 +26,11 @@ class UndoRedoLinkCreation(UndoRedo):
         taskB   = periode.getByUniqueID(self.ID_taskB)
         
         # Operate :
-        taskA.removeDependance(taskB)
+        taskA.addDependance(taskB)
 
         # Update :
         self.app.getTaskEditor().redessiner()
-        self.app.getDonneeCalendrier().updateAffichage(True)
+        self.app.getDonneeCalendrier().updateAffichage()
 
     def _redo(self):
         # Get Period & Tasks :
@@ -39,8 +39,8 @@ class UndoRedoLinkCreation(UndoRedo):
         taskB   = periode.getByUniqueID(self.ID_taskB)
 
         # Operate :
-        taskA.addDependance(taskB)
+        taskA.removeDependance(taskB)
 
         # Update :
         self.app.getTaskEditor().redessiner()
-        self.app.getDonneeCalendrier().updateAffichage()
+        self.app.getDonneeCalendrier().updateAffichage(True)

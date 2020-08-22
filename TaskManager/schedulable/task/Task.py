@@ -11,6 +11,7 @@ from ..AbstractSchedulableObject import *
 from .dialog.datetimeDialog import *
 from .dialog.askEditTask import *
 from .undoredo.UndoRedoLinkCreation import *
+from .undoredo.UndoRedoLinkDeleting import *
 from .undoredo.UndoRedoTaskDeleting import *
 from .TaskInDnd import *
 
@@ -428,6 +429,7 @@ class Task(AbstractSchedulableObject):
         """
         self.__dependances.remove(task)
         task.__dependantes.remove(self)
+        UndoRedoLinkDeleting(self, task)
 
     ""
     ###########################
