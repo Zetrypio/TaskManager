@@ -113,3 +113,13 @@ class ToolBar(Frame):
         
         # Liste qui va contenir les futurs frames
         self.lesFramesDesBoutons.append([]) 
+
+    def changeAfficherMasquerMode(self, hide):
+        """
+        Méthode qui change l'image du bouton si des schedulables sont cachées
+        @param hide : <bool> False alors il n'y a rien de masqué
+        """
+        if not hide:
+            self.lesBoutonsEnListes[1][1].config(image = getImage("Ressources/textures/par defaut/afficher masquer a.png"))
+        else:
+            self.lesBoutonsEnListes[1][1].config(image = getImage("Ressources/textures/par defaut/afficher masquer b.png"))

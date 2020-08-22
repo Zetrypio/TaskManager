@@ -18,6 +18,7 @@ class AfficherMasquer(TaskEditor):
         """
         @param master        : <tkinter.frame> là oùon veut notre widget
         @param periodManager : <PeriodManager> celui d'application
+        @return masquage : <bool> True si QQch est caché
         """
         # Note : master est une référence vers le dialog
         Frame.__init__(self, master, **kw)
@@ -177,7 +178,7 @@ class AfficherMasquer(TaskEditor):
                             break
                     break
             self.redessiner()
-        return
+
 
     def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
             """
@@ -232,7 +233,28 @@ class AfficherMasquer(TaskEditor):
     ###########
     ""
     def onClose(self, button):
+        self.masquage = False
         if button == "Ok":
             # On cherche s'il y a des changements
             for i in range(len(self.iterScheduModify)):
                 self.listeModify[i][0].setVisible(self.listeModify[i][1])
+            i = 0
+            # On cherche s'il y en a un qui est caché
+            while not self.masquage and i < len(self.getPeriodManager().getActivePeriode().getPrimitivesSchedulables()):
+                s = self.getPeriodManager().getActivePeriode().getPrimitivesSchedulables()[i]
+                if not s.isVisible():
+                    self.masquage = True
+                    break
+                if isinstance(s, Task):
+                    if s.isContainer():
+                        for st in s.getSubTasks():
+                            if not st.isVisible():
+                                self.masquage = True
+                                break
+                elif isinstance(s, Groupe):
+                    for st in s.getListTasks():
+                        if not st.isVisible():
+                            self.masquage = True
+                            break
+                i+=1
+        return self.masquage

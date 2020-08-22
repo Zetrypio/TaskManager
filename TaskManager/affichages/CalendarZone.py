@@ -142,11 +142,7 @@ class CalendarZone(Frame):
         """
         Permet d'afficher ou masquer un jour...
         """
-        someoneHidden = askAfficherMasquer(self.getApplication().getPeriodManager())
-        if someoneHidden:
-            print("Caché")
-        else:
-            print("vision supersonique activée")
+        self.getBarreOutilActive().changeAfficherMasquerMode(askAfficherMasquer(self.getApplication().getPeriodManager()))
 
     def ajouterHeure(self):
         """

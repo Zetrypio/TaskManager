@@ -17,11 +17,7 @@ def askAfficherMasquer(periodManager):
     def onClose(b):
         nonlocal masquage
         if b == "Ok":
-            gestion.onClose(b)
-        if any(not t.isVisible() for t in periodManager.getActivePeriode().getPrimitivesSchedulables()):
-            masquage = True
-        else:
-            masquage = False
+            masquage = gestion.onClose(b)
         fen.destroy()
 
     fen = Dialog(title = "Afficher ou masquer des taches", buttons = ("Ok", "Annuler"), command = onClose)
