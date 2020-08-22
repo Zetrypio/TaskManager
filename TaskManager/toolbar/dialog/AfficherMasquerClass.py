@@ -132,11 +132,25 @@ class AfficherMasquer(TaskEditor):
         l'attribut visible des schedulables
         @param mode : <str> Permet de savoir le type de l'event
         """
+        def addIt(tache):
+            """
+            Fonction embarqué qui permet d'ajouter la tache à la liste
+            des taches dont la visibilité change. Ce qui permet d'enregistrer ça en local
+            @param tache : <Task> tache qu'il faut ajouter
+            """
+            if tache in self.iterScheduModify:
+                self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]]
+            else:
+                self.listeModify.append([tache, not tache.isVisible()])
+                self.iterScheduModify.append(tache)
+
+
+
         x = self.tree.winfo_pointerx() - self.tree.winfo_rootx()
         y = self.tree.winfo_pointery() - self.tree.winfo_rooty()
         item = self.tree.item(self.tree.identify_row(y))
         itemId = self.tree.identify_row(y)
-        print("event :", mode, x, y, itemId)
+        print("event :", mode, x, y, itemId, self.tree.identify_column(x))
         if mode != "select":
             #for t in self.getTaskInTaskEditor():
                 #if t.id == itemId:
@@ -145,17 +159,21 @@ class AfficherMasquer(TaskEditor):
             elif mode == "close":
                 self.listOpen.remove(itemId)
 
-            return
+            #return
         # Si on clique sur la colone des trucs visibles
         if self.tree.identify_column(x) == "#0":
+            # Parcours des taches de premier plan
             for t in self.getTaskInTaskEditor():
+                # Si on est la tache et l'id
                 if t.id == itemId:
-                    if t in self.iterScheduModify:
-                        self.listeModify[self.iterScheduModify.index(t)] = [t, not self.listeModify[self.iterScheduModify.index(t)][1]]
-                    else:
-                        self.listeModify.append([t, not t.isVisible()])
-                        self.iterScheduModify.append(t)
+                    addIt(t)
                     break
+                # Si on est la tache ou une sous ligne de cette tache
+                elif itemId.startswith(t.id):
+                    # On regarde les sousTaches
+                    for st in t.getSubTasks():
+                        if st.id == itemId:
+                            addIt(st)
             self.redessiner()
         return
 
@@ -190,7 +208,6 @@ class AfficherMasquer(TaskEditor):
                 texte = displayable.isVisible() if displayable not in self.iterScheduModify else self.listeModify[self.iterScheduModify.index(displayable)][1]
                 a = self.tree.insert(parent, pos, text = texte, values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew], open = parentNew in self.listOpen)
                 # On rajoute l'iid à la liste
-                print(parentNew,self.listOpen, parentNew in self.listOpen)
                 self.listTreeItem.append(parentNew)
 
                 # On insère les éléments supplémentaires :
@@ -206,6 +223,7 @@ class AfficherMasquer(TaskEditor):
                     else:
                         self.tree.insert(parentNew, END, text=ligne[0], values=[ligne[1]], iid=parentNew+"e%s"%indice, tags=["Couleur%s"%displayable.getColor(), parentNew], open = parentNew+"e%s"%indice in self.listOpen )
                         lastParentIndex = indice
+                        self.listTreeItem.append(parentNew+"e%s"%indice)
     ""
     ###########
     # onClose #
