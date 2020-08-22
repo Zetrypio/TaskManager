@@ -158,8 +158,8 @@ class AfficherMasquer(TaskEditor):
                 self.listOpen.append(itemId)
             elif mode == "close":
                 self.listOpen.remove(itemId)
-
-            #return
+            self.redessiner()
+            return
         # Si on clique sur la colone des trucs visibles
         if self.tree.identify_column(x) == "#0":
             # Parcours des taches de premier plan
@@ -174,6 +174,8 @@ class AfficherMasquer(TaskEditor):
                     for st in t.getSubTasks():
                         if st.id == itemId:
                             addIt(st)
+                            break
+                    break
             self.redessiner()
         return
 
