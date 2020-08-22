@@ -122,7 +122,7 @@ class AfficherMasquer(TaskEditor):
             self._ajouterTache(t, indice, "", pos)
 
         # Add binding :
-        self.tree.bind("<Button-1>", self.__onClic)
+        self.tree.bind("<<TreeviewSelect>>", self.__onClic)
 
     def __onClic(self, event):
         """
@@ -131,7 +131,7 @@ class AfficherMasquer(TaskEditor):
         """
         print("focus")
         a = self.tree.focus()
-        print(a)
+        print(a, event.x)
         #if self.tree.identify_column(event.x) == "#0":
         for t in self.getTaskInTaskEditor():
             print(t.id)
@@ -139,7 +139,7 @@ class AfficherMasquer(TaskEditor):
                 t.setVisible(not t.isVisible())
                 print("setted")
                 break
-        #self.redessiner()
+        self.redessiner()
         return
 
     def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
