@@ -122,7 +122,8 @@ class AfficherMasquer(TaskEditor):
             self._ajouterTache(t, indice, "", pos)
 
         # Add binding :
-        self.tree.bind("<<TreeviewSelect>>", self.__onClic)
+        #self.tree.bind("<<TreeviewSelect>>", self.__onClic)
+        self.tree.bind("<Button-1>", self.__onClic)
 
     def __onClic(self, event):
         """
@@ -130,16 +131,17 @@ class AfficherMasquer(TaskEditor):
         l'attribut visible des schedulables
         """
         print("focus")
-        a = self.tree.focus()
-        print(a, event.x)
-        #if self.tree.identify_column(event.x) == "#0":
-        for t in self.getTaskInTaskEditor():
-            print(t.id)
-            if t.id == a:
-                t.setVisible(not t.isVisible())
-                print("setted")
-                break
-        self.redessiner()
+        item = self.tree.item(self.tree.identify_row(event.y))
+        itemId = self.tree.identify_row(event.y)
+        print(id, event.x)
+        if self.tree.identify_column(event.x) == "#0":
+            for t in self.getTaskInTaskEditor():
+                print(t.id)
+                if t.id == itemId:
+                    t.setVisible(not t.isVisible())
+                    print("setted")
+                    break
+            self.redessiner()
         return
 
     def _ajouterTache(self, displayable, idNum, parent, pos, recursionLevel = 0, **kwargs):
@@ -169,7 +171,7 @@ class AfficherMasquer(TaskEditor):
                     return
 
                 # On insère la ligne d'entête :
-                a = self.tree.insert(parent, pos, text = displayable.isVisible(), values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew, "rmenu%s"%parentNew])
+                a = self.tree.insert(parent, pos, text = displayable.isVisible(), values = displayable.getHeader(), iid = parentNew, tags = ["Couleur%s"%displayable.getColor(), parentNew])
 
                 # On insère les éléments supplémentaires :
                 args = {} # *args sont pour la prochaine récursion. **kwargs sont pour l'actuelle.
