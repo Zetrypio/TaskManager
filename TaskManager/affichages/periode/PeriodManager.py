@@ -7,6 +7,7 @@ from .dialog.dupliquerPeriodDialog import *
 from .dialog.modifierPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
 from .undoredo.UndoRedoPeriodCreation import *
+from .undoredo.UndoRedoPeriodDeleting import *
 from .Periode import *
 
 class PeriodManager:
@@ -141,6 +142,8 @@ class PeriodManager:
 
         # On met le combobox des périodes à jour
         self.getApplication().getDonneeCalendrier().getParametreAffichage().updateComboboxPeriode()
+        self.getApplication().getDonneeCalendrier().updateAffichage()
+        self.getApplication().getTaskEditor().redessiner()
         self.getApplication().listKey.append(periode.getUniqueID())
 
         # Undo-redo :
@@ -160,6 +163,7 @@ class PeriodManager:
             else:
                 self.setActivePeriode(None)
         self.getApplication().listKey.remove(periode.getUniqueID())
+        UndoRedoPeriodDeleting(periode)
 
     ""
     ######################################################
@@ -265,6 +269,5 @@ class PeriodManager:
         if len(periodes) == 0:
             return showerror("Erreur de sélection", "Vous devez avoir au moins une période sélectionnée pour effectuer cette action.")
         for periode in reversed(periodes):
-            self.periodes.remove(periode)
-            self.app.getTaskEditor().supprimer(periode)
+            self.supprimer(periode)
         self.app.getDonneeCalendrier().updateAffichage()
