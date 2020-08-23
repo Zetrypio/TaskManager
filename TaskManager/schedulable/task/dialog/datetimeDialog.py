@@ -26,9 +26,11 @@ def askdatetime(style):
             fen.destroy()
         elif a == 'Ok': # Si on accepte :
             # on met en forme la date
-            date = cal.selection.date()
+            date = cal.selection
             if date == None:
                 date = datetime.datetime.now().date()
+            else:
+                date = date.date()
             # et l'heure :
             dateheure = datetime.datetime.combine(date, datetime.time(hor.heure, hor.minute))
             # et on ferme la fenêtre.
