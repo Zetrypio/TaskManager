@@ -48,6 +48,20 @@ class AfficherMasquer(TaskEditor):
         # Liste des 10 dernières recherches:
         self._dernieresRecherches = deque(maxlen=10)
 
+        # Ajout des 3 checkbuttons de catégories
+        self.__frameCheckBtn = Frame(self)
+        self.__frameCheckBtn.pack(side = TOP, fill = X, padx = 5, pady = 5)
+        self.__varCbTask      = BooleanVar()
+        self.__varCbRepetTask = BooleanVar()
+        self.__varCbGroupe    = BooleanVar()
+        self.__varCbTask.set(     True)
+        self.__varCbRepetTask.set(True)
+        self.__varCbGroupe.set(   True)
+
+        Checkbutton(self.__frameCheckBtn, text = "Taches", variable = self.__varCbTask, command = self.checkTask).pack(side = LEFT, fill = BOTH, expand = YES)
+        Checkbutton(self.__frameCheckBtn, text = "Taches à répétitions", variable = self.__varCbRepetTask, command = self.checkRepetTask).pack(side = LEFT, fill = BOTH, expand = YES)
+        Checkbutton(self.__frameCheckBtn, text = "Groupes", variable = self.__varCbGroupe, command = self.checkGroupe).pack(side = LEFT, fill = BOTH, expand = YES)
+
         # Ajout du binding
         # On fait un after car sinon l'événement se déclanche avant que le texte change dans le combobox
         self.barreRecherche.bind("<Key>", lambda e: self.after(10, lambda: self.filter(name = e.widget.get())))
@@ -78,7 +92,59 @@ class AfficherMasquer(TaskEditor):
         @return <PeriodManager>
         """
         return self.__periodManager
-    
+
+    ""
+    #####################################
+    # Méthodes des checkbuttons globaux #
+    #####################################
+    ""
+    def checkTask(self):
+        """
+        Méthode qui une fois activé mets toutes les taches
+        du statut du checkbutton
+        """
+        statut = self.__varCbTask.get()
+        for s in self.getTaskInTaskEditor():
+            if isinstance(s, Task) and s.getNbRep() == 0:
+                self.addIt(s, statut)
+                # On mets à jours les sous taches si conteneur
+                if s.isContainer():
+                    for st in s.getSubTasks():
+                        self.addIt(st, statut) if st.getNbRep() == 0 else None
+        self.redessiner()
+
+    def checkRepetTask(self):
+        """
+        Méthode qui une fois activé mets toutes les taches à répétitions
+        du statut du checkbutton
+        """
+        statut = self.__varCbRepetTask.get()
+        # Parcours à la recherche de toutes les taches a repetitions sauf celles des groupes
+        for s in self.getTaskInTaskEditor():
+            if isinstance(s, Task) and s.getNbRep() != 0:
+                self.addIt(s, statut)
+                # On mets à jours les sous taches si conteneur
+                if s.isContainer():
+                    for st in s.getSubTasks():
+                        self.addIt(st, statut) if st.getNbRep() != 0 else None
+        self.redessiner()
+
+    def checkGroupe(self):
+        """
+        Méthode qui une fois activé mets tous les groupe
+        du statut du checkbutton
+        """
+        statut = self.__varCbGroupe.get()
+        for s in self.getTaskInTaskEditor():
+            # Si c'est un groupe
+            if isinstance(s, Groupe):
+                # On met à jour le groupe
+                self.addIt(s, statut)
+                # + toutes ses Taches
+                for tache in s.getListTasks():
+                    self.addIt(tache, statut)
+        self.redessiner()
+
     ""
     #####################
     # Autres méthodes : #
@@ -134,23 +200,6 @@ class AfficherMasquer(TaskEditor):
         l'attribut visible des schedulables
         @param mode : <str> Permet de savoir le type de l'event
         """
-        def addIt(tache, mode = None):
-            """
-            Fonction embarqué qui permet d'ajouter la tache à la liste
-            des taches dont la visibilité change. Ce qui permet d'enregistrer ça en local
-            @param tache : <Task> tache qu'il faut ajouter
-            @param mode  : <bool> si on veut set un truc spécial
-            """
-            # Si ça fait partie de ceux qu'on a déjà modifié
-            if tache in self.iterScheduModify:
-                self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]] if mode is None else [tache, mode]
-            # Sinon on rajoute à ceux qu'on a modifié
-            else:
-                self.listeModify.append([tache, not tache.isVisible()]) if mode is None else self.listeModify.append([tache, mode])
-                self.iterScheduModify.append(tache)
-
-
-
         x = self.tree.winfo_pointerx() - self.tree.winfo_rootx()
         y = self.tree.winfo_pointery() - self.tree.winfo_rooty()
         itemId = self.tree.identify_row(y)
@@ -170,14 +219,14 @@ class AfficherMasquer(TaskEditor):
             for t in self.getTaskInTaskEditor():
                 # Si on est la tache et l'id
                 if t.id == itemId:
-                    addIt(t)
+                    self.addIt(t)
                     # On met à jour toutes les soustaches
                     if isinstance(t, Task) and t.isContainer():
                         for st in t.getSubTasks():
-                            addIt(st, self.listeModify[self.iterScheduModify.index(t)][1])
+                            self.addIt(st, self.listeModify[self.iterScheduModify.index(t)][1])
                     elif isinstance(t, Groupe):
                         for tache in t.getListTasks():
-                            addIt(tache, self.listeModify[self.iterScheduModify.index(t)][1])
+                            self.addIt(tache, self.listeModify[self.iterScheduModify.index(t)][1])
                     break
                 # Si on est la tache ou une sous ligne de cette tache
                 elif itemId.startswith(t.id):
@@ -188,12 +237,12 @@ class AfficherMasquer(TaskEditor):
                         if isinstance(t, Task):
                             for st in t.getSubTasks():
                                 if st.id == itemId:
-                                    addIt(st)
+                                    self.addIt(st)
                                     break
                         elif isinstance(t, Groupe):
                             for tache in t.getListTasks():
                                 if tache.id == itemId:
-                                    addIt(tache)
+                                    self.addIt(tache)
                                     break
                     break
             self.redessiner()
@@ -247,6 +296,21 @@ class AfficherMasquer(TaskEditor):
                         lastParentIndex = indice
                         # On rajoute l'iid à la liste
                         self.listTreeItem.append(parentNew+"e%s"%indice)
+
+    def addIt(self, tache, mode = None):
+        """
+        Méthode qui permet d'ajouter la tache à la liste
+        des taches dont la visibilité change. Ce qui permet d'enregistrer ça en local
+        @param tache : <Task> tache qu'il faut ajouter
+        @param mode  : <bool> si on veut set un truc spécial
+        """
+        # Si ça fait partie de ceux qu'on a déjà modifié
+        if tache in self.iterScheduModify:
+            self.listeModify[self.iterScheduModify.index(tache)] = [tache, not self.listeModify[self.iterScheduModify.index(tache)][1]] if mode is None else [tache, mode]
+        # Sinon on rajoute à ceux qu'on a modifié
+        else:
+            self.listeModify.append([tache, not tache.isVisible()]) if mode is None else self.listeModify.append([tache, mode])
+            self.iterScheduModify.append(tache)
     ""
     ###########
     # onClose #
