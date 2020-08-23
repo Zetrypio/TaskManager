@@ -46,7 +46,6 @@ class TaskParametre(AbstractSchedulableParametre):
         self.varRepTimedelta = None
         self.varRep = IntVar()
         self.varUnitRep = StringVar()
-        self.varID = StringVar()
         self.varDone = BooleanVar()
 
 
@@ -70,7 +69,6 @@ class TaskParametre(AbstractSchedulableParametre):
             self.varUnitRep.set("semaines")
         else:
             self.varUnitRep.set("jours")
-        self.varID.set(self._getSchedulable().getUniqueID())
 
 
         ## Attributs généraux
@@ -98,8 +96,6 @@ class TaskParametre(AbstractSchedulableParametre):
 
         ## Attributs avancés
         # (voir parent) self._frameAdvanced = LabelFrame(self._pageAvancee, text = "Options avancées")
-        self.lbId = Label(           self._frameAdvanced, text = "ID :")
-        self.entryId = Entry(        self._frameAdvanced, textvariable = self.varID, state = DISABLED)
         self.lbSubtask = Label(      self._frameAdvanced, text = "Sous-tâches :")
         self.lbListSub = Label(      self._frameAdvanced, text = self.__getListTask(self._getSchedulable().getSubTasks()) if self._getSchedulable().isContainer() else "Tache non conteneur", anchor = "nw")
         self.lbDepces = Label(       self._frameAdvanced, text = "Dépendances :")
@@ -140,8 +136,6 @@ class TaskParametre(AbstractSchedulableParametre):
         self.cbUnit.pack(side = LEFT, fill = BOTH, expand = YES)
         # Avancée
         # (voir parent) self._frameAdvanced.pack(side = TOP, fill = BOTH, expand = YES)
-        self.lbId.grid(          row = 0, column = 0, sticky = "e" )
-        self.entryId.grid(       row = 0, column = 1, sticky = "we")
         self.lbSubtask.grid(     row = 1, column = 0, sticky = "e" )
         self.lbListSub.grid(     row = 1, column = 1, sticky = "w" )
         self.lbDepces.grid(      row = 2, column = 0, sticky = "ne")

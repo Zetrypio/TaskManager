@@ -29,12 +29,14 @@ class AbstractSchedulableParametre(Notebook):
         self.__varPeriode = StringVar()
         #varCouleur = StringVar()
         # textDesc (je le met ici pour ne pas l'oublier)
+        self.__varID = StringVar()
 
         # Affectation des variables
         self.__varNom.set(self._getSchedulable().getNom())
         self.__varPeriode.set(self._getSchedulable().getPeriode().getNom())
         #varCouleur.set(self._getSchedulable().getColor())
         # textDesc (je le met ici pour ne pas l'oublier)
+        self.__varID.set(self._getSchedulable().getUniqueID())
 
         # Attributs généraux :
         self._frameGeneral = LabelFrame(self.__pageGeneral, text = "Attributs généraux")
@@ -52,6 +54,9 @@ class AbstractSchedulableParametre(Notebook):
 
         # Attributs avancées :
         self._frameAdvanced = LabelFrame(self.__pageAvancee, text = "Options avancées")
+        self.__lbId = Label(               self._frameAdvanced, text = "ID :")
+        self.__entryId = Entry(            self._frameAdvanced, textvariable = self.__varID, state = DISABLED)
+
 
         ## Affichage
         # Général
@@ -67,6 +72,9 @@ class AbstractSchedulableParametre(Notebook):
         self.__sep.grid(         row = 5, column = 0, sticky = "we", columnspan = 2, pady = 2)
         # Avancée
         self._frameAdvanced.pack(side = TOP, fill = BOTH, expand = YES)
+        self.__lbId.grid(          row = 0, column = 0, sticky = "e" )
+        self.__entryId.grid(       row = 0, column = 1, sticky = "we")
+
 
     "" # Marque pour le repli de code
     #############
