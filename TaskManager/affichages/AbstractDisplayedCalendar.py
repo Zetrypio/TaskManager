@@ -478,7 +478,7 @@ class AbstractDisplayedCalendar(Frame):
             mois        = str(mois[dt.month-1])
 
             texte = texte.replace("NJ2", numJour2C)
-            texte = texte.replace("JS0", numJour[0])
+            texte = texte.replace("JS0", jourSemaine[0])
             texte = texte.replace("NM2", numMois2C)
             texte = texte.replace("NA", numAnnee)
             texte = texte.replace("JS", jourSemaine)

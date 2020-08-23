@@ -96,6 +96,13 @@ class TaskAdder(Frame):
         """
         return self.master.getApplication()
 
+    def getData(self):
+        """
+        Getter pour le data
+        @return <Data>
+        """
+        return self.getApplication().getData()
+
     def getDebut(self):
         """
         Permet d'obtenir le début déjà choisi par l'utilisateur.
@@ -161,6 +168,75 @@ class TaskAdder(Frame):
         return self.master
 
     ""
+    #############
+    # Setters : #
+    #############
+    ""
+    def __adaptText(self, dt):
+        """
+        Méthode qui Fait un texte joli avec un date
+        @param dt : <datetime.date> celui du jour
+        @return texte : <str> un truc en accord avec les préférences
+        """
+        ## Gestion du texte
+        # Le fichier existe ?
+        if not self.getData().testDataExist("Calendrier"):
+            texte = dt.year + " " + dt.month + " " + dt.day
+        # On cherche le lien
+        if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
+            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")[1]
+        else :
+            lien = "."
+        # On cherche le style
+        if self.getData().testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
+            ## Traitement du texte
+            # Constantes
+            jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
+            texte = self.getData().getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
+
+            numJour     = str(dt.day)
+            numMois     = str(dt.month)
+            numJour2C   = "%02i"%dt.day
+            numMois2C   = "%02i"%dt.month
+            numAnnee    = str(dt.year)
+            jourSemaine = str(jour[dt.weekday()])
+            mois        = str(mois[dt.month-1])
+
+            texte = texte.replace("NJ2", numJour2C)
+            texte = texte.replace("JS0", jourSemaine[0])
+            texte = texte.replace("NM2", numMois2C)
+            texte = texte.replace("NA", numAnnee)
+            texte = texte.replace("JS", jourSemaine)
+            texte = texte.replace("M3", mois[:3])
+            texte = texte.replace("NJ", numJour)
+            texte = texte.replace("MO", mois)
+
+            texte = texte.replace("_", lien)
+
+        return texte
+
+    def setDebut(self, value):
+        """
+        Méthode qui fixe le début + met un joli texte sur le bouton
+        @param value : <datetime.datetime> celui du moment a afficher
+        """
+        self.debut = value
+        self.champDebut.config(text = self.__adaptText(value.date()) + " " + str(value.time()) if value is not None else "")
+        self.autoSetDuree()
+
+    def setFin(self, value):
+        """
+        Méthode qui fixe la fin + met un joli texte sur le bouton
+        @param value : <datetime.datetime> celui du moment a afficher
+        """
+        if value is not None:
+            self.fin = value
+        self.champFin.config(text = self.__adaptText(value.date()) + " " + str(value.time()) if value is not None else "")
+        self.autoSetDuree()
+
+    ""
     ##################################
     # Méthodes liées aux dialogues : #
     ##################################
@@ -174,9 +250,7 @@ class TaskAdder(Frame):
 
         ## demande de la date
         date = askdatetime(self.getStyleHorloge())
-        self.debut = date
-        self.champDebut.config(text = date if date is not None else "")
-        self.autoSetDuree()
+        self.setDebut(date)
 
     def askDateFin(self):
         """
@@ -187,10 +261,7 @@ class TaskAdder(Frame):
 
         # demande de la date
         date = askdatetime(self.getStyleHorloge())
-        if date is not None:
-            self.fin = date
-        self.champFin.config(text = date if date is not None else "")
-        self.autoSetDuree()
+        self.setFin(date)
 
     ""
     #####################
@@ -213,11 +284,9 @@ class TaskAdder(Frame):
         """
         ecart = datetime.timedelta(days = int(self.champJour.get()), hours = int(self.champHeure.get()), minutes = int(self.champMinute.get()))
         if self.debut is not None:
-            self.fin = self.debut + ecart
-            self.champFin.config(text = self.fin)
+            self.setFin(self.debut + ecart)
         elif self.debut is None and self.fin is not None:
-            self.debut = self.fin - ecart
-            self.champDebut.config(text = self.debut)
+            self.setDebut(self.fin - ecart)
         else:
             return # Pour ne pas faire le test Durée
         # On met le text en rouge si l'écart est négatif
