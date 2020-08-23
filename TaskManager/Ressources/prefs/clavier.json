@@ -29,6 +29,14 @@
         "preferences": {
             "description": "Ouvre la fenêtre des préférences",
             "bindings" : ["<Control-,>"]
+        },
+        "annuler": {
+            "description" : "Annule la dernière action",
+            "bindings" : ["<Control-z>"]
+        },
+        "retablir": {
+            "description" : "Rétablit la dernière action annulé",
+            "bindings" : ["<Control-y>"]
         }
     },
     "General": {

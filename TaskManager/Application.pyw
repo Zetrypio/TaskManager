@@ -85,6 +85,8 @@ class Application(Frame):
         self.bind_all("<<restart>>"    , lambda e=None:self.restart())
         self.bind_all("<<open-file>>"  , lambda e=None:self.open())
         self.bind_all("<<quit>>"       , lambda e=None:self.quit())
+        self.bind_all("<<annuler>>"    , lambda e=None:UndoRedo.undo())
+        self.bind_all("<<retablir>>"   , lambda e=None:UndoRedo.redo())
         # Set des bindings mécanique en lien avec le bindingManager
 
         #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
