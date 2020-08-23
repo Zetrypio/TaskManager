@@ -78,10 +78,7 @@ class PeriodAdder(Frame):
 
         # demande de la date
         date = askdate()
-        if date is not None:
-            self.debut = date
-        self.champDebut.config(text = date)
-        self.autoSetDuree()
+        self.setDebut(date)
 
     def askDateFin(self):
         """
@@ -92,10 +89,7 @@ class PeriodAdder(Frame):
 
         # demande de la date
         date = askdate()
-        if date is not None:
-            self.fin = date
-        self.champFin.config(text = date)
-        self.autoSetDuree()
+        self.setFin(date)
 
     def getApplication(self):
         """
@@ -103,6 +97,13 @@ class PeriodAdder(Frame):
         @return l'Application
         """
         return self.getTaskEditor().getApplication()
+
+    def getData(self):
+        """
+        Getter pour le data
+        @return <data>
+        """
+        return self.getApplication().getData()
 
     def getDuree(self):
         """
@@ -121,6 +122,50 @@ class PeriodAdder(Frame):
     # Setters : #
     #############
     ""
+    def __adaptText(self, dt):
+        """
+        Méthode qui Fait un texte joli avec un date
+        @param dt : <datetime.date> celui du jour
+        @return texte : <str> un truc en accord avec les préférences
+        """
+        ## Gestion du texte
+        # Le fichier existe ?
+        if not self.getData().testDataExist("Calendrier"):
+            texte = dt.year + " " + dt.month + " " + dt.day
+        # On cherche le lien
+        if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
+            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")[1]
+        else :
+            lien = "."
+        # On cherche le style
+        if self.getData().testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
+            ## Traitement du texte
+            # Constantes
+            jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+            mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+
+            texte = self.getData().getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
+
+            numJour     = str(dt.day)
+            numMois     = str(dt.month)
+            numJour2C   = "%02i"%dt.day
+            numMois2C   = "%02i"%dt.month
+            numAnnee    = str(dt.year)
+            jourSemaine = str(jour[dt.weekday()])
+            mois        = str(mois[dt.month-1])
+
+            texte = texte.replace("NJ2", numJour2C)
+            texte = texte.replace("JS0", jourSemaine[0])
+            texte = texte.replace("NM2", numMois2C)
+            texte = texte.replace("NA", numAnnee)
+            texte = texte.replace("JS", jourSemaine)
+            texte = texte.replace("M3", mois[:3])
+            texte = texte.replace("NJ", numJour)
+            texte = texte.replace("MO", mois)
+
+            texte = texte.replace("_", lien)
+
+        return texte
     def autoSetDuree(self):
         """
         Permet de mettre automatiquement le widget de durée de la période vers
@@ -130,13 +175,35 @@ class PeriodAdder(Frame):
         self.champJour.set(ecart.days)
         self.verifyDuree()
 
+    def setDebut(self, value):
+        """
+        Méthode qui permet de mettre un début
+        + config un joli texte (en accord avec les préférences) sur le bouton
+        + verifyDuree
+        @param value : <datetime.date> date a mettre en place
+        """
+        if value is not None:
+            self.debut = value
+        self.champDebut.config(text = self.__adaptText(value) if value is not None else "")
+        self.autoSetDuree()
+
+    def setFin(self, value):
+        """
+        Méthode qui permet de mettre une fin
+        + config un joli texte (en accord avec les préférences) sur le bouton
+        + verifyDuree
+        @param value : <datetime.date> date a mettre en place
+        """
+        if value is not None:
+            self.fin = value
+        self.champFin.config(text = self.__adaptText(value) if value is not None else "")
+        self.autoSetDuree()
+
     def setAutoFin(self):
         """
         Méthode qui permet de fixer la fin en éditant la durée
         """
-        self.fin = self.debut + datetime.timedelta(days = int(self.champJour.get()))
-        self.champFin.config(text = self.fin)
-        self.verifyDuree()
+        self.setFin(self.debut + datetime.timedelta(days = int(self.champJour.get())))
 
     def verifyDuree(self):
         """
