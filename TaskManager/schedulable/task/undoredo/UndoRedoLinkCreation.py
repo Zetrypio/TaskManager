@@ -12,7 +12,9 @@ class UndoRedoLinkCreation(UndoRedo):
 
         # Data :
         self.ID_taskA   = taskA.getUniqueID()
+        self.ID_taskA_P = taskA.getParent().getUniqueID() if taskA.getParent() else None
         self.ID_taskB   = taskB.getUniqueID()
+        self.ID_taskB_P = taskB.getParent().getUniqueID() if taskB.getParent() else None
         self.ID_periode = taskA.getPeriode().getUniqueID() # Ils ont forcément la même période
 
         # Application & Other :
@@ -23,7 +25,19 @@ class UndoRedoLinkCreation(UndoRedo):
         # Get Period & Tasks :
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
         taskA   = periode.getByUniqueID(self.ID_taskA)
+        if taskA is None:
+            taskA_P = periode.getByUniqueID(self.ID_taskA_P)
+            for task in taskA_P.getSubTasks():
+                if task.getUniqueID() == self.ID_taskA:
+                    taskA = task
+                    break
         taskB   = periode.getByUniqueID(self.ID_taskB)
+        if taskB is None:
+            taskB_P = periode.getByUniqueID(self.ID_taskB_P)
+            for task in taskB_P.getSubTasks():
+                if task.getUniqueID() == self.ID_taskB:
+                    taskB = task
+                    break
         
         # Operate :
         taskA.removeDependance(taskB)
@@ -37,6 +51,19 @@ class UndoRedoLinkCreation(UndoRedo):
         periode = self.periodeManager.getByUniqueID(self.ID_periode)
         taskA   = periode.getByUniqueID(self.ID_taskA)
         taskB   = periode.getByUniqueID(self.ID_taskB)
+        if taskA is None:
+            taskA_P = periode.getByUniqueID(self.ID_taskA_P)
+            for task in taskA_P.getSubTasks():
+                if task.getUniqueID() == self.ID_taskA:
+                    taskA = task
+                    break
+        taskB   = periode.getByUniqueID(self.ID_taskB)
+        if taskB is None:
+            taskB_P = periode.getByUniqueID(self.ID_taskB_P)
+            for task in taskB_P.getSubTasks():
+                if task.getUniqueID() == self.ID_taskB:
+                    taskB = task
+                    break
 
         # Operate :
         taskA.addDependance(taskB)
