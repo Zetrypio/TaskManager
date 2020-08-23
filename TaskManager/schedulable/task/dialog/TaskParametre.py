@@ -169,7 +169,15 @@ class TaskParametre(AbstractSchedulableParametre):
         if not self._getSchedulable().isContainer():
             self._getSchedulable().setDebut(self.__varDebut, change = "duree")
             self._getSchedulable().setDuree(datetime.timedelta(days = self.__varJour.get(), hours = self.__varHour.get(), minutes = self.__varMin.get()))
-        #self._getSchedulable().setRep # TODO
+        if self.__varRep is not None and self.__varUnitRep is not None:
+            if self.__varUnitRep == "semaine":
+                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep * 7))
+            elif self.__varUnitRep == "jours":
+                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep))
+            elif self.__varUnitRep == "heures":
+                self._getSchedulable().setRep(datetime.timedelta(hours = self.__varRep))
+
+        self._getSchedulable().setNbRep(self.__varNbRep.get())
         self._getSchedulable().setDone(self.__varDone.get())
 
         self._getSchedulable().getApplication().getTaskEditor().redessiner()

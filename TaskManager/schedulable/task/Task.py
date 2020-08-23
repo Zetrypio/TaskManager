@@ -498,6 +498,24 @@ class Task(AbstractSchedulableObject):
         self.__duree = duree
         self.setDebut(self.getDebut(), change = "fin")
 
+    def setRep(self, time):
+        """
+        Setter pour la durée entre 2 répétitions
+        @param time : <datetime.timedelta> Celui entre 2 répétitions
+        """
+        if not isinstance(time, datetime.timedelta):
+            raise ValueError("%s <%s> n'est pas du bon type, ce doit être un datetime.timedelta"%(time, time.__class__.__name__))
+        self.__rep = time
+
+    def setNbRep(self, nb):
+        """
+        Setter pour le nombre de répétition
+        @param nb : <int> nombre de répétition
+        """
+        if not isinstance(nb, int):
+            raise ValueError("%s <%s> n'est pas du bon type, ce doit être un int"%(nb, nb.__class__.__name__))
+        self.__nbrep = nb
+
     def intersectWith(self, task):
         """
         Permet de savoir si cette tâche s'intersectionne avec une autre.
