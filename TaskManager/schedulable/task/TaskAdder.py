@@ -310,15 +310,18 @@ class TaskAdder(Frame):
         debut = self.getDebut()
         duree = self.getDuree()
         if duree < datetime.timedelta(0) or (debut is not None and duree <= datetime.timedelta(0)):
-            return showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative ou nulle")
+            showerror("Durée incorrect", "Vous ne pouvez pas créer une tache avec une durée négative ou nulle")
+            return
         rep   = self.getRepetitionTime()
+        nbrep = int(self.champNbRepetition.get())
         periode = self.getApplication().getPeriodManager().getActivePeriode()
         # On check si on est dans la période
-        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin())):
+        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin()))\
+        or (duree is not None and (debut + duree + nbrep * rep).date() > periode.getFin()) \
+        or (debut + nbrep * rep).date() > periode.getFin(): # Si ne nombre de répétition fait que c'est après la fin de la période
             if not askyesnowarning(title = "Tache hors période", message = "Vous voulez créer une tache qui n'est pas entièrement dans la période actuelle.\nVoulez-vous vraiment créer cette tache ?"):
                 return
         nom = self.champNom.get()
-        nbrep = int(self.champNbRepetition.get())
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.get()
         self.getTaskEditor().ajouter(Task(nom, periode, desc, color, debut, duree, rep, nbrep))
