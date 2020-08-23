@@ -47,6 +47,7 @@ class TaskParametre(AbstractSchedulableParametre):
         self.varRep = IntVar()
         self.varUnitRep = StringVar()
         self.varDone = BooleanVar()
+        self.__varGroupe = StringVar()
 
 
         # Affectation des variables
@@ -69,6 +70,7 @@ class TaskParametre(AbstractSchedulableParametre):
             self.varUnitRep.set("semaines")
         else:
             self.varUnitRep.set("jours")
+        self.__varGroupe.set(str(self._getSchedulable().getGroupe()) + "   ID : " +self._getSchedulable().getGroupe().getUniqueID()) if self._getSchedulable().hasGroupe() else self.__varGroupe.set("N'est pas dans un groupe")
 
 
         ## Attributs généraux
@@ -108,6 +110,8 @@ class TaskParametre(AbstractSchedulableParametre):
         self.cbDone = Checkbutton(   self._frameAdvanced, variable = self.varDone)
         self.lbParent = Label(       self._frameAdvanced, text = "Parent :")
         self.lbResultParent = Label( self._frameAdvanced, text = self._getSchedulable().getParent() if self._getSchedulable().getParent() else "")
+        self.__lbGroupe = Label(self._frameAdvanced, text = "Groupe :")
+        self.__lbResultGroupe = Label(self._frameAdvanced, text = self.__varGroupe.get())
 
 
 
@@ -148,6 +152,8 @@ class TaskParametre(AbstractSchedulableParametre):
         self.cbDone.grid(        row = 6, column = 1, sticky = "we")
         self.lbParent.grid(      row = 7, column = 0, sticky = "e" )
         self.lbResultParent.grid(row = 7, column = 1, sticky = "w" )
+        self.__lbGroupe.grid(row = 8, column = 0, sticky = "e")
+        self.__lbResultGroupe.grid(row = 8, column = 1, sticky = "w")
 
         # Config grid
         self._frameAdvanced.columnconfigure(1, weight = 1)
