@@ -287,9 +287,9 @@ class Task(AbstractSchedulableObject):
                     yield DatetimeItemPart(date, heure1, heure2, self)
 
         # Permet de gérer les tâches à répétitions différemment de celles qui sont normales :
-        if self.__nbrep > 0:
+        if self.getNbRep() > 0 and self.isVisible():
             instance = self.copy()
-            count = self.__nbrep
+            count = self.getNbRep()
             while count > 0 and instance.getDebut().date() < self.getPeriode().getFin():
                 yield from addRepartition(instance)
                 instance.setDebut(instance.getDebut() + instance.__rep)
