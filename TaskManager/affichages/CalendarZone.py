@@ -143,6 +143,8 @@ class CalendarZone(Frame):
         Permet d'afficher ou masquer un jour...
         """
         self.getBarreOutilActive().changeAfficherMasquerMode(askAfficherMasquer(self.getApplication().getPeriodManager()))
+        # On se met à jour
+        self.getDonneeCalendrier().updateAffichage()
 
     def ajouterHeure(self):
         """
