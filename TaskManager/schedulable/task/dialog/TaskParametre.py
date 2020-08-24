@@ -192,8 +192,8 @@ class TaskParametre(AbstractSchedulableParametre):
         date = askdatetime(False)
         if date is None:
             return
-        self.varDebut = date
-        self.btnDebut.config(text = self.varDebut if self.varDebut is not None else "")
+        self.__varDebut = date
+        self.__btnDebut.config(text = self.__varDebut if self.__varDebut is not None else "")
         self.__autoSetDuree()
 
     def __askFin(self):
@@ -204,8 +204,8 @@ class TaskParametre(AbstractSchedulableParametre):
         date = askdatetime(False)
         if date is None:
             return
-        self.varFin = date
-        self.btnFin.config(text = self.varFin if self.varFin is not None else "")
+        self.__varFin = date
+        self.__btnFin.config(text = self.__varFin if self.__varFin is not None else "")
         self.__autoSetDuree()
 
     def __autoSetDuree(self):
@@ -213,22 +213,22 @@ class TaskParametre(AbstractSchedulableParametre):
         Permet de mettre à jour les widgets de durée de tâche.
         """
         try:
-            ecart = self.varFin - self.varDebut
+            ecart = self.__varFin - self.__varDebut
             if ecart < datetime.timedelta(0) : # Si durée négative, on remet la fin en vue de la durée
                 self.__autoSetFin()
                 return
             else:
-                self.varJour.set(ecart.days)
-                self.varHour.set(ecart.seconds//3600)
-                self.varMin.set(ecart.seconds//60%60)
+                self.__varJour.set(ecart.days)
+                self.__varHour.set(ecart.seconds//3600)
+                self.__varMin.set(ecart.seconds//60%60)
         except:pass
 
     def __autoSetFin(self):
         """
         Fonction qui change automatiquement la fin si on change la durée
         """
-        self.varFin = (self.varDebut + datetime.timedelta(days = self.varJour.get(), hours = self.varHour.get(), minutes = self.varMin.get()))
-        self.btnFin.config(text = self.varFin)
+        self.__varFin = (self.__varDebut + datetime.timedelta(days = self.__varJour.get(), hours = self.__varHour.get(), minutes = self.__varMin.get()))
+        self.__btnFin.config(text = self.__varFin)
 
     def __getListTask(self, list, StringV = False):
         """
@@ -255,13 +255,13 @@ class TaskParametre(AbstractSchedulableParametre):
         @param mode : <str> sert a savoir si c'est dépendances ou dépendantes
         """
         if mode == "depces":
-            t = self.lbListDepces.get(ACTIVE)
+            t = self.__lbListDepces.get(ACTIVE)
             id = t.split("ID")[-1]
             id = id[id.rfind(" ")+1:]
             depces = self._getSchedulableWithID(id)
             deptes = self._getSchedulable()
         elif mode == "deptes":
-            t = self.lbListDeptes.get(ACTIVE)
+            t = self.__lbListDeptes.get(ACTIVE)
             id = t.split("ID")[-1]
             id = id[id.rfind(" ")+1:]
             deptes = self._getSchedulableWithID(id)
