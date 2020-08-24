@@ -39,17 +39,21 @@ class DisplayableGroup(AbstractItemContent):
 
         # Texte : 
         self.__texte.insert(INSERT, self._schedulable.getNom() + "\n" + self._schedulable.getDescription())
-        #self.__texte.insert(INSERT, "\n")
-        #self.__texte.insert(INSERT, self._schedulable.getDescription())
 
         self.__taskFrame = []
 
+        # Liste des parts des tâches à afficher :
+        parts = []
+        for t in self._schedulable.getListTasks():
+            parts += t.getRepartition(None)
+        parts.sort(key=lambda p: p.getDebut())
+
         # Ajout des tâches à l'intérieur :
-        for t in self._schedulable.getListTasks() :
-            if part.getDebut() <= t.getDebut() and t.getFin() <= part.getFin():
+        for p in parts :
+            if part.getDebut() <= p.getDebut() and p.getFin() <= part.getFin():
                 self.__texte.insert(INSERT, "\n")
                 f = Frame(self.__texte)
-                tache = t.createDisplayableInstance(f, part)
+                tache = p.getSchedulable().createDisplayableInstance(f, part)
                 tache.pack_propagate(True)
                 tache.pack(expand = YES, fill = BOTH)
                 tache.configSize(width = 10, height = 2)
@@ -57,7 +61,7 @@ class DisplayableGroup(AbstractItemContent):
                 tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
                 self.__taskFrame.append(tache)
                 self.__texte.window_create(INSERT, window = f)#, stretch = 1)
-        # TODO : filtrer selon la position (si 2 taches ont 1 heure de décalage, que ça ce voie sur Classique).
+        # TODO fixed ? : filtrer selon la position (si 2 taches ont 1 heure de décalage, que ça ce voie sur Classique).
         
         # Ajout des tags
         self.__texte.tag_add("titre", "0.0", "1.0")#%int(len(task.getNom())))
