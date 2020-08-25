@@ -87,6 +87,9 @@ class Application(Frame):
         self.bind_all("<<quit>>"       , lambda e=None:self.quit())
         self.bind_all("<<annuler>>"    , lambda e=None:UndoRedo.undo())
         self.bind_all("<<retablir>>"   , lambda e=None:UndoRedo.redo())
+        self.bind_all("<<coller>>"     , lambda e=None:self.getDonneeCalendrier().coller())
+        self.bind_all("<<copier>>"     , lambda e=None:self.getDonneeCalendrier().copier())
+        self.bind_all("<<couper>>"     , lambda e=None:self.getDonneeCalendrier().couper())
         # Set des bindings mécanique en lien avec le bindingManager
 
         #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
