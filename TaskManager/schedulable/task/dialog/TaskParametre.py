@@ -60,11 +60,11 @@ class TaskParametre(AbstractSchedulableParametre):
             self.__varMin.set(   self.__varDuree.seconds//60%60)
         self.__varNbRep.set(     self._getSchedulable().getNbRep())
         self.__varRepTimedelta = self._getSchedulable().getRep() if self._getSchedulable().getRep() is not None else datetime.timedelta()
-        self.__varRep          = self.varRepTimedelta.seconds//3600 if self.__varRepTimedelta.days == 0 else self.__varRepTimedelta.days
+        self.__varRep.set(       self.__varRepTimedelta.seconds//3600 if self.__varRepTimedelta.days == 0 else self.__varRepTimedelta.days)
         self.__varDone.set(      self._getSchedulable().isDone())
-        if self.__varRep == 0: # ici les heures valent 0
+        if self.__varRep.get() == 0: # ici les heures valent 0
             self.__varUnitRep.set("jours")
-        elif self.__varRepTimedelta.days == 0 and self.__varRep != 0:
+        elif self.__varRepTimedelta.days == 0 and self.__varRep.get() != 0:
             self.__varUnitRep.set("heures")
         elif self.__varRepTimedelta.days % 7 == 0:
             self.__varUnitRep.set("semaines")
@@ -171,12 +171,12 @@ class TaskParametre(AbstractSchedulableParametre):
             self._getSchedulable().setDebut(self.__varDebut, change = "duree")
             self._getSchedulable().setDuree(datetime.timedelta(days = self.__varJour.get(), hours = self.__varHour.get(), minutes = self.__varMin.get()))
         if self.__varRep is not None and self.__varUnitRep is not None:
-            if self.__varUnitRep == "semaine":
-                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep * 7))
-            elif self.__varUnitRep == "jours":
-                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep))
-            elif self.__varUnitRep == "heures":
-                self._getSchedulable().setRep(datetime.timedelta(hours = self.__varRep))
+            if self.__varUnitRep.get() == "semaine":
+                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep.get() * 7))
+            elif self.__varUnitRep.get() == "jours":
+                self._getSchedulable().setRep(datetime.timedelta(days = self.__varRep.get()))
+            elif self.__varUnitRep.get() == "heures":
+                self._getSchedulable().setRep(datetime.timedelta(hours = self.__varRep.get()))
 
         self._getSchedulable().setNbRep(self.__varNbRep.get())
         self._getSchedulable().setDone(self.__varDone.get())
