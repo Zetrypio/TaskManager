@@ -51,8 +51,12 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__partsParColonnes = []
 
         ## Binding
+        self.__frame.bind_all("<<deselect-all>>", lambda e=None: print("e")) # self.deselectEverything()
+        self.__frame.bind("<<delete-all>>",   lambda e=None:None)
+        self._setBinding("Classique", self.__frame)
+
         #self.bind("<Delete>", lambda e = None : self.event_generate("<<delete-selected>>"))
-        # self.bind("<Configure>", lambda e : self.updateAffichage())
+        #self.bind("<Configure>", lambda e : self.updateAffichage())
 
     "" # Marque pour que le repli de code fasse ce que je veux
     #############
