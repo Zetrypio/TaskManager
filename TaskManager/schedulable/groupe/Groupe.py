@@ -194,8 +194,8 @@ class Groupe(AbstractSchedulableObject):
             while i < len(parts)-1:
                 if self.__canPartsBeOne(displayedCalendar, parts[i], parts[i+1]):
                     parts[i:i+2] = [DatetimeItemPart(parts[i+0].getJour(),
-                                                     parts[i+0].getHeureDebut(),
-                                                     parts[i+1].getHeureFin(),
+                                                     min(parts[i+0].getHeureDebut(), parts[i+1].getHeureDebut()),
+                                                     max(parts[i+0].getHeureFin(),   parts[i+1].getHeureFin()),
                                                      self)]
                     i-=1
                 i += 1
