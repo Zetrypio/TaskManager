@@ -319,36 +319,29 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Methode qui permet de coller ce qu'il y a d'enregistré
         dans la liste DonneeCalendrier.CLIPBOARD
         """
-        print("coller", DonneeCalendrier.CLIPBOARD)
-        def chercheTask(id, p):
-            """
-            Fonction embarquée qui recherche la tache lié à l'id
-            Pour l'instant seule les task ont un UUID
-            @param id : <str> id de la tache qu'on cherche
-            @param p  : <periode> celle qui contient la tache
-            @return <task> recherché, None si non trouvé
-            """
-            for t in p.getPrimitivesSchedulables():
-                if isinstance(t, Task):
-                    if id == t.getUniqueID():
-                        return t
-                    elif t.isContainer():
-                        for st in t.getSubTasks():
-                            if st.getUniqueID() == id:
-                                return st
-            else:
-                return None
-
         for dico in DonneeCalendrier.CLIPBOARD:
             # Si c'est un groupe :
             if "listTasks" in dico:
                 g = Groupe.load(dico, self.getPeriodeActive())
+                if g.getFin().date() < self.getPeriodeActive().getDebut() or g.getDebut().date() > self.getPeriodeActive().getFin():
+                    # On remet en place tout le monde
+                    ecart = g.getDebut().date() - self.getPeriodeActive().getDebut()
+                    for tache in g.getListTasks():
+                        tache.setDebut(tache.getDebut() - ecart)
+                # Si on est pas dans la période :
                 self.getPeriodeActive().addPrimitiveSchedulable(g)
                 g.instantiate()
 
             # Sinon c'est une tâche standard :
             else :
                 t = Task.load(dico, self.getPeriodeActive())
+                if t.getFin().date() < self.getPeriodeActive().getDebut() or t.getDebut().date() > self.getPeriodeActive().getFin():
+                    t.setDebut(datetime.datetime(year   = self.getPeriodeActive().getDebut().year,
+                                                 month  = self.getPeriodeActive().getDebut().month,
+                                                 day    = self.getPeriodeActive().getDebut().day,
+                                                 hour   = t.getDebut().hour,
+                                                 minute = t.getDebut().minute
+                               ))
                 self.getPeriodeActive().addPrimitiveSchedulable(t)
                 t.instantiate()
 
@@ -360,7 +353,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Méthode qui enregistre la selection
         dans DonneeCalendrier.CLIPBOARD
         """
-        print("copier")
         # On vide tout
         DonneeCalendrier.CLIPBOARD.clear()
         # On met tout dans la liste
@@ -375,7 +367,6 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Méthode qui enregistre la sélection dans
         DonneeCalendrier.CLIPBOARD et qui la supprime ensuite
         """
-        print("couper")
         # On copie
         self.copier()
         # Et on supprime
