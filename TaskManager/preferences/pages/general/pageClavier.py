@@ -134,7 +134,7 @@ class PageClavier(AbstractPage):
         # On parcours les bindings pour trouver correspondances
         for line in self.__listeItemTreeview:
             bindingConflictuel = set(self.__treeB.item(line, "value")[1].split("; ")).intersection(bindingItem)
-            if bindingConflictuel != set() and bindingConflictuel != set(""):
+            if bindingConflictuel != set() and bindingConflictuel != {''}:
                     if line != item:
                         sectionConflit, nomConflit, bindingConflit = self.__valueLineTV(line)
                         # On ajoute le nom du Binding virtuel à la liste
