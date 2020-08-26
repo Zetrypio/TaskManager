@@ -38,6 +38,7 @@ class PageClavier(AbstractPage):
         self.__frameBas = Frame(self._mFrame)
         self.__btnSave = Button(self.__frameBas, text = "Sauvegarder", command = self.__save)
         self.__lbListConflit = Label(self.__frameBas, text = "Liste des conflits :")
+        self.__lbNoteConflit = Label(self.__frameBas, text = "Note : ce n'est pas parce qu'un raccourci est conflictuel qu'il ne fonctionnera pas\nCela signifie simplement qu'il qu'il peut y avoir des problèmes")
         self.__varListConflit = StringVar()
         self.__listConflit = Listbox(self.__frameBas, listvariable = self.__varListConflit)
         self.__lbChampBind = Label(self.__frameBas, text="Combinaison de touches :")
@@ -50,6 +51,7 @@ class PageClavier(AbstractPage):
         # Affichage
         self.__frameBas.pack(side = BOTTOM, fill = BOTH)
         self.__lbListConflit.pack(side = TOP, anchor = "e", padx=28)
+        self.__lbNoteConflit.pack(side = BOTTOM, anchor = "e")
         self.__listConflit.pack(side = RIGHT, fill = BOTH,expand = YES, padx=3)
         self.__lbChampBind.pack(side = TOP, fill = Y, anchor = "w")
         self.__champBind.pack(side = TOP, fill = X)
