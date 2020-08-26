@@ -323,7 +323,13 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             # Si c'est un groupe :
             if "listTasks" in dico:
                 g = Groupe.load(dico, self.getPeriodeActive())
-                if g.getFin().date() < self.getPeriodeActive().getDebut() or g.getDebut().date() > self.getPeriodeActive().getFin():
+                # Si on sélectionne un jour, on place le groupe dessus
+                if len(self.jourSelectionnes) == 1 and (list(self.jourSelectionnes)[0] >= self.getPeriodeActive().getDebut() and list(self.jourSelectionnes)[0] <= self.getPeriodeActive().getFin()):
+                    # On place à ce moment là la tache
+                    ecart = g.getDebut().date() - list(self.jourSelectionnes)[0]
+                    for tache in g.getListTasks():
+                        tache.setDebut(tache.getDebut() - ecart)
+                elif g.getFin().date() < self.getPeriodeActive().getDebut() or g.getDebut().date() > self.getPeriodeActive().getFin():
                     # On remet en place tout le monde
                     ecart = g.getDebut().date() - self.getPeriodeActive().getDebut()
                     for tache in g.getListTasks():
@@ -335,7 +341,12 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             # Sinon c'est une tâche standard :
             else :
                 t = Task.load(dico, self.getPeriodeActive())
-                if t.getFin().date() < self.getPeriodeActive().getDebut() or t.getDebut().date() > self.getPeriodeActive().getFin():
+                # Si on sélectionne un jour, on place la tache dessus
+                if len(self.jourSelectionnes) == 1 and (list(self.jourSelectionnes)[0] >= self.getPeriodeActive().getDebut() and list(self.jourSelectionnes)[0] <= self.getPeriodeActive().getFin()):
+                    # On place à ce moment là la tache
+                    ecart = t.getDebut().date() - list(self.jourSelectionnes)[0]
+                    t.setDebut(t.getDebut() - ecart)
+                elif t.getFin().date() < self.getPeriodeActive().getDebut() or t.getDebut().date() > self.getPeriodeActive().getFin():
                     t.setDebut(datetime.datetime(year   = self.getPeriodeActive().getDebut().year,
                                                  month  = self.getPeriodeActive().getDebut().month,
                                                  day    = self.getPeriodeActive().getDebut().day,

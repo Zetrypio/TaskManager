@@ -555,5 +555,4 @@ class AbstractDisplayedCalendar(Frame):
         dictionnaire = self.getApplication().getBindingIn("Affichage-" + nomCalendrier)
         for binding in dictionnaire:
             for key in dictionnaire[binding]["bindings"]:
-                print("setBinding :", nomCalendrier, binding, key)
                 aBinder.bind(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
