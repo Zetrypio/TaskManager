@@ -11,6 +11,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
     Classe contenant le panneau à onglets avec tout les
     affichages des calendriers.
     """
+    CLIPBOARD = []
     def __init__(self, master = None, **kwargs):
         """
         Constructeur de DonneeCalendrier.
@@ -307,6 +308,79 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         for p in self.getToutLesPanneaux():
             p.updateColor()
+
+    ""
+    #################
+    # Copier/Coller #
+    #################
+    ""
+    def coller(self):
+        """
+        Methode qui permet de coller ce qu'il y a d'enregistré
+        dans la liste DonneeCalendrier.CLIPBOARD
+        """
+        for dico in DonneeCalendrier.CLIPBOARD:
+            # Si c'est un groupe :
+            if "listTasks" in dico:
+                g = Groupe.load(dico, self.getPeriodeActive())
+                # Si on sélectionne un jour, on place le groupe dessus
+                if len(self.jourSelectionnes) == 1 and (list(self.jourSelectionnes)[0] >= self.getPeriodeActive().getDebut() and list(self.jourSelectionnes)[0] <= self.getPeriodeActive().getFin()):
+                    # On place à ce moment là la tache
+                    ecart = g.getDebut().date() - list(self.jourSelectionnes)[0]
+                    for tache in g.getListTasks():
+                        tache.setDebut(tache.getDebut() - ecart)
+                elif g.getFin().date() < self.getPeriodeActive().getDebut() or g.getDebut().date() > self.getPeriodeActive().getFin():
+                    # On remet en place tout le monde
+                    ecart = g.getDebut().date() - self.getPeriodeActive().getDebut()
+                    for tache in g.getListTasks():
+                        tache.setDebut(tache.getDebut() - ecart)
+                # Si on est pas dans la période :
+                self.getPeriodeActive().addPrimitiveSchedulable(g)
+                g.instantiate()
+
+            # Sinon c'est une tâche standard :
+            else :
+                t = Task.load(dico, self.getPeriodeActive())
+                # Si on sélectionne un jour, on place la tache dessus
+                if len(self.jourSelectionnes) == 1 and (list(self.jourSelectionnes)[0] >= self.getPeriodeActive().getDebut() and list(self.jourSelectionnes)[0] <= self.getPeriodeActive().getFin()):
+                    # On place à ce moment là la tache
+                    ecart = t.getDebut().date() - list(self.jourSelectionnes)[0]
+                    t.setDebut(t.getDebut() - ecart)
+                elif t.getFin().date() < self.getPeriodeActive().getDebut() or t.getDebut().date() > self.getPeriodeActive().getFin():
+                    t.setDebut(datetime.datetime(year   = self.getPeriodeActive().getDebut().year,
+                                                 month  = self.getPeriodeActive().getDebut().month,
+                                                 day    = self.getPeriodeActive().getDebut().day,
+                                                 hour   = t.getDebut().hour,
+                                                 minute = t.getDebut().minute
+                               ))
+                self.getPeriodeActive().addPrimitiveSchedulable(t)
+                t.instantiate()
+
+        # Pas de dépendances, car on supprime l'UID
+        self.updateAffichage()
+
+    def copier(self):
+        """
+        Méthode qui enregistre la selection
+        dans DonneeCalendrier.CLIPBOARD
+        """
+        # On vide tout
+        DonneeCalendrier.CLIPBOARD.clear()
+        # On met tout dans la liste
+        for s in self.getSelectedSchedulable():
+            dico = s.saveByDict(saveID = False)
+            DonneeCalendrier.CLIPBOARD.append(dico)
+
+    def couper(self):
+        """
+        Méthode qui enregistre la sélection dans
+        DonneeCalendrier.CLIPBOARD et qui la supprime ensuite
+        """
+        # On copie
+        self.copier()
+        # Et on supprime
+        for s in self.getSelectedSchedulable():
+            s.delete()
 
     ""
     ###################

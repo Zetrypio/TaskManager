@@ -316,9 +316,9 @@ class TaskAdder(Frame):
         nbrep = int(self.champNbRepetition.get())
         periode = self.getApplication().getPeriodManager().getActivePeriode()
         # On check si on est dans la période
-        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin()))\
+        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin())\
         or (duree is not None and (debut + duree + nbrep * rep).date() > periode.getFin()) \
-        or (debut + nbrep * rep).date() > periode.getFin(): # Si ne nombre de répétition fait que c'est après la fin de la période
+        or (debut + nbrep * rep).date() > periode.getFin()): # Si ne nombre de répétition fait que c'est après la fin de la période
             if not askyesnowarning(title = "Tache hors période", message = "Vous voulez créer une tache qui n'est pas entièrement dans la période actuelle.\nVoulez-vous vraiment créer cette tache ?"):
                 return
         nom = self.champNom.get()

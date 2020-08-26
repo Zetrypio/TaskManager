@@ -642,9 +642,11 @@ class Task(AbstractSchedulableObject):
     # Méthodes liées à l'enregistrement : #
     #######################################
     ""
-    def saveByDict(self):
+    def saveByDict(self, saveID = True):
         """
         Méthode qui sauvegarde les attributs présent (ici)
+
+        @param saveID : <bool> True on enregistre l'UID actuel
 
         @save debut      : <datetime>  ou None
         @save duree      : <timedelta> ou None
@@ -658,7 +660,7 @@ class Task(AbstractSchedulableObject):
         @return dico : <dict> contient les couples clé-valeur ci-dessus
         """
         # On va chercher les attributs de la superclasse
-        dico = super().saveByDict()
+        dico = super().saveByDict(saveID)
         # Si on est conteneur, il y a des attributs qu'on a pas
 
         dico["debut"] = datetimeToStr(self.getDebut())
@@ -670,8 +672,6 @@ class Task(AbstractSchedulableObject):
         dico["subtasks"] = [st.saveByDict() for st in self.getSubTasks()] if self.isContainer() else None
         dico["parent"] = self.getParent().getNom() if self.getParent() else None
         dico["done"] = self.__done
-
-        dico["id"] = self.getUniqueID()
 
 
         dico["dependance"] = []

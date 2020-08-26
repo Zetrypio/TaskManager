@@ -37,6 +37,18 @@
         "retablir": {
             "description" : "Rétablit la dernière action annulé",
             "bindings" : ["<Control-y>"]
+        },
+        "copier": {
+            "description" : "Copie la sélection",
+            "bindings" : ["<Control-c>"]
+        },
+        "couper": {
+            "description" : "Supprime la sélection après l'avoir copié",
+            "bindings" : ["<Control-x>"]
+        },
+        "coller": {
+            "description" : "Applique ce qui est en copie",
+            "bindings" : ["<Control-v>"]
         }
     },
     "General": {

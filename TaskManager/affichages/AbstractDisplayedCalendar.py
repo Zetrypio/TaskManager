@@ -39,8 +39,12 @@ class AbstractDisplayedCalendar(Frame):
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
-        self.heureDebut = datetime.time(8, 0, 0)
-        self.heureFin = datetime.time(17, 59, 0)
+        if self.getData().testDataExist("Calendrier", "Classique", "heure de début"):
+            h = self.getData().getOneValue("Calendrier", "Classique", "heure de début").split(":")
+            self.heureDebut = datetime.time(int(h[0]), int(h[1]), 0)
+        if self.getData().testDataExist("Calendrier", "Classique", "heure de fin"):
+            h = self.getData().getOneValue("Calendrier", "Classique", "heure de fin").split(":")
+            self.heureFin = datetime.time(int(h[0]), int(h[1]), 0)
 
         # infos des jours :
         self.jourDebut = self.getDebutPeriode()

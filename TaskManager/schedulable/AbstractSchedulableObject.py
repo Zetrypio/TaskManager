@@ -346,15 +346,18 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
     # Méthodes liées à l'enregistrement : #
     #######################################
     ""
-    def saveByDict(self):
+    def saveByDict(self, saveID = True):
         """
         Méthode qui sauvegarde les attributs présent dans la super classe (ici)
         A redéfinir dans les sous-classe pour les nouveaux attributs
+
+        @param saveID : <bool> True on enregistre l'UID actuel
 
         @save nom     : <str> contient le nom de la tache
         @save periode : <str> contient le nom de la période
         @save desc    : <str> contient le texte de la description
         @save color   : <str> contient la couleur de la tache
+        @save id      : <str> contient l'UID de la tache
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
@@ -362,5 +365,6 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
             "nom"     : self.getNom(),
             "periode" : self.getPeriode().getNom(),
             "desc"    : self.getDescription(),
-            "color"   : self.getColor()
+            "color"   : self.getColor(),
+            "id"      : self.getUniqueID() if saveID else None
         }
