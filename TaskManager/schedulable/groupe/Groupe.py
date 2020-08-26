@@ -303,17 +303,19 @@ class Groupe(AbstractSchedulableObject):
     # Méthodes liées à l'enregistrement : #
     #######################################
     ""
-    def saveByDict(self):
+    def saveByDict(self, saveID = True):
         """
         Méthode qui sauvegarde les attributs présent dans la classe "Groupe" (ici)
+
+        @param saveID : <bool> True on enregistre l'UID actuel
 
         @save listTasks : <list Task> contient les taches du groupe
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
         dico = {}
-        dico = super().saveByDict()
-        dico["listTasks"] = [task.saveByDict() for task in self.getListTasks()]
+        dico = super().saveByDict(saveID)
+        dico["listTasks"] = [task.saveByDict(saveID = saveID) for task in self.getListTasks()]
         return dico
 
 # L'import est à la fin pour éviter les soucis circulaires d'imports (un vrai cauchemar).

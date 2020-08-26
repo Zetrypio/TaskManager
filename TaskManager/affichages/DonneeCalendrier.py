@@ -368,9 +368,7 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         DonneeCalendrier.CLIPBOARD.clear()
         # On met tout dans la liste
         for s in self.getSelectedSchedulable():
-            dico = s.saveByDict()
-            # On reset l'id
-            dico["id"] = None
+            dico = s.saveByDict(saveID = False)
             DonneeCalendrier.CLIPBOARD.append(dico)
 
     def couper(self):
