@@ -249,6 +249,8 @@ class Groupe(AbstractSchedulableObject):
             return False
         if partA.getDebut() > partB.getDebut():
             partA, partB = partB, partA
+        if partA.getFin() > partB.getDebut():
+            return True
         for part in displayedCalendar.getPartsOfDay(partA.getJour()):
             if part.getSchedulable() is not self and part.getSchedulable() not in self.__listTasks:
                 if part.intersectWith(partA) or part.intersectWith(partB):
