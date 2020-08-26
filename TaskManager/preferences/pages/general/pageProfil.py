@@ -103,6 +103,8 @@ class PageProfil(AbstractPage):
 
        # on set le nouveau path
        if path is not None:
+           path += os.sep
+           print("path :", path)
            self.__varEntryPath.set(path)
            for file in os.listdir(self.getProfilFolder()):
                move(self.getProfilFolder()+os.sep+file, path)
