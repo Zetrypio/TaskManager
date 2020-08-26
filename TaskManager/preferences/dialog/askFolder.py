@@ -31,3 +31,4 @@ def testVide(path):
         # si on clique sur la croix/cancel
         if not path:
             return None
+    return path

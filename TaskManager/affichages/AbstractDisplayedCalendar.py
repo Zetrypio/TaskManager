@@ -213,7 +213,7 @@ class AbstractDisplayedCalendar(Frame):
                 s.add(schedulable)
             if isinstance(schedulable, Groupe):
                 for task in schedulable.getSelectedTask():
-                    s.add(schedulable)
+                    s.add(schedulable) # Si on met task on peut plus dégrouper, si on met schedulable on peut pas décaler jour/heure
 
         return s # old : (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
 

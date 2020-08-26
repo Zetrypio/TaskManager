@@ -9,6 +9,7 @@ import os
 from ..AbstractPage import *
 from util.widgets.Dialog import askyesnowarning
 
+from ...dialog.askFolder import *
 
 
 class PageProfil(AbstractPage):
