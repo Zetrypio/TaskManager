@@ -55,6 +55,13 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         """
         return self.master.getApplication()
 
+    def getCalendarZone(self):
+        """
+        Getter de la CalendarZone
+        @return <CalendarZone>
+        """
+        return self.getZoneAffichage().getCalendarZone()
+
     def getDonneeCalendrier(self):
         """
         Il est important de redéfinir cette méthode car sinon

@@ -80,23 +80,22 @@ class Application(Frame):
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
         ## Bindings
-        self.bind_all("<<preferences>>", lambda e=None:self.preferences())
-        self.bind_all("<<save-file>>"  , lambda e=None:self.save())
-        self.bind_all("<<restart>>"    , lambda e=None:self.restart())
-        self.bind_all("<<open-file>>"  , lambda e=None:self.open())
-        self.bind_all("<<quit>>"       , lambda e=None:self.quit())
-        self.bind_all("<<annuler>>"    , lambda e=None:UndoRedo.undo())
-        self.bind_all("<<retablir>>"   , lambda e=None:UndoRedo.redo())
-        self.bind_all("<<coller>>"     , lambda e=None:self.getDonneeCalendrier().coller())
-        self.bind_all("<<copier>>"     , lambda e=None:self.getDonneeCalendrier().copier())
-        self.bind_all("<<couper>>"     , lambda e=None:self.getDonneeCalendrier().couper())
+        # Les virtuels
+        self.bind_all("<<Application-preferences>>", lambda e=None:self.preferences())
+        self.bind_all("<<Application-save-file>>"  , lambda e=None:self.save())
+        self.bind_all("<<Application-restart>>"    , lambda e=None:self.restart())
+        self.bind_all("<<Application-open-file>>"  , lambda e=None:self.open())
+        self.bind_all("<<Application-quit>>"       , lambda e=None:self.quit())
+        self.bind_all("<<Application-annuler>>"    , lambda e=None:UndoRedo.undo())
+        self.bind_all("<<Application-retablir>>"   , lambda e=None:UndoRedo.redo())
+        self.bind_all("<<Application-coller>>"     , lambda e=None:self.getDonneeCalendrier().coller())
+        self.bind_all("<<Application-copier>>"     , lambda e=None:self.getDonneeCalendrier().copier())
+        self.bind_all("<<Application-couper>>"     , lambda e=None:self.getDonneeCalendrier().couper())
         # Set des bindings mécanique en lien avec le bindingManager
-
-        #self.bind_all("<Control-r>", lambda e : self.event_generate("<<restart>>"))
-
         for binding in self.getBindingIn("Application"):
             for key in self.getBindingIn("Application")[binding]["bindings"]:
-                self.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
+                self.bind_all(key, lambda e, binding = binding : self.event_generate("<<Application-" + binding + ">>"), add=1)
+        # (!) D'autres bindings existent, ils sont rajouté par les calendriers
 
         # Final
         self.getData().endInit()

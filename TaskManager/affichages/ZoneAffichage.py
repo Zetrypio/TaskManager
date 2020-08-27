@@ -52,6 +52,13 @@ class ZoneAffichage(Frame):
         """
         return self.master.getApplication()
 
+    def getCalendarZone(self):
+        """
+        Getter pour le calendarZone
+        @return <CalendarZone>
+        """
+        return self.master
+
     def getData(self):
         """
         Getter pour data.

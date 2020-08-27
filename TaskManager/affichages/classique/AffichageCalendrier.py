@@ -51,9 +51,9 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__partsParColonnes = []
 
         ## Binding
-        self.__frame.bind_all("<<deselect-all>>", lambda e=None: print("e")) # self.deselectEverything()
-        self.__frame.bind("<<delete-all>>",   lambda e=None:None)
-        self._setBinding("Classique", self.__frame)
+        self.getApplication().bind_all("<<Affichage-Classique-deselect-all>>"   , self.deselectAll) # self.deselectEverything()
+        self.getApplication().bind_all("<<Affichage-Classique-delete-selected>>", self.deleteSelected)
+        self._setBinding("Classique", self.getApplication())
 
         #self.bind("<Delete>", lambda e = None : self.event_generate("<<delete-selected>>"))
         #self.bind("<Configure>", lambda e : self.updateAffichage())
@@ -367,6 +367,27 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
             # On incrémente le jour, car on a pas rangeDate, comme indiqué plus haut.
             jour += datetime.timedelta(days = 1)
+
+    ""
+    ###########################
+    # Méthodes des bindings : #
+    ###########################
+    ""
+    def deleteSelected(self, event):
+        """
+        Supprime tout ce qui est actuellement sélectionné
+        @param event : <event> set à chercher la provenance de l'event
+        """
+        if self.hasParent(self, event.widget):
+            super().deleteSelected()
+
+    def deselectAll(self, event):
+        """
+        Désélectionne tout ce qui est actuellement sélectionné
+        @param event : <event> sert à chercher la provenance de l'event
+        """
+        if self.hasParent(self, event.widget):
+            self.deselectEverything()
 
     ""
     #####################

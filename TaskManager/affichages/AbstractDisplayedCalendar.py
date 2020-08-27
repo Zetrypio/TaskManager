@@ -385,6 +385,13 @@ class AbstractDisplayedCalendar(Frame):
         """
         raise NotImplementedError
 
+    def deleteSelected(self):
+        """
+        Méthode qui supprime tous les schedulables sélectionné
+        """
+        for s in self.getSelectedSchedulable():
+            s.delete()
+
     def deselectEverything(self):
         """
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
@@ -555,4 +562,23 @@ class AbstractDisplayedCalendar(Frame):
         dictionnaire = self.getApplication().getBindingIn("Affichage-" + nomCalendrier)
         for binding in dictionnaire:
             for key in dictionnaire[binding]["bindings"]:
-                aBinder.bind(key, lambda e, binding = binding : self.event_generate("<<" + binding + ">>"), add=1)
+                aBinder.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + "Affichage-" + nomCalendrier + "-" + binding + ">>"), add=1)
+
+    def hasParent(self, parent, widget):
+        """
+        Méthode qui cherche si le widget à un parent précis
+        @param parent : <str> le parent recherché
+        @param widget : <tkinter.widget> celui dont on cherche la provenance
+
+        @return : <bool> True si le widget l'a comme parent sinon False
+        """
+        master = widget.master
+        while True:
+            try:
+                if master == parent:
+                    return True
+                elif master == self.getDonneeCalendrier().getCalendarZone():
+                    return self.getDonneeCalendrier().getPanneauActif() == parent
+                master = master.master
+            except AttributeError:
+                return False

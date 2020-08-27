@@ -83,13 +83,13 @@ class AffichageGantt(AbstractDisplayedCalendar):
         #self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
 
         # Définition des events virtuels :
-        self.can.bind_all("<<deselect-all>>",    self.__onClicSurCanvas, add=1)
-        self.can.bind_all("<<delete-selected>>", lambda e: self.__deleteSelected() , add=1)
+        #self.can.bind_all("<<Affichage-Gantt-deselect-all>>",    self.__onClicSurCanvas, add=1)
+        #self.can.bind_all("<<Affichage-Gantt-delete-selected>>", lambda e: self.__deleteSelected() , add=1)
 
         # Définition des bindings inchangeables (souris):
         self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas)
-        self.can.bind("<Button-1>", self.__onClicSurCanvas)
-        self.can.bind("<Motion>", self.__updateLinkingLine)
+        self.can.bind("<Button-1>"        , self.__onClicSurCanvas)
+        self.can.bind("<Motion>"          , self.__updateLinkingLine)
 
         # Infobulle toujours vraie :
         ajouterInfoBulleTagCanvas(self.can, "plus", "Ajouter un lien.")
