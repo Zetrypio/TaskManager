@@ -51,8 +51,8 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__partsParColonnes = []
 
         ## Binding
-        self.getApplication().bind_all("<<Affichage-Classique-deselect-all>>"   , self.deselectAll) # self.deselectEverything()
-        self.getApplication().bind_all("<<Affichage-Classique-delete-selected>>", self.deleteSelected)
+        self.getApplication().bind_all("<<Affichage-Classique-deselect-all>>"   , self.deselectAll   , add = 1) # self.deselectEverything()
+        self.getApplication().bind_all("<<Affichage-Classique-delete-selected>>", self.deleteSelected, add = 1)
         self._setBinding("Classique", self.getApplication())
 
         #self.bind("<Delete>", lambda e = None : self.event_generate("<<delete-selected>>"))

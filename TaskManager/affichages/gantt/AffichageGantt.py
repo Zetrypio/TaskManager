@@ -70,7 +70,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.can.config(yscrollcommand = self.scrollbar.set) # 2e reliage de la scrollbar
 
         # Bindings du Canvas :
-        self._setBinding("Gantt", self.can)
+        self._setBinding("Gantt", self.getApplication())
 
         # Pour savoir si un événement à été annulé.
         # Seul événement annulable : clic sur le canvas.
@@ -83,8 +83,8 @@ class AffichageGantt(AbstractDisplayedCalendar):
         #self.can.bind("<Delete>", print)#lambda e: self.can.event_generate("<<delete-selected>>"), add=1)
 
         # Définition des events virtuels :
-        #self.can.bind_all("<<Affichage-Gantt-deselect-all>>",    self.__onClicSurCanvas, add=1)
-        #self.can.bind_all("<<Affichage-Gantt-delete-selected>>", lambda e: self.__deleteSelected() , add=1)
+        self.getApplication().bind_all("<<Affichage-Gantt-deselect-all>>",    self.deselectAll     , add=1)
+        self.getApplication().bind_all("<<Affichage-Gantt-delete-selected>>", self.__deleteSelected, add=1)
 
         # Définition des bindings inchangeables (souris):
         self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas)
@@ -257,11 +257,11 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Ajustement des TextWidgets
         self.update()
         AffichageGantt.TAILLE_BANDEAU_JOUR = max(t.winfo_height() for t in self.__textwidgets)#int(TextWidget.MINHEIGHT)
-#        for tw, idTw in zip(self.__textwidgets, self.can.find_withtag("bandeauJour")):
-#            tw.resize(height = TextWidget.MINHEIGHT) # La taille du widget
-#            self.can.itemconfigure(idTw, height = TextWidget.MINHEIGHT) # La taille alloué au widget
-#        self.can.move("bandeauJour", 0, AffichageGantt.TAILLE_BANDEAU_JOUR//2)
-#        TextWidget.MINHEIGHT = 0
+        #for tw, idTw in zip(self.__textwidgets, self.can.find_withtag("bandeauJour")):
+            #tw.resize(height = TextWidget.MINHEIGHT) # La taille du widget
+            #self.can.itemconfigure(idTw, height = TextWidget.MINHEIGHT) # La taille alloué au widget
+        #self.can.move("bandeauJour", 0, AffichageGantt.TAILLE_BANDEAU_JOUR//2)
+        #TextWidget.MINHEIGHT = 0
 
     def __afficherLesTaches(self, force = False):
         """
@@ -297,28 +297,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         # Si la dep n'est pas encore dans la liste des listeDisplayableItem, on attends
                         if getObjGantt(dep) is not None:
                             self.createLink(displayable, getObjGantt(dep))
-
-    def __deleteSelected(self):
-        """
-        Permet de supprimer les objets qui sont actuellements sélectionnés.
-        Pour le moment ne gère que les liens, mais gèrera à terme
-        les autres schedulables aussi.
-        """
-        print("on m'ap")
-        for item in reversed(self.listeDisplayableItem):
-            if isinstance(item, AbstractLink):
-                if item.isSelected():
-                    print(item)
-                    item.delete()
-                    self.listeDisplayableItem.remove(item)
-            elif isinstance(item, ObjetGantt):
-                obj = item.getSchedulable()
-                if obj.isSelected():
-                    # Environ...
-                    item.delete()
-                    self.listeDisplayableItem.remove(item)
-
-        self.updateAffichage()
 
     def __endLinkingLine(self):
         try:
@@ -559,6 +537,40 @@ class AffichageGantt(AbstractDisplayedCalendar):
         Permet de vider self._list
         """
         self.listeDisplayableItem = []
+
+    ""
+    #################################
+    # Méthodes liées aux bindings : #
+    #################################
+    ""
+    def __deleteSelected(self, event):
+        """
+        Permet de supprimer les objets qui sont actuellements sélectionnés.
+        @param event : <event> set à chercher la provenance de l'event
+        """
+        # Si c'est bien sur le ce calendrier que l'on est
+        if self.hasParent(self, event.widget):
+            for item in reversed(self.listeDisplayableItem):
+                if isinstance(item, AbstractLink):
+                    if item.isSelected():
+                        item.delete()
+                        self.listeDisplayableItem.remove(item)
+                elif isinstance(item, ObjetGantt):
+                    obj = item.getSchedulable()
+                    if obj.isSelected():
+                        obj.delete()
+                        self.listeDisplayableItem.remove(item)
+
+            self.updateAffichage()
+
+    def deselectAll(self, event):
+        """
+        Désélectionne tout ce qui est actuellement sélectionné
+        @param event : <event> sert à chercher la provenance de l'event
+        """
+        if self.hasParent(self, event.widget):
+            self.deselectEverything()
+
 
     ""
     #####################
