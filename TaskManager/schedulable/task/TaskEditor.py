@@ -137,6 +137,26 @@ class TaskEditor(Frame):
             self.frameInput.pack(side = TOP, fill = X, before = self.tree)
             self.frameInputPeriode.pack_forget()
 
+    def selectLineTreeview(self, schedulable):
+        """
+        Permet de sélectionner une ligne du Treeview
+        @param schedulable : <AbstractSchedulableObject>  celui qui'il faut relier à la ligne pour sélectionner
+        """
+        for item in self.getTaskInTaskEditor():
+            # Si on cherche une subtask
+            if isinstance(schedulable, Task) and schedulable.getParent() is not None:
+                try:
+                    list = self.tree.get_children(self.tree.get_children(item.id))
+                except:
+                    list = self.tree.get_children(item.id)
+                for subt in list:
+                    if subt == schedulable.id:
+
+                        self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
+            # Si on cherche une tache/groupe global
+            if schedulable.id == item.id and schedulable.isSelected():
+                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
+
     ""
     ###################################
     # Méthodes liées aux schedulables #
@@ -277,7 +297,7 @@ class TaskEditor(Frame):
                 self.FILTRE[k] = filtre[k]
             elif k in self.FILTRE:
                 del self.FILTRE[k]
-        print(self.FILTRE)
+        #print(self.FILTRE)
         self.redessiner()
 
     def tri_alphabetique(self):
@@ -356,7 +376,6 @@ class TaskEditor(Frame):
             """
             schedulable.setSelected(True)
             self.getApplication().getDonneeCalendrier().updateColor()
-            print("selectIt")
 
         for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
             for t in self.getTaskInTaskEditor():

@@ -258,6 +258,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         if not isinstance(selected, bool): raise TypeError("Exptected a boolean")
         self.__selected = selected
+        self.getApplication().getTaskEditor().selectLineTreeview(self)
 
     def setVisible(self, visible):
         """
