@@ -1,70 +1,108 @@
 {
-    "Affichage-Gantt": {
-        "deselect-all": {
-            "description": "Désélectionner Tout",
-            "bindings": ["<Escape>"]
-            },
+    "Affichage-Classique": {
         "delete-selected": {
-            "description": "Supprimer l'élément sélectionné",
-            "bindings": ["<Delete>", "<BackSpace>"]
-            }
+            "description": "Supprimer l'\u00e9l\u00e9ment s\u00e9lectionn\u00e9",
+            "bindings": [
+                "<Delete>"
+            ]
         },
+        "deselect-all": {
+            "description": "D\u00e9s\u00e9lectionner tout",
+            "bindings": [
+                "<Escape>"
+            ]
+        },
+        "select-all": {
+            "description": "Permet de tout sélectionner",
+            "bindings": ["<Control-a>"]
+            }
+    },
+    "Affichage-Gantt": {
+        "delete-selected": {
+            "description": "Supprimer l'\u00e9l\u00e9ment s\u00e9lectionn\u00e9",
+            "bindings": [
+                "<Delete>"
+            ]
+        },
+        "deselect-all": {
+            "description": "D\u00e9s\u00e9lectionner tout",
+            "bindings": [
+                "<Escape>"
+            ]
+        },
+        "select-all": {
+            "description": "Permet de tout sélectionner",
+            "bindings": ["<Control-a>"]
+            }
+    },
     "Application": {
+        "annuler": {
+            "description": "Annule la derni\u00e8re action",
+            "bindings": [
+                "<Control-z>"
+            ]
+        },
+        "coller": {
+            "description": "Applique ce qui est en copie",
+            "bindings": [
+                "<Control-v>"
+            ]
+        },
+        "copier": {
+            "description": "Copie la s\u00e9lection",
+            "bindings": [
+                "<Control-c>"
+            ]
+        },
+        "couper": {
+            "description": "Supprime la s\u00e9lection apr\u00e8s l'avoir copi\u00e9",
+            "bindings": [
+                "<Control-x>"
+            ]
+        },
         "open-file": {
             "description": "Ouvre l'explorateur de fichier ou en ouvrir un",
-            "bindings" : ["<Control-o>"]
+            "bindings": [
+                "<Control-o>"
+            ]
+        },
+        "preferences": {
+            "description": "Ouvre la fen\u00eatre des pr\u00e9f\u00e9rences",
+            "bindings": [
+                "<Control-,>"
+            ]
         },
         "quit": {
             "description": "Ferme le logiciel",
-            "bindings" : ["<Control-q>"]
+            "bindings": [
+                "<Control-q>"
+            ]
         },
         "restart": {
-            "description": "Redémarre le logiciel",
-            "bindings" : ["<Control-r>"]
+            "description": "Red\u00e9marre le logiciel",
+            "bindings": [
+                "<Control-r>"
+            ]
+        },
+        "retablir": {
+            "description": "R\u00e9tablit la derni\u00e8re action annul\u00e9",
+            "bindings": [
+                "<Control-y>"
+            ]
         },
         "save-file": {
             "description": "Sauvegarde le fichier en cours",
-            "bindings" : ["<Control-s>"]
-        },
-        "preferences": {
-            "description": "Ouvre la fenêtre des préférences",
-            "bindings" : ["<Control-,>"]
-        },
-        "annuler": {
-            "description" : "Annule la dernière action",
-            "bindings" : ["<Control-z>"]
-        },
-        "retablir": {
-            "description" : "Rétablit la dernière action annulé",
-            "bindings" : ["<Control-y>"]
-        },
-        "copier": {
-            "description" : "Copie la sélection",
-            "bindings" : ["<Control-c>"]
-        },
-        "couper": {
-            "description" : "Supprime la sélection après l'avoir copié",
-            "bindings" : ["<Control-x>"]
-        },
-        "coller": {
-            "description" : "Applique ce qui est en copie",
-            "bindings" : ["<Control-v>"]
+            "bindings": [
+                "<Control-s>"
+            ]
         }
     },
     "General": {
-	"selectionner-jour": {
-	    "description": "Permet de sélectionner un jour entier avec toutes ses taches",
-	    "bindings": []
-            },
         "selectionner-groupe": {
-            "description": "Permet de sélectionner un groupe entier",
-            "bindings": []
-            }
-        },
-    "Affichage-Classique": {
-        "deselect-all": {
-            "description": "Désélectionner Tout",
-            "bindings": ["<Escape>"]
-            }
+            "description": "Permet de s\u00e9lectionner un groupe entier",
+            "bindings": [
+                ""
+            ]
         }
+    }
 }
