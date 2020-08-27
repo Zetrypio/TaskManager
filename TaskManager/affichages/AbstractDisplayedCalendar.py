@@ -225,11 +225,15 @@ class AbstractDisplayedCalendar(Frame):
         ce nouvel objet sera normalement entièrement visible.
         @return None si l'objet n'est pas visible du tout.
         """
-        # Test du jour :
+        ## Test du jour :
         if part.getJour() < self.getJourDebut() or part.getJour() > self.getJourFin() + datetime.timedelta(days=1):
             return None
 
-        # Test de l'intégrité :
+        ## Test de l'intégrité :
+        # Est ce que la tache est dans les bonnes heures ?
+        if part.getHeureDebut() >= self.getHeureFin() or part.getHeureFin() <= self.getHeureDebut():
+            return None
+        # Est ce que la tache dépasse ?
         if part.getHeureDebut() >= self.getHeureDebut() and part.getHeureFin() <= self.getHeureFin():
             return part
 
