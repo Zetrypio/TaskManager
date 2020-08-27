@@ -85,6 +85,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Définition des events virtuels :
         self.getApplication().bind_all("<<Affichage-Gantt-deselect-all>>",    self.deselectAll     , add=1)
         self.getApplication().bind_all("<<Affichage-Gantt-delete-selected>>", self.__deleteSelected, add=1)
+        self.getApplication().bind_all("<<Affichage-Gantt-select-all>>",      self.selectAll, add=1)
 
         # Définition des bindings inchangeables (souris):
         self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas)
@@ -571,6 +572,18 @@ class AffichageGantt(AbstractDisplayedCalendar):
         if self.hasParent(self, event.widget):
             self.deselectEverything()
 
+    def selectAll(self, event):
+        """
+        Sélectionne tous les schedulables mais pas les jours
+        @param event : <event> sert à chercher la provenance de l'event
+        """
+        if self.hasParent(self, event.widget):
+            for item in self.listeDisplayableItem:
+                if isinstance(item, AbstractLink):
+                    item.setSelected(True)
+                elif isinstance(item, ObjetGantt):
+                    item.getSchedulable().setSelected(True)
+            self.getDonneeCalendrier().updateColor()
 
     ""
     #####################

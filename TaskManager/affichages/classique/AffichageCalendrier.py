@@ -53,6 +53,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         ## Binding
         self.getApplication().bind_all("<<Affichage-Classique-deselect-all>>"   , self.deselectAll   , add = 1) # self.deselectEverything()
         self.getApplication().bind_all("<<Affichage-Classique-delete-selected>>", self.deleteSelected, add = 1)
+        self.getApplication().bind_all("<<Affichage-Classique-select-all>>", self.selectAll, add = 1)
         self._setBinding("Classique", self.getApplication())
 
         #self.bind("<Delete>", lambda e = None : self.event_generate("<<delete-selected>>"))
@@ -388,6 +389,16 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         if self.hasParent(self, event.widget):
             self.deselectEverything()
+
+    def selectAll(self, event):
+        """
+        Sélectionne tous les schedulables mais pas les jours
+        @param event : <event> sert à chercher la provenance de l'event
+        """
+        if self.hasParent(self, event.widget):
+            for item in self.listeDisplayableItem:
+                item.getSchedulable().setSelected(True)
+            self.getDonneeCalendrier().updateColor()
 
     ""
     #####################

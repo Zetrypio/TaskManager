@@ -77,7 +77,7 @@ class DependanceLink(AbstractLink):
         if not isinstance(value, bool):
             raise TypeError("Expected a boolean but got %s"%value)
         self.__selected = value
-
+        self.highlight(color = None)
     ""
     ##################################
     # Méthodes liées à l'affichage : #
