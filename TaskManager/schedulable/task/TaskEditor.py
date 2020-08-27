@@ -346,10 +346,43 @@ class TaskEditor(Frame):
 
     def __mousePressed(self, event):
         """
-        Méthode qui ne fait rien.
+        Méthode qui sélectionne les schedulables si possible
         @param event: non utilisé.
         """
-        pass
+        def selectIt(schedulable):
+            """
+            Fonction embarqué pour sélectionner le schedulable, + si c'est fait alors on redraw
+            @param schedulable : <AbstractSchedulableObject>
+            """
+            schedulable.setSelected(True)
+            self.getApplication().getDonneeCalendrier().updateColor()
+            print("selectIt")
+
+        for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
+            for t in self.getTaskInTaskEditor():
+                # Si c'est la tache
+                #print("iid :", i, "tache.id", t.id)
+                if isinstance(t, Task) and not t.isContainer() and t.id == i:
+                    selectIt(t)
+                # Si on sélectionne le conteneur, on select tout le monde
+                elif isinstance(t, Task) and t.isContainer() and t.id == i:
+                    for st in t.getSubTasks():
+                        selectIt(st)
+                # Si c'est une tache conteneur
+                elif isinstance(t, Task) and t.isContainer():
+                    for st in t.getSubTasks():
+                        # Si c'est la sous-tache
+                        if st.id == i:
+                            selectIt(st)
+                # Si c'est un groupe et que c'est le bon
+                elif isinstance(t, Groupe) and t.id == i:
+                    selectIt(t)
+                # Si c'est un groupe, il faut parcourir les taches
+                elif isinstance(t, Groupe):
+                    for tache in t.getListTasks():
+                        if tache.id == i:
+                            selectIt(tache)
+
 
     def __mousePressedBefore(self, event):
         """
