@@ -15,6 +15,7 @@ from toolbar.dialog.gestionHeureCalendrierDialog import *
 from toolbar.dialog.gestionJourDialog import *
 
 from .periode.dialog.dateDialog import *
+from .undoredo.UndoRedoDecaler import *
 from .ZoneAffichage import *
 
 class CalendarZone(Frame):
@@ -229,9 +230,16 @@ class CalendarZone(Frame):
 
         # Ajustement des heures
         horsChamp = False
+        
+        # map des undo-redo-s :
+        mapIDBeginTaskBefore = {}
+        mapIDBeginTaskAfter  = {}
 
         for tache in self.getDonneeCalendrier().getSelectedSchedulable():
             if isinstance(tache, Task):
+                # map d'avant le déplacement :
+                mapIDBeginTaskBefore[tache.getUniqueID()] = tache.getDebut()
+                
                 # Si tout va bien
                 if  (tache.getDebut()+datetime.timedelta(hours=nb)).date() == (tache.getFin()+datetime.timedelta(hours=nb)).date()\
                 and heureDebut <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
@@ -290,6 +298,13 @@ class CalendarZone(Frame):
                         addApres = timeApres.hour - heureFin.hour
                         self.gestionHeure(addApres, "Apres")
 
+                # map d'après le déplacement :
+                mapIDBeginTaskAfter[tache.getUniqueID()] = tache.getDebut()
+
+        # Undo-redo :
+        UndoRedoDecaler(self.getPeriodeActive(), mapIDBeginTaskBefore, mapIDBeginTaskAfter)
+
+        # Update affichage :
         self.getDonneeCalendrier().updateAffichage(True)
 
     def decalerJour(self):
@@ -325,9 +340,15 @@ class CalendarZone(Frame):
         # Ajustement des jours
         horsChamp = False
         duree = datetime.timedelta(days = nb)
+        
+        # map des undo-redo-s :
+        mapIDBeginTaskBefore = {}
+        mapIDBeginTaskAfter  = {}
 
         for tache in self.getDonneeCalendrier().getSelectedSchedulable():
             if isinstance(tache, Task): # TODO avec groupe.
+                # map d'avant le déplacement :
+                mapIDBeginTaskBefore[tache.getUniqueID()] = tache.getDebut()
                 # Si tout va bien
                 if  debut <= (tache.getDebut()+duree).date()\
                 and fin   >= (tache.getFin()+duree).date():
@@ -372,6 +393,12 @@ class CalendarZone(Frame):
                         pass
                     elif choix =="changer":
                         tache.setPeriode(periode)
+
+                # map d'après le déplacement :
+                mapIDBeginTaskAfter[tache.getUniqueID()] = tache.getDebut()
+
+        # Undo-redo :
+        UndoRedoDecaler(self.getPeriodeActive(), mapIDBeginTaskBefore, mapIDBeginTaskAfter)
 
         self.getDonneeCalendrier().updateAffichage(True)
 
