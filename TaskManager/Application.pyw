@@ -242,7 +242,11 @@ class Application(Frame):
             self.winfo_toplevel().title(titre)
         except:
             pass
-        self.save() # Pour l'auto save et puis voilà c'est cool
+        try:
+            self.save() # Pour l'auto save et puis voilà c'est cool
+        except BaseException as e:
+            self._report_exception()
+            raise
 
     def save(self):
         """
@@ -284,6 +288,7 @@ class Application(Frame):
                 self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
                 self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
         except Exception as e:
+            self._report_exception()
             showerror("Erreur", "Erreur lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
         try:
             self.winfo_toplevel().title(titre)
@@ -313,6 +318,7 @@ class Application(Frame):
         try:
             self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
         except BaseException as e:
+            self._report_exception()
             showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
         else:
             if sys.platform.startswith("win"):
