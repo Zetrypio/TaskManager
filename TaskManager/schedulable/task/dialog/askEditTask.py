@@ -4,9 +4,9 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.Dialog import *
-
 from schedulable.task.dialog.TaskParametre import *
 
+from .undoredo.UndoRedoTaskEditing import *
 
 def askEditTask(task):
     """
@@ -15,7 +15,9 @@ def askEditTask(task):
     """
     def onClose(button):
         if button == "Ok":
+            taskUndo = task.saveByDict()
             parametrage.onClose()
+            UndoRedoTaskEditing(taskUndo, task)
         elif button == "Supprimer":
             task.delete()
 
