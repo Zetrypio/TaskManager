@@ -116,7 +116,7 @@ class Application(Frame):
         """
         Permet d'obtenir les combinaisons
         @param categorie : <str> nom de la catégorie dont on veux les bindings
-                          exemple : "Application"
+                 exemple : "Application"
         @return <dict> contenant tous les bindings
         """
         return self.getBindingManager().getBindings()[categorie]
@@ -259,7 +259,7 @@ class Application(Frame):
             pass
         try:
             d = {"periodes": {}}
-            # On check l'auto delete des périodes trop vielles
+            # On check l'auto delete des périodes trop vieilles
             if self.getData().testDataExist("General", "General", "auto-delete") and self.getData().getOneValue("General", "General", "auto-delete") == "True":
                 nb = int(self.getData().getOneValue("General", "General", "duree auto-delete") if self.getData().testDataExist("General", "General", "duree auto-delete") else None)
                 unit = self.getData().getOneValue("General", "General", "unité de l'auto del") if self.getData().testDataExist("General", "General", "unité de l'auto del") else None
