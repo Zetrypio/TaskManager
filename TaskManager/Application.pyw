@@ -261,13 +261,13 @@ class Application(Frame):
             d = {"periodes": {}}
             # On check l'auto delete des périodes trop vielles
             if self.getData().testDataExist("General", "General", "auto-delete") and self.getData().getOneValue("General", "General", "auto-delete") == "True":
-                nb = self.getData().getOneValue("General", "General", "duree auto-delete") if self.getData().testDataExist("General", "General", "duree auto-delete") else None
+                nb = int(self.getData().getOneValue("General", "General", "duree auto-delete") if self.getData().testDataExist("General", "General", "duree auto-delete") else None)
                 unit = self.getData().getOneValue("General", "General", "unité de l'auto del") if self.getData().testDataExist("General", "General", "unité de l'auto del") else None
                 if nb is not None and unit is not None:
                     nb = nb*30 if unit == "mois" else nb
                     nb = nb*7 if unit == "semaine" else nb
                     nb = nb*1 if unit == "jours" else nb
-                    deldate = datetime.date.today() - datetime.timedelta(days = int(nb))
+                    deldate = datetime.date.today() - datetime.timedelta(days = nb)
                 else :
                     deldate = None
             else:
