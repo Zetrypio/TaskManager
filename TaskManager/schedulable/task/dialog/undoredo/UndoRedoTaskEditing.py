@@ -4,7 +4,7 @@ from util.UndoRedo import *
 class UndoRedoTaskEditing(UndoRedo):
     def __init__(self, taskUndo, task):
         # Super Constructor and Action Info :
-        super().__init__("Créer une tâche")
+        super().__init__("Éditer une tâche.")
 
         # Data :
         self.undoData   = taskUndo
