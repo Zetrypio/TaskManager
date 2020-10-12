@@ -200,12 +200,15 @@ class CalendarZone(Frame):
         """
         Valide toutes les tâches qui sont terminées aujourd'hui.
         """
+        tasks = []
         now = datetime.date.today()
         for tache in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if tache.getFin().date() == now:
                 tache.setDone(True)
+                tasks.append(tache)
             tache.updateStatut()
         self.getApplication().getTaskEditor().redessiner()
+        UndoRedoTasksValidations(tasks)
 
     def decalerHeure(self):
         """
