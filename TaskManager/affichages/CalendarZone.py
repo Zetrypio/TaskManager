@@ -186,12 +186,15 @@ class CalendarZone(Frame):
         """
         Valide TOUTES les tâches qui sont avant maintenant.
         """
+        tasks = []
         now = datetime.datetime.now()
         for schedulable in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.getFin() <= now:
                 schedulable.setDone(True)
+                tasks.append(schedulable)
             schedulable.updateStatut()
         self.getApplication().getTaskEditor().redessiner()
+        UndoRedoTasksValidations(tasks)
 
     def avancementJourFini(self):
         """
