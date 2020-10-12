@@ -16,6 +16,7 @@ from toolbar.dialog.gestionJourDialog import *
 
 from .periode.dialog.dateDialog import *
 from .undoredo.UndoRedoDecaler import *
+from .undoredo.UndoRedoTasksValidations import *
 from .ZoneAffichage import *
 
 class CalendarZone(Frame):
@@ -136,7 +137,7 @@ class CalendarZone(Frame):
 
     ""
     ####################################################
-    # Pour la barre d'outil des calendries standards : #
+    # Pour la barre d'outil des calendriers standards : #
     ####################################################
     ""
     def afficherMasquerJour(self):
@@ -173,10 +174,13 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
+        tasks = []
         for tache in self.getPeriodeActive().getPrimitivesSchedulables():
             if tache.isSelected():
                 tache.setDone(True)
+                tasks.append(tache)
         self.getApplication().getTaskEditor().redessiner()
+        UndoRedoTasksValidations(tasks)
 
     def avancementNormal(self):
         """
