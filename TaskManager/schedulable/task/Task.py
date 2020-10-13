@@ -13,6 +13,7 @@ from .dialog.askEditTask import *
 from .undoredo.UndoRedoLinkCreation import *
 from .undoredo.UndoRedoLinkDeleting import *
 from .undoredo.UndoRedoTaskDeleting import *
+from .undoredo.UndoRedoTransformTaskToDnD import *
 from .TaskInDnd import *
 
 from affichages.items.DatetimeItemPart import *
@@ -172,7 +173,7 @@ class Task(AbstractSchedulableObject):
         # Ajout des menus :
         # Si c'est un conteneur :
         if not self.isContainer() and self.__parent is None:
-            rmenu.add_command(label="Transformer en une tâche déplaçable", command=lambda: self.transformToDnd(taskEditor, rmenu))
+            rmenu.add_command(label="Transformer en une tâche déplaçable", command=lambda: self.transformToDnd(taskEditor))
             rmenu.add_separator()
         # Dans tout les cas :
         rmenu.add_command(label = "Éditer %s"%self.getNom(), command = lambda : askEditTask(self))
@@ -601,7 +602,7 @@ class Task(AbstractSchedulableObject):
         self.__done = value
         self.updateStatut()
 
-    def transformToDnd(self, taskEditor, rmenu):
+    def transformToDnd(self, taskEditor):
         """
         Permet de transformer cette tâche en une tâche déplaçable,
         c'est-à-dire une tâche conteneur. En vrai, ce sera une
@@ -609,20 +610,13 @@ class Task(AbstractSchedulableObject):
         
         @param taskEditor: Référence vers le TaskEditor pour pouvoir
         faire les opérations.
-        @param rmenu: référence vers le RMenu de cet tâche en tant
-        qu'item du TaskEditor. Nécessaire pour l'opération.
         """
-        # On supprime le RMenu pour le recréer après
-        # dans le TaskEditor via notre méthode getRMenuContent()
-        # car il va être différent.
-        rmenu.destroy()
-        del rmenu
-        
+
         # On s'enlève du TaskEditor, mais on ne se supprime pas
         # attention. On va juste se réajouter ailleurs...
        #taskEditor.supprimer(self)
         self.getPeriode().removePrimitiveSchedulable(self) # N'enlève pas des instanciées.
-        
+
         # On crée une tâche qui nous ressemble, mais dont le début
         # n'est pas présent. Et pour cause : c'est ce qui fait que
         # ça devient une tâche conteneur. On peut alors s'y ajouter.
@@ -630,12 +624,15 @@ class Task(AbstractSchedulableObject):
         newTask.__debut = None
         newTask.updateStatut()
         newTask.addSubTask(self)
-        
+
         # Le fait de rajouter cette nouvelle tâche va nous rajouter
         # indirectement. Je vous avais bien dit qu'on ne se supprimait pas !
         #taskEditor.ajouter(newTask)
         self.getPeriode().addPrimitiveSchedulable(newTask)
         taskEditor.redessiner()
+
+        # Undo-redo :
+        UndoRedoTransformTaskToDnD(self)
 
     ""
     #######################################
