@@ -136,9 +136,9 @@ class CalendarZone(Frame):
             self.outilBar.pack(side=TOP, fill=X, expand=NO)
 
     ""
-    ####################################################
+    #####################################################
     # Pour la barre d'outil des calendriers standards : #
-    ####################################################
+    #####################################################
     ""
     def afficherMasquerJour(self):
         """
