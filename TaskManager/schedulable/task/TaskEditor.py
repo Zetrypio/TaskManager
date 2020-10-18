@@ -270,7 +270,7 @@ class TaskEditor(Frame):
     def __filterStateOf(self, t):
         """
         Permet de savoir l'état de filtrage d'une tâche.
-        @deprecated: Je crois même que ce n'est plus utilisé du tout.
+        @deprecated: Je crois même que ce n'est plus utilisé du tout. C'EST FAUX !!! Mais comment ?
         @return  1 Si la tâche est acceptée par le filtre et qu'elle doit être prioritaire.
         @return  0 Si la tâche est acceptée par le filtre sans être prioritaire.
         @return -1 Si la tâche n'est pas acceptée par le filtre.
@@ -299,6 +299,15 @@ class TaskEditor(Frame):
                 del self.FILTRE[k]
         #print(self.FILTRE)
         self.redessiner()
+
+    ""
+    ##  MODE DES TRIS :
+    # - Alpha             : alphabétique (a -> z)
+    # - Alpha_reverse     : alphabétique (z -> a)
+    # - Statut_importance : Retard -> À faire | Répétition -> Inconnu -> Fait
+    # - Statut_prochain   : À faire | Répétition -> Inconnu -> Fait | Retard
+    # - Statut_autre      : Inconnu -> Retard -> Répétition -> Fait | À faire
+    ""
 
     def tri_alphabetique(self):
         """
@@ -341,7 +350,8 @@ class TaskEditor(Frame):
             self.getTaskInTaskEditor().sort(key=lambda t: t.getDebut() if t.getDebut() is not None else datetime.datetime(1, 1, 1))
             self.getTaskInTaskEditor().sort(key=lambda t: 0 if t.getStatut() == "Retard"
                                       else 1 if t.getStatut() == "À faire" or t.getStatut() == "Répétition"
-                                      else 2)
+                                      else 2 if t.getStatut() == "Inconnu"
+                                      else 3)
         self.redessiner()
 
     ""
@@ -358,6 +368,7 @@ class TaskEditor(Frame):
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
+            # TODO : Revoir aussi ICI pour si on fait une multisélection.
             for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
                 for t in self.getTaskInTaskEditor():
                     if isinstance(t, Task) and t.getStatut() == "Inconnu":
@@ -387,6 +398,7 @@ class TaskEditor(Frame):
                 elif isinstance(t, Task) and t.isContainer() and t.id == i:
                     for st in t.getSubTasks():
                         selectIt(st)
+                    selectIt(t)
                 # Si c'est une tache conteneur
                 elif isinstance(t, Task) and t.isContainer():
                     for st in t.getSubTasks():
@@ -410,6 +422,7 @@ class TaskEditor(Frame):
         @param event: infos sur l'évement de sélection.
         """
         self.mousepress = True
+        # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview me semble-t-il.
         for elem in self.tree.selection():
             self.tree.selection_remove(elem)
         self.after(10, self.__mousePressed, event)
