@@ -114,10 +114,11 @@ class Task(AbstractSchedulableObject):
     def getHeader(self):
         """
         Permet de donner la ligne d'entête de cet objet dans l'affichage du Treeview() du TaskEditor().
+        Affiche le nombre de taches faites si c'est une tache conteneur
         @return Le nom suivi du statut
         @specified by getHeader() in ITaskEditorDisplayableObject().
         """
-        return self.getNom(), self._statut
+        return self.getNom(), self._statut if self._statut != "Inconnu" else str(len(["a" for subT in self.getSubTasks() if subT.isDone()])) + "/" + str(len(self.getSubTasks()))
 
     def iterateDisplayContent(self, displayDependances = True, displayDependantes = True):
         """
