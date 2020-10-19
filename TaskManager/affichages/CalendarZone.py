@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 from tkinter.messagebox import showerror
 
+from schedulable.groupe.Groupe import *
 from schedulable.groupe.dialog.groupDialog import *
 
 from toolbar.ToolBar import *
@@ -174,13 +175,34 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        tasks = []
-        for tache in self.getPeriodeActive().getPrimitivesSchedulables():
-            if tache.isSelected():
-                tache.setDone(True)
-                tasks.append(tache)
+        def findAndChecked(task):
+            """
+            Fonction embarqué qui permet de vérifier si la tache est sélectionné et de la valider si elle l'est
+            + l'ajoute à la liste schedulables
+            @param : <Task> : prend seulement des taches, car c'est les seules à pouvoir être faites
+            @return : <bool> True si tache trouvé, False sinon
+            """
+            print(type(task))
+            if task.isSelected():
+                task.setDone(True)
+                schedulables.append(task)
+                return True
+            return False
+
+        schedulables = []
+        for schedulable in self.getPeriodeActive().getPrimitivesSchedulables():
+            if not findAndChecked(schedulable): # Si on a pas trouvé
+                # C'est peut-être un groupe
+                if isinstance(schedulable, Groupe):
+                    for task in self.getSelectedTasks():
+                        findAndChecked(task)
+                # C'est peut-être une sous-tache
+                elif schedulable.isContainer():
+                    for subT in schedulable.getSubTasks():
+                        findAndChecked(subT)
+
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks)
+        UndoRedoTasksValidations(schedulables) if schedulables != [] else None
 
     def avancementNormal(self):
         """
@@ -194,7 +216,7 @@ class CalendarZone(Frame):
                 tasks.append(schedulable)
             schedulable.updateStatut()
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks)
+        UndoRedoTasksValidations(tasks) if tasks != [] else None
 
     def avancementJourFini(self):
         """
@@ -208,7 +230,7 @@ class CalendarZone(Frame):
                 tasks.append(tache)
             tache.updateStatut()
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks)
+        UndoRedoTasksValidations(tasks) if tasks != [] else None
 
     def decalerHeure(self):
         """
