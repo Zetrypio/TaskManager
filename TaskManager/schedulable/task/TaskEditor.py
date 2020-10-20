@@ -414,17 +414,20 @@ class TaskEditor(Frame):
                         if tache.id == i:
                             selectIt(tache)
 
-
-    def __mousePressedBefore(self, event):
+    def __mousePressedBefore(self, event, control = False):
         """
-        Méthode pour quand on sélectionne un truc dans le treeview,
+        Méthode pour quand on sélectionne un truc dans le Treeview,
         juste avant qu'il soit réellement sélectionné.
         @param event: infos sur l'évement de sélection.
+        @param control: True si l'utilisateur à appuyé sur Contrôle
+        lors de l'événement, False sinon.
         """
         self.mousepress = True
-        # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview me semble-t-il.
-#        for elem in self.tree.selection():
-#            self.tree.selection_remove(elem)
+        if not control:
+            # On désélectionne tout pour être sûr.
+            self.tree.selection_remove(*self.tree.selection())
+        else:
+            pass # TODO sélectionner les lignes des schedulables.
         self.after(10, self.__mousePressed, event)
 
     def __mouseReleased(self, event):
