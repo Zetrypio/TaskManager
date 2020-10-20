@@ -525,5 +525,6 @@ class TaskEditor(Frame):
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
+        self.tree.bind("<Control-ButtonPress-1>", lambda e: self.__mousePressedBefore(e, control=True))
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
