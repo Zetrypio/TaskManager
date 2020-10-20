@@ -51,8 +51,9 @@ class Task(AbstractSchedulableObject):
         
         # Informations des répétitions :
 
-        self.__rep   = rep    # répétition
-        self.__nbrep = nbrep  # nombre de répétitions
+        self.__rep   = rep         # répétition
+        self.__nbrep = nbrep       # nombre de répétitions
+        self.__setRepetOut = set() # liste des itération où la répétition ne doit pas se faire
         
         # Parent :
         self.__parent = parent
@@ -461,20 +462,6 @@ class Task(AbstractSchedulableObject):
         """
         return (self.__debut + self.__duree) if self.__debut is not None else None
 
-    def getNbRep(self):
-        """
-        Getter pour le nombre de répétition de la tache
-        @return <int>
-        """
-        return self.__nbrep
-
-    def getRep(self):
-        """
-        Getter pour la durée entre 2 répétitions
-        @return <datetime.timedelta>
-        """
-        return self.__rep
-
     def setDebut(self, debut, change = "fin"):
         """
         Permet de mettre le début de la période.
@@ -500,6 +487,47 @@ class Task(AbstractSchedulableObject):
         self.__duree = duree
         self.setDebut(self.getDebut(), change = "fin")
 
+    def intersectWith(self, task):
+        """
+        Permet de savoir si cette tâche s'intersectionne avec une autre.
+        @param task: la tâche dont on teste l'intersection avec celle-ci.
+        @return True si les 2 tâches s'intersectionnent, False sinon.
+        """
+        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
+
+    ""
+    ################
+    # Répétition : #
+    ################
+    ""
+    def addRepetOut(self, num):
+        """
+        Ajoute une répétition à ne pas faire
+        @param num : <int> doit être compris entre 0 et self.getNbRep
+        """
+        pass
+
+    def getNbRep(self):
+        """
+        Getter pour le nombre de répétition de la tache
+        @return <int>
+        """
+        return self.__nbrep
+
+    def getRep(self):
+        """
+        Getter pour la durée entre 2 répétitions
+        @return <datetime.timedelta>
+        """
+        return self.__rep
+
+    def getRepetOut(self):
+        """
+        Getter pour les numéros des itérations dont on ne doit pas réaliser la répétition
+        @return <set> une copie
+        """
+        return self.__setRepetOut.copy()
+
     def setRep(self, time):
         """
         Setter pour la durée entre 2 répétitions
@@ -517,14 +545,6 @@ class Task(AbstractSchedulableObject):
         if not isinstance(nb, int):
             raise ValueError("%s <%s> n'est pas du bon type, ce doit être un int"%(nb, nb.__class__.__name__))
         self.__nbrep = nb
-
-    def intersectWith(self, task):
-        """
-        Permet de savoir si cette tâche s'intersectionne avec une autre.
-        @param task: la tâche dont on teste l'intersection avec celle-ci.
-        @return True si les 2 tâches s'intersectionnent, False sinon.
-        """
-        return not (self.getFin() < task.getDebut() or self.getDebut() > task.getFin())
 
     ""
     ############

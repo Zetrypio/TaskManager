@@ -10,6 +10,7 @@ from util.widgets.ttkcalendar import *
 from ...AbstractSchedulableParametre import *
 
 from .datetimeDialog import *
+from .askSeparateRepetitiveTask import *
 
 class TaskParametre(AbstractSchedulableParametre):
     """
@@ -89,12 +90,13 @@ class TaskParametre(AbstractSchedulableParametre):
             self.__sbMin =      Spinbox(  self.__frameDuree, from_ = 0, to=59, increment = 1, width = 4, command = self.__autoSetFin, textvariable = self.__varMin)
             self.__lbMin =      Label(    self.__frameDuree, text = "minutes")
         # Répétition
-        self.__lbNbRep =    Label(   self._frameGeneral, text = "Nombre de répétitions :")
-        self.__sbNbRep =    Spinbox( self._frameGeneral, from_ = -1, to = 100, increment = 1, width = 4, textvariable = self.__varNbRep)
-        self.__lbRepet =    Label(   self._frameGeneral, text = "tout les :")
-        self.__frameRepet = Frame(   self._frameGeneral)
-        self.__sbRep =      Spinbox( self.__frameRepet, from_ = 1, to = 100, increment = 1, width = 4, textvariable = self.__varRep)
-        self.__cbUnit =     Combobox(self.__frameRepet, value = ["semaine", "jours", "heures"], textvariable = self.__varUnitRep)
+        self.__lbNbRep =      Label(   self._frameGeneral, text = "Nombre de répétitions :")
+        self.__sbNbRep =      Spinbox( self._frameGeneral, from_ = -1, to = 100, increment = 1, width = 4, textvariable = self.__varNbRep)
+        self.__btnEditRepet = Button(  self._frameGeneral, text = "Éditer", command = lambda : askSeparateRepetitiveTask(self._getSchedulable()))
+        self.__lbRepet =      Label(   self._frameGeneral, text = "tout les :")
+        self.__frameRepet =   Frame(   self._frameGeneral)
+        self.__sbRep =        Spinbox( self.__frameRepet, from_ = 1, to = 100, increment = 1, width = 4, textvariable = self.__varRep)
+        self.__cbUnit =       Combobox(self.__frameRepet, value = ["semaine", "jours", "heures"], textvariable = self.__varUnitRep)
 
         ## Attributs avancés
         # (voir parent) self._frameAdvanced = LabelFrame(self._pageAvancee, text = "Options avancées")
@@ -137,6 +139,7 @@ class TaskParametre(AbstractSchedulableParametre):
         self.__sbNbRep.grid(       row = 9,  column = 1, sticky = "w")
         self.__lbRepet.grid(       row = 10, column = 0, sticky = "e")
         self.__frameRepet.grid(    row = 10, column = 1, sticky = "we")
+        self.__btnEditRepet.grid(  row = 11, column = 1, sticky = "e")
         self.__sbRep.pack( side = LEFT, fill = BOTH)
         self.__cbUnit.pack(side = LEFT, fill = BOTH, expand = YES)
         # Avancée
