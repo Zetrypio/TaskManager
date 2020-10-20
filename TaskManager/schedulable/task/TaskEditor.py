@@ -423,8 +423,8 @@ class TaskEditor(Frame):
         """
         self.mousepress = True
         # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview me semble-t-il.
-        for elem in self.tree.selection():
-            self.tree.selection_remove(elem)
+#        for elem in self.tree.selection():
+#            self.tree.selection_remove(elem)
         self.after(10, self.__mousePressed, event)
 
     def __mouseReleased(self, event):
