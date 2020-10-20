@@ -63,7 +63,7 @@ class TaskEditor(Frame):
         self.barreRecherche.bind("<FocusOut>", lambda e: self._chercher(e.widget.get()))
         self.barreRecherche.bind("<Return>", lambda e: self._chercher(e.widget.get()))
 
-        # Zone avec la liste des tâches : # >>> XXX c'est quoi ? >>> (c'était là comme ça) >>> : self._chercher(e.widget.get()))
+        # Zone avec la liste des tâches :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
 
@@ -106,7 +106,6 @@ class TaskEditor(Frame):
     def getTaskInTaskEditor(self):
         """
         Getter pour la liste des tâches qui doivent être affiché ou des périodes selon le filtre
-        @old : remplace tâches
         @return une liste de schedulable et TaskUnplanified
         """
         if "type" in self.FILTRE and "Période" in self.FILTRE["type"]:
@@ -150,8 +149,8 @@ class TaskEditor(Frame):
                     list = self.tree.get_children(item.id)
                 for subt in list:
                     if subt == schedulable.id:
-
                         self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
+
             # Si on cherche une tache/groupe global
             if schedulable.id == item.id and schedulable.isSelected():
                 self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
@@ -206,8 +205,8 @@ class TaskEditor(Frame):
 
             # RMenu :
             r = RMenu(self, binder = self.tree, bindWithId = "rmenu%s"%parentNew)
-            rmenu = displayable.setRMenuContent(self, r)
-            if rmenu:
+            exist = displayable.setRMenuContent(self, r)
+            if exist:
                 self.__rmenu.append(r)
             else:
                 # Le try except est nécessaire si jamais ce RMenu() à déjà été détruit dans le displayable.setRMenuContent(self, r)
@@ -367,7 +366,7 @@ class TaskEditor(Frame):
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
-            # TODO : Revoir aussi ICI pour si on fait une multisélection.
+            # TODO : Revoir aussi ICI pour si on fait une multi-sélection.
             for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
                 for t in self.getTaskInTaskEditor():
                     if isinstance(t, Task) and t.getStatut() == "Inconnu":
@@ -407,7 +406,7 @@ class TaskEditor(Frame):
                 # Si c'est un groupe et que c'est le bon
                 elif isinstance(t, Groupe) and t.id == i:
                     selectIt(t)
-                # Si c'est un groupe, il faut parcourir les taches
+                # Si c'est un groupe, il faut parcourir les tâches
                 elif isinstance(t, Groupe):
                     for tache in t.getListTasks():
                         if tache.id == i:
@@ -421,7 +420,7 @@ class TaskEditor(Frame):
         @param event: infos sur l'évement de sélection.
         """
         self.mousepress = True
-        # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview me semble-t-il.
+        # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview() me semble-t-il.
         for elem in self.tree.selection():
             self.tree.selection_remove(elem)
         self.after(10, self.__mousePressed, event)
@@ -470,7 +469,7 @@ class TaskEditor(Frame):
     ""
     def redessiner(self):
         """
-        Méthode pour mettre à jour l'affichage du Treeview.
+        Méthode pour mettre à jour l'affichage du Treeview().
         """
         # On efface tout :
         self.tree.destroy()
