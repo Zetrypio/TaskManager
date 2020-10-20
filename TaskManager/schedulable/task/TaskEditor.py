@@ -33,7 +33,6 @@ class TaskEditor(Frame):
         self.mousepress = False
         self.MODE_TRI = "None"
 
-        self.taches = [] # Pourra aussi contenir des Périodes.
         self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
 
         self.__periodManager = periodManager
