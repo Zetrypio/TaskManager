@@ -292,7 +292,7 @@ class Task(AbstractSchedulableObject):
         if self.getNbRep() > 0 and self.isVisible():
             instance = self.copy()
             count = self.getNbRep()
-            while count > 0 and instance.getDebut().date() < self.getPeriode().getFin():
+            while count > 0 and instance.getDebut().date() <= self.getPeriode().getFin():
                 yield from addRepartition(instance)
                 instance.setDebut(instance.getDebut() + instance.__rep)
                 count -= 1
