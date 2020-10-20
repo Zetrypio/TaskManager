@@ -7,6 +7,7 @@ import datetime
 
 from .items.DatetimeItemPart import *
 
+from util.util import adaptDate
 from util.widgets.Dialog import *
 from util.widgets.TextWidget import *
 
@@ -467,41 +468,7 @@ class AbstractDisplayedCalendar(Frame):
         TextWidget.giveData(self.getData())
 
         ## Gestion du texte
-        # Le fichier existe ?
-        if not self.getData().testDataExist("Calendrier"):
-            texte = dt.year + " " + dt.month + " " + dt.day
-        # On cherche le lien
-        if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
-            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")[1]
-        else :
-            lien = "."
-        # On cherche le style
-        if self.getData().testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
-            ## Traitement du texte
-            # Constantes
-            jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-            mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
-            texte = self.getData().getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
-
-            numJour     = str(dt.day)
-            numMois     = str(dt.month)
-            numJour2C   = "%02i"%dt.day
-            numMois2C   = "%02i"%dt.month
-            numAnnee    = str(dt.year)
-            jourSemaine = str(jour[dt.weekday()])
-            mois        = str(mois[dt.month-1])
-
-            texte = texte.replace("NJ2", numJour2C)
-            texte = texte.replace("JS0", jourSemaine[0])
-            texte = texte.replace("NM2", numMois2C)
-            texte = texte.replace("NA", numAnnee)
-            texte = texte.replace("JS", jourSemaine)
-            texte = texte.replace("M3", mois[:3])
-            texte = texte.replace("NJ", numJour)
-            texte = texte.replace("MO", mois)
-
-            texte = texte.replace("_", lien)
+        texte = adaptDate(self.getData(), dt)
 
         ## gestion du mode
         # Si c'est aujourd'hui

@@ -254,7 +254,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
         jour = self.getJourDebut()
         for compteur in range(self.getNbJour()):
-
             # Est-ce que le jour est sélectionné ?
             jourSelectionne = self.getDonneeCalendrier().isJourSelected(jour)
 

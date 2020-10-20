@@ -10,6 +10,7 @@ import time
 from affichages.periode.Periode import *
 from util.widgets.ColorButton import *
 from util.widgets.Dialog import askyesnowarning
+from util.util import adaptDate
 
 from .dialog.datetimeDialog import *
 from .Task import *
@@ -172,58 +173,13 @@ class TaskAdder(Frame):
     # Setters : #
     #############
     ""
-    def __adaptText(self, dt):
-        """
-        Méthode qui Fait un texte joli avec un date
-        @param dt : <datetime.date> celui du jour
-        @return texte : <str> un truc en accord avec les préférences
-        """
-        ## Gestion du texte
-        # Le fichier existe ?
-        if not self.getData().testDataExist("Calendrier"):
-            texte = dt.year + " " + dt.month + " " + dt.day
-        # On cherche le lien
-        if self.getData().testDataExist("Calendrier", "Calendrier", "Lien"):
-            lien = self.getData().getOneValue("Calendrier", "Calendrier", "Lien")[1]
-        else :
-            lien = "."
-        # On cherche le style
-        if self.getData().testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
-            ## Traitement du texte
-            # Constantes
-            jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-            mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
-
-            texte = self.getData().getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
-
-            numJour     = str(dt.day)
-            numMois     = str(dt.month)
-            numJour2C   = "%02i"%dt.day
-            numMois2C   = "%02i"%dt.month
-            numAnnee    = str(dt.year)
-            jourSemaine = str(jour[dt.weekday()])
-            mois        = str(mois[dt.month-1])
-
-            texte = texte.replace("NJ2", numJour2C)
-            texte = texte.replace("JS0", jourSemaine[0])
-            texte = texte.replace("NM2", numMois2C)
-            texte = texte.replace("NA", numAnnee)
-            texte = texte.replace("JS", jourSemaine)
-            texte = texte.replace("M3", mois[:3])
-            texte = texte.replace("NJ", numJour)
-            texte = texte.replace("MO", mois)
-
-            texte = texte.replace("_", lien)
-
-        return texte
-
     def setDebut(self, value):
         """
         Méthode qui fixe le début + met un joli texte sur le bouton
         @param value : <datetime.datetime> celui du moment a afficher
         """
         self.debut = value
-        self.champDebut.config(text = self.__adaptText(value.date()) + " " + str(value.time()) if value is not None else "")
+        self.champDebut.config(text = adaptDate(self.getData(), value.date()) + " " + str(value.time()) if value is not None else "")
         self.autoSetDuree()
 
     def setFin(self, value):
@@ -233,7 +189,7 @@ class TaskAdder(Frame):
         """
         if value is not None:
             self.fin = value
-        self.champFin.config(text = self.__adaptText(value.date()) + " " + str(value.time()) if value is not None else "")
+        self.champFin.config(text = adaptDate(self.getData(), value.date()) + " " + str(value.time()) if value is not None else "")
         self.autoSetDuree()
 
     ""
