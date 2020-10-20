@@ -4,16 +4,20 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from collections import deque
 
+from affichages.periode.Periode import *
 from affichages.periode.PeriodAdder import *
+from util.util import adaptTextColor
 from util.widgets.RMenu import *
 
 from .dialog.askHeureExacteDialog import *
 from .undoredo.UndoRedoTaskCreation import *
 from .Task import *
 from .TaskAdder import *
-from util.util import adaptTextColor
 
 from ..AbstractSchedulableObject import *
+from ..groupe.Groupe import *
+
+import sys
 
 class TaskEditor(Frame):
     """
@@ -172,10 +176,12 @@ class TaskEditor(Frame):
         if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
-            displayable.id = parentNew
+            displayable.id = parentNew # Cet id est défini pour la première fois ici. CE N'EST PAS L'UNIQUE_ID.
+            # (d'ailleurs, c'est pas très OO de définir comme ça un id juste comme ca en tant que nouvel attribut
+            # et tout et tout. Il vaudrait mieux faire un dictionnaire des id vers leurs tâches. Ce serait d'ailleurs
+            # plus efficaces pour certains algorithmes du programme.)
 
             # On fait la couleur :
-
             self.tree.tag_configure("Couleur%s"%displayable.getColor(), background = displayable.getColor())
             # + celle de la ligne
             if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
@@ -375,11 +381,15 @@ class TaskEditor(Frame):
                         if i == t.id:
                             tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
 
-    def __mousePressed(self, event):
+    def __mousePressed(self, eventc, control = False):
         """
         Méthode qui sélectionne les schedulables si possible
         @param event: non utilisé.
         """
+        if control:
+            # On commence par savoir quels sont les objets sélectionnés :
+            print(self.__getEnsembleObjetAvecSelection())
+        
         def selectIt(schedulable):
             """
             Fonction embarqué pour sélectionner le schedulable, + si c'est fait alors on redraw
@@ -426,9 +436,71 @@ class TaskEditor(Frame):
         if not control:
             # On désélectionne tout pour être sûr.
             self.tree.selection_remove(*self.tree.selection())
-        else:
-            pass # TODO sélectionner les lignes des schedulables.
-        self.after(10, self.__mousePressed, event)
+
+        self.after(10, self.__mousePressed, event, control)
+    
+    def __getEnsembleObjetAvecSelection(self):
+        ensembleObjets = set()
+
+        def recursive(obj, s, recursionLevel = 0, dependances = True, dependantes = True):
+            """Permet la récursivité entre les objets."""
+            # Niveaux de récursion :
+            if recursionLevel > 5:
+                return
+
+            # Période : c'est le plus simple, car pas de sous-objets possibles.
+            if isinstance(obj, Periode):
+                if s.startswith(obj.id):
+                    ensembleObjets.add(obj)
+                    return True
+                
+            # Groupes : il y a des sous-tâches.
+            elif isinstance(obj, Groupe):
+                if s.startswith(obj.id):
+                    ensembleObjets.add(obj)
+                    
+                    # Sous-tâches :
+                    for st in obj.getListTasks():
+                        recursive(st, s, recursionLevel+1, dependances, dependantes)
+                    return True
+
+            # Tâches : sous-tâches possibles + dépendances + dépendantes.
+            elif isinstance(obj, Task):
+                if s.startswith(obj.id):
+                    ensembleObjets.add(obj)
+                    
+                    # Sous-tâches :
+                    if obj.isContainer():
+                        for st in obj.getSubTasks():
+                            recursive(st, s, recursionLevel+1, dependances, dependantes)
+                    
+                    # Dépendances :
+                    if dependances:
+                        for depT in obj.getDependances():
+                            recursive(depT, s, recursionLevel+1, True, False)
+                    
+                    # Dépendantes :
+                    if dependantes:
+                        for depT in obj.getDependantes():
+                            recursive(depT, s, recursionLevel+1, False, True)
+                    return True
+            else:
+                # Euh qu'est-ce qu'on fait ici ?
+                print("ERROR : objet non valide dans le TaskEditor, %s"%obj, file = sys.stderr)
+
+        # Parcours de la sélection
+        for s in self.tree.selection():
+
+            # Pour chaque éléments sélectionnés, on va chercher de quelle objet il s'agit.
+            for obj in self.getTaskInTaskEditor():
+
+                # La fonction s'occupe de l'ajout et tout et tout.
+                if recursive(obj, s):
+
+                    # Inutile de continuer si la fonction nous l'indique.
+                    break
+
+        return ensembleObjets
 
     def __mouseReleased(self, event):
         """
@@ -484,8 +556,6 @@ class TaskEditor(Frame):
         # On recrée tout :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
-
-
 
         # avec la scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
