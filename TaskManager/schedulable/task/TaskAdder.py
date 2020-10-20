@@ -282,7 +282,10 @@ class TaskAdder(Frame):
         """
         Méthode qui met à jour la fin si on change les durée
         """
-        ecart = datetime.timedelta(days = int(self.champJour.get()), hours = int(self.champHeure.get()), minutes = int(self.champMinute.get()))
+        day    = int(self.champJour.get())   if self.champJour.get()   != "" else 0
+        hour   = int(self.champHeure.get())  if self.champHeure.get()  != "" else 0
+        minute = int(self.champMinute.get()) if self.champMinute.get() != "" else 0
+        ecart = datetime.timedelta(days = day, hours = hour, minutes = minute)
         if self.debut is not None:
             self.setFin(self.debut + ecart)
         elif self.debut is None and self.fin is not None:
