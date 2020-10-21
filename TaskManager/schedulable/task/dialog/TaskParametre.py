@@ -7,6 +7,7 @@ import datetime
 
 from util.widgets.ColorButton import *
 from util.widgets.ttkcalendar import *
+from util.util import adaptDatetime
 from ...AbstractSchedulableParametre import *
 
 from .datetimeDialog import *
@@ -77,9 +78,9 @@ class TaskParametre(AbstractSchedulableParametre):
         ## Attributs généraux
         if not self._getSchedulable().isContainer():
             self.__lbDebut =    Label( self._frameGeneral, text = "Début :")
-            self.__btnDebut =   Button(self._frameGeneral, text = self.__varDebut, command = self.__askDebut)
+            self.__btnDebut =   Button(self._frameGeneral, text = adaptDatetime(self.__varDebut), command = self.__askDebut)
             self.__lbFin =      Label( self._frameGeneral, text = "Fin :"  )
-            self.__btnFin =     Button(self._frameGeneral, text = self.__varFin,   command = self.__askFin)
+            self.__btnFin =     Button(self._frameGeneral, text = adaptDatetime(self.__varFin),   command = self.__askFin)
             self.__lbDuree =    Label( self._frameGeneral, text = "Durée :")
             # Duree
             self.__frameDuree = Frame(    self._frameGeneral)
@@ -197,7 +198,7 @@ class TaskParametre(AbstractSchedulableParametre):
         if date is None:
             return
         self.__varDebut = date
-        self.__btnDebut.config(text = self.__varDebut if self.__varDebut is not None else "")
+        self.__btnDebut.config(text = adaptDatetime(self.__varDebut) if self.__varDebut is not None else "")
         self.__autoSetDuree()
 
     def __askFin(self):
@@ -209,7 +210,7 @@ class TaskParametre(AbstractSchedulableParametre):
         if date is None:
             return
         self.__varFin = date
-        self.__btnFin.config(text = self.__varFin if self.__varFin is not None else "")
+        self.__btnFin.config(text = adaptDatetime(self.__varFin) if self.__varFin is not None else "")
         self.__autoSetDuree()
 
     def __autoSetDuree(self):
@@ -232,7 +233,7 @@ class TaskParametre(AbstractSchedulableParametre):
         Fonction qui change automatiquement la fin si on change la durée
         """
         self.__varFin = (self.__varDebut + datetime.timedelta(days = self.__varJour.get(), hours = self.__varHour.get(), minutes = self.__varMin.get()))
-        self.__btnFin.config(text = self.__varFin)
+        self.__btnFin.config(text = adaptDatetime(self.__varFin))
 
     def __getListTask(self, list, StringV = False):
         """

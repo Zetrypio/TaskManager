@@ -141,7 +141,7 @@ class PeriodAdder(Frame):
         """
         if value is not None:
             self.debut = value
-        self.champDebut.config(text = adaptDate(self.getData(), value) if value is not None else "")
+        self.champDebut.config(text = adaptDate(value) if value is not None else "")
         self.autoSetDuree()
 
     def setFin(self, value):
@@ -153,7 +153,7 @@ class PeriodAdder(Frame):
         """
         if value is not None:
             self.fin = value
-        self.champFin.config(text = adaptDate(self.getData(), value) if value is not None else "")
+        self.champFin.config(text = adaptDate(value) if value is not None else "")
         self.autoSetDuree()
 
     def setAutoFin(self):

@@ -179,7 +179,7 @@ class TaskAdder(Frame):
         @param value : <datetime.datetime> celui du moment a afficher
         """
         self.debut = value
-        self.champDebut.config(text = adaptDate(self.getData(), value.date()) + " " + str(value.time().strftime("%H:%M")) if value is not None else "")
+        self.champDebut.config(text = adaptDatetime(value.date()) if value is not None else "")
         self.autoSetDuree()
 
     def setFin(self, value):
@@ -189,7 +189,7 @@ class TaskAdder(Frame):
         """
         if value is not None:
             self.fin = value
-        self.champFin.config(text = adaptDate(self.getData(), value.date()) + " " + str(value.time().strftime("%H:%M")) if value is not None else "")
+        self.champFin.config(text = adaptDatetime(value.date()) if value is not None else "")
         self.autoSetDuree()
 
     ""

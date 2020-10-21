@@ -468,7 +468,7 @@ class AbstractDisplayedCalendar(Frame):
         TextWidget.giveData(self.getData())
 
         ## Gestion du texte
-        texte = adaptDate(self.getData(), dt)
+        texte = adaptDate(dt)
 
         ## gestion du mode
         # Si c'est aujourd'hui

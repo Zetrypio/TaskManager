@@ -74,7 +74,11 @@ class Task(AbstractSchedulableObject):
 
     def __str__(self):
         """Return a nice string representation of this object."""
-        return "Task: %s, from %s to %s, %s"%(self.getNom(), self.getDebut() or "Unknown", self.getFin() or "Unknown", self.getStatut())
+        return "Task: %s, from %s to %s, %s"%(self.getNom(),
+                                                adaptDatetime(self.getDebut()) if self.getDebut() is not None else "Unknown",
+                                                adaptDatetime(self.getFin()) if self.getFin() is not None else "Unknown",
+                                                self.getStatut()
+                                                )
 
     "" # Marque pour repli de code
     ###############################

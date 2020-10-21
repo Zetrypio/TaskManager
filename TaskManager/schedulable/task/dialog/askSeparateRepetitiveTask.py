@@ -4,7 +4,7 @@ from tkinter.ttk import *
 from tkinter import Frame, Label
 
 from util.widgets.Dialog import *
-from util.util import adaptDate
+from util.util import adaptDatetime
 
 def askSeparateRepetitiveTask(task):
     """
@@ -33,7 +33,7 @@ def askSeparateRepetitiveTask(task):
     listeDate = StringVar()
 
     # Affctation
-    listeDate.set([adaptDate(task.getData(), (numero*task.getRep() + task.getDebut()).date()) + " - " + str((numero*task.getRep() + task.getDebut()).time().strftime("%H:%M")) for numero in range(task.getNbRep())]) # En gros "date joli - time"
+    listeDate.set([adaptDatetime((numero*task.getRep() + task.getDebut())) for numero in range(task.getNbRep())]) # En gros "date joli - time"
 
 
     fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"), command = onClose)

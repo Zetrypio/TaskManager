@@ -3,7 +3,7 @@ from configparser import *
 import os
 
 from util.widgets.TextWidget import *
-from util.util import adaptTextColor
+from util.util import adaptTextColor, setStyleDay
 from affichages.gantt.liens.AbstractLink import *
 
 # Dictionnaires de couleurs
@@ -39,6 +39,8 @@ class Data(ConfigParser):
         else :
             couleur = self.getPalette()["jour"]
         self.changePalette("jour", couleur)
+        # Mettre le style d'affichage des jours
+        setStyleDay(self.getStyleDayPrinting())
 
     "" # Marque pour le repli
     ################
@@ -144,6 +146,28 @@ class Data(ConfigParser):
 
     def getProfilFolder(self):
         return self.__profilFolder
+
+    def getStyleDayPrinting(self):
+        """
+        Getter pour le style d'affichage des jours selon les préférences
+        Cette méthode est utilisé par util.util#adaptDate pour rendre toutes les dates jolies
+        Utiliser cette méthode permet de passer une seule fois par data, ensuite les valeurs sont stockées dans util
+        @return <tuple> : (<str>, <str>) : (format de texte, lien)
+        """
+        # Si le fichier n'existe pas :
+        if not self.testDataExist("Calendrier"):
+            return ("NA_NM2_NJ", ".")
+        # On cherche le lien
+        if self.testDataExist("Calendrier", "Calendrier", "Lien"):
+            lien = self.getOneValue("Calendrier", "Calendrier", "Lien")[1]
+        else :
+            lien = "."
+        # On cherche le style
+        if self.testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
+            texte = self.getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
+        # On retourne les valeurs :
+        return (texte, lien)
+
 
     ""
     ###########

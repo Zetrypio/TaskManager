@@ -14,7 +14,7 @@ class PageCalendrier(AbstractPage):
         super().__init__(master, nom = "Calendrier", **kwargs)
         # Note : self.master renvoie a ParametrageZone
         # Note : Si on rajoute une option,  ne pas oublier d'ajouter la variable de controle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
-        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
+        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self._addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
 
         def changeMode(v): # Fonction d'assignement qu'un certain lambda sait pas faire
@@ -42,10 +42,10 @@ class PageCalendrier(AbstractPage):
         self.__frameStyle = LabelFrame(self._mFrame, text = "Style d'affichage des jours")
 
         self.__varComboStyleFinal = StringVar()
-        self._listData.append([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_MO"])
+        self._addDataNeedRestart([self.__varComboStyleFinal, "sytle d'affichage", "JS_NJ_MO"])
         self.__comboStyleFinal = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varComboStyleFinal)
         self.__varLienStyle = StringVar()
-        self._listData.append([self.__varLienStyle, "Lien", "\" \""])
+        self._addDataNeedRestart([self.__varLienStyle, "Lien", "\" \""])
         self.__oldLien = self._listData[-1][-1] # pour le retrouver lorsqu'on change le lien et refaire l'affichage du combobox
         self.__comboLienStyle = Combobox(self.__frameStyle, state = "readonly", textvariable = self.__varLienStyle, value = ["\" \"", "\"/\"", "\"-\"", "\".\""])
         self.__comboLienStyle.bind("<<ComboboxSelected>>", lambda e=None : self.__changeLien())
@@ -251,7 +251,7 @@ class PageCalendrier(AbstractPage):
         toudai      = datetime.datetime.today() # Pour la blague je le laisse, permet d'avoir un affichage joli
 
         numJour     = str(toudai.day)
-        numMois     = str(toudai.month)
+        #numMois     = str(toudai.month) inutilisé
         numJour2C   = "%02i"%toudai.day
         numMois2C   = "%02i"%toudai.month
         numAnnee    = str(toudai.year)

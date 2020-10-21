@@ -2,6 +2,10 @@
 import math
 import datetime
 
+# Constantes :
+FORMAT = "" # pour l'affichage des jours
+LIEN   = ""
+
 def adaptTextColor(color):
     """
     Fonction qui permet de renvoyer la couleur du texte, selon que la couleur passé est sombre ou claire
@@ -67,51 +71,56 @@ def rangeDate(jourA, jourB, last = True):
             jour += datetime.timedelta(days = 1)
         if last:
             yield jourB
+def setStyleDay(tuple):
+    """
+    Permet de mettre les constantes en place
+    @param tuple : <tuple> retourné par la méthode Data#getStyleDayPrinting()
+    """
+    global FORMAT, LIEN
+    FORMAT, LIEN = tuple
 
-def adaptDate(data, dt):
+def adaptDate(dt):
     """
     Fonction qui permet d'avoir un texte d'une date en adéquation avec les préférences
-    @param data : <Data> l'objet data de l'Application
     @param dt : <datetime.date> la date à transformer
     @return texte : <str> le string adéquat
     """
-    # Le fichier existe ?
-    if not data.testDataExist("Calendrier"):
-        texte = dt.year + " " + dt.month + " " + dt.day
-    # On cherche le lien
-    if data.testDataExist("Calendrier", "Calendrier", "Lien"):
-        lien = data.getOneValue("Calendrier", "Calendrier", "Lien")[1]
-    else :
-        lien = "."
-    # On cherche le style
-    if data.testDataExist("Calendrier", "Calendrier", "sytle d'affichage"):
-        ## Traitement du texte
-        # Constantes
-        jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
-        mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+    ## Traitement du texte
+    # Constantes
+    jour        = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+    mois        = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
-        texte = data.getOneValue("Calendrier", "Calendrier", "sytle d'affichage")
+    texte = FORMAT
 
-        numJour     = str(dt.day)
-        numMois     = str(dt.month)
-        numJour2C   = "%02i"%dt.day
-        numMois2C   = "%02i"%dt.month
-        numAnnee    = str(dt.year)
-        jourSemaine = str(jour[dt.weekday()])
-        mois        = str(mois[dt.month-1])
+    numJour     = str(dt.day)
+    #numMois     = str(dt.month) inutilisé
+    numJour2C   = "%02i"%dt.day
+    numMois2C   = "%02i"%dt.month
+    numAnnee    = str(dt.year)
+    jourSemaine = str(jour[dt.weekday()])
+    mois        = str(mois[dt.month-1])
 
-        texte = texte.replace("NJ2", numJour2C)
-        texte = texte.replace("JS0", jourSemaine[0])
-        texte = texte.replace("NM2", numMois2C)
-        texte = texte.replace("NA", numAnnee)
-        texte = texte.replace("JS", jourSemaine)
-        texte = texte.replace("M3", mois[:3])
-        texte = texte.replace("NJ", numJour)
-        texte = texte.replace("MO", mois)
+    texte = texte.replace("NJ2", numJour2C)
+    texte = texte.replace("JS0", jourSemaine[0])
+    texte = texte.replace("NM2", numMois2C)
+    texte = texte.replace("NA", numAnnee)
+    texte = texte.replace("JS", jourSemaine)
+    texte = texte.replace("M3", mois[:3])
+    texte = texte.replace("NJ", numJour)
+    texte = texte.replace("MO", mois)
 
-        texte = texte.replace("_", lien)
+    texte = texte.replace("_", LIEN)
 
     return texte
+
+def adaptDatetime(dt):
+    """
+    Fonction qui retourne un joli texte en fonction des préférences utilisateur pour la date
+    + retire les secondes qui servent à rien de time
+    @param dt : <datetime.datetime> celui a transformer
+    @return : <str> le joli texte
+    """
+    return adaptDate(dt.date()) + " - " + dt.time().strftime("%H:%M")
 
 ## Conversion datetime et str
 def datetimeToStr(d):
