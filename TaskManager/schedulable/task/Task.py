@@ -133,9 +133,9 @@ class Task(AbstractSchedulableObject):
         """
         # Note : on yield par paires.
         if not self.isContainer():
-            yield "Début :",           self.getDebut()
-            yield "Durée :",           self.getDuree()
-            yield "Fin :",             self.getFin()
+            yield "Début :",           adaptDatetime(self.getDebut())
+            yield "Durée :",           "%s:%02i:%02i"%(self.getDuree().days, self.getDuree().seconds//3600, (self.getDuree()-datetime.timedelta(hours=self.getDuree().seconds//3600)).seconds//60)
+            yield "Fin :",             adaptDatetime(self.getFin())
             yield "Nombre rep :",      self.__nbrep
             yield "Temps entre rep :", self.__rep
             if displayDependances:
