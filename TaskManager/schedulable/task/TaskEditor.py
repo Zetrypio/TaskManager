@@ -39,6 +39,7 @@ class TaskEditor(Frame):
 
         self.taches = [] # Pourra aussi contenir des Périodes.
         self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
+        self.__idObjectsInTreeview = {}
 
         self.__periodManager = periodManager
 
@@ -146,20 +147,19 @@ class TaskEditor(Frame):
         Permet de sélectionner une ligne du Treeview
         @param schedulable : <AbstractSchedulableObject>  celui qui'il faut relier à la ligne pour sélectionner
         """
-        for item in self.getTaskInTaskEditor():
-            # Si on cherche une subtask
-            if isinstance(schedulable, Task) and schedulable.getParent() is not None:
-                try:
-                    list = self.tree.get_children(self.tree.get_children(item.id))
-                except:
-                    list = self.tree.get_children(item.id)
-                for subt in list:
-                    if subt == schedulable.id:
-
-                        self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
-            # Si on cherche une tache/groupe global
-            if schedulable.id == item.id and schedulable.isSelected():
-                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
+#        for item in self.getTaskInTaskEditor():
+#            # Si on cherche une subtask
+#            if isinstance(schedulable, Task) and schedulable.getParent() is not None:
+#                try:
+#                    list = self.tree.get_children(self.tree.get_children(item.id))
+#                except:
+#                    list = self.tree.get_children(item.id)
+#                for subt in list:
+#                    if subt == schedulable.id:
+#                        self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
+#            # Si on cherche une tache/groupe global
+#            if schedulable.id == item.id and schedulable.isSelected():
+#                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
 
     ""
     ###################################
@@ -176,10 +176,9 @@ class TaskEditor(Frame):
         if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
-            displayable.id = parentNew # Cet id est défini pour la première fois ici. CE N'EST PAS L'UNIQUE_ID.
-            # (d'ailleurs, c'est pas très OO de définir comme ça un id juste comme ca en tant que nouvel attribut
-            # et tout et tout. Il vaudrait mieux faire un dictionnaire des id vers leurs tâches. Ce serait d'ailleurs
-            # plus efficaces pour certains algorithmes du programme.)
+
+            # On mémorise l'id de cette manière là maintenant :
+            self.__idObjectsInTreeview[parentNew] = displayable
 
             # On fait la couleur :
             self.tree.tag_configure("Couleur%s"%displayable.getColor(), background = displayable.getColor())
@@ -376,53 +375,42 @@ class TaskEditor(Frame):
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
             # TODO : Revoir aussi ICI pour si on fait une multisélection.
             for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-                for t in self.getTaskInTaskEditor():
-                    if isinstance(t, Task) and t.getStatut() == "Inconnu":
-                        if i == t.id:
-                            tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
+                try:
+                    t = self.__idObjectsInTreeview[i]   # Obtenir l'objet correspondant à l'ID.
+                except:
+                    continue
+                if isinstance(t, Task) and t.getStatut() == "Inconnu":
+                    tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
 
-    def __mousePressed(self, eventc, control = False):
+    def __mousePressed(self, event, control = False):
         """
         Méthode qui sélectionne les schedulables si possible
         @param event: non utilisé.
         """
         if control:
             # On commence par savoir quels sont les objets sélectionnés :
-            print(self.__getEnsembleObjetAvecSelection())
-        
-        def selectIt(schedulable):
-            """
-            Fonction embarqué pour sélectionner le schedulable, + si c'est fait alors on redraw
-            @param schedulable : <AbstractSchedulableObject>
-            """
-            schedulable.setSelected(True)
-            self.getApplication().getDonneeCalendrier().updateColor()
-
-        for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-            for t in self.getTaskInTaskEditor():
-                # Si c'est la tache
-                #print("iid :", i, "tache.id", t.id)
-                if isinstance(t, Task) and not t.isContainer() and t.id == i:
-                    selectIt(t)
-                # Si on sélectionne le conteneur, on select tout le monde
-                elif isinstance(t, Task) and t.isContainer() and t.id == i:
-                    for st in t.getSubTasks():
-                        selectIt(st)
-                    selectIt(t)
-                # Si c'est une tache conteneur
-                elif isinstance(t, Task) and t.isContainer():
-                    for st in t.getSubTasks():
-                        # Si c'est la sous-tache
-                        if st.id == i:
-                            selectIt(st)
-                # Si c'est un groupe et que c'est le bon
-                elif isinstance(t, Groupe) and t.id == i:
-                    selectIt(t)
-                # Si c'est un groupe, il faut parcourir les taches
-                elif isinstance(t, Groupe):
-                    for tache in t.getListTasks():
-                        if tache.id == i:
-                            selectIt(tache)
+            ensembleId = self.__getEnsembleIdObjetAvecSelection(getParent=True)
+            self.tree.selection_remove(*self.tree.selection())
+            self.tree.selection_add(*ensembleId)
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+                obj.setSelected(id in ensembleId)
+        else:
+            ensembleId = self.__getEnsembleIdObjetAvecSelection(getParent=False)
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+                obj.setSelected(False)
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+                if id in ensembleId:
+                    obj.setSelected(True)
+                    if isinstance(obj, Task) and obj.isContainer() and id in ensembleId:
+                        for st in obj.getSubTasks():
+                            st.setSelected(True)
+                    elif isinstance(obj, Groupe) and id in ensembleId:
+                        for st in t.getListTasks():
+                            st.setSelected(True)
+        self.getApplication().getDonneeCalendrier().updateColor()
 
     def __mousePressedBefore(self, event, control = False):
         """
@@ -438,69 +426,17 @@ class TaskEditor(Frame):
             self.tree.selection_remove(*self.tree.selection())
 
         self.after(10, self.__mousePressed, event, control)
-    
-    def __getEnsembleObjetAvecSelection(self):
-        ensembleObjets = set()
 
-        def recursive(obj, s, recursionLevel = 0, dependances = True, dependantes = True):
-            """Permet la récursivité entre les objets."""
-            # Niveaux de récursion :
-            if recursionLevel > 5:
-                return
-
-            # Période : c'est le plus simple, car pas de sous-objets possibles.
-            if isinstance(obj, Periode):
-                if s.startswith(obj.id):
-                    ensembleObjets.add(obj)
-                    return True
-                
-            # Groupes : il y a des sous-tâches.
-            elif isinstance(obj, Groupe):
-                if s.startswith(obj.id):
-                    ensembleObjets.add(obj)
-                    
-                    # Sous-tâches :
-                    for st in obj.getListTasks():
-                        recursive(st, s, recursionLevel+1, dependances, dependantes)
-                    return True
-
-            # Tâches : sous-tâches possibles + dépendances + dépendantes.
-            elif isinstance(obj, Task):
-                if s.startswith(obj.id):
-                    ensembleObjets.add(obj)
-                    
-                    # Sous-tâches :
-                    if obj.isContainer():
-                        for st in obj.getSubTasks():
-                            recursive(st, s, recursionLevel+1, dependances, dependantes)
-                    
-                    # Dépendances :
-                    if dependances:
-                        for depT in obj.getDependances():
-                            recursive(depT, s, recursionLevel+1, True, False)
-                    
-                    # Dépendantes :
-                    if dependantes:
-                        for depT in obj.getDependantes():
-                            recursive(depT, s, recursionLevel+1, False, True)
-                    return True
-            else:
-                # Euh qu'est-ce qu'on fait ici ?
-                print("ERROR : objet non valide dans le TaskEditor, %s"%obj, file = sys.stderr)
-
-        # Parcours de la sélection
-        for s in self.tree.selection():
-
-            # Pour chaque éléments sélectionnés, on va chercher de quelle objet il s'agit.
-            for obj in self.getTaskInTaskEditor():
-
-                # La fonction s'occupe de l'ajout et tout et tout.
-                if recursive(obj, s):
-
-                    # Inutile de continuer si la fonction nous l'indique.
-                    break
-
-        return ensembleObjets
+    def __getEnsembleIdObjetAvecSelection(self, getParent = False):
+        ensembleIdObjets = set()
+        for id in self.tree.selection():
+            while id != "":
+                if id in self.__idObjectsInTreeview:
+                    ensembleIdObjets.add(id)
+                    if not getParent:
+                        break
+                id = id [:-2]
+        return ensembleIdObjets
 
     def __mouseReleased(self, event):
         """
@@ -552,6 +488,7 @@ class TaskEditor(Frame):
         self.tree.destroy()
         self.scrollbar.destroy()
         self.__rmenu = []
+        self.__idObjectsInTreeview.clear()
 
         # On recrée tout :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
