@@ -408,7 +408,7 @@ class TaskEditor(Frame):
                         for st in obj.getSubTasks():
                             st.setSelected(True)
                     elif isinstance(obj, Groupe) and id in ensembleId:
-                        for st in t.getListTasks():
+                        for st in obj.getListTasks():
                             st.setSelected(True)
         self.getApplication().getDonneeCalendrier().updateColor()
 
