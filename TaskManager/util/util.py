@@ -128,14 +128,14 @@ def datetimeToStr(d):
     Permet de transformer un datetime en str selon le format suivant : YYYY-MM-DD-HH-MM-SS
     @param d : <datetime.datetime> celui qu'on doit transformer
     """
-    return "-".join([str(d.year), str(d.month), str(d.day), str(d.hour), str(d.minute), str(d.second)]) if isinstance(d, datetime.datetime) else None
+    return d.strftime("%Y-%m-%d-%H-%M-%S") if isinstance(d, datetime.datetime) else None
 
 def dateToStr(d):
     """
     Permet de transformer un datetime en str selon le format suivant : YYYY-MM-DD
     @param d : <datetime.date> celui qu'on doit transformer
     """
-    return "-".join([str(d.year), str(d.month), str(d.day)]) if isinstance(d, datetime.date) else None
+    return d.strftime("%Y-%m-%d") if isinstance(d, datetime.date) else None
 
 def strToDate(dt):
     """
@@ -143,10 +143,7 @@ def strToDate(dt):
     @param dt : <str>
     @return <datetime.date>
     """
-    if not isinstance(dt, str):
-        return None
-    y, m, d = dt.split("-")
-    return datetime.date(int(y), int(m), int(d))
+    return datetime.datetime.strptime(dt+"-0-0-0", "%Y-%m-%d-%H-%M-%S").date() if isinstance(dt, str) else None
 
 def strToDatetime(dt):
     """
@@ -154,10 +151,7 @@ def strToDatetime(dt):
     @param dt : <str>
     @return <datetime.datetime>
     """
-    if not isinstance(dt, str):
-        return None
-    y, m, d, h, mi, s = dt.split("-")
-    return datetime.datetime(int(y), int(m), int(d), int(h), int(mi), int(s))
+    return datetime.datetime.strptime(dt,"%Y-%m-%d-%H-%M-%S") if isinstance(dt, str) else None
 
 def strToTimedelta(dt):
     """
