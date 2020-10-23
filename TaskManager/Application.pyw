@@ -236,6 +236,7 @@ class Application(Frame):
             self.getDonneeCalendrier().switchPeriode()
         except Exception as e:
             showerror("Erreur", "Erreur lors de l'ouverture :\n%s : %s"%(e.__class__.__name__, e))
+            self._report_exception()
         UndoRedo.reset()
         # On enlève le titre :
         try:
