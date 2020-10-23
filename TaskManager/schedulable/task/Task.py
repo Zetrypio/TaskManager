@@ -268,7 +268,6 @@ class Task(AbstractSchedulableObject):
 
     def getRepartition(self, displayedCalendar):
         """
-        TODO : Gère également les tâches à répétition. 
         @see AbstractSchedulableObject#getRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
@@ -301,6 +300,12 @@ class Task(AbstractSchedulableObject):
             instance = self.copy()
             count = self.getNbRep()
             while count > 0 and instance.getDebut().date() <= self.getPeriode().getFin():
+                print(self.getNbRep() - count, self.getDissociated(), self.getNbRep() - count in self.getDissociated())
+                if self.getNbRep() - count in self.getDissociated():
+                    print("yep")
+                    count -= 1
+                    continue
+                print("yop")
                 yield from addRepartition(instance)
                 instance.setDebut(instance.getDebut() + instance.__rep)
                 count -= 1

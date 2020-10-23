@@ -84,7 +84,7 @@ def askSeparateRepetitiveTask(task):
         # Parcours du tuple pour avoir l'index de la ligne
         for iteration in selected:
             task.addDissociated(iteration)
-            # On créer une nouvelle tache à la place
+            ## On créer une nouvelle tache à la place
             dico = task.saveByDict()
             # On retire les répétitions et on met la date de l'itération retiré
             dico["rep"] = "1-0"
@@ -95,6 +95,7 @@ def askSeparateRepetitiveTask(task):
 
             ## On créer finalement notre nouvelle tache
             newTask = Task.load(dico, periode)
+            newTask.setUniqueID()
             # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
             if dico["parent"] is not None:
                 task.getParent().addSubTask(newTask)

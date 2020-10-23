@@ -25,7 +25,13 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self._statut     = ""
 
         # Pour reconnaître un objet parmi tous :
-        self.__uniqueID = id if id is not None else self.setUniqueID()
+        if id is not None:
+            self.__uniqueID = id
+            self.__addAndVerifyUniqueID()
+        else:
+            self.setUniqueID() # il y a un verify dedans
+
+
 
     "" # Marque pour que le repli de code fasse ce que je veux
     ############
@@ -192,6 +198,17 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         return self.__visible
 
+    def __addAndVerifyUniqueID(self):
+        """
+        Méthode qui vérifie si l'Unique ID est bien unique
+        Si c'est bon ça l'ajoute à la liste
+        """
+        ID = int(self.getUniqueID())
+        while str(ID) in self.getApplication().listKey:
+            ID += 1
+        self.getApplication().listKey.append(str(ID))
+        self.__uniqueID = str(ID)
+
     ""
     ############
     # Setters: #
@@ -274,10 +291,8 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         qui vérifie s'il est bien unique
         """
         ID = id(self)
-        if self.getPeriode():
-            while str(ID) in self.getApplication().listKey:
-                ID += 1
-        return str(ID)
+        self.__uniqueID = str(ID)
+        self.__addAndVerifyUniqueID
 
     ""
     #####################
