@@ -389,14 +389,14 @@ class TaskEditor(Frame):
         """
         if control:
             # On commence par savoir quels sont les objets sélectionnés :
-            ensembleId = self.__getEnsembleIdObjetAvecSelection(getParent=True)
+            ensembleId = self.__getEnsembleIdObjetAvecSelection()#getParent=True ?
             self.tree.selection_remove(*self.tree.selection())
             self.tree.selection_add(*ensembleId)
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
                 obj.setSelected(id in ensembleId)
         else:
-            ensembleId = self.__getEnsembleIdObjetAvecSelection(getParent=False)
+            ensembleId = self.__getEnsembleIdObjetAvecSelection()#getParent=False (valeur par défaut)
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
                 obj.setSelected(False)
@@ -427,14 +427,22 @@ class TaskEditor(Frame):
 
         self.after(10, self.__mousePressed, event, control)
 
-    def __getEnsembleIdObjetAvecSelection(self, getParent = False):
+    def __getEnsembleIdObjetAvecSelection(self):
+        """
+        Permet d'obtenir tout les objets sélectionnés par les lignes sélectionnées du Treeview().
+        Si un ligne ne correspond pas à un objet, elle est remplacée par la ligne parente et ainsi
+        de suite justqu'à tomber sur un objet, au quel cas le processus s'arrête sir le paramètre
+        getParent est sur False. Cela remonte dans tout les cas si getParent est sur True.
+        @param getParent: True si on doit remonter dans tout les cas, False si c'est seulement quand
+        cela ne correspond pas à un objet.
+        @return l'ensemble (set()) des objets correspondant à la sélection dans le Treeview().
+        """
         ensembleIdObjets = set()
         for id in self.tree.selection():
             while id != "":
                 if id in self.__idObjectsInTreeview:
                     ensembleIdObjets.add(id)
-                    if not getParent:
-                        break
+                    break
                 id = id [:-2]
         return ensembleIdObjets
 
