@@ -28,7 +28,8 @@ class Task(AbstractSchedulableObject):
                  parent = None,
                  done = False,
                  dependances = None, dependantes = None,
-                 id = None):
+                 id = None,
+                 dissociated = None):
         """
         @param nom         : nom de la tâche.
         @param periode     : Période de la tâche, peut être None.
@@ -41,6 +42,7 @@ class Task(AbstractSchedulableObject):
         @param dependances : <list Task>
         @param dependantes : <list Task>
         @param id          : <str> contient l'id de la tache
+        @param dissociated : <list int> contient les numéros des d'itération à ne pas faire
         """
         # Constructeur parent :
         super().__init__(nom, periode, desc, color, id)
@@ -53,7 +55,7 @@ class Task(AbstractSchedulableObject):
 
         self.__rep   = rep         # répétition
         self.__nbrep = nbrep       # nombre de répétitions
-        self.__setDissociated = set() # liste des itération où la répétition ne doit pas se faire
+        self.__setDissociated = set(dissociated) if dissociated is not None else set() # liste des itération où la répétition ne doit pas se faire
         
         # Parent :
         self.__parent = parent
@@ -95,15 +97,16 @@ class Task(AbstractSchedulableObject):
         @return la tâche nouvellement créée.
         """
         t = Task(nom     = d["nom"],
-            periode = p,
-            desc    = d["desc"],
-            color   = d["color"],
-            debut   = strToDatetime(d["debut"]),
-            duree   = strToTimedelta(d["duree"]),
-            rep     = strToTimedelta(d["rep"]),
-            nbrep   = d["nbrep"],
-            done    = d["done"],
-            id      = d["id"])
+            periode     = p,
+            desc        = d["desc"],
+            color       = d["color"],
+            debut       = strToDatetime(d["debut"]),
+            duree       = strToTimedelta(d["duree"]),
+            rep         = strToTimedelta(d["rep"]),
+            nbrep       = d["nbrep"],
+            done        = d["done"],
+            id          = d["id"],
+            dissociated = set(d["dissociated"]) if d["dissociated"] is not None else None)
         # On crée les sous tâches si elles existent :
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
@@ -509,7 +512,7 @@ class Task(AbstractSchedulableObject):
         Ajoute une répétition à ne pas faire
         @param num : <int> doit être compris entre 0 et self.getNbRep
         """
-        pass
+        self.__setDissociated.add(num)
 
     def getNbRep(self):
         """
