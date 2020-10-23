@@ -6,6 +6,7 @@ from util.widgets.Dialog import *
 from .dialog.dupliquerPeriodDialog import *
 from .dialog.modifierPeriodDialog import *
 from .dialog.scinderPeriodDialog import *
+from .undoredo.UndoRedoChangerPeriode import *
 from .undoredo.UndoRedoPeriodCreation import *
 from .undoredo.UndoRedoPeriodDeleting import *
 from .Periode import *
@@ -77,6 +78,7 @@ class PeriodManager:
         """
         if not isinstance(periode, (Periode, None.__class__)):
             raise ValueError("La période ne peut pas être %s")
+        precedente = self.activePeriode # (pour undo-redo)
         self.activePeriode = periode
         self.app.getDonneeCalendrier().setJourDebut(periode.getDebut() if periode is not None else None)
         self.app.getDonneeCalendrier().setJourFin(periode.getFin() if periode is not None else None)
@@ -85,6 +87,9 @@ class PeriodManager:
         self.app.getDonneeCalendrier().getZoneAffichage().getParametreAffichage().switchPeriode()
         self.app.getDonneeCalendrier().switchPeriode()
         self.app.getTaskEditor().redessiner()
+
+        # Undo-redo :
+        UndoRedoChangerPeriode(precedente, periode, self)
 
     def setActivePeriodeWithName(self, name):
         """
