@@ -18,6 +18,19 @@ def askSeparateRepetitiveTask(task):
         if button == "Ok":
             print("ok.")
 
+    def makeListDissociated():
+        """
+        Fonction qui génère la liste des répétition avec un jolie texte
+        @return <list> un truc parfait pour le StringVar de la listeDate
+        """
+        listTemp = [] # variable temporaire pour améliorer la visibilité
+        for numero in range(task.getNbRep()):
+            if numero in task.getDissociated(): # on rajoute * si dissocié
+                listTemp.append("*" + adaptDatetime(numero*task.getRep() + task.getDebut()))
+            else :
+                listTemp.append(adaptDatetime(numero*task.getRep() + task.getDebut()))
+        return listTemp
+
     def manageOption(e = None):
         """
         Fonction qui gère les options des boutons
@@ -55,6 +68,12 @@ def askSeparateRepetitiveTask(task):
         En pratique, retire l'itération en question de la liste "setDissociated"
         """
         selected = listBoxRepet.curselection()
+        for iteration in selected:
+            task.removeDissociated(iteration)
+
+        # On met à jour la liste
+        manageOption()
+        listeDate.set(makeListDissociated())
 
     def dissociate():
         """
@@ -73,26 +92,26 @@ def askSeparateRepetitiveTask(task):
             periode = task.getPeriode()
             # on change le début
             dico["debut"] = datetimeToStr(task.getDebut() + iteration * task.getRep())
+
             ## On créer finalement notre nouvelle tache
             newTask = Task.load(dico, periode)
             # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
             if dico["parent"] is not None:
                 task.getParent().addSubTask(newTask)
                 newTask.instantiate()
+            # Sinon on la rajoute à la période
             else:
                 periode.addPrimitiveSchedulable(newTask)
+
+            # On met à jour la liste
+            manageOption()
+            listeDate.set(makeListDissociated())
 
     # Variable
     listeDate = StringVar()
 
     # Affctation
-    listTemp = [] # variable temporaire pour améliorer la visibilité
-    for numero in range(task.getNbRep()):
-        if numero in task.getDissociated(): # on rajoute * si dissocié
-            listTemp.append("*" + adaptDatetime(numero*task.getRep() + task.getDebut()))
-        else :
-            listTemp.append(adaptDatetime(numero*task.getRep() + task.getDebut()))
-    listeDate.set(listTemp)
+    listeDate.set(makeListDissociated())
 
     fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"), command = onClose)
 

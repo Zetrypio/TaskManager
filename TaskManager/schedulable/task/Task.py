@@ -553,6 +553,15 @@ class Task(AbstractSchedulableObject):
             raise ValueError("%s <%s> n'est pas du bon type, ce doit être un int"%(nb, nb.__class__.__name__))
         self.__nbrep = nb
 
+    def removeDissociated(self, num):
+        """
+        Méthode qui retire "num" des itérations dissociées
+        @param num : <int> le numéro de l'itération que l'on ré-associe
+        """
+        assert num in self.getDissociated(), "num : " + num + " n'est pas dans la liste des dissociated"
+        self.__setDissociated.remove(num)
+
+
     ""
     ############
     # Groupe : #
