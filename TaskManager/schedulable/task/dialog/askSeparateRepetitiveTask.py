@@ -5,7 +5,7 @@ from tkinter import Frame, Label
 
 
 from util.widgets.Dialog import *
-from util.util import adaptDatetime, timedeltaToStr
+from util.util import adaptDatetime, datetimeToStr
 
 def askSeparateRepetitiveTask(task):
     """
@@ -72,10 +72,15 @@ def askSeparateRepetitiveTask(task):
             dico["nbrep"] = 0
             periode = task.getPeriode()
             # on change le début
-            dico["debut"] = timedeltaToStr(task.getDebut() + iteration * task.getRep())
+            dico["debut"] = datetimeToStr(task.getDebut() + iteration * task.getRep())
             ## On créer finalement notre nouvelle tache
             newTask = Task.load(dico, periode)
-            periode.addPrimitiveSchedulable(newTask)
+            # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
+            if dico["parent"] is not None:
+                task.getParent().addSubTask(newTask)
+                newTask.instantiate()
+            else:
+                periode.addPrimitiveSchedulable(newTask)
 
     # Variable
     listeDate = StringVar()
