@@ -554,12 +554,34 @@ class Task(AbstractSchedulableObject):
         assert iteration > 0 and iteration <= self.getNbRep(), "iteration must be 0 < iteration <= " + self.getNbRep() + " not : " +iteration
         # On commence simplement :
         newTask = self.copy()
-        ## On doit changer : début, nombre d'itération, itérations dissociées
+
+        ## On doit changer : parent, début, nombre d'itération, itérations dissociées
+        # Parent
+        newTask.__parent = None # Reset, pour le remettre proprement après si jamais il y a besoin
+
         # Début
         newTask.setDebut(self.getDebut() + iteration * self.getRep())
+
         # Nombre d'itérations
         newTask.setNbRep(self.getNbRep() - iteration)
-        self.setNbRep(iteration) if iteration != 1 else self.setNbRep(0) # Car 0 et 1 itération c'est la même chose or 1 = tache a répet et 0 = tache standard
+
+        # S'il n'y a plus d'itération avant (version newTask)
+        if self.getNbRep()-1 == iteration:
+            # On retransforme en tache simple
+            # 0 = tache simple
+            # 1 = répétition avec 1 itération (le satut change)
+            newTask.setNbRep(0)
+            newTask.setRep(datetime.timedelta(0))
+        else:
+            self.setNbRep(iteration)
+
+        # S'il n'y a plus d'itération avant (version self)
+        if iteration == 1:
+            self.setNbRep(0)
+            self.setRep(datetime.timedelta(0))
+        else:
+            self.setNbRep(iteration)
+
         # Itérations dissociées
         newTask.clearDissociated()
         for dissociated in self.getDissociated():

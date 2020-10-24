@@ -73,6 +73,10 @@ def askSeparateRepetitiveTask(task):
                 task.getPeriode().addPrimitiveSchedulable(newTask)
             newTask.instantiate()
 
+        # On met à jour la liste
+        manageOption()
+        listeDate.set(makeListDissociated())
+
     def associate():
         """
         Fonction qui remet la tache à répétition dans celles à faire
