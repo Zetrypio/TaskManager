@@ -99,10 +99,10 @@ def askSeparateRepetitiveTask(task):
             # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
             if dico["parent"] is not None:
                 task.getParent().addSubTask(newTask)
-                newTask.instantiate()
             # Sinon on la rajoute à la période
             else:
                 periode.addPrimitiveSchedulable(newTask)
+            newTask.instantiate()
 
             # On met à jour la liste
             manageOption()

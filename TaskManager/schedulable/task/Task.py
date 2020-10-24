@@ -298,17 +298,17 @@ class Task(AbstractSchedulableObject):
         # Permet de gérer les tâches à répétitions différemment de celles qui sont normales :
         if self.getNbRep() > 0 and self.isVisible():
             instance = self.copy()
-            count = self.getNbRep()
-            while count > 0 and instance.getDebut().date() <= self.getPeriode().getFin():
-                print(self.getNbRep() - count, self.getDissociated(), self.getNbRep() - count in self.getDissociated())
-                if self.getNbRep() - count in self.getDissociated():
+            count = 0
+            while count < self.getNbRep() and instance.getDebut().date() <= self.getPeriode().getFin():
+                print(count, "/", self.getNbRep(),self.getDebut() + self.getRep()*count)
+                if count in self.getDissociated():
                     print("yep")
-                    count -= 1
+                    count += 1
                     continue
                 print("yop")
                 yield from addRepartition(instance)
-                instance.setDebut(instance.getDebut() + instance.__rep)
-                count -= 1
+                instance.setDebut(self.getDebut() + self.getRep()*count)
+                count += 1
         else:
             yield from addRepartition(self)
 
