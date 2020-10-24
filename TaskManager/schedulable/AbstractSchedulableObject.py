@@ -25,7 +25,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         self._statut     = ""
 
         # Pour reconnaître un objet parmi tous :
-        self.__uniqueID = id if id is not None else self.setUniqueID()
+        self.setUniqueID(ID = id) # il y a un verify dedans
 
     "" # Marque pour que le repli de code fasse ce que je veux
     ############
@@ -268,16 +268,16 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         if not isinstance(visible, bool): raise TypeError("Exptected a boolean")
         self.__visible = visible
 
-    def setUniqueID(self):
+    def setUniqueID(self, ID = None):
         """
         Permet d'ajouter un uniqueID à la tache et de le mettre dans la liste
         qui vérifie s'il est bien unique
         """
-        ID = id(self)
-        if self.getPeriode():
-            while str(ID) in self.getApplication().listKey:
-                ID += 1
-        return str(ID)
+        ID = int(ID) if ID is not None else id(self) # Permet de mettre à id(self) si ID est sur None, sinon ça garde ID
+        while str(ID) in self.getApplication().listKey:
+            ID += 1
+        self.__uniqueID = str(ID)
+        self.getApplication().listKey.append(str(ID))
 
     ""
     #####################

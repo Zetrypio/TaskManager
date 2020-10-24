@@ -39,9 +39,8 @@ class Periode(ITaskEditorDisplayableObject):
         self.__primitivesSchedulables = []   # Liste des objets primitifs | natifs
         self.__instanciatedSchedulables = [] # Liste des objets instanciés
 
-        self.uniqueID = id # Pour le calendrier des périodes sinon ça bug
-        if id is None:
-            self.setUniqueID()
+        # Pour le calendrier des périodes sinon ça bug
+        self.setUniqueID(ID = id)
 
     def __str__(self):
         """Return a nice string representation for Period objects."""
@@ -224,7 +223,7 @@ class Periode(ITaskEditorDisplayableObject):
         Getter pour l'unique Id
         @return l'uniqueID
         """
-        return self.uniqueID
+        return self.__uniqueID
 
     def intersectWith(self, other):
         """
@@ -319,15 +318,16 @@ class Periode(ITaskEditorDisplayableObject):
         if not isinstance(value, bool): raise TypeError("Expected a boolean")
         self.selected = value
 
-    def setUniqueID(self):
+    def setUniqueID(self, ID = None):
         """
         Permet d'ajouter un uniqueID à une période et de le mettre dans la liste
         qui vérifie s'il est bien unique
         """
-        ID = id(self)
-        while id in self.getApplication().listKey:
+        ID = int(ID) if ID is not None else id(self) # Permet de mettre à id(self) si ID est sur None, sinon ça garde ID
+        while str(ID) in self.getApplication().listKey:
             ID += 1
-        self.uniqueID = str(ID)
+        self.__uniqueID = str(ID)
+        self.getApplication().listKey.append(str(ID))
 
     ""
     ######################

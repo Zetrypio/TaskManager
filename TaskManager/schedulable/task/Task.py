@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Label, Frame, Button as TkButton
@@ -28,7 +28,8 @@ class Task(AbstractSchedulableObject):
                  parent = None,
                  done = False,
                  dependances = None, dependantes = None,
-                 id = None):
+                 id = None,
+                 dissociated = None):
         """
         @param nom         : nom de la tâche.
         @param periode     : Période de la tâche, peut être None.
@@ -41,6 +42,7 @@ class Task(AbstractSchedulableObject):
         @param dependances : <list Task>
         @param dependantes : <list Task>
         @param id          : <str> contient l'id de la tache
+        @param dissociated : <list int> contient les numéros des d'itération à ne pas faire
         """
         # Constructeur parent :
         super().__init__(nom, periode, desc, color, id)
@@ -53,7 +55,7 @@ class Task(AbstractSchedulableObject):
 
         self.__rep   = rep         # répétition
         self.__nbrep = nbrep       # nombre de répétitions
-        self.__setRepetOut = set() # liste des itération où la répétition ne doit pas se faire
+        self.__setDissociated = set(dissociated) if dissociated is not None else set() # liste des itération où la répétition ne doit pas se faire
         
         # Parent :
         self.__parent = parent
@@ -95,15 +97,16 @@ class Task(AbstractSchedulableObject):
         @return la tâche nouvellement créée.
         """
         t = Task(nom     = d["nom"],
-            periode = p,
-            desc    = d["desc"],
-            color   = d["color"],
-            debut   = strToDatetime(d["debut"]),
-            duree   = strToTimedelta(d["duree"]),
-            rep     = strToTimedelta(d["rep"]),
-            nbrep   = d["nbrep"],
-            done    = d["done"],
-            id      = d["id"])
+            periode     = p,
+            desc        = d["desc"],
+            color       = d["color"],
+            debut       = strToDatetime(d["debut"]),
+            duree       = strToTimedelta(d["duree"]),
+            rep         = strToTimedelta(d["rep"]),
+            nbrep       = d["nbrep"],
+            done        = d["done"],
+            id          = d["id"],
+            dissociated = set(d["dissociated"]) if d["dissociated"] is not None else None)
         # On crée les sous tâches si elles existent :
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
@@ -265,7 +268,6 @@ class Task(AbstractSchedulableObject):
 
     def getRepartition(self, displayedCalendar):
         """
-        TODO : Gère également les tâches à répétition. 
         @see AbstractSchedulableObject#getRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
@@ -296,11 +298,14 @@ class Task(AbstractSchedulableObject):
         # Permet de gérer les tâches à répétitions différemment de celles qui sont normales :
         if self.getNbRep() > 0 and self.isVisible():
             instance = self.copy()
-            count = self.getNbRep()
-            while count > 0 and instance.getDebut().date() <= self.getPeriode().getFin():
+            count = 0
+            while count < self.getNbRep() and instance.getDebut().date() <= self.getPeriode().getFin():
+                if count in self.getDissociated():
+                    count += 1
+                    continue
                 yield from addRepartition(instance)
-                instance.setDebut(instance.getDebut() + instance.__rep)
-                count -= 1
+                instance.setDebut(self.getDebut() + self.getRep()*count)
+                count += 1
         else:
             yield from addRepartition(self)
 
@@ -504,12 +509,12 @@ class Task(AbstractSchedulableObject):
     # Répétition : #
     ################
     ""
-    def addRepetOut(self, num):
+    def addDissociated(self, num):
         """
         Ajoute une répétition à ne pas faire
         @param num : <int> doit être compris entre 0 et self.getNbRep
         """
-        pass
+        self.__setDissociated.add(num)
 
     def getNbRep(self):
         """
@@ -525,12 +530,12 @@ class Task(AbstractSchedulableObject):
         """
         return self.__rep
 
-    def getRepetOut(self):
+    def getDissociated(self):
         """
         Getter pour les numéros des itérations dont on ne doit pas réaliser la répétition
         @return <set> une copie
         """
-        return self.__setRepetOut.copy()
+        return self.__setDissociated.copy()
 
     def setRep(self, time):
         """
@@ -549,6 +554,15 @@ class Task(AbstractSchedulableObject):
         if not isinstance(nb, int):
             raise ValueError("%s <%s> n'est pas du bon type, ce doit être un int"%(nb, nb.__class__.__name__))
         self.__nbrep = nb
+
+    def removeDissociated(self, num):
+        """
+        Méthode qui retire "num" des itérations dissociées
+        @param num : <int> le numéro de l'itération que l'on ré-associe
+        """
+        assert num in self.getDissociated(), "num : " + num + " n'est pas dans la liste des dissociated"
+        self.__setDissociated.remove(num)
+
 
     ""
     ############
@@ -670,14 +684,15 @@ class Task(AbstractSchedulableObject):
 
         @param saveID : <bool> True on enregistre l'UID actuel
 
-        @save debut      : <datetime>  ou None
-        @save duree      : <timedelta> ou None
-        @save rep        : <?> répétition
-        @save nbrep      : <int> nombre de répérition
-        @save parent     : <str> nom du conteneur
-        @save done       : <?>
-        @save depencance : <list str> liste des noms des taches
-        @save dependante : <list str> liste des noms des taches
+        @save debut       : <datetime>  ou None
+        @save duree       : <timedelta> ou None
+        @save rep         : <?> répétition
+        @save nbrep       : <int> nombre de répérition
+        @save parent      : <str> nom du conteneur
+        @save done        : <?>
+        @save depencance  : <list str> liste des noms des taches
+        @save dependante  : <list str> liste des noms des taches
+        @save dissociated : <set int> liste des itérations à ne pas faire
 
         @return dico : <dict> contient les couples clé-valeur ci-dessus
         """
@@ -703,5 +718,7 @@ class Task(AbstractSchedulableObject):
         dico["dependante"] = []
         for dep in self.getDependantes():
             dico["dependante"].append(dep.getUniqueID())
+
+        dico["dissociated"] = [out for out in self.getDissociated()]
 
         return dico
