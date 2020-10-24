@@ -515,6 +515,23 @@ class Task(AbstractSchedulableObject):
         @param num : <int> doit être compris entre 0 et self.getNbRep
         """
         self.__setDissociated.add(num)
+        ## On créer une nouvelle tache à la place
+        # En passant par le dico on évite l'import du module datetime
+        newTask = self.copy()
+        # On retire les répétitions et on met la date de l'itération retiré
+        newTask.setRep(datetime.timedelta(0))
+        newTask.setNbRep(0)
+        # on change le début
+        newTask.setDebut(self.getDebut() + num * self.getRep())
+        newTask.setUniqueID() # On sait jamais
+        # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
+        if self.getParent() is not None:
+            newTask.__parent = None
+            self.getParent().addSubTask(newTask)
+        # Sinon on la rajoute à la période
+        else:
+            self.getPeriode().addPrimitiveSchedulable(newTask)
+        newTask.instantiate()
 
     def clearDissociated(self):
         """

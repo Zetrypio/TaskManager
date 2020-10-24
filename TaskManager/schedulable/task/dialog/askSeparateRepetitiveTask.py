@@ -95,7 +95,9 @@ def askSeparateRepetitiveTask(task):
         # Parcours du tuple pour avoir l'index de la ligne
         for iteration in selected:
             task.addDissociated(iteration)
+            """
             ## On créer une nouvelle tache à la place
+            # En passant par le dico on évite l'import du module datetime
             dico = task.saveByDict()
             # On retire les répétitions et on met la date de l'itération retiré
             dico["rep"] = "1-0"
@@ -114,6 +116,7 @@ def askSeparateRepetitiveTask(task):
             else:
                 periode.addPrimitiveSchedulable(newTask)
             newTask.instantiate()
+            """
 
             # On met à jour la liste
             manageOption()
