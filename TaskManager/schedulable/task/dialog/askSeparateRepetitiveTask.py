@@ -40,7 +40,7 @@ def askSeparateRepetitiveTask(task):
         """
         selected = listBoxRepet.curselection()
         # Scinder
-        if 1 in selected :
+        if 0 in selected :
             btnScinder.config(state = DISABLED)
         else:
             btnScinder.config(state = ACTIVE)
@@ -61,6 +61,17 @@ def askSeparateRepetitiveTask(task):
         de la répétition selectionné
         """
         selected = listBoxRepet.curselection()
+        # On passe par une boucle pour avoir des int
+        for iteration in selected:
+            newTask = task.scinder(iteration)
+
+            # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
+            if task.getParent() is not None:
+                task.getParent().addSubTask(newTask)
+            # Sinon on la rajoute à la période
+            else:
+                task.getPeriode().addPrimitiveSchedulable(newTask)
+            newTask.instantiate()
 
     def associate():
         """

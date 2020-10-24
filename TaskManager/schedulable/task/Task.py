@@ -226,7 +226,7 @@ class Task(AbstractSchedulableObject):
         @return une copie de la tâche.
         """
         t = Task(self.getNom(), self.getPeriode(), self.getDescription(), self.getColor(),
-                 self.getDebut(), self.getDuree(), self.__rep, self.__nbrep, self.getParent())
+                 self.getDebut(), self.getDuree(), self.__rep, self.__nbrep, self.getParent(), dissociated = self.getDissociated())
         # Doit-on copier les dépendances et le statut ?
         t.__dependances = self.__dependances[:]
         t.updateStatut()
@@ -300,11 +300,11 @@ class Task(AbstractSchedulableObject):
             instance = self.copy()
             count = 0
             while count < self.getNbRep() and instance.getDebut().date() <= self.getPeriode().getFin():
+                instance.setDebut(self.getDebut() + self.getRep()*count)
                 if count in self.getDissociated():
                     count += 1
                     continue
                 yield from addRepartition(instance)
-                instance.setDebut(self.getDebut() + self.getRep()*count)
                 count += 1
         else:
             yield from addRepartition(self)
@@ -473,8 +473,8 @@ class Task(AbstractSchedulableObject):
 
     def setDebut(self, debut, change = "fin"):
         """
-        Permet de mettre le début de la période.
-        @param debut: Le datetime.date du début de la période.
+        Permet de mettre le début de la tache.
+        @param debut: Le datetime.datetime du début de la tache.
         @param change: Si "duree": change la durée mais pas la fin,
                        Si "fin": change la fin mais pas la durée.
                        Sinon : raise ValueError
@@ -516,6 +516,13 @@ class Task(AbstractSchedulableObject):
         """
         self.__setDissociated.add(num)
 
+    def clearDissociated(self):
+        """
+        Méthode qui ré-associe toutes les taches dissociées
+        En pratique ça vide le set : self.getDissociated
+        """
+        self.__setDissociated.clear()
+
     def getNbRep(self):
         """
         Getter pour le nombre de répétition de la tache
@@ -536,6 +543,32 @@ class Task(AbstractSchedulableObject):
         @return <set> une copie
         """
         return self.__setDissociated.copy()
+
+    def scinder(self, iteration):
+        """
+        Méthode qui coupe la Tache à répétition en 2 tache à répétitions
+        Ça creer une nouvelle tache qui commence à l'iteration et finit là ou se terminait l'ancienne
+        @param iteration : <int> compris entre 1 et self.getNbRep() (0 exclus car ça revient à recreer la tache)
+        @return <Task> la nouvelle tache
+        """
+        assert iteration > 0 and iteration <= self.getNbRep(), "iteration must be 0 < iteration <= " + self.getNbRep() + " not : " +iteration
+        # On commence simplement :
+        newTask = self.copy()
+        ## On doit changer : début, nombre d'itération, itérations dissociées
+        # Début
+        newTask.setDebut(self.getDebut() + iteration * self.getRep())
+        # Nombre d'itérations
+        newTask.setNbRep(self.getNbRep() - iteration)
+        self.setNbRep(iteration) if iteration != 1 else self.setNbRep(0) # Car 0 et 1 itération c'est la même chose or 1 = tache a répet et 0 = tache standard
+        # Itérations dissociées
+        newTask.clearDissociated()
+        for dissociated in self.getDissociated():
+            # Si on est dans la nouvelle tache :
+            if dissociated >= iteration:
+                self.removeDissociated(dissociated)
+                newTask.addDissociated(dissociated-iteration)
+
+        return newTask
 
     def setRep(self, time):
         """
