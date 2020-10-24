@@ -12,11 +12,7 @@ def askSeparateRepetitiveTask(task):
     Dialogue qui gère les taches à répétitions (les jours à ne pas afficher et autres
     @param task : <Task> tache dont on gère les répétition
     """
-    from ..Task import Task
-
-    def onClose(button):
-        if button == "Ok":
-            print("ok.")
+    from ..Task import Task # Import circulaire...
 
     def makeListDissociated():
         """
@@ -129,7 +125,7 @@ def askSeparateRepetitiveTask(task):
     # Affctation
     listeDate.set(makeListDissociated())
 
-    fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"), command = onClose)
+    fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"))
 
     # Liste de widget
     lbTop = Label(fen, text = "Gestion des répétitions :\n\t- (*)Dissocier : retire une tache des répétition\n\t- Scinder : crée une nouvelle tache à répétition", justify = LEFT)
