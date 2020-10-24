@@ -93,7 +93,7 @@ class TaskParametre(AbstractSchedulableParametre):
         # Répétition
         self.__lbNbRep =      Label(   self._frameGeneral, text = "Nombre de répétitions :")
         self.__sbNbRep =      Spinbox( self._frameGeneral, from_ = -1, to = 100, increment = 1, width = 4, textvariable = self.__varNbRep)
-        self.__btnEditRepet = Button(  self._frameGeneral, text = "Éditer", command = lambda : askSeparateRepetitiveTask(self._getSchedulable()))
+        self.__btnEditRepet = Button(  self._frameGeneral, text = "Éditer", command = self.__askSeparateRepetitiveTask)
         self.__lbRepet =      Label(   self._frameGeneral, text = "tout les :")
         self.__frameRepet =   Frame(   self._frameGeneral)
         self.__sbRep =        Spinbox( self.__frameRepet, from_ = 1, to = 100, increment = 1, width = 4, textvariable = self.__varRep)
@@ -212,6 +212,28 @@ class TaskParametre(AbstractSchedulableParametre):
         self.__varFin = date
         self.__btnFin.config(text = adaptDatetime(self.__varFin) if self.__varFin is not None else "")
         self.__autoSetDuree()
+
+    def __askSeparateRepetitiveTask(self):
+        """
+        Méthode qui ouvre le dialogue .askSeparateRepetitiveTask(self._getSchedulable())
+        + met a jour les attributs changées
+        """
+        askSeparateRepetitiveTask(self._getSchedulable())
+        # On remet à jour tout ce qui parle des répétitions car si c'est devenu une tache simple,
+        # Les durées entre 2 répétitions sont nulles
+        self.__varNbRep.set(     self._getSchedulable().getNbRep())
+        self.__varRepTimedelta = self._getSchedulable().getRep() if self._getSchedulable().getRep() is not None else datetime.timedelta()
+        self.__varRep.set(       self.__varRepTimedelta.seconds//3600 if self.__varRepTimedelta.days == 0 else self.__varRepTimedelta.days)
+        self.__varDone.set(      self._getSchedulable().isDone())
+        if self.__varRep.get() == 0: # ici les heures valent 0
+            self.__varUnitRep.set("jours")
+        elif self.__varRepTimedelta.days == 0 and self.__varRep.get() != 0:
+            self.__varUnitRep.set("heures")
+        elif self.__varRepTimedelta.days % 7 == 0:
+            self.__varUnitRep.set("semaines")
+        else:
+            self.__varUnitRep.set("jours")
+
 
     def __autoSetDuree(self):
         """
