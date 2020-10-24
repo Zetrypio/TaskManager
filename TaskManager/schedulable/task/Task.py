@@ -300,12 +300,9 @@ class Task(AbstractSchedulableObject):
             instance = self.copy()
             count = 0
             while count < self.getNbRep() and instance.getDebut().date() <= self.getPeriode().getFin():
-                print(count, "/", self.getNbRep(),self.getDebut() + self.getRep()*count)
                 if count in self.getDissociated():
-                    print("yep")
                     count += 1
                     continue
-                print("yop")
                 yield from addRepartition(instance)
                 instance.setDebut(self.getDebut() + self.getRep()*count)
                 count += 1
