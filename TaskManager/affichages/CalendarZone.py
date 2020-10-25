@@ -181,36 +181,37 @@ class CalendarZone(Frame):
                 schedulables.extend(schedulable.setDone(True))
 
         self.getApplication().getTaskEditor().redessiner()
-        print(schedulables)
-        UndoRedoTasksValidations(schedulables) if schedulables != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def avancementNormal(self):
         """
         Valide TOUTES les tâches qui sont avant maintenant.
         """
-        tasks = []
+        schedulables = []
         now = datetime.datetime.now()
         for schedulable in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.getFin() <= now:
-                schedulable.setDone(True)
-                tasks.append(schedulable)
-            schedulable.updateStatut()
+                schedulables.extend(schedulable.setDone(True))
+
+            #schedulable.updateStatut() fait dans la methode setDone()
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks) if tasks != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def avancementJourFini(self):
         """
         Valide toutes les tâches qui sont terminées aujourd'hui.
         """
-        tasks = []
+        schedulables = []
         now = datetime.date.today()
         for tache in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if tache.getFin().date() == now:
-                tache.setDone(True)
-                tasks.append(tache)
-            tache.updateStatut()
+                schedulables.extend(tache.setDone(True))
+
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks) if tasks != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def decalerHeure(self):
         """
