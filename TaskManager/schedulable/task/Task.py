@@ -709,9 +709,13 @@ class Task(AbstractSchedulableObject):
         """
         Setter pour dire si la tâche est validée.
         @param value: True si la tâche est validée, False sinon.
+        @return [self]/[] : <list> On renvoie une liste pour pouvoir l'accumuler avec les autres qui ont changé
         """
-        self.__done = value
-        self.updateStatut()
+        if self.isDone() != value:
+            self.__done = value
+            self.updateStatut()
+            return [self]
+        return []
 
     def transformToDnd(self, taskEditor):
         """
