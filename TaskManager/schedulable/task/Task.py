@@ -401,6 +401,15 @@ class Task(AbstractSchedulableObject):
             raise RuntimeError("Impossible d'enlever une tâche d'un conteneur où cette tâche n'est pas présente.")
         self.__subtasks.remove(task)
 
+    def setParent(self, parent):
+        """
+        Setter pour le parent de la tache
+        Faire attention pour les taches avec un groupe et sous taches
+        @param parent : <Task> tache conteneur
+        """
+        assert parent is None or parent.isContainer(), "parent doit être une tache conteneur"
+        self.__parent = parent
+
     ""
     #################
     # Dépendances : #

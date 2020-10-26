@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from util.UndoRedo import *
 
 class UndoRedoTaskEditing(UndoRedo):
@@ -23,11 +23,17 @@ class UndoRedoTaskEditing(UndoRedo):
         task    = periode.getByUniqueID(self.ID_task)
         
         # Operate :
-        task.delete()
-        task = Task.load(self.undoData, periode)
+        newTask = Task.load(self.undoData, periode)
+
+        if task.getParent() is not None:
+            newTask.setParent(None)
+            task.getParent().addSubTask(newTask)
+        else:
+            periode.addPrimitiveSchedulable(newTask)
 
         # Update :
-        self.app.getTaskEditor().ajouter(task)
+        task.delete()
+        newTask.instantiate()
         self.app.getDonneeCalendrier().updateAffichage(True)
 
     def _redo(self):
