@@ -91,13 +91,25 @@ class Groupe(AbstractSchedulableObject):
         yield {}
         yield from sorted(self.__listTasks, key=lambda t:t.getDebut())
     
-    def setDone(self, value):
+    def setAllDone(self, value):
         """
         Permet de valider le groupe, en validant toutes les tâches contenues dans le groupe.
         @param value: True si il faut valider le groupe, False sinon, selon Task#setDone().
         """
-        for t in self.__listTasks:
+        for t in self.getListTasks():
             t.setDone(value)
+
+    def setDone(self, value):
+        """
+        Permet de valider le groupe, en validant toutes les tâches contenues dans le groupe.
+        @param value: True si il faut valider le groupe, False sinon, selon Task#setDone()
+        @return changed : <list Task> liste des taches qui n'étaient pas faites avant (pour l'undo-redo)
+        """
+        changed = []
+        for t in self.getSelectedTask():
+            if t.isDone() != value: # vérifie on doit changer son état sinon pas besoin
+                changed.extend(t.setDone(value))
+        return changed
 
     #def getFilterStateWith(self):
         #"""

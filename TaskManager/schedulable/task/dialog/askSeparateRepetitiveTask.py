@@ -12,11 +12,7 @@ def askSeparateRepetitiveTask(task):
     Dialogue qui gère les taches à répétitions (les jours à ne pas afficher et autres
     @param task : <Task> tache dont on gère les répétition
     """
-    from ..Task import Task
-
-    def onClose(button):
-        if button == "Ok":
-            print("ok.")
+    from ..Task import Task # Import circulaire...
 
     def makeListDissociated():
         """
@@ -40,7 +36,7 @@ def askSeparateRepetitiveTask(task):
         """
         selected = listBoxRepet.curselection()
         # Scinder
-        if 1 in selected :
+        if 0 in selected :
             btnScinder.config(state = DISABLED)
         else:
             btnScinder.config(state = ACTIVE)
@@ -61,6 +57,21 @@ def askSeparateRepetitiveTask(task):
         de la répétition selectionné
         """
         selected = listBoxRepet.curselection()
+        # On passe par une boucle pour avoir des int
+        for iteration in selected:
+            newTask = task.scinder(iteration)
+
+            # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
+            if task.getParent() is not None:
+                task.getParent().addSubTask(newTask)
+            # Sinon on la rajoute à la période
+            else:
+                task.getPeriode().addPrimitiveSchedulable(newTask)
+            newTask.instantiate()
+
+        # On met à jour la liste
+        manageOption()
+        listeDate.set(makeListDissociated())
 
     def associate():
         """
@@ -84,7 +95,9 @@ def askSeparateRepetitiveTask(task):
         # Parcours du tuple pour avoir l'index de la ligne
         for iteration in selected:
             task.addDissociated(iteration)
+            """
             ## On créer une nouvelle tache à la place
+            # En passant par le dico on évite l'import du module datetime
             dico = task.saveByDict()
             # On retire les répétitions et on met la date de l'itération retiré
             dico["rep"] = "1-0"
@@ -103,6 +116,7 @@ def askSeparateRepetitiveTask(task):
             else:
                 periode.addPrimitiveSchedulable(newTask)
             newTask.instantiate()
+            """
 
             # On met à jour la liste
             manageOption()
@@ -114,7 +128,7 @@ def askSeparateRepetitiveTask(task):
     # Affctation
     listeDate.set(makeListDissociated())
 
-    fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"), command = onClose)
+    fen = Dialog(title = "Répétition de \"%s\""%task.getNom(), buttons = ("Ok", "Annuler"), exitButton = ("Ok", "Annuler", "WM_DELETE_WINDOW"))
 
     # Liste de widget
     lbTop = Label(fen, text = "Gestion des répétitions :\n\t- (*)Dissocier : retire une tache des répétition\n\t- Scinder : crée une nouvelle tache à répétition", justify = LEFT)

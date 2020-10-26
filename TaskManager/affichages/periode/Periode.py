@@ -125,6 +125,14 @@ class Periode(ITaskEditorDisplayableObject):
         for o in self.__primitivesSchedulables:
             if o.getUniqueID() == id:
                 return o
+            elif isinstance(o, Groupe):
+                for task in o.getListTasks():
+                    if task.getUniqueID() == id:
+                        return task
+            elif o.isContainer():
+                for subT in o.getSubTasks():
+                    if subT.getUniqueID() == id:
+                        return subT
 
     def getColor(self):
         """

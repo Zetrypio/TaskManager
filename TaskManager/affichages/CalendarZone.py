@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+# *-* coding:utf-8 *-*
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import Frame, Label
@@ -175,62 +175,43 @@ class CalendarZone(Frame):
         """
         Permet de valider les tâches sélectionnées.
         """
-        def findAndChecked(task):
-            """
-            Fonction embarqué qui permet de vérifier si la tache est sélectionné et de la valider si elle l'est
-            + l'ajoute à la liste schedulables
-            @param : <Task> : prend seulement des taches, car c'est les seules à pouvoir être faites
-            @return : <bool> True si tache trouvé, False sinon
-            """
-            print(type(task))
-            if task.isSelected():
-                task.setDone(True)
-                schedulables.append(task)
-                return True
-            return False
-
         schedulables = []
-        for schedulable in self.getPeriodeActive().getPrimitivesSchedulables():
-            if not findAndChecked(schedulable): # Si on a pas trouvé
-                # C'est peut-être un groupe
-                if isinstance(schedulable, Groupe):
-                    for task in self.getSelectedTasks():
-                        findAndChecked(task)
-                # C'est peut-être une sous-tache
-                elif schedulable.isContainer():
-                    for subT in schedulable.getSubTasks():
-                        findAndChecked(subT)
+        for schedulable in self.getPeriodeActive().getInstanciatedSchedulables(): # On peut prendre Instanciated car on ne valide pas les taches conteneurs
+            if schedulable.isSelected():
+                schedulables.extend(schedulable.setDone(True))
 
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(schedulables) if schedulables != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def avancementNormal(self):
         """
         Valide TOUTES les tâches qui sont avant maintenant.
         """
-        tasks = []
+        schedulables = []
         now = datetime.datetime.now()
         for schedulable in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.getFin() <= now:
-                schedulable.setDone(True)
-                tasks.append(schedulable)
-            schedulable.updateStatut()
+                schedulables.extend(schedulable.setDone(True))
+
+            #schedulable.updateStatut() fait dans la methode setDone()
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks) if tasks != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def avancementJourFini(self):
         """
         Valide toutes les tâches qui sont terminées aujourd'hui.
         """
-        tasks = []
+        schedulables = []
         now = datetime.date.today()
         for tache in self.getDonneeCalendrier().getPeriodeActive().getInstanciatedSchedulables():
             if tache.getFin().date() == now:
-                tache.setDone(True)
-                tasks.append(tache)
-            tache.updateStatut()
+                schedulables.extend(tache.setDone(True))
+
         self.getApplication().getTaskEditor().redessiner()
-        UndoRedoTasksValidations(tasks) if tasks != [] else None
+        if schedulables != []:
+            UndoRedoTasksValidations(schedulables)
 
     def decalerHeure(self):
         """
