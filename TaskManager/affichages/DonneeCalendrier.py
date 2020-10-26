@@ -3,6 +3,7 @@
 from .classique.AffichageCalendrier import *
 from .gantt.AffichageGantt import *
 from .periode.AffichageCalendrierPeriode import *
+from .undoredo.UndoRedoIntervertirJours import *
 
 from .AbstractDisplayedCalendar import *
 
@@ -408,14 +409,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         Permet d'intervertir les 2 jours exactement sélectionnés, affiche une erreur à l'utilisateur sinon.
         """
         if len(self.jourSelectionnes) != 2 :
-            showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour executer cette action.")
+            showerror("Selection invalide", "Il vous faut exactement deux jours sélectionnés pour exécuter cette action.")
             return
 
         lesJours = list(self.jourSelectionnes)
         jour1 = lesJours[0]
         jour2 = lesJours[1]
         if jour1 > jour2:
-            jour2, jour1 = jour1, jour2
+            jour1, jour2 = jour2, jour1
 
         tacheJour1 = set()
         tacheJour2 = set()
@@ -434,9 +435,15 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
         for tache in tacheJour2-tacheJour1:
             tache.setDebut(tache.getDebut()-diff)
 
+        # Enclanchement d'un événement :
         for p in self.getToutLesPanneaux():
             p.onIntervertir()
+
+        # Mise-à-jour de l'affichage :
         self.updateAffichage(force=True)
+
+        # Undo-redo :
+        UndoRedoIntervertirJours(tacheJour1, tacheJour2, diff, self.getApplication().getPeriodManager().getActivePeriode())
 
     def mouseClicked(self, event):
         """

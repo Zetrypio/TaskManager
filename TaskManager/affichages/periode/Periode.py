@@ -120,7 +120,7 @@ class Periode(ITaskEditorDisplayableObject):
         """
         Permet d'obtenir un AbstractSchedulableObject par son Unique ID.
         @param id: l'UniqueID de l'objet à retrouver.
-        @return l'objet trouvé.
+        @return l'objet trouvé ou None le cas échéant.
         """
         for o in self.__primitivesSchedulables:
             if o.getUniqueID() == id:
