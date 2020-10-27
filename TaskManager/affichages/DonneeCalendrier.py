@@ -331,12 +331,14 @@ class DonneeCalendrier(AbstractDisplayedCalendar):
             # Si c'est un groupe :
             if "listTasks" in dico:
                 g = Groupe.load(dico, self.getPeriodeActive())
+
                 # Si on sélectionne un jour, on place le groupe dessus
                 if len(self.jourSelectionnes) == 1 and (list(self.jourSelectionnes)[0] >= self.getPeriodeActive().getDebut() and list(self.jourSelectionnes)[0] <= self.getPeriodeActive().getFin()):
                     # On place à ce moment là la tache
                     ecart = g.getDebut().date() - list(self.jourSelectionnes)[0]
                     for tache in g.getListTasks():
                         tache.setDebut(tache.getDebut() - ecart)
+
                 elif g.getFin().date() < self.getPeriodeActive().getDebut() or g.getDebut().date() > self.getPeriodeActive().getFin():
                     # On remet en place tout le monde
                     ecart = g.getDebut().date() - self.getPeriodeActive().getDebut()

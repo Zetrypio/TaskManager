@@ -61,13 +61,8 @@ def askSeparateRepetitiveTask(task):
         for iteration in selected:
             newTask = task.scinder(iteration)
 
-            # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
-            if task.getParent() is not None:
-                task.getParent().addSubTask(newTask)
-            # Sinon on la rajoute à la période
-            else:
-                task.getPeriode().addPrimitiveSchedulable(newTask)
-            newTask.instantiate()
+            # On rajoute la tache
+            task.getPeriode().addCopiedTask(newTask, task)
 
         # On met à jour la liste
         manageOption()
@@ -95,32 +90,10 @@ def askSeparateRepetitiveTask(task):
         # Parcours du tuple pour avoir l'index de la ligne
         for iteration in selected:
             task.addDissociated(iteration)
-            """
-            ## On créer une nouvelle tache à la place
-            # En passant par le dico on évite l'import du module datetime
-            dico = task.saveByDict()
-            # On retire les répétitions et on met la date de l'itération retiré
-            dico["rep"] = "1-0"
-            dico["nbrep"] = 0
-            periode = task.getPeriode()
-            # on change le début
-            dico["debut"] = datetimeToStr(task.getDebut() + iteration * task.getRep())
 
-            ## On créer finalement notre nouvelle tache
-            newTask = Task.load(dico, periode)
-            newTask.setUniqueID()
-            # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
-            if dico["parent"] is not None:
-                task.getParent().addSubTask(newTask)
-            # Sinon on la rajoute à la période
-            else:
-                periode.addPrimitiveSchedulable(newTask)
-            newTask.instantiate()
-            """
-
-            # On met à jour la liste
-            manageOption()
-            listeDate.set(makeListDissociated())
+        # On met à jour la liste
+        manageOption()
+        listeDate.set(makeListDissociated())
 
     # Variable
     listeDate = StringVar()

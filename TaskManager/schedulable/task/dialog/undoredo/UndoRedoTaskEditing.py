@@ -25,15 +25,10 @@ class UndoRedoTaskEditing(UndoRedo):
         # Operate :
         newTask = Task.load(self.undoData, periode)
 
-        if task.getParent() is not None:
-            newTask.setParent(None)
-            task.getParent().addSubTask(newTask)
-        else:
-            periode.addPrimitiveSchedulable(newTask)
+        periode.addCopiedTask(newTask, task)
 
         # Update :
         task.delete()
-        newTask.instantiate()
         self.app.getDonneeCalendrier().updateAffichage(True)
 
     def _redo(self):
@@ -43,9 +38,11 @@ class UndoRedoTaskEditing(UndoRedo):
         task    = periode.getByUniqueID(self.ID_task)
 
         # Operate :
-        task.delete()
-        task = Task.load(self.redoData, periode)
+        newTask = Task.load(self.redoData, periode)
+
+        periode.addCopiedTask(newTask, task)
 
         # Update :
-        self.app.getTaskEditor().ajouter(task)
+        task.delete()
+        #self.app.getTaskEditor().ajouter(newTask)
         self.app.getDonneeCalendrier().updateAffichage(True)

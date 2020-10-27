@@ -533,14 +533,9 @@ class Task(AbstractSchedulableObject):
         # on change le début
         newTask.setDebut(self.getDebut() + num * self.getRep())
         newTask.setUniqueID() # On sait jamais
-        # S'il y a une tache parente, on la rajoute en subtask tant qu'a faire
-        if self.getParent() is not None:
-            newTask.__parent = None
-            self.getParent().addSubTask(newTask)
-        # Sinon on la rajoute à la période
-        else:
-            self.getPeriode().addPrimitiveSchedulable(newTask)
-        newTask.instantiate()
+
+        # On rajoute la tache :
+        self.getPeriode().addCopiedTask(newTask, self)
 
     def clearDissociated(self):
         """

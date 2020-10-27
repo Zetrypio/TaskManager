@@ -343,6 +343,27 @@ class Periode(ITaskEditorDisplayableObject):
     #    schedulables    #
     ######################
     ""
+    def addCopiedTask(self, newTask, oldTask):
+        """
+        Méthode qui permet de rajouter une nouvelle tache instanciée
+        Tache provenant d'une copie d'une tache existante
+        En pratique, permet de remettre newTask dans une tache parente si besoin
+        @param newTask : <Task> nouvelle tache à ajouter
+        @param oldTask : <Task> ancienne tache d'où newTask tire ses attributs
+        """
+        # On reset le parent
+        newTask.setParent(None)
+
+        # Si oldTask est une sous-tache
+        if oldTask.getParent() is not None:
+            # On y rajoute newTask
+            oldTask.getParent().addSubTask(newTask)
+        else:
+            # Sinon on lee rajoute à la période classiquement
+            self.addPrimitiveSchedulable(newTask)
+        # On finit par instancier
+        newTask.instantiate()
+
     def addInstanciatedSchedulable(self, schedulable):
         """
         Permet d'ajouter un objet planifiable à la liste des objets planifiables 
