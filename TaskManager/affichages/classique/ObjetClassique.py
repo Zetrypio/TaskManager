@@ -33,6 +33,7 @@ class ObjetClassique(AbstractMultiFrameItem):
         Utile pour la création des liens par exemple, ou la sélection des tâches etc.
         """
         self.master.clicSurObjet(self)
+#        self.getApplication().getTaskEditor().selectLineTreeview(self)
 
     def __onMultiSelect(self):
         """

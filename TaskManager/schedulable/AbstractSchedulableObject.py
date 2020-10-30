@@ -256,9 +256,25 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         Permet de sélectionner ou désélectionner cet objet.
         @param selected: True si l'objet doit être sélectionné, False sinon.
         """
-        if not isinstance(selected, bool): raise TypeError("Exptected a boolean")
+        if not isinstance(selected, bool): raise TypeError("Expected a boolean")
         self.__selected = selected
+
+    ""
+    # XXX : Question : Est-ce une bonne idée ?
+    ""
+    def setSelectedAndUpdate(self, selected):
+        """
+        Permet de sélectionner ou désélectionner cet objet,
+        et de mettre à jour dans les différents endroits de l'affichage.
+        (TaskEditor et Affichages)
+        @param param: True si l'objet doit être sélectionné, False sinon.
+        """
+        self.setSelected(selected)
+
+        # Updates :
         self.getApplication().getTaskEditor().selectLineTreeview(self)
+        self.getApplication().getTaskEditor().redessiner()
+        self.getApplication().getDonneeCalendrier().updateColor()
 
     def setVisible(self, visible):
         """

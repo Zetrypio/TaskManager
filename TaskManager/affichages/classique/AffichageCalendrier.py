@@ -413,7 +413,6 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         Méthode exécutée lors d'un clic sur un objet.
         @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
         """
-        for s in self.getPeriodeActive().getInstanciatedSchedulables():
-            s.setSelected(False)
+        self.deselectEverything()
         objClassique.getSchedulable().setSelected(True)
         self.getDonneeCalendrier().updateColor()
