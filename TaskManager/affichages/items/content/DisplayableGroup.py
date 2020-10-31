@@ -61,7 +61,7 @@ class DisplayableGroup(AbstractItemContent):
                 tache.bindTo("<Control-Button-1>", lambda e, task=tache: self.__onTaskSelected(task, True))
                 self.__taskFrame.append(tache)
                 self.__texte.window_create(INSERT, window = f)#, stretch = 1)
-        # TODO fixed ? : filtrer selon la position (si 2 taches ont 1 heure de décalage, que ça ce voie sur Classique).
+        # TODO fixed ? : filtrer selon la position (si 2 tâches ont 1 heure de décalage, que ça ce voie sur Classique).
         
         # Ajout des tags
         self.__texte.tag_add("titre", "0.0", "1.0")#%int(len(task.getNom())))
@@ -115,7 +115,7 @@ class DisplayableGroup(AbstractItemContent):
     def bindTo(self, binding, command, add=None):
         self.bind(binding, command, add)
         self.__texte.bind(binding, command, add)
-        # TODO : Ajouter les sous-tâches ?
+        # TODO : Ajouter les sous-tâches ? Ou simplement faire les bindings d'une tâche normale.
 
     def __onTaskSelected(self, task, control):
         """

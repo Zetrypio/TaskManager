@@ -46,12 +46,12 @@ class MultiFrameItemInnerLink(AbstractLink):
         """
         Méthode qui permet de mettre la bonne couleur selon ce qu'il y a besoin.
         """
-        # TODO : Couleur lors Ajout et Suppression.
+        # TODO : Couleur lors Ajout VIA bouton +
         if self.isSelected():
-            self.setColor(self.getPalette()["selected"]) # old : "#0078FF"
+            self.setColor(self.getPalette()["selected"])
             self.setStrokeWeight(3)
         else:
-            self.setColor(self.getPalette()["normalInnerLink"]) # old : "grey"
+            self.setColor(self.getPalette()["normalInnerLink"])
             self.setStrokeWeight(2)
 
     ""
