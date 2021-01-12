@@ -560,8 +560,8 @@ class AbstractDisplayedCalendar(Frame):
     def _setBinding(self, nomCalendrier, aBinder):
         """
         Fonction qui va charger tous les bind a mettre
-        @param nomCalendrier : <str> nom du calendrier pour connaire le dictionnaire à aller chercher (!) avec majuscule (!)
-        @param aBinder       : <objet> a bind, un canevas ou self tout simplement
+        @param nomCalendrier : <str> nom du calendrier pour connaître le dictionnaire à aller chercher (!) avec majuscule (!)
+        @param aBinder       : <objet> a bind, un Canvas ou self tout simplement
         """
         dictionnaire = self.getApplication().getBindingIn("Affichage-" + nomCalendrier)
         for binding in dictionnaire:
