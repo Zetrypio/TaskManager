@@ -104,7 +104,7 @@ class ProfilManager:
             self.__app.winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
             return
         else:
-            raise NotImplemtedError
+            raise RuntimeError("Le profil choisi n'existe pas.")
 
     ""
     #########################
