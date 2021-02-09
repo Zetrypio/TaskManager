@@ -12,11 +12,8 @@ class ProfilManager:
         """
         Classe qui s'occupe de manier les profils et de transmettre ses infos à la pageProfil
         """
-
         self.__app = app
-
         self.__profilActif = None
-
         self.__donnee = None
 
         self.__loadUserProfil()
@@ -89,6 +86,7 @@ class ProfilManager:
         """
         self.__read()
         self.__donnee["profil"][profil] = path
+
         # Si c'est le profil actif, il faut prévenir Data
         if profil == self.getProfilActif():
             self.getApplication().getData().setProfilFolder(path)
@@ -101,8 +99,7 @@ class ProfilManager:
         """
         if profil in self.getAllNomProfil():
             self.__profilActif = profil
-            self.__app.winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
-            return
+            self.getApplication().winfo_toplevel().title(self.__app.winfo_toplevel().title().split(" - ")[0] + " - " + profil)
         else:
             raise RuntimeError("Le profil choisi n'existe pas.")
 
@@ -146,8 +143,10 @@ class ProfilManager:
                                     False = création d'un profil, facultatif
         """
         nom, folderProfil = askProfil(obligatoire, self.__app, self.getAllNomProfil())
+
         if nom is None:
             return False
+
         self.__donnee["user"][os.getlogin()].append(nom)
         self.__donnee["profil"][nom] = folderProfil
 
@@ -168,6 +167,7 @@ class ProfilManager:
         for listProfil in self.__donnee["user"].values():
             if profil in listProfil:
                 autreUser = True
+
         # Si personne d'autre utilise le profil
         if not autreUser:
             path = self.getAllNomProfil()[profil]
@@ -184,13 +184,20 @@ class ProfilManager:
         Permet de changer de profil
         @param nouvProfil : <str> indiquant le nouveau nom, permettant d'aller chercher le path
         """
+        # On sauvegarde l'ancien profil avant tout :
+        self.getApplication().save()
+
         self.setProfilActif(nouvProfil)
 
         ## Changement de l'ordre des profils
         # Variable pour que la ligne d'après soit plus lisible
         listProfil = self.__donnee["user"][os.getlogin()]
-        listProfil.insert(0,listProfil.pop(listProfil.index(nouvProfil)))
+        listProfil.insert(0, listProfil.pop(listProfil.index(nouvProfil)))
         self.__donnee["user"][os.getlogin()] = listProfil
         self.__write()
 
         self.__loadProfil()
+            
+        # Application des tâches et périodes :
+        # On évite d'enregistrer sur le mauvais profil, mais on recharge l'application :
+        self.getApplication().restart(save=False)

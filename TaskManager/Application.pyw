@@ -313,23 +313,24 @@ class Application(Frame):
     def preferences(self):
         self.prefFen.activateandwait()
 
-    def restart(self):
+    def restart(self, save=True):
         """
         Restarter de l'application.
         """
-        try:
-            self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
-        except BaseException as e:
-            self._report_exception()
-            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+        if save == True:
+            try:
+                self.save() # Pour être sûr, même si c'est fait dans le finally du main aussi.
+            except BaseException as e:
+                self._report_exception()
+                showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+                return
+        if sys.platform.startswith("win"):
+            command = "start pyw -3.8 "
         else:
-            if sys.platform.startswith("win"):
-                command = "start pyw -3.8 "
-            else:
-                command = "pythonw3 " # À tester sur mac ou linux (mais bon mac ne supporte pas l'application de toutes façon...).
-            command += sys.argv[0]
-            os.system(command)
-            raise SystemExit(0)
+            command = "pythonw3 " # À tester sur mac ou linux (mais bon mac ne supporte pas l'application de toutes façon...).
+        command += sys.argv[0]
+        os.system(command)
+        raise SystemExit(0)
 
     def setModeEditionPeriode(self, enEdition):
         """
@@ -397,6 +398,8 @@ def main():
         app.getDonneeCalendrier().switchPeriode()
 
 
+    # Cela est nécessaire pour le restart sans save :
+    save = True
     try:
         app.mainloop()
         try:
@@ -404,15 +407,21 @@ def main():
         except:
             pass
     except SystemExit:
+        # Cela est nécessaire pour le restart sans save,
+        # car le code vas dans tout les cas dans le bloc finally.
+        save = False
         raise
     except BaseException as e:
         Frame().winfo_toplevel().withdraw()
         app._report_exception()
         showerror("Erreur Fatale", "Erreur Fatale de l'application.\nL'application va essayer d'enregistrer.\n%s : %s"%(e.__class__.__name__, e))
     finally:
-        try:
-            app.save()
-        except BaseException as e:
-            Frame().winfo_toplevel().withdraw()
-            app._report_exception()
-            showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
+        # Comme le code va tout le temps ici,
+        # Il est nécessaire de savoir si on est dans un restart sans save.
+        if save:
+            try:
+                app.save()
+            except BaseException as e:
+                Frame().winfo_toplevel().withdraw()
+                app._report_exception()
+                showerror("Erreur Fatale", "Erreur Fatale de lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))
