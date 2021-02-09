@@ -9,7 +9,7 @@ class AbstractPage(Frame):
     def __init__(self, master, nom = "Inconnu", iid_parent = "", **kwargs):
         # Note : self.master renvoie vers ParametrageZone
         # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
-        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self._addDataNeedRestart(liste)", avec la même liste que pour self._listData
+        # Note : Si l'option que l'on souhaite ajouter nécessite un redémarrage pour s'appliquer, utiliser la méthode "self._addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
         super().__init__(master, **kwargs)
         self.nom = nom
@@ -17,7 +17,7 @@ class AbstractPage(Frame):
         self.iid = self.getIidParent()+"-"+self.getNom()
 
         self._listData = [] # C'est une liste qui contient toutes les variables de contrôles à enregistrer + les key pour le dico [variable, text]
-        self._listDataRestart = [] # Contient les variables qui si elles sont changées, nécéssite un redémarrage de l'application pour s'appliquer
+        self._listDataRestart = [] # Contient les variables qui si elles sont changées, nécessite un redémarrage de l'application pour s'appliquer
 
         self._mFrame = Frame(self)
         self.__lbTitre = Label(self, text=self.nom)
@@ -115,7 +115,7 @@ class AbstractPage(Frame):
     ""
     #################################
     # Méthodes liées à la fermeture #
-    #   de la fenetre préférences   #
+    #   de la fenêtre préférences   #
     #################################
     ""
     def _makeDictAndSave(self):

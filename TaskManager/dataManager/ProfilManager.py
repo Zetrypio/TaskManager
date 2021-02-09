@@ -10,7 +10,7 @@ NOMFICHIER = "Ressources/prefs/profils.json".replace("/", os.sep)
 class ProfilManager:
     def __init__(self, app):
         """
-        Classe qui s'occupe de manier les profils et de transmettres ses infos à la pageProfil
+        Classe qui s'occupe de manier les profils et de transmettre ses infos à la pageProfil
         """
 
         self.__app = app
@@ -83,7 +83,7 @@ class ProfilManager:
 
     def saveNewPath(self, path, profil):
         """
-        Fonction qui va juste changer le path du profil courrant
+        Fonction qui va juste changer le path du profil courant
         @param path   : <str> contient le chemin du folder
         @param profil : <str> contient le nom du profil
         """
@@ -96,7 +96,7 @@ class ProfilManager:
 
     def setProfilActif(self, profil):
         """
-        Permet aussi de changer le nom de la fenetre
+        Permet aussi de changer le nom de la fenêtre
         @param profil : <str> nom du profil (doit être dans la liste)
         """
         if profil in self.getAllNomProfil():

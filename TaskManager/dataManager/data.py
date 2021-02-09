@@ -15,15 +15,16 @@ class Data(ConfigParser):
         super().__init__(self)
         # Création des attributs
         self.__profilFolder = None
-        self.__palette = {"background"        : "#dedede",
-                          "foreground"        : "#000000",
-                          "selected"          : "#91c9f7",
-                          "jour"              : "#ffffa0",
-                          "highlightedWidget" : "#cccccc",
-                          "normalInnerLink"   : "#808080", # (= "grey" = "gray")
-                          "addLink"           : "#ffaf00",
-                          "deleteLink"        : "#ff3f3f"
-                          }
+        self.__palette = {
+            "background"        : "#dedede",
+            "foreground"        : "#000000",
+            "selected"          : "#91c9f7",
+            "jour"              : "#ffffa0",
+            "highlightedWidget" : "#cccccc",
+            "normalInnerLink"   : "#808080", # (= "grey" = "gray")
+            "addLink"           : "#ffaf00",
+            "deleteLink"        : "#ff3f3f"
+        }
 
     def endInit(self):
         """
@@ -91,7 +92,7 @@ class Data(ConfigParser):
     def testBool(self, value):
        """ Test pour savoir si value est un Booléen """
        if not isinstance(value, bool):
-           raise TypeError("Exptected a boolean")
+           raise TypeError("Expected a boolean")
 
     def testDataExist(self, nomFichier, nomSection = None, nomCle = None):
         """
@@ -99,7 +100,7 @@ class Data(ConfigParser):
         @param nomFichier : <str> contient le nom du fichier dans lequel se trouve notre valeur
         @param nomSection : <str> contient le nom de la section dans laquelle se trouve notre valeur
         @param nomCle     : <str> contient le nom de la clé pour ainsi obtenir la valeur
-        @return : True = la clé exsite, False = la clé, la section ou le fichier n'existe pas
+        @return : True = la clé existe, False = la clé, la section ou le fichier n'existe pas
         """
         self.readFile(nomFichier)
         # Le fichier existe ?
@@ -118,7 +119,7 @@ class Data(ConfigParser):
     def testString(self, value):
        """ Test pour savoir si value est un String """
        if not isinstance(value, str):
-           raise TypeError("Exptected a string")
+           raise TypeError("Expected a string")
 
     ""
     ###########
@@ -192,12 +193,12 @@ class Data(ConfigParser):
     def setCurrentTheme(self, style):
         """
         Setter pour un nouveau thème et donc change la palette
-        @param style : <ttk.style> pour récuperer toutes les valeurs adéquates
+        @param style : <ttk.style> pour récupérer toutes les valeurs adéquates
         """
         def couleurAdaptative(native, accentuation, cle):
             """
             Fonction embarqué qui permet de mettre une couleur asé sur une autre
-            avec une acctentuation différence
+            avec une accentuation différence
             @param native       : <str> couleur a tester (clair/foncé) et à modifier
             @param accentuation : <str> valeur de l'acctentuation en hexa. exemple : "121212"
             @param cle          : <str> nom de la clé de la nouvelle couleur
@@ -205,11 +206,11 @@ class Data(ConfigParser):
             # Si c'est clair
             if adaptTextColor(native) == "#000000":
                 self.changePalette(cle, "#" + hex(int(native[1:], 16) - int(accentuation, 16))[2:])
-            # Si c'es foncé
+            # Si c'est foncé
             else :
                 self.changePalette(cle, "#" + hex(int(native[1:], 16) + int(accentuation, 16))[2:])
 
-        # On récup les valeurs pour les mettre dans le dico __palette
+        # On récupère les valeurs pour les mettre dans le dico __palette
         self.changePalette("background", style.lookup(".", "background"))
         self.changePalette("foreground", style.lookup(".", "foreground"))
         if style.lookup(".", "selectbackground") != "":

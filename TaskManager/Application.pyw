@@ -138,6 +138,7 @@ class Application(Frame):
         @return le panneau actif dans les affichages de calendrier.
         """
         return self.calendar.getPanneauActif()
+
     def getPeriodManager(self):
         """
         Permet d'obtenir le PeriodManager.
