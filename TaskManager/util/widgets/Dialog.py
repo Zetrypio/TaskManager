@@ -79,7 +79,12 @@ class Dialog(Frame):
         """
         self.__bouton_appuyer = None
         self.dialog.wm_deiconify()
-        self.parent.winfo_toplevel().attributes("-disabled", True)
+        try:
+            # Sur windows, il est préférable d'utiliser un state -disabled
+            self.parent.winfo_toplevel().attributes("-disabled", True)
+        except:
+            # Mais ça ne marche pas partout (mac par exemple) donc on utilise le grab.
+            self.dialog.grab_set()
         self.dialog.focus_set()
         self.geometry("+%s+%s"%(self.winfo_screenwidth(), self.winfo_screenheight()))
         self.update()
@@ -122,7 +127,12 @@ class Dialog(Frame):
         """
         if self.__mainloop:
             self.quit()
-        self.parent.winfo_toplevel().attributes("-disabled", False)
+        try:
+            # Sur windows, il est préférable d'utiliser un state -disabled
+            self.parent.winfo_toplevel().attributes("-disabled", False)
+        except:
+            # Mais ça ne marche pas partout (mac par exemple) donc on utilise le grab.
+            self.dialog.grab_release()
         try:
             self.dialog.withdraw()
         except:
