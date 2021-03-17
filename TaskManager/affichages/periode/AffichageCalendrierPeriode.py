@@ -169,7 +169,7 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
             if dernierJour.isocalendar()[0] == premierJour.isocalendar()[0] and premierJour.isocalendar()[1] < dernierJour.isocalendar()[1]:
                 return dernierJour.isocalendar()[1] - premierJour.isocalendar()[1] + 1
             elif dernierJour.isocalendar()[0] > premierJour.isocalendar()[0]:
-                return (dernierJour - datetime.timedelta(days = dernierJour.isocalendar()[2])).isocalendar()[1] - premierJour.isocalendar()[1] + 2
+                return dernierJour.isocalendar()[1] + 1 # +1 = la 1ère semaine qui manque, old : (dernierJour - datetime.timedelta(days = dernierJour.isocalendar()[2])).isocalendar()[1] - premierJour.isocalendar()[1] + 2
             elif premierJour.isocalendar()[0] > dernierJour.isocalendar()[0] :
                 return dernierJour.isocalendar()[1] + 1
 
