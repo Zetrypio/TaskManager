@@ -316,7 +316,7 @@ class AbstractDisplayedCalendar(Frame):
 
     ""
     ######################
-    # Methodes liées aux #
+    # Méthodes liées aux #
     #    schedulables    #
     ######################
     ""
@@ -402,7 +402,10 @@ class AbstractDisplayedCalendar(Frame):
         """
         for s in self.getPeriodeActive().getInstanciatedSchedulables():
             s.setSelected(False)
-        self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =)
+        self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =) # TODO à revoir si c'est bien
+        
+        # Update du TaskEditor() et de son Treeview() :
+        self.getApplication().getTaskEditor().deselectEverything()
 
     def identify_region(self, x, y):
         """

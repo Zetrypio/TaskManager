@@ -161,6 +161,13 @@ class TaskEditor(Frame):
 #            if schedulable.id == item.id and schedulable.isSelected():
 #                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
 
+    def deselectEverything(self):
+        """
+        Permet de désélectionner tout ce qui est sélectionné dans le Treeview(),
+        il n'y a pas d'autre update implicitement rajoutés.
+        """
+        self.tree.selection_remove(*self.tree.selection())
+
     ""
     ###################################
     # Méthodes liées aux schedulables #
@@ -384,37 +391,77 @@ class TaskEditor(Frame):
 
     def __mousePressed(self, event, control = False):
         """
-        Méthode qui sélectionne les schedulables si possible
+        Méthode qui sélectionne les schedulables si possible.
+
+        Normalement, à l'exécution de cette fonction,
+        l'update du Treeview() sur les lignes suite au clic
+        à été faite, par #__mousePressedBefore(),
+        et si jamais la touche contrôle n'était pas appuyée,
+        toute sélection aura été effacé au préalable.
+
         @param event: non utilisé.
         """
+        # On mémorise les nouvelles sélections dues aux sous-tâches | groupes :
+        ensembleNouvelleSelection = set()
+
+        # On commence par savoir quels sont les objets sélectionnés :
+        ensembleId = self.__getEnsembleIdObjetAvecSelection()
+
         if control:
-            # On commence par savoir quels sont les objets sélectionnés :
-            ensembleId = self.__getEnsembleIdObjetAvecSelection()#getParent=True ?
-            self.tree.selection_remove(*self.tree.selection())
+            # On corrige la sélection pour qu'elle corresponde aux objets plutôt qu'au lignes :
+            self.deselectEverything()
             self.tree.selection_add(*ensembleId)
+
+            # On change l'attribut de sélection à ces objets, proprement dit.
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
                 obj.setSelected(id in ensembleId)
+
+                if id in ensembleId:
+                    # On ajout les sous-tâches si elles existent :
+                    if isinstance(obj, Task) and obj.isContainer():
+                        for st in obj.getSubTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+                    elif isinstance(obj, Groupe):
+                        for st in obj.getListTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
         else:
-            ensembleId = self.__getEnsembleIdObjetAvecSelection()#getParent=False (valeur par défaut)
+            # On désélectionne tout au départ
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
                 obj.setSelected(False)
+
+            # Et on re-sélectionne APRÈS COUP ceux de la liste, car ils peuvent engendrer
+            # plus d'objets à être sélectionnés à leur tours eux aussi.
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
+
+                # au quel cas on re-sélectionne :
                 if id in ensembleId:
                     obj.setSelected(True)
-                    if isinstance(obj, Task) and obj.isContainer() and id in ensembleId:
+                    # et si c'est le cas, on sélectionne les sous-tâches (si elles existent)
+                    if isinstance(obj, Task) and obj.isContainer():
                         for st in obj.getSubTasks():
                             st.setSelected(True)
-                    elif isinstance(obj, Groupe) and id in ensembleId:
+                            ensembleNouvelleSelection.add(st)
+                    elif isinstance(obj, Groupe):
                         for st in obj.getListTasks():
                             st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+
+        # On fait également l'update de la sélection dans le Treeview() pour les nouvelles tâches rajouté entre temps.
+        for id in self.__idObjectsInTreeview:
+            if self.__idObjectsInTreeview[id] in ensembleNouvelleSelection:
+                self.tree.selection_add(id)
+
+        # Mise à jour de la couleur pour montrer la sélection dans l'affichage du calendrier.
         self.getApplication().getDonneeCalendrier().updateColor()
 
     def __mousePressedBefore(self, event, control = False):
         """
-        Méthode pour quand on sélectionne un truc dans le Treeview,
+        Méthode pour quand on sélectionne un truc dans le Treeview(),
         juste avant qu'il soit réellement sélectionné.
         @param event: infos sur l'évement de sélection.
         @param control: True si l'utilisateur à appuyé sur Contrôle
@@ -423,18 +470,16 @@ class TaskEditor(Frame):
         self.mousepress = True
         if not control:
             # On désélectionne tout pour être sûr.
-            self.tree.selection_remove(*self.tree.selection())
+            self.deselectEverything()
 
+        # On exécute la fonction self.__mousePressed après que la sélection des lignes du Treeview() se soit update.
         self.after(10, self.__mousePressed, event, control)
 
     def __getEnsembleIdObjetAvecSelection(self):
         """
         Permet d'obtenir tout les objets sélectionnés par les lignes sélectionnées du Treeview().
         Si un ligne ne correspond pas à un objet, elle est remplacée par la ligne parente et ainsi
-        de suite justqu'à tomber sur un objet, au quel cas le processus s'arrête sir le paramètre
-        getParent est sur False. Cela remonte dans tout les cas si getParent est sur True.
-        @param getParent: True si on doit remonter dans tout les cas, False si c'est seulement quand
-        cela ne correspond pas à un objet.
+        de suite justqu'à tomber sur un objet, au quel cas le processus s'arrête.
         @return l'ensemble (set()) des objets correspondant à la sélection dans le Treeview().
         """
         ensembleIdObjets = set()
@@ -540,6 +585,6 @@ class TaskEditor(Frame):
 
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
-        self.tree.bind("<Control-ButtonPress-1>", lambda e: self.__mousePressedBefore(e, control=True))
+        self.tree.bind("<Control-ButtonPress-1>", lambda e: self.__mousePressedBefore(e, control=True)) # TODO: Command sur macOS
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
