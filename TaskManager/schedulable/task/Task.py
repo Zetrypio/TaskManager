@@ -106,7 +106,7 @@ class Task(AbstractSchedulableObject):
             nbrep       = d["nbrep"],
             done        = d["done"],
             id          = d["id"],
-            dissociated = set(d["dissociated"]) if d["dissociated"] is not None else None)
+            dissociated = set(d["dissociated"]) if "dissociated" in d and d["dissociated"] is not None else None)
         # On crée les sous tâches si elles existent :
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
