@@ -70,5 +70,6 @@ class AbstractItemContent(Frame):
         Permet de binder un binding sur tout les sous-widget de ce widget,
         à redéfinir explicitement dans les sous-classes.
         Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
+        Cependant, la commande prendra l'objet TODO
         """
         raise NotImplementedError

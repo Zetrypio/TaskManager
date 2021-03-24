@@ -142,11 +142,19 @@ class TaskEditor(Frame):
             self.frameInput.pack(side = TOP, fill = X, before = self.tree)
             self.frameInputPeriode.pack_forget()
 
-    def selectLineTreeview(self, schedulable):
+    def selectLineTreeview(self, schedulable, value):
         """
         Permet de sélectionner une ligne du Treeview
         @param schedulable : <AbstractSchedulableObject>  celui qui'il faut relier à la ligne pour sélectionner
+        @param value: True si on sélectionne l'objet, False si on le désélectionne.
         """
+        for id in self.__idObjectsInTreeview:
+            if self.__idObjectsInTreeview[id] == schedulable:
+                if value:
+                    self.tree.selection_add(id)
+                else:
+                    self.tree.selection_remove(id)
+
 #        for item in self.getTaskInTaskEditor():
 #            # Si on cherche une subtask
 #            if isinstance(schedulable, Task) and schedulable.getParent() is not None:

@@ -241,6 +241,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         """
         self._schedulable.inverseSelection()
         self.master.getDonneeCalendrier().updateColor()
+        self.getApplication().getTaskEditor().selectLineTreeview(self._schedulable, self._schedulable.isSelected())
 
     def __onSelect(self):
         """
@@ -248,6 +249,7 @@ class ObjetGantt(AbstractMultiFrameItem):
         Utile pour la création des liens par exemple, ou la sélection des tâches etc.
         """
         self.master.clicSurObjet(self)
+        self.getApplication().getTaskEditor().selectLineTreeview(self._schedulable, self._schedulable.isSelected())
 
     def delete(self):
         """
