@@ -235,6 +235,8 @@ class Application(Frame):
             ## On active une période.
             self.getDonneeCalendrier().switchPeriode()
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             showerror("Erreur", "Erreur lors de l'ouverture :\n%s : %s"%(e.__class__.__name__, e))
         UndoRedo.reset()
         # On enlève le titre :
