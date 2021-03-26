@@ -155,20 +155,6 @@ class TaskEditor(Frame):
                 else:
                     self.tree.selection_remove(id)
 
-#        for item in self.getTaskInTaskEditor():
-#            # Si on cherche une subtask
-#            if isinstance(schedulable, Task) and schedulable.getParent() is not None:
-#                try:
-#                    list = self.tree.get_children(self.tree.get_children(item.id))
-#                except:
-#                    list = self.tree.get_children(item.id)
-#                for subt in list:
-#                    if subt == schedulable.id:
-#                        self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
-#            # Si on cherche une tache/groupe global
-#            if schedulable.id == item.id and schedulable.isSelected():
-#                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
-
     def deselectEverything(self):
         """
         Permet de désélectionner tout ce qui est sélectionné dans le Treeview(),
@@ -388,16 +374,16 @@ class TaskEditor(Frame):
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
-            # TODO : Revoir aussi ICI pour si on fait une multisélection.
-            for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
+            # TODO : Revoir aussi ICI pour si on fait une multi-sélection.
+            for id in self.__getEnsembleIdObjetAvecSelection(): # Parcourir et obtenir tout les éléments sélectionnés.
                 try:
-                    t = self.__idObjectsInTreeview[i]   # Obtenir l'objet correspondant à l'ID.
+                    t = self.__idObjectsInTreeview[id]   # Obtenir l'objet correspondant à l'ID.
                 except:
                     continue
-                if isinstance(t, Task) and t.getStatut() == "Inconnu":
+                if isinstance(t, Task) and t.isContainer(): # isContainer équivaut à Drag&Drop-able
                     tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
 
-    def __mousePressed(self, event, control = False):
+    def __mousePressed(self, event, control=False, selectedBefore=None):
         """
         Méthode qui sélectionne les schedulables si possible.
 
@@ -417,16 +403,17 @@ class TaskEditor(Frame):
 
         if control:
             # On corrige la sélection pour qu'elle corresponde aux objets plutôt qu'au lignes :
-            self.deselectEverything()
+            self.deselectEverything()           # Rappel : sélection visuelle uniquement ici
             self.tree.selection_add(*ensembleId)
 
             # On change l'attribut de sélection à ces objets, proprement dit.
             for id in self.__idObjectsInTreeview:
                 obj = self.__idObjectsInTreeview[id]
-                obj.setSelected(id in ensembleId)
+                obj.setSelected(id in ensembleId or obj in ensembleNouvelleSelection)
 
-                if id in ensembleId:
-                    # On ajout les sous-tâches si elles existent :
+                # Si l'ID est dans nouvelle sélection, mais pas ancienne, ie: celui sur lequel on a cliqué,
+                if id in ensembleId and id not in selectedBefore: 
+                    # alors on ajout les sous-tâches si elles existent :
                     if isinstance(obj, Task) and obj.isContainer():
                         for st in obj.getSubTasks():
                             st.setSelected(True)
@@ -480,8 +467,12 @@ class TaskEditor(Frame):
             # On désélectionne tout pour être sûr.
             self.deselectEverything()
 
+        # On regarde ce qui est sélectionné avant, pour faire un avant-après
+        # dans self.__mousePressed(), permettant ainsi de retrouver l'objet sélectionné.
+        selectedBefore = self.__getEnsembleIdObjetAvecSelection()
+
         # On exécute la fonction self.__mousePressed après que la sélection des lignes du Treeview() se soit update.
-        self.after(10, self.__mousePressed, event, control)
+        self.after(10, self.__mousePressed, event, control, selectedBefore)
 
     def __getEnsembleIdObjetAvecSelection(self):
         """

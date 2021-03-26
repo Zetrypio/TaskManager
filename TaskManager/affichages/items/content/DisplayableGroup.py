@@ -132,12 +132,13 @@ class DisplayableGroup(AbstractItemContent):
         if control:
             # et la nouvelle valeur est une inversion de l'ancienne.
             value = not self._schedulable.isSelected()
-            self._schedulable.setSelected(value)
-            taskEditor.selectLineTreeview(self._schedulable, value)
         else:
             # Alors qu'un clic est toujours une activation,
-            self._schedulable.setSelected(True)
-            taskEditor.selectLineTreeview(self._schedulable, True)
+            value = True
+        # On met à jour la valeur :
+        self._schedulable.setSelected(value)
+        taskEditor.selectLineTreeview(self._schedulable, value)
+        if value:
             # On sélectionne aussi toutes les sous-tâches.
             for t in self.__taskFrame:
                 t.getSchedulable().setSelected(True)

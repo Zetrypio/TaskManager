@@ -372,6 +372,7 @@ class Task(AbstractSchedulableObject):
     def isContainer(self):
         """
         Permet de savoir si cette tâche est une tâche conteneur.
+        C'est équivalent à savoir si c'est un tâche qu'on peut Drag&Drop dans le TaskEditor.
         @return True si la tâche est une tâche conteneur, False sinon.
         """
         self.updateStatut()
