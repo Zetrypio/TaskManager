@@ -17,7 +17,6 @@ from .undoredo.UndoRedoTransformTaskToDnD import *
 from .TaskInDnd import *
 
 from affichages.items.DatetimeItemPart import *
-from affichages.items.content.DisplayableTask import *
 from util.util import *
 
 class Task(AbstractSchedulableObject):
@@ -260,7 +259,7 @@ class Task(AbstractSchedulableObject):
 
     def getRepartition(self, displayedCalendar):
         """
-        TODO : Gère également les tâches à répétition. 
+        Gère également les tâches à répétition. 
         @see AbstractSchedulableObject#getRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
@@ -681,3 +680,5 @@ class Task(AbstractSchedulableObject):
             dico["dependante"].append(dep.getUniqueID())
 
         return dico
+
+from affichages.items.content.DisplayableTask import *

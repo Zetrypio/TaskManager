@@ -251,37 +251,21 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
                 self.setPeriode(p)
                 break
 
-    def setSelected(self, selected):
+    def setSelected(self, selected, andInside=False):
         """
         Permet de sélectionner ou désélectionner cet objet.
         @param selected: True si l'objet doit être sélectionné, False sinon.
+        @param andInside: True si l'objet est composite et doit considérer faire récursivitée.
         """
         if not isinstance(selected, bool): raise TypeError("Expected a boolean")
         self.__selected = selected
-
-    ""
-    # XXX : Question : Est-ce une bonne idée ?
-    ""
-    def setSelectedAndUpdate(self, selected):
-        """
-        Permet de sélectionner ou désélectionner cet objet,
-        et de mettre à jour dans les différents endroits de l'affichage.
-        (TaskEditor et Affichages)
-        @param param: True si l'objet doit être sélectionné, False sinon.
-        """
-        self.setSelected(selected)
-
-        # Updates :
-        self.getApplication().getTaskEditor().selectLineTreeview(self)
-        self.getApplication().getTaskEditor().redessiner()
-        self.getApplication().getDonneeCalendrier().updateColor()
 
     def setVisible(self, visible):
         """
         Permet de rendre cet objet visible ou invisible.
         @param visible: True si l'objet doit être visible, False sinon. 
         """
-        if not isinstance(visible, bool): raise TypeError("Exptected a boolean")
+        if not isinstance(visible, bool): raise TypeError("Expected a boolean")
         self.__visible = visible
 
     def setUniqueID(self):

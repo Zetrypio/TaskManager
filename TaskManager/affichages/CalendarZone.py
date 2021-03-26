@@ -440,26 +440,37 @@ class CalendarZone(Frame):
         """
         # Obtention de la période et des schedulables instanciés sélectionnés :
         periode = self.getDonneeCalendrier().getPeriodeActive()
-        schedulables = list(self.getDonneeCalendrier().getSelectedSchedulable())
-        # Petite vérification :
-        if any(not isinstance(obj, Groupe) for obj in schedulables): # Si il y en a au moins UN qui n'est pas un groupe :
-            return showerror("Sélection invalide", "Vous ne pouvez dégrouper que des groupes.")
+        schedulables = set(self.getDonneeCalendrier().getSelectedSchedulable())
+        schedPerGroup = {} # dictionnaire des tâches à dégrouper, par groupe.
+        # Calcul des tâches à enlever par groupes :
+        for schedulable in set(schedulables):
+            if isinstance(schedulable, Groupe):
+                if schedulable not in schedPerGroup:
+                    schedPerGroup[schedulable] = set()
+            else: # Task
+                groupe = schedulable.getGroupe()
+                if groupe is None:
+                    showerror("Erreur de sélection", "Vous ne pouvez pas dégrouper des tâches qui ne sont pas dans un groupe.")
+                    return
+                if groupe not in schedPerGroup:
+                    schedPerGroup[groupe] = set()
+                schedPerGroup[groupe].add(schedulable)
+                
         # Pour chaque groupes sélectionnés :
-        for groupe in set(schedulables):
-            # Ré-ajout des tâches qui étaient dans le groupe :
-            for t in groupe.getListTasks():
-                if t in groupe.getSelectedTask():
-                    groupe.removeTask(t, testDelete = True)
+        for groupe in schedPerGroup:
+            # Ré-ajout au calendrier des tâches qui étaient dans le groupe :
+            for t in schedPerGroup[groupe] if schedPerGroup[groupe] else groupe.getListTasks():
+                groupe.removeTask(t, testDelete=True)
 
-            # Suppression du groupe , s'il n'y a plus de tache :
+            # Demande de suppression du groupe, s'il n'y a plus qu'une tâche :
             if len(groupe.getListTasks()) == 1:
-                if askyesnowarning(title = "Édition du groupe", message = 'Le groupe "%s" ne possède plus qu\'une tache :\n\t- %s\nVoulez-vous supprimer le groupe ?'%(groupe.getNom(), list(groupe.getListTasks())[0].getNom())):
-                    groupe.removeTask(list(groupe.getListTasks())[0], testDelete = True)
-                    #groupe.delete(), vu qu'on testDelete = True, inutile de le re-delete après
+                if askyesnowarning(title="Édition du groupe", message='Le groupe "%s" ne possède plus qu\'une tache :\n\t- %s\nVoulez-vous supprimer le groupe ?'%(groupe.getNom(), list(groupe.getListTasks())[0].getNom())):
+                    groupe.removeTask(list(groupe.getListTasks())[0], testDelete=True)
+                    # Le groupe va s'auto-delete avec le testDelete.
 
         # Mise à jour de l'affichage qu'à la fin :
         self.getApplication().getTaskEditor().redessiner()
-        self.getDonneeCalendrier().updateAffichage(True)
+        self.getDonneeCalendrier().updateAffichage(True) # True = on force la total, car suppression d'objet.
 
     def deplacerIntervertir(self):
         """

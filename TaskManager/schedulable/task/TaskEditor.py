@@ -172,7 +172,7 @@ class TaskEditor(Frame):
     def deselectEverything(self):
         """
         Permet de désélectionner tout ce qui est sélectionné dans le Treeview(),
-        il n'y a pas d'autre update implicitement rajoutés.
+        il n'y a pas d'autre update implicitement rajoutés. (pas même sur les objets planifiables)
         """
         self.tree.selection_remove(*self.tree.selection())
 

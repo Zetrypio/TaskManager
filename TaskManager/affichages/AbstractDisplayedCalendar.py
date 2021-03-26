@@ -24,7 +24,7 @@ class AbstractDisplayedCalendar(Frame):
     (je parle ici de DonneeCalendrier).
     """
 
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master=None, **kwargs):
         """
         Constructeur d'un calendrier quelconque.
         Classe abstraite, donc veuillez utiliser une
@@ -34,8 +34,7 @@ class AbstractDisplayedCalendar(Frame):
         """
         assert self.__class__ != AbstractDisplayedCalendar # interdire instanciation direct (classe abstraite version simple)
         super().__init__(master, **kwargs)
-        # Forcement après le constructeur parent à cause d'un self.master requis pour le getPalette()
-        super().config(bg = self.getPalette()["background"])
+        self.config(bg = self.getPalette()["background"])
         # Note : self.master est référence vers DonneeCalendrier.
 
         # infos des heures :
@@ -97,7 +96,7 @@ class AbstractDisplayedCalendar(Frame):
         @return datetime.date() correspondant à la fin de la période active si elle existe.
         @return None si elle n'existe pas.
         """
-        return self.getPeriodeActive().getFin()   if self.getPeriodeActive() is not None else None
+        return self.getPeriodeActive().getFin() if self.getPeriodeActive() is not None else None
 
     def getHeureDebut(self):
         """
@@ -207,15 +206,19 @@ class AbstractDisplayedCalendar(Frame):
         return self.getApplication().getPeriodManager().getActivePeriode()
 
     def getSelectedSchedulable(self):
+        """
+        Getter pour obtenir la liste des schedulables sélectionnés dans l'affichage,
+        inclu également les tâches à l'intérieur d'un groupe qui sont sélectionnées.
+        @return set() des schedulables sélectionnées. (permet d'éviter les doublons).
+        """
         s = set()
         for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.isSelected():
                 s.add(schedulable)
             if isinstance(schedulable, Groupe):
                 for task in schedulable.getSelectedTask():
-                    s.add(schedulable) # Si on met task on peut plus dégrouper, si on met schedulable on peut pas décaler jour/heure
-
-        return s # old : (schedulable for schedulable in self.getPeriodeActive().getInstanciatedSchedulables() if schedulable.isSelected())
+                    s.add(task)
+        return s
 
     def getVisiblePart(self, part):
         """
@@ -381,10 +384,14 @@ class AbstractDisplayedCalendar(Frame):
                 return None
         return schedulable
 
-    def clicSurObjet(self, objet):
+    def clicSurObjet(self, objet, schedulableDisp=None, control=False):
         """
-        Méthode à exécuter quand on clic sur l'un des objets.
+        Méthode exécutée lors d'un clic sur un objet.
         Utile pour sélectionner une tâche par exemple.
+        @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
+        @param schedulable: l'objet planifiable cliqué si il y en a un.
+        @param control: True si la touche control (command sur mac) a été
+        activé lors de ce clic, False sinon.
         @param objet: l'objet sur lequel on a cliqué.
         """
         raise NotImplementedError
@@ -401,7 +408,7 @@ class AbstractDisplayedCalendar(Frame):
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
         """
         for s in self.getPeriodeActive().getInstanciatedSchedulables():
-            s.setSelected(False)
+            s.setSelected(False, andInside=True)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =) # TODO à revoir si c'est bien
         
         # Update du TaskEditor() et de son Treeview() :
@@ -448,7 +455,7 @@ class AbstractDisplayedCalendar(Frame):
         for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             # Si l'objet est partiellement sur le jour :
             if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
-                schedulable.setSelected(True)
+                schedulable.setSelected(True) # TODO tâches d'un groupe seulement le jour j
         self.updateColor()
 
         self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.

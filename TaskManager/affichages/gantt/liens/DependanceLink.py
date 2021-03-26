@@ -128,7 +128,7 @@ class DependanceLink(AbstractLink):
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
         #self._getAffichageGantt().clicSurObjet(self)
 
-    def _onControlClic(self):
+    def _onControlClic(self): # TODO : gérer le control clic avec le clic une 1 méthode.
         self._getAffichageGantt().cancelEvent()
         self.__selected = not self.__selected
         self._getAffichageGantt().getDonneeCalendrier().updateColor()

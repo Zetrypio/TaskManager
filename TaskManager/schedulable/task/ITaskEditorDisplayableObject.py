@@ -86,9 +86,3 @@ class ITaskEditorDisplayableObject:
         @return True si le RMenu() existe, False sinon.
         """
         raise NotImplementedError
-
-    def selectInTaskEditor(self):
-        """
-        Méthode qui demande au TaskEditor de sélectionner la ligne qui correspond au schedulable
-        """
-        raise NotImplementedError
