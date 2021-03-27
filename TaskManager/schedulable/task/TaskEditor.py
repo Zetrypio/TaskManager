@@ -374,14 +374,17 @@ class TaskEditor(Frame):
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
-            # TODO : Revoir aussi ICI pour si on fait une multi-sélection.
+            possibles = set()
             for id in self.__getEnsembleIdObjetAvecSelection(): # Parcourir et obtenir tout les éléments sélectionnés.
                 try:
                     t = self.__idObjectsInTreeview[id]   # Obtenir l'objet correspondant à l'ID.
                 except:
                     continue
                 if isinstance(t, Task) and t.isContainer(): # isContainer équivaut à Drag&Drop-able
-                    tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
+                    possibles.add(t)
+            if len(possibles) == 1:
+                t = list(possibles)[0]
+                tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
 
     def __mousePressed(self, event, control=False, selectedBefore=None):
         """
