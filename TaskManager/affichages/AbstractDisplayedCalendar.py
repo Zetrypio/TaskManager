@@ -455,7 +455,14 @@ class AbstractDisplayedCalendar(Frame):
         for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             # Si l'objet est partiellement sur le jour :
             if schedulable.getDebut().date() <= jour and schedulable.getFin().date() >= jour:
-                schedulable.setSelected(True) # TODO tâches d'un groupe seulement le jour j
+                schedulable.setSelected(True)
+                self.getApplication().getTaskEditor().selectLineTreeview(schedulable, True)
+                if isinstance(schedulable, Groupe):
+                    for task in schedulable.getSubTasks():
+                        if task.getDebut().date() <= jour and task.getFin().date() >= jour:
+                            task.setSelected(True) # TODO tâches d'un groupe seulement le jour j
+                            self.getApplication().getTaskEditor().selectLineTreeview(task, True)
+                        
         self.updateColor()
 
         self.getDonneeCalendrier().selectJour(jour) # C'est l'une des raison pour lesquelles on a besoin d'un truc similaire à la branche Calendrier_data.
