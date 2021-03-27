@@ -173,9 +173,9 @@ class Groupe(AbstractSchedulableObject):
 
     def delete(self):
         """
-        Permet de supprimer définitievement ce groupe et ses taches
+        Permet de supprimer définitivement ce groupe et ses tâches
         """
-        # On comence par supprimer toutes les taches
+        # On commence par supprimer toutes les tâches
         for tache in self.getListTasks():
             tache.delete()
         # Et on se supprime
@@ -219,17 +219,18 @@ class Groupe(AbstractSchedulableObject):
         """
         self.getPeriode().addInstanciatedSchedulable(self)
 
-    def setSelected(self, selected):
+    def setSelected(self, selected, andInside=False):
         """
         Permet de sélectionner ou désélectionner cet objet.
-        Si il s'agit d'une désélection, désélectionne aussi les sous-tâches.
+        Si andInside est sur True, affecte aussi les sous-tâches.
         @param selected: True si l'objet doit être sélectionné, False sinon.
+        @param andInside: True si on affecte aussi les sous-tâches.
         @override setSelected(value) in AbstractSchedulableObject.
         """
-        super().setSelected(selected)
-        if not selected:
+        super().setSelected(selected, andInside)
+        if andInside:
             for t in self.__listTasks:
-                t.setSelected(False)
+                t.setSelected(selected, andInside)
 
     def updateStatut(self):
         """
@@ -319,11 +320,8 @@ class Groupe(AbstractSchedulableObject):
     def saveByDict(self, saveID = True):
         """
         Méthode qui sauvegarde les attributs présent dans la classe "Groupe" (ici)
-
         @param saveID : <bool> True on enregistre l'UID actuel
-
         @save listTasks : <list Task> contient les taches du groupe
-
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
         dico = {}

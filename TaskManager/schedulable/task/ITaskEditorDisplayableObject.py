@@ -41,6 +41,12 @@ class ITaskEditorDisplayableObject:
         """
         raise NotImplementedError
 
+    def isSelected(self):
+        """
+        @return True si l'objet est sélectionné, False sinon.
+        """
+        raise NotImplementedError
+
     ""
     #####################
     # Autres méthodes : #
@@ -87,8 +93,9 @@ class ITaskEditorDisplayableObject:
         """
         raise NotImplementedError
 
-    def selectInTaskEditor(self):
+    def setSelected(self, value):
         """
-        Méthode qui demande au TaskEditor de sélectionner la ligne qui correspond au schedulable
+        Permet de changer si l'objet est sélectionné.
+        @param value: True si l'objet doit être sélectionné, False sinon.
         """
         raise NotImplementedError

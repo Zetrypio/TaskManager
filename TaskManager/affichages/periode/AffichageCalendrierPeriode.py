@@ -295,13 +295,20 @@ class AffichageCalendrierPeriode(AbstractDisplayedCalendar):
         Si c'est avec la touche contrôle, alors la/les période(s) précédemment sélectionnées ne sont pas désélectionnées.
         """
         #x, y = event.x, event.y
+        taskEditor = self.getApplication().getTaskEditor()
+        item = self.findItem(event)
         if not control:
             for p in self.getApplication().getPeriodManager().getPeriodes():
                 p.setSelected(False)
+                taskEditor.selectLineTreeview(p, False)
 
-        if self.findItem(event) is not None:
-            self.findItem(event).setSelected(True if not control else not self.findItem(event).isSelected())
-        self.updateAffichage()
+        if item is not None:
+            value = True if not control else not item.isSelected()
+            item.setSelected(value)
+            taskEditor.selectLineTreeview(item, value)
+
+        # Pas besoin d'update tout l'affichage, seulement les couleurs.
+        self.updateColor()
 
     def findItem(self, event):
         """

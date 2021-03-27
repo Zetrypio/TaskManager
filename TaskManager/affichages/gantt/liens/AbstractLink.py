@@ -265,7 +265,7 @@ class AbstractLink(IDisplayableItem):
         # Binding : #
         #############
         if self.__binding1 is None:
-            self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>", lambda e: self._onClic())
+            self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>", lambda e: self._onClic()) # TODO : Fusionner control clic
             self.__binding2 = canvas.tag_bind(self.getTag(), "<Control-Button-1>", lambda e: self._onControlClic())
 
     def updateColor(self, canvas):

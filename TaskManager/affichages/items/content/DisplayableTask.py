@@ -20,29 +20,34 @@ class DisplayableTask(AbstractItemContent):
         @param part: la partie d'affichage géré par cet objet.
         @param **kwargs: les options d'affichage du tkinter.Frame() que cet objet est.
         """
+        # S'assurer que c'est bien une tâche :
+        if not isinstance(schedulable, Task):
+            raise TypeError("Expected Task, but got %s for schedulable %s"%(schedulable.__class__.__name__, schedulable))
 
-        # Création des widgets :
+        super().__init__(master, schedulable, bg = schedulable.getColor(), **kwargs)
+
+        ## Création des widgets :
+        # Texte :
+        self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), width=0, height=0)
         if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
         and self.getApplication().getData().getOneValue("General", "Thème", "couleur adaptative") == "True":
-            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), fg=adaptTextColor(self.__getDisplayColor()), width=0, height=0)
-        else:
-            self.__texte = Text(self, wrap="word", bg=self.__getDisplayColor(), width=0, height=0)
+            self.__texte.configure(fg=adaptTextColor(self.__getDisplayColor()), width=0, height=0)
+
+        # Texte écrit :
+        self.__texte.insert(INSERT, self._schedulable.getNom())
+        self.__texte.insert(INSERT, "\n")
+        self.__texte.insert(INSERT, self._schedulable.getDescription())
 
         # Config des Tags :
         self.__texte.tag_config("titre", font="Arial 12 bold")
         self.__texte.tag_config("corps", font="Arial 10")
-
-        # Texte :
-        self.__texte.insert(INSERT, self._schedulable.getNom())
-        self.__texte.insert(INSERT, "\n")
-        self.__texte.insert(INSERT, self._schedulable.getDescription())
 
         # Ajout des tags
         self.__texte.tag_add("titre", "0.0", "1.0")
         self.__texte.tag_add("corps", "1.0", END)
 
         # Finalisation et placements :
-        self.__texte.config(state="disabled")  # Pour ne pas changer le texte dedans.
+        self.__texte.config(state="disabled")    # Pour ne pas changer le texte dedans.
         self.__texte.pack(fill=BOTH, expand=YES) # On l'affiche une fois qu'il est tout beau.
         self.pack_propagate(False)
 
@@ -62,9 +67,8 @@ class DisplayableTask(AbstractItemContent):
         return self.getApplication().getData().getPalette()["selected"] if self._schedulable.isSelected() else self._schedulable.getColor()
 
     def needButtonPlus(self, affichageGantt):
-        if affichageGantt.getVisiblePart(self._schedulable.getLastPart(affichageGantt)) == self.__part and len(self._schedulable.getDependantes()) == 0:
-            return True
-        return False
+        return (affichageGantt.getVisiblePart(self._schedulable.getLastPart(affichageGantt)) == self.__part
+            and len(self._schedulable.getDependantes()) == 0)
 
     ""
     ##################################
@@ -73,7 +77,7 @@ class DisplayableTask(AbstractItemContent):
     ""
     def configSize(self, width, height):
         """
-        Permet de contrôler la taille de l'objet pour les groupes.
+        Permet de contrôler la taille de l'objet (pour les groupes).
         """
         self.__texte.config(width = width, height = height)
 
@@ -91,7 +95,20 @@ class DisplayableTask(AbstractItemContent):
     def bindTo(self, binding, command, add=None):
         """
         Permet de binder tout les widgets contenus dans celui-ci.
+        @param binding: même doc que pour les binds de tkinter
+        @param command: fonction qui va prendre cet objet en paramètre.
+        @param add: même doc que pour les binds de tkinter.
         @see tkinter.Misc#bind(binding, command, add) pour la documentation du binding.
         """
-        self.bind(binding, command, add)
-        self.__texte.bind(binding, command, add)
+        self.bind(binding, lambda e: command(self), add)
+        self.__texte.bind(binding, lambda e: command(self), add)
+
+    def onClic(self, control=False):
+        if control:
+            value = not self._schedulable.isSelected()
+        else:
+            value = True
+        self._schedulable.setSelected(value)
+        self.getApplication().getTaskEditor().selectLineTreeview(self._schedulable, value)
+
+from schedulable.task.Task import Task

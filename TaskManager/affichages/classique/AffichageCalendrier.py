@@ -15,7 +15,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     Affichage de calendrier classique.
     Si deux objets sont en même temps, ils sont affichés dans des colonnes séparées.
     """
-    def __init__(self, master = None, **kwargs):
+    def __init__(self, master=None, **kwargs):
         """
         Affichage par défaut du calendrier et de ses tâches.
         @param master: NoteBook du DonneeCalendrier, master du tkinter.Frame() que cet objet est.
@@ -27,7 +27,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         self.__listeLabelHeure = []       # \
         self.__listeLabelJour = []        #  )-> Tout est dans le nom de ces trois listes.
         self.__listeSeparateurJour = []   # /
-        
+
         # Vaudrait-il mieux pas utiliser la liste héritée self.listeTaskAffichees ?
         self.listeDisplayableItem = []  # Liste de la variante affichée de ces tâches.
 
@@ -36,7 +36,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
 
         # Mise à jour de l'affichage.
         self.updateAffichage()
-        
+
         # Pour mémoriser les différentes parts pour savoir si elles sont le même jour qu'une autre.
         # Est-ce vraiment nécessaire au vu de l'attribut self.__partsParColonnes qui répartie les parts
         # selon leurs colonnes ET DONC leur jour ?
@@ -354,7 +354,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             displayable.updateColor(self.__frame)
 
-        # Ci-dessous, une petite customisation, qui permet de faire que les labels des jours soient en bleu quand le jour en question est sélecionné.
+        # Ci-dessous, une petite customisation, qui permet de faire que les labels des jours soient coloré quand le jour en question est sélectionné.
 
         # Variable qui parcours la liste, rangeDate n'est pas fonctionnelle car après il y un soucis de last entre période et 2/5/... jours
         jour = self.getJourDebut()
@@ -396,7 +396,7 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
         """
         if self.hasParent(self, event.widget):
             for item in self.listeDisplayableItem:
-                item.getSchedulable().setSelected(True)
+                item.getSchedulable().setSelected(True, andInside=True)
             self.getDonneeCalendrier().updateColor()
 
     ""
@@ -407,12 +407,16 @@ class AffichageCalendrier(AbstractDisplayedCalendar):
     def __onClicSurFrame(self):
         self.deselectEverything()
 
-    def clicSurObjet(self, objClassique):
+    def clicSurObjet(self, objClassique, schedulableDisp=None, control=False):
         """
         Méthode exécutée lors d'un clic sur un objet.
         @param objClassique: l'objet sur lequel l'utilisateur à cliqué.
+        @param schedulable: l'objet planifiable cliqué si il y en a un.
+        @param control: True si la touche control (command sur mac) a été
+        activé lors de ce clic, False sinon.
+        @override clicSurObjet(objet) in AbstractDisplayedCalendar()
         """
-        for s in self.getPeriodeActive().getInstanciatedSchedulables():
-            s.setSelected(False)
-        objClassique.getSchedulable().setSelected(True)
+        if control is False:
+            self.deselectEverything()
+        schedulableDisp.onClic(control)
         self.getDonneeCalendrier().updateColor()

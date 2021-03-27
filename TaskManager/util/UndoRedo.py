@@ -30,6 +30,8 @@ class UndoRedo:
         if not self in UndoRedo.UNDO + UndoRedo.REDO and not UndoRedo.__blocked:
             UndoRedo.UNDO.append(self)
             UndoRedo.REDO = []
+            return True
+        return False
 
     def _undo(self):
         """

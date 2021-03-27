@@ -27,20 +27,6 @@ class ObjetClassique(AbstractMultiFrameItem):
         self.__widget = []
         self.__rmenu = {}
 
-    def __onSelect(self):
-        """
-        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
-        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
-        """
-        self.master.clicSurObjet(self)
-
-    def __onMultiSelect(self):
-        """
-        Permet d'inverser l'état de sélection de l'objet schedulable.
-        """
-        self._schedulable.inverseSelection()
-        self.master.getDonneeCalendrier().updateColor()
-
     def delete(self):
         for f in self.__listeCadre:
             try:
@@ -71,9 +57,10 @@ class ObjetClassique(AbstractMultiFrameItem):
                 widget = self._schedulable.createDisplayableInstance(f, part)
                 widget.pack(expand = YES, fill = BOTH)
                 # C'est pour ça que l'on fait cette méthode-ci pour le bind.
-                # Cela permet de s'assurer que tout les sous-widgets seront binds aussi :
-                widget.bindTo("<Button-1>", lambda e: self.__onSelect())
-                widget.bindTo("<Control-Button-1>", lambda e: self.__onMultiSelect())
+                # Cela permet de s'assurer que tout les sous-widgets seront binds aussi,
+                # ainsi que de récupérer l'objet réellement cliqué, par exemple une sous-tâche d'un groupe :
+                widget.bindTo("<Button-1>",         lambda obj: self.master.clicSurObjet(self, obj, control=False))
+                widget.bindTo("<Control-Button-1>", lambda obj: self.master.clicSurObjet(self, obj, control=True))
 
                 # RMenu :
                 rmenu = RMenu(widget, False)
@@ -86,7 +73,7 @@ class ObjetClassique(AbstractMultiFrameItem):
                 colonne     = int(rect.getX1())
                 colonnespan = int(rect.getWidth())
 
-                f.grid(row = ligne, rowspan = lignespan, column = colonne, columnspan = colonnespan, sticky="nsew")
+                f.grid(row=ligne, rowspan=lignespan, column=colonne, columnspan=colonnespan, sticky=NSEW)
 
                 # On le mémorise :
                 self.__listeCadre.append(f)

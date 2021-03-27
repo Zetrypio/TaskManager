@@ -67,8 +67,11 @@ class AbstractItemContent(Frame):
     ""
     def bindTo(self, binding, command, add=None):
         """
-        Permet de binder un binding sur tout les sous-widget de ce widget,
+        Permet de binder tout les widgets contenus dans celui-ci,
         à redéfinir explicitement dans les sous-classes.
-        Pour la documentation du binding, voir tkinter.Misc#bind(binding, command, add=None).
+        @param binding: même doc que pour les binds de tkinter
+        @param command: fonction qui va prendre l'objet cliqué en paramètre (cet objet ou un autre si objet composite).
+        @param add: même doc que pour les binds de tkinter.
+        @see tkinter.Misc#bind(binding, command, add) pour la documentation du binding.
         """
         raise NotImplementedError

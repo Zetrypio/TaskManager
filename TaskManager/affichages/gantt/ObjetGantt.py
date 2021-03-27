@@ -153,8 +153,8 @@ class ObjetGantt(AbstractMultiFrameItem):
                     widget.pack(expand = YES, fill = BOTH)
                     # C'est pour ça que l'on fait cette méthode-ci pour le bind.
                     # Cela permet de s'assurer que tout les sous-widgets seront binds aussi :
-                    widget.bindTo("<Button-1>", lambda e: self.__onSelect())
-                    widget.bindTo("<Control-Button-1>", lambda e: self.__onMultiSelect())
+                    widget.bindTo("<Button-1>",         lambda obj: self.master.clicSurObjet(self, obj, control=False))
+                    widget.bindTo("<Control-Button-1>", lambda obj: self.master.clicSurObjet(self, obj, control=True))
 
                     # Ajout du RMenu :
                     rmenu = RMenu(widget, False)
@@ -235,19 +235,6 @@ class ObjetGantt(AbstractMultiFrameItem):
     # Autres Méthodes : #
     #####################
     ""
-    def __onMultiSelect(self):
-        """
-        Permet d'inverser l'état de sélection de l'objet schedulable.
-        """
-        self._schedulable.inverseSelection()
-        self.master.getDonneeCalendrier().updateColor()
-
-    def __onSelect(self):
-        """
-        Permet d'informer à l'affichage gantt que l'on a appuyé sur cet objet.
-        Utile pour la création des liens par exemple, ou la sélection des tâches etc.
-        """
-        self.master.clicSurObjet(self)
 
     def delete(self):
         """

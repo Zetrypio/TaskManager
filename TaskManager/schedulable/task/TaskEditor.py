@@ -4,16 +4,20 @@ from tkinter.ttk import *
 from tkinter import Label, Frame
 from collections import deque
 
+from affichages.periode.Periode import *
 from affichages.periode.PeriodAdder import *
+from util.util import adaptTextColor
 from util.widgets.RMenu import *
 
 from .dialog.askHeureExacteDialog import *
 from .undoredo.UndoRedoTaskCreation import *
 from .Task import *
 from .TaskAdder import *
-from util.util import adaptTextColor
 
 from ..AbstractSchedulableObject import *
+from ..groupe.Groupe import *
+
+import sys
 
 class TaskEditor(Frame):
     """
@@ -34,6 +38,7 @@ class TaskEditor(Frame):
         self.MODE_TRI = "None"
 
         self.__rmenu = [] # Liste des menus clic-droit pour faire que les tâches puissent être transformées en Inconnues.
+        self.__idObjectsInTreeview = {}
 
         self.__periodManager = periodManager
 
@@ -135,25 +140,26 @@ class TaskEditor(Frame):
             self.frameInput.pack(side = TOP, fill = X, before = self.tree)
             self.frameInputPeriode.pack_forget()
 
-    def selectLineTreeview(self, schedulable):
+    def selectLineTreeview(self, displayable, value):
         """
         Permet de sélectionner une ligne du Treeview
-        @param schedulable : <AbstractSchedulableObject>  celui qui'il faut relier à la ligne pour sélectionner
+        @param displayable : <ITaskEditorDisplayableObject> l'objet qu'on veut sélectionner dans le TaskEditor.
+        @param value: True si on sélectionne l'objet, False si on le désélectionne.
         """
-        for item in self.getTaskInTaskEditor():
-            # Si on cherche une subtask
-            if isinstance(schedulable, Task) and schedulable.getParent() is not None:
-                try:
-                    list = self.tree.get_children(self.tree.get_children(item.id))
-                except:
-                    list = self.tree.get_children(item.id)
-                for subt in list:
-                    if subt == schedulable.id:
-                        self.tree.selection_set(subt) if schedulable.isSelected() else self.tree.selection_remove(subt)
+        # On parcours bien tout, car l'objet peut apparaître plusieurs fois avec les dépendances etc.
+        for id in self.__idObjectsInTreeview:
+            if self.__idObjectsInTreeview[id] == displayable:
+                if value:
+                    self.tree.selection_add(id)
+                else:
+                    self.tree.selection_remove(id)
 
-            # Si on cherche une tache/groupe global
-            if schedulable.id == item.id and schedulable.isSelected():
-                self.tree.selection_set(item.id) if schedulable.isSelected() else self.tree.selection_remove(item.id)
+    def deselectEverything(self):
+        """
+        Permet de désélectionner tout ce qui est sélectionné dans le Treeview(),
+        il n'y a pas d'autre update implicitement rajoutés. (pas même sur les objets planifiables)
+        """
+        self.tree.selection_remove(*self.tree.selection())
 
     ""
     ###################################
@@ -170,10 +176,11 @@ class TaskEditor(Frame):
         if displayable.getFilterStateWith(self.FILTRE) >= 0 or recursionLevel > 0: # Ne pas filtrer dans les sous-tâches
             # On défini l'ID du nouveau parent :
             parentNew = parent+"p%s"%idNum
-            displayable.id = parentNew
+
+            # On mémorise l'id de cette manière là maintenant :
+            self.__idObjectsInTreeview[parentNew] = displayable
 
             # On fait la couleur :
-
             self.tree.tag_configure("Couleur%s"%displayable.getColor(), background = displayable.getColor())
             # + celle de la ligne
             if self.getApplication().getData().testDataExist("General", "Thème", "couleur adaptative") \
@@ -366,64 +373,122 @@ class TaskEditor(Frame):
         if self.mousepress:
             self.mousepress = False
             pos = (max(event.x_root - 100, 0), max(event.y_root - 25, 0))
-            # TODO : Revoir aussi ICI pour si on fait une multi-sélection.
-            for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-                for t in self.getTaskInTaskEditor():
-                    if isinstance(t, Task) and t.getStatut() == "Inconnu":
-                        if i == t.id:
-                            tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
+            possibles = set()
+            for id in self.__getEnsembleIdObjetAvecSelection(): # Parcourir et obtenir tout les éléments sélectionnés.
+                try:
+                    t = self.__idObjectsInTreeview[id]   # Obtenir l'objet correspondant à l'ID.
+                except:
+                    continue
+                if isinstance(t, Task) and t.isContainer(): # isContainer équivaut à Drag&Drop-able
+                    possibles.add(t)
+            if len(possibles) == 1:
+                t = list(possibles)[0]
+                tdnd = TaskInDnd(pos, self, t, command = self.__trouverPositionTache)
 
-    def __mousePressed(self, event):
+    def __mousePressed(self, event, control=False, selectedBefore=None):
         """
-        Méthode qui sélectionne les schedulables si possible
+        Méthode qui sélectionne les schedulables si possible.
+
+        Normalement, à l'exécution de cette fonction,
+        l'update du Treeview() sur les lignes suite au clic
+        à été faite, par #__mousePressedBefore(),
+        et si jamais la touche contrôle n'était pas appuyée,
+        toute sélection aura été effacé au préalable.
+
         @param event: non utilisé.
         """
-        def selectIt(schedulable):
-            """
-            Fonction embarqué pour sélectionner le schedulable, + si c'est fait alors on redraw
-            @param schedulable : <AbstractSchedulableObject>
-            """
-            schedulable.setSelected(True)
-            self.getApplication().getDonneeCalendrier().updateColor()
+        # On mémorise les nouvelles sélections dues aux sous-tâches | groupes :
+        ensembleNouvelleSelection = set()
 
-        for i in self.tree.selection(): # Parcourir et obtenir tout les éléments sélectionnés.
-            for t in self.getTaskInTaskEditor():
-                # Si c'est la tache
-                #print("iid :", i, "tache.id", t.id)
-                if isinstance(t, Task) and not t.isContainer() and t.id == i:
-                    selectIt(t)
-                # Si on sélectionne le conteneur, on select tout le monde
-                elif isinstance(t, Task) and t.isContainer() and t.id == i:
-                    for st in t.getSubTasks():
-                        selectIt(st)
-                    selectIt(t)
-                # Si c'est une tache conteneur
-                elif isinstance(t, Task) and t.isContainer():
-                    for st in t.getSubTasks():
-                        # Si c'est la sous-tache
-                        if st.id == i:
-                            selectIt(st)
-                # Si c'est un groupe et que c'est le bon
-                elif isinstance(t, Groupe) and t.id == i:
-                    selectIt(t)
-                # Si c'est un groupe, il faut parcourir les tâches
-                elif isinstance(t, Groupe):
-                    for tache in t.getListTasks():
-                        if tache.id == i:
-                            selectIt(tache)
+        # On commence par savoir quels sont les objets sélectionnés :
+        ensembleId = self.__getEnsembleIdObjetAvecSelection()
 
+        if control:
+            # On corrige la sélection pour qu'elle corresponde aux objets plutôt qu'au lignes :
+            self.deselectEverything()           # Rappel : sélection visuelle uniquement ici
+            self.tree.selection_add(*ensembleId)
 
-    def __mousePressedBefore(self, event):
+            # On change l'attribut de sélection à ces objets, proprement dit.
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+                obj.setSelected(id in ensembleId or obj in ensembleNouvelleSelection)
+
+                # Si l'ID est dans nouvelle sélection, mais pas ancienne, ie: celui sur lequel on a cliqué,
+                if id in ensembleId and id not in selectedBefore: 
+                    # alors on ajout les sous-tâches si elles existent :
+                    if isinstance(obj, Task) and obj.isContainer():
+                        for st in obj.getSubTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+                    elif isinstance(obj, Groupe):
+                        for st in obj.getListTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+        else:
+            # On désélectionne tout au départ
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+                obj.setSelected(False)
+
+            # Et on re-sélectionne APRÈS COUP ceux de la liste, car ils peuvent engendrer
+            # plus d'objets à être sélectionnés à leur tours eux aussi.
+            for id in self.__idObjectsInTreeview:
+                obj = self.__idObjectsInTreeview[id]
+
+                # au quel cas on re-sélectionne :
+                if id in ensembleId:
+                    obj.setSelected(True)
+                    # et si c'est le cas, on sélectionne les sous-tâches (si elles existent)
+                    if isinstance(obj, Task) and obj.isContainer():
+                        for st in obj.getSubTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+                    elif isinstance(obj, Groupe):
+                        for st in obj.getListTasks():
+                            st.setSelected(True)
+                            ensembleNouvelleSelection.add(st)
+
+        # On fait également l'update de la sélection dans le Treeview() pour les nouvelles tâches rajouté entre temps.
+        self.updateSelection()
+
+        # Mise à jour de la couleur pour montrer la sélection dans l'affichage du calendrier.
+        self.getApplication().getDonneeCalendrier().updateColor()
+
+    def __mousePressedBefore(self, event, control = False):
         """
-        Méthode pour quand on sélectionne un truc dans le treeview,
+        Méthode pour quand on sélectionne un truc dans le Treeview(),
         juste avant qu'il soit réellement sélectionné.
         @param event: infos sur l'évement de sélection.
+        @param control: True si l'utilisateur à appuyé sur Contrôle
+        lors de l'événement, False sinon.
         """
         self.mousepress = True
-        # Note : ceci pourrait être fait en tant que paramètre de sélection unique pour le Treeview() me semble-t-il.
-        for elem in self.tree.selection():
-            self.tree.selection_remove(elem)
-        self.after(10, self.__mousePressed, event)
+        if not control:
+            # On désélectionne tout pour être sûr.
+            self.deselectEverything()
+
+        # On regarde ce qui est sélectionné avant, pour faire un avant-après
+        # dans self.__mousePressed(), permettant ainsi de retrouver l'objet sélectionné.
+        selectedBefore = self.__getEnsembleIdObjetAvecSelection()
+
+        # On exécute la fonction self.__mousePressed après que la sélection des lignes du Treeview() se soit update.
+        self.after(10, self.__mousePressed, event, control, selectedBefore)
+
+    def __getEnsembleIdObjetAvecSelection(self):
+        """
+        Permet d'obtenir tout les objets sélectionnés par les lignes sélectionnées du Treeview().
+        Si un ligne ne correspond pas à un objet, elle est remplacée par la ligne parente et ainsi
+        de suite justqu'à tomber sur un objet, au quel cas le processus s'arrête.
+        @return l'ensemble (set()) des objets correspondant à la sélection dans le Treeview().
+        """
+        ensembleIdObjets = set()
+        for id in self.tree.selection():
+            while id != "":
+                if id in self.__idObjectsInTreeview:
+                    ensembleIdObjets.add(id)
+                    break
+                id = id [:-2]
+        return ensembleIdObjets
 
     def __mouseReleased(self, event):
         """
@@ -475,12 +540,11 @@ class TaskEditor(Frame):
         self.tree.destroy()
         self.scrollbar.destroy()
         self.__rmenu = []
+        self.__idObjectsInTreeview.clear()
 
         # On recrée tout :
         self.tree = Treeview(self, columns = ('Statut',), height = 0)
         self.tree.pack(expand = YES, fill = BOTH, side = LEFT)
-
-
 
         # avec la scrollbar :
         self.scrollbar = Scrollbar(self, orient = VERTICAL, command = self.tree.yview)
@@ -518,7 +582,21 @@ class TaskEditor(Frame):
             # Ajout de la tâche :
             self._ajouterTache(t, indice, "", pos)
 
+        # Update Sélection :
+        self.updateSelection()
+
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
+        self.tree.bind("<Control-ButtonPress-1>", lambda e: self.__mousePressedBefore(e, control=True)) # TODO: Command sur macOS
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
+
+    def updateSelection(self):
+        """
+        Permet de mettre à jour les éléments sélectionnés dans le Treeview
+        selon leur véritable valeur de sélection.
+        """
+        for id in self.__idObjectsInTreeview:
+            displayable = self.__idObjectsInTreeview[id]
+            # Update de la sélection :
+            self.selectLineTreeview(displayable, displayable.isSelected())

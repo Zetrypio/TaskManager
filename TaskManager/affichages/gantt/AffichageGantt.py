@@ -44,7 +44,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         # Liste des datetimeItemParts :
         self.__parts = []
 
-        # Ligne verte pour quand on est en train de relier plusieurs tâches ou autre :
+        # Ligne verte pour quand on est en train de relier plusieurs tâches ou autre : TODO : utiliser un dictionnaire
         self.__id_LinkingLine = None
         self.__x1_LinkingLine = None
         self.__y1_LinkingLine = None
@@ -88,7 +88,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         self.getApplication().bind_all("<<Affichage-Gantt-select-all>>",      self.selectAll, add=1)
 
         # Définition des bindings inchangeables (souris):
-        self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas)
+        self.can.bind("<Control-Button-1>", self.__onControlClicSurCanvas) # TODO : fusionner control avec l'autre ?
         self.can.bind("<Button-1>"        , self.__onClicSurCanvas)
         self.can.bind("<Motion>"          , self.__updateLinkingLine)
 
@@ -582,7 +582,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                 if isinstance(item, AbstractLink):
                     item.setSelected(True)
                 elif isinstance(item, ObjetGantt):
-                    item.getSchedulable().setSelected(True)
+                    item.getSchedulable().setSelected(True, andInside=True)
             self.getDonneeCalendrier().updateColor()
 
     ""
@@ -590,11 +590,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
     # Autres méthodes : #
     #####################
     ""
-    def clicSurObjet(self, objGantt):
+    def clicSurObjet(self, objGantt, schedulableDisp=None, control=False):
         """
         Méthode à exécuter quand on clic sur l'un des objets de gantt.
         Peut créer un lien si on était en mode d'ajout de liens etc.
         @param objGantt: l'objet sur lequel on a cliqué.
+        @param schedulable: l'objet planifiable cliqué si il y en a un.
+        @param control: True si la touche control (command sur mac) a été
+        activé lors de ce clic, False sinon.
         @override clicSurObjet(objet) in AbstractDisplayedCalendar()
         """
         # Si on est en mode ajout ou suppression de lien :
@@ -608,7 +611,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
                         self.__activeGanttObject, objGantt = objGantt, self.__activeGanttObject
 
                     # A faire car on perd activeGanttObject dans createLink
-                    # Deplus l'ajout de dependance dois se faire apres sinon on raise RunTimeError
+                    # De plus l'ajout de dépendance dois se faire après sinon on raise RunTimeError
                     objA, objB = objGantt, self.__activeGanttObject
 
                     ## Check si le lien existe déjà
@@ -637,10 +640,10 @@ class AffichageGantt(AbstractDisplayedCalendar):
                                 self.listeDisplayableItem.remove(lien)
                                 break
 
-                    # Si le lien existe dans un premier sens :
+                    # Si le la dépendance existe dans un premier sens :
                     if self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependances():
                         objGantt.getSchedulable().removeDependance(self.__activeGanttObject.getSchedulable())
-                    # Dans le deuxième sens :
+                    # Dans l'autre sens :
                     elif self.__activeGanttObject.getSchedulable() in objGantt.getSchedulable().getDependantes():
                         self.__activeGanttObject.getSchedulable().removeDependance(objGantt.getSchedulable())
 
@@ -649,11 +652,14 @@ class AffichageGantt(AbstractDisplayedCalendar):
                     self.__endLinkingLine()
                     self.updateAffichage()
 
+        # Les liens ne se font pas ici, ils sont indépendants chez eux même. Est-ce bien ? pour le moment ça va ok.
         # Sinon on désélectionne tout les liens et les tâches,
         # pour ne sélectionner que la tâche sur laquelle on a cliqué.
         elif self.__activeGanttObject is None:
-            self.deselectEverything()
-            objGantt.getSchedulable().setSelected(True)
+            if control is False:
+                self.deselectEverything()
+            schedulableDisp.onClic(control)
+
             self.getDonneeCalendrier().updateColor()
 
     def createLink(self, objA, objB):
@@ -677,9 +683,9 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for item in self.listeDisplayableItem:
             if isinstance(item, DependanceLink):
                 item.setSelected(False)
-                #item.updateColor(self.can)
 
-        self.updateAffichage()
+        #self.updateAffichage()
+        self.updateColor()
 
     def onIntervertir(self):
         """

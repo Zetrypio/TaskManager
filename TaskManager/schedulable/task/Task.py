@@ -17,7 +17,6 @@ from .undoredo.UndoRedoTransformTaskToDnD import *
 from .TaskInDnd import *
 
 from affichages.items.DatetimeItemPart import *
-from affichages.items.content.DisplayableTask import *
 from util.util import *
 
 class Task(AbstractSchedulableObject):
@@ -268,6 +267,7 @@ class Task(AbstractSchedulableObject):
 
     def getRepartition(self, displayedCalendar):
         """
+        Gère également les tâches à répétition. 
         @see AbstractSchedulableObject#getRepartition(displayedCalendar)
         @override AbstractSchedulableObject#getRepartition(displayedCalendar)
         """
@@ -383,6 +383,7 @@ class Task(AbstractSchedulableObject):
     def isContainer(self):
         """
         Permet de savoir si cette tâche est une tâche conteneur.
+        C'est équivalent à savoir si c'est un tâche qu'on peut Drag&Drop dans le TaskEditor.
         @return True si la tâche est une tâche conteneur, False sinon.
         """
         self.updateStatut()
@@ -499,7 +500,7 @@ class Task(AbstractSchedulableObject):
 
     def setDuree(self, duree):
         """
-        Setter de la duree de la tache
+        Setter de la durée de la tache
         @param duree : <datetime.timedelta> celui qu'il faut mettre
         """
         self.__duree = duree
@@ -539,7 +540,7 @@ class Task(AbstractSchedulableObject):
 
     def clearDissociated(self):
         """
-        Méthode qui ré-associe toutes les taches dissociées
+        Méthode qui ré-associe toutes les tâches dissociées
         En pratique ça vide le set : self.getDissociated
         """
         self.__setDissociated.clear()
@@ -569,7 +570,7 @@ class Task(AbstractSchedulableObject):
         """
         Méthode qui coupe la Tache à répétition en 2 tache à répétitions
         Ça creer une nouvelle tache qui commence à l'iteration et finit là ou se terminait l'ancienne
-        @param iteration : <int> compris entre 1 et self.getNbRep() (0 exclus car ça revient à recreer la tache)
+        @param iteration : <int> compris entre 1 et self.getNbRep() (0 exclus car ça revient à recréer la tache)
         @return <Task> la nouvelle tache
         """
         assert iteration > 0 and iteration <= self.getNbRep(), "iteration must be 0 < iteration <= " + self.getNbRep() + " not : " +iteration
@@ -606,7 +607,7 @@ class Task(AbstractSchedulableObject):
         # Itérations dissociées
         newTask.clearDissociated()
         for dissociated in self.getDissociated():
-            # Si on est dans la nouvelle tache :
+            # Si on est dans la nouvelle tâche :
             if dissociated >= iteration:
                 self.removeDissociated(dissociated)
                 newTask.addDissociated(dissociated-iteration)
@@ -802,3 +803,5 @@ class Task(AbstractSchedulableObject):
         dico["dissociated"] = [out for out in self.getDissociated()]
 
         return dico
+
+from affichages.items.content.DisplayableTask import *
