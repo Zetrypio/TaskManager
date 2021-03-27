@@ -142,14 +142,15 @@ class TaskEditor(Frame):
             self.frameInput.pack(side = TOP, fill = X, before = self.tree)
             self.frameInputPeriode.pack_forget()
 
-    def selectLineTreeview(self, schedulable, value):
+    def selectLineTreeview(self, displayable, value):
         """
         Permet de sélectionner une ligne du Treeview
-        @param schedulable : <AbstractSchedulableObject>  celui qui'il faut relier à la ligne pour sélectionner
+        @param displayable : <ITaskEditorDisplayableObject> l'objet qu'on veut sélectionner dans le TaskEditor.
         @param value: True si on sélectionne l'objet, False si on le désélectionne.
         """
+        # On parcours bien tout, car l'objet peut apparaître plusieurs fois avec les dépendances etc.
         for id in self.__idObjectsInTreeview:
-            if self.__idObjectsInTreeview[id] == schedulable:
+            if self.__idObjectsInTreeview[id] == displayable:
                 if value:
                     self.tree.selection_add(id)
                 else:
@@ -450,9 +451,10 @@ class TaskEditor(Frame):
                             ensembleNouvelleSelection.add(st)
 
         # On fait également l'update de la sélection dans le Treeview() pour les nouvelles tâches rajouté entre temps.
-        for id in self.__idObjectsInTreeview:
-            if self.__idObjectsInTreeview[id] in ensembleNouvelleSelection:
-                self.tree.selection_add(id)
+        #for id in self.__idObjectsInTreeview:
+            #if self.__idObjectsInTreeview[id] in ensembleNouvelleSelection:
+                #self.tree.selection_add(id)
+        self.updateSelection()
 
         # Mise à jour de la couleur pour montrer la sélection dans l'affichage du calendrier.
         self.getApplication().getDonneeCalendrier().updateColor()
@@ -585,8 +587,21 @@ class TaskEditor(Frame):
             # Ajout de la tâche :
             self._ajouterTache(t, indice, "", pos)
 
+        # Update Sélection :
+        self.updateSelection()
+
         # Add binding :
         self.tree.bind("<ButtonPress-1>", self.__mousePressedBefore)
         self.tree.bind("<Control-ButtonPress-1>", lambda e: self.__mousePressedBefore(e, control=True)) # TODO: Command sur macOS
         self.tree.bind_all("ButtonReleased-1>", self.__mouseReleased)
         self.tree.bind("<B1-Motion>", self.__mouseDragged)
+
+    def updateSelection(self):
+        """
+        Permet de mettre à jour les éléments sélectionnés dans le Treeview
+        selon leur véritable valeur de sélection.
+        """
+        for id in self.__idObjectsInTreeview:
+            displayable = self.__idObjectsInTreeview[id]
+            # Update de la sélection :
+            self.selectLineTreeview(displayable, displayable.isSelected())

@@ -255,7 +255,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         Permet de sélectionner ou désélectionner cet objet.
         @param selected: True si l'objet doit être sélectionné, False sinon.
-        @param andInside: True si l'objet est composite et doit considérer faire récursivitée.
+        @param andInside=False: True si l'objet est composite et doit considérer faire récursivitée.
         """
         if not isinstance(selected, bool): raise TypeError("Expected a boolean")
         self.__selected = selected

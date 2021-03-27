@@ -458,9 +458,9 @@ class AbstractDisplayedCalendar(Frame):
                 schedulable.setSelected(True)
                 self.getApplication().getTaskEditor().selectLineTreeview(schedulable, True)
                 if isinstance(schedulable, Groupe):
-                    for task in schedulable.getSubTasks():
+                    for task in schedulable.getListTasks():
                         if task.getDebut().date() <= jour and task.getFin().date() >= jour:
-                            task.setSelected(True) # TODO tâches d'un groupe seulement le jour j
+                            task.setSelected(True)
                             self.getApplication().getTaskEditor().selectLineTreeview(task, True)
                         
         self.updateColor()
@@ -473,7 +473,7 @@ class AbstractDisplayedCalendar(Frame):
     #   l'affichage    #
     ####################
     ""
-    def _makeTextWidget(self, dt ,master = None):
+    def _makeTextWidget(self, dt, master = None):
         """
         Méthode qui permet d'obtenir un textWidget avec toutes les options qu'il faut (couleur + texte)
         @param dt     : <datetime.date> le jour du TextWidget

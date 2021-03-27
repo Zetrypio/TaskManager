@@ -41,6 +41,12 @@ class ITaskEditorDisplayableObject:
         """
         raise NotImplementedError
 
+    def isSelected(self):
+        """
+        @return True si l'objet est sélectionné, False sinon.
+        """
+        raise NotImplementedError
+
     ""
     #####################
     # Autres méthodes : #
@@ -84,5 +90,12 @@ class ITaskEditorDisplayableObject:
         @param taskEditor : permet de faire des interactions avec le TaskEditor().
         @param rmenu : le RMenu() sur lequel rajouter les commandes et tout et tout.
         @return True si le RMenu() existe, False sinon.
+        """
+        raise NotImplementedError
+
+    def setSelected(self, value):
+        """
+        Permet de changer si l'objet est sélectionné.
+        @param value: True si l'objet doit être sélectionné, False sinon.
         """
         raise NotImplementedError
