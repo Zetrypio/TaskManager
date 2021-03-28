@@ -121,17 +121,16 @@ class DependanceLink(AbstractLink):
     # Autres méthodes : #
     #####################
     ""
-    def _onClic(self):
+    def _onClic(self, control=False):
         self._getAffichageGantt().cancelEvent()
-        self._getAffichageGantt().deselectEverything()
-        self.__selected = True
+        if not control:
+            self._getAffichageGantt().deselectEverything()
+            self.__selected = True
+        else:
+            self.__selected = not self.__selected
+            
         self._getAffichageGantt().getDonneeCalendrier().updateColor()
         #self._getAffichageGantt().clicSurObjet(self)
-
-    def _onControlClic(self): # TODO : gérer le control clic avec le clic une 1 méthode.
-        self._getAffichageGantt().cancelEvent()
-        self.__selected = not self.__selected
-        self._getAffichageGantt().getDonneeCalendrier().updateColor()
 
     #def cliqueSuppr(self):
         #if self.tacheD.master.mode == "delDep":

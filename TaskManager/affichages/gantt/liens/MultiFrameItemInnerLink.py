@@ -34,6 +34,7 @@ class MultiFrameItemInnerLink(AbstractLink):
     # Getters : #
     #############
     ""
+
     def isSelected(self):
         return self.getPartA().getSchedulable().isSelected()
 
@@ -42,6 +43,7 @@ class MultiFrameItemInnerLink(AbstractLink):
     # Setters : #
     #############
     ""
+
     def __setColor(self):
         """
         Méthode qui permet de mettre la bonne couleur selon ce qu'il y a besoin.
@@ -59,6 +61,7 @@ class MultiFrameItemInnerLink(AbstractLink):
     # Méthodes liées à l'affichage : #
     ##################################
     ""
+
     def redraw(self, canvas):
         """
         Méthode pour dessiner la flèche.
@@ -80,13 +83,12 @@ class MultiFrameItemInnerLink(AbstractLink):
     # Autres méthodes : #
     #####################
     ""
-    def _onClic(self):
-        self._getAffichageGantt().cancelEvent()
-        self._getAffichageGantt().deselectEverything()
-        self.getPartA().getSchedulable().setSelected(True)
-        self._getAffichageGantt().getDonneeCalendrier().updateColor()
 
-    def _onControlClic(self):
+    def _onClic(self, control=False):
         self._getAffichageGantt().cancelEvent()
-        self.getPartA().getSchedulable().inverseSelection()
+        if not control:
+            self._getAffichageGantt().deselectEverything()
+            self.getPartA().getSchedulable().setSelected(True)
+        else:
+            self.getPartA().getSchedulable().inverseSelection()
         self._getAffichageGantt().getDonneeCalendrier().updateColor()

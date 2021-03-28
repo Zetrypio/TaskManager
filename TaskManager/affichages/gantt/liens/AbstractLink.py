@@ -265,8 +265,8 @@ class AbstractLink(IDisplayableItem):
         # Binding : #
         #############
         if self.__binding1 is None:
-            self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>", lambda e: self._onClic()) # TODO : Fusionner control clic
-            self.__binding2 = canvas.tag_bind(self.getTag(), "<Control-Button-1>", lambda e: self._onControlClic())
+            self.__binding1 = canvas.tag_bind(self.getTag(), "<Button-1>",         lambda e: self._onClic(control=False))
+            self.__binding2 = canvas.tag_bind(self.getTag(), "<Control-Button-1>", lambda e: self._onClic(control=True))
 
     def updateColor(self, canvas):
         """
@@ -297,8 +297,9 @@ class AbstractLink(IDisplayableItem):
         """
         raise NotImplementedError
 
-    def _onControlClic(self):
+    def _onClic(self, control=False):
         """
         Méthode appelée quand un contrôle+clic est fait sur ce lien.
+        @param control=False: True si la touche contrôle (command sur mac) est appuyée, False sinon.
         """
         raise NotImplementedError
