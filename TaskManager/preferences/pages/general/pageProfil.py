@@ -21,30 +21,38 @@ class PageProfil(AbstractPage):
        super().__init__(master, nom = "Profil", iid_parent ="-General", **kwargs)
 
        ## Widgets
-       self.__frameChoixProfil = Frame(self._mFrame)
-       self.__lbProfil = Label(self.__frameChoixProfil, text="Profil :")
-       self.__cbProfil = Combobox(self.__frameChoixProfil, state="readonly")
-       self.__cbProfil.bind("<<ComboboxSelected>>", lambda e :self.__varEntryPath.set(self.getProfilManager().getProfilFolder(self.__cbProfil.get())))
-       self.__btnAjouter   = Button(self.__frameChoixProfil, text="Ajouter",   command=self.__ajouter)
-       self.__btnSupprimer = Button(self.__frameChoixProfil, text="Supprimer", command=self.__supprimer)
-       # Folder location
-       self.__lbPathCustomFile = Label(self._mFrame, text = "Chemin d'enregistrement de vos fichiers de préférences")
-       self.__varEntryPath = StringVar()
-       self.__entryPathCustomFile = Entry(self._mFrame, state="normal", textvariable = self.__varEntryPath)
-       self.__btnParcourir = Button(self._mFrame, text = "...", command = self.__parcourir, width=3)
+       self.__frameLine1            = Frame(self._mFrame)
+       self.__frameLine2            = Frame(self._mFrame)
+       self.__frameLine3            = Frame(self._mFrame)
+       # Ligne 1 : Nom du profil
+       self.__lbProfil              = Label(self.__frameLine1, text="Profil :")
+       self.__cbProfil              = Entry(self.__frameLine1, text="Bonjour le test.", state = "readonly")
+       self.__btnAjouter            = Button(self.__frameLine1, text="Ajouter",   command=self.__ajouter)
+       self.__btnSupprimer          = Button(self.__frameLine1, text="Supprimer", command=self.__supprimer)
+       # Ligne 2 : Folder location
+       self.__lbPathCustomFile      = Label(self.__frameLine2, text = "Chemin d'enregistrement de vos fichiers de préférences")
+       # Ligne 3 : Folder location
+       self.__varEntryPath          = StringVar()
+       self.__entryPathCustomFile   = Entry(self.__frameLine3, state="normal", textvariable = self.__varEntryPath)
+       self.__btnParcourir          = Button(self.__frameLine3, text = "...", command = self.__parcourir, width=3)
 
 
        # Affichage
-       self.__frameChoixProfil   .grid(column = 0, row = 0, sticky = "wens")
-       self.__lbProfil           .grid(column = 0, row = 0, sticky = "w")
-       self.__cbProfil           .grid(column = 1, row = 0, sticky = "we")
-       self.__btnAjouter         .grid(column = 2, row = 0, sticky = "e")
-       self.__btnSupprimer       .grid(column = 3, row = 0, sticky = "e")
-       self.__lbPathCustomFile   .grid(column = 0, row = 1, sticky = "w")
-       self.__entryPathCustomFile.grid(column = 0, row = 2, sticky = "we")
-       self.__btnParcourir       .grid(column = 1, row = 2, sticky = "w")
+       self.__btnSupprimer       .pack(side = RIGHT)
+       self.__btnAjouter         .pack(side = RIGHT)
+       self.__lbProfil           .pack(side = LEFT)
+       self.__cbProfil           .pack(side = LEFT, fill = X, expand = YES)
+       self.__frameLine1         .pack(side = TOP, fill = X)
+
+       self.__lbPathCustomFile   .pack(side = LEFT, fill = X)
+       self.__frameLine2         .pack(side = TOP, fill = X)
+
+       self.__entryPathCustomFile.pack(side = LEFT, fill = X, expand = YES)
+       self.__btnParcourir       .pack(side = RIGHT)
+       self.__frameLine3         .pack(side = TOP, fill = X)
 
        # Fonction de paramétrage
+       self.__cbProfil.bind("<<ComboboxSelected>>", lambda e :self.__varEntryPath.set(self.getProfilManager().getProfilFolder(self.__cbProfil.get())))
        self.__chargeProfil(self.getProfilManager().getProfilActif())
 
     ""
@@ -69,7 +77,7 @@ class PageProfil(AbstractPage):
             return
 
         # On pose la question
-        if not askyesnowarning(title = "Supprimer un thème", message = "Voulez-vous vraiment supprimer \"%s\" de vos profils ?\nSi vous êtes le seul utilisateur, cela supprimera le dossier ainsi que tout ce qui s'y trouve"%self.__cbProfil.get()):
+        if not askyesnowarning(title = "Supprimer un profil", message = "Voulez-vous vraiment supprimer \"%s\" de vos profils ?\nSi vous êtes le seul utilisateur, cela supprimera le dossier ainsi que tout ce qui s'y trouve"%self.__cbProfil.get()):
             return
 
         self.getProfilManager().deleteProfil(self.__cbProfil.get())
@@ -87,13 +95,18 @@ class PageProfil(AbstractPage):
         @param profil : <str> nom du profil a charger
                         if None : profil = 1er profil de la liste
         """
-        self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
+        #self.__cbProfil.config(value=self.getProfilManager().getListeProfilsUser()[:])
 
         # On prend le premier profil si c'est None en paramètre
-        profil = self.__cbProfil.cget("value")[0] if profil is None else profil
+        #profil = self.__cbProfil.cget("value")[0] if profil is None else profil
+        if profil is None:
+            profil = self.getProfilManager().getListeProfilsUser()[0]
+        self.__cbProfil.config(state = "normal")
+        self.__cbProfil.insert(0, profil)
+        self.__cbProfil.config(state = "readonly")
 
         self.__varEntryPath.set(self.getProfilFolder(profil))
-        self.__cbProfil.set(profil)
+        #self.__cbProfil.set(profil)
 
     def __parcourir(self):
        """
