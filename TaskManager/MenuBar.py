@@ -31,6 +31,8 @@ class MenuBar(Menu):
         # Menu Fichier :
         self.menuFichier.add_command(label = "Enregistrer", accelerator=self.__getBindingOf("save-file"), command = master.save)
         self.menuFichier.add_separator()
+        self.menuFichier.add_command(label = "Changer de Profil", accelerator=self.__getBindingOf("change-profile"), command = master.changeProfile)
+        self.menuFichier.add_separator()
         self.menuFichier.add_command(label = "Restart",     accelerator=self.__getBindingOf("restart"),   command = master.restart)
         self.menuFichier.add_command(label = "Quitter",     accelerator=self.__getBindingOf("quit"),      command = master.quit)
 

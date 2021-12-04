@@ -94,6 +94,7 @@ class ProfilManager:
 
     def setProfilActif(self, profil):
         """
+        TODO : Mettre private
         Permet aussi de changer le nom de la fenêtre
         @param profil : <str> nom du profil (doit être dans la liste)
         """

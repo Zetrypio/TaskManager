@@ -21,6 +21,7 @@ from util.util import *
 from MenuBar import *
 from preferences.fenetrePreferences import *
 from preferences.themes.themeLoader import *
+from dataManager.dialog.askChangeProfil import *
 from dataManager.data import *
 from dataManager.ProfilManager import *
 from dataManager.BindingManager import *
@@ -312,6 +313,10 @@ class Application(Frame):
     # Autres méthodes : #
     #####################
     ""
+    def changeProfile(self):
+        askChangeProfil(self.getProfilManager())
+        pass # TODO
+
     def preferences(self):
         self.prefFen.activateandwait()
 
