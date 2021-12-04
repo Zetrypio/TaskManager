@@ -42,7 +42,7 @@ class PageClavier(AbstractPage):
         self.__varListConflit = StringVar()
         self.__listConflit = Listbox(self.__frameBas, listvariable = self.__varListConflit, height = 5)
         self.__scrollConflit = Scrollbar(self.__frameBas, command=self.__listConflit.yview)
-        self.__listConflit.configure(yscrollcommand=self.__scrollbar.set)
+        self.__listConflit.configure(yscrollcommand=self.__scrollConflit.set)
         self.__lbChampBind = Label(self.__frameBas, text="Combinaison de touches :")
         self.__btnReset = Button(self.__frameBas, text = "Reset", command = self.__reset)
         # Le champ d'entrée
