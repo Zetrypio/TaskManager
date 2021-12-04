@@ -16,7 +16,7 @@ class PageProfil(AbstractPage):
     def __init__(self, master, **kwargs):
         # Note : self.master renvoie a ParametrageZone
         # Note : Si on rajoute une option, ne pas oublier d'ajouter la variable de contrôle à self._listData.append([variable, "texte explicatif", valeurParDefaut])
-        # Note : Si l'option que l'on souhaite ajouter nécéssite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
+        # Note : Si l'option que l'on souhaite ajouter nécessite un redémarrage pour s'appliquer, utiliser la méthode "self.__addDataNeedRestart(liste)", avec la même liste que pour self._listData
 
        super().__init__(master, nom = "Profil", iid_parent ="-General", **kwargs)
 
@@ -25,7 +25,7 @@ class PageProfil(AbstractPage):
        self.__lbProfil = Label(self.__frameChoixProfil, text="Profil :")
        self.__cbProfil = Combobox(self.__frameChoixProfil, state="readonly")
        self.__cbProfil.bind("<<ComboboxSelected>>", lambda e :self.__varEntryPath.set(self.getProfilManager().getProfilFolder(self.__cbProfil.get())))
-       self.__btnAjouter = Button(self.__frameChoixProfil, text="Ajouter", command=self.__ajouter)
+       self.__btnAjouter   = Button(self.__frameChoixProfil, text="Ajouter",   command=self.__ajouter)
        self.__btnSupprimer = Button(self.__frameChoixProfil, text="Supprimer", command=self.__supprimer)
        # Folder location
        self.__lbPathCustomFile = Label(self._mFrame, text = "Chemin d'enregistrement de vos fichiers de préférences")
@@ -35,14 +35,14 @@ class PageProfil(AbstractPage):
 
 
        # Affichage
-       self.__frameChoixProfil.grid(column = 0, row = 0, sticky = "wens")
-       self.__lbProfil.grid(column = 0, row = 0, sticky = "w")
-       self.__cbProfil.grid(column = 1, row = 0, sticky="we")
-       self.__btnAjouter.grid(column=2, row=0, sticky="e")
-       self.__btnSupprimer.grid(column=3, row=0, sticky="e")
-       self.__lbPathCustomFile.grid(column = 0, row = 1, sticky = "w")
+       self.__frameChoixProfil   .grid(column = 0, row = 0, sticky = "wens")
+       self.__lbProfil           .grid(column = 0, row = 0, sticky = "w")
+       self.__cbProfil           .grid(column = 1, row = 0, sticky = "we")
+       self.__btnAjouter         .grid(column = 2, row = 0, sticky = "e")
+       self.__btnSupprimer       .grid(column = 3, row = 0, sticky = "e")
+       self.__lbPathCustomFile   .grid(column = 0, row = 1, sticky = "w")
        self.__entryPathCustomFile.grid(column = 0, row = 2, sticky = "we")
-       self.__btnParcourir.grid(column = 1, row = 2, sticky = "w")
+       self.__btnParcourir       .grid(column = 1, row = 2, sticky = "w")
 
        # Fonction de paramétrage
        self.__chargeProfil(self.getProfilManager().getProfilActif())
