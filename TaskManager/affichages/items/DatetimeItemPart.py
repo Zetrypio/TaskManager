@@ -43,9 +43,9 @@ class DatetimeItemPart:
         Renvoie hash(self).
         Doit être redéfini car la méthode #__eq__() est redéfinie et qu'on va utiliser cet objet dans un set().
         Doit renvoyer un nombre le plus unique possible pour chaque instance en fonction de ses attributs.
-        @return hash(self.__schedulable)
+        @return hash(self.__schedulable) + 31 * hash(self.__heureDebut) + 17 * hash(self.__heureFin) + 43 * hash(self.__jour)
         """
-        return hash(self.__schedulable)
+        return hash(self.__schedulable) + 31 * hash(self.__heureDebut) + 17 * hash(self.__heureFin) + 43 * hash(self.__jour)
 
     "" # Marque pour le repli de code
     #############
