@@ -37,6 +37,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         Getter pour l'Application
         @return <Application>
         """
+        # FIXME : Ne fonctionne pas pour les tâches en dehors de périodes.
         return self.getPeriode().getApplication()
 
     def getColor(self):

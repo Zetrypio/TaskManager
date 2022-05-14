@@ -262,7 +262,8 @@ class ParametreAffichage(Frame):
         # On met à jour la liste des durée possible
         self.configPossibiliteListe()
         # On set le combo des périodes avec le nom de la période
-        self.listePeriode.set(self.getPeriodeActive().getNom())
+        periodeActive = self.getPeriodeActive()
+        self.listePeriode.set(periodeActive.getNom() if periodeActive is not None else "")
 
         # On affiche la période entière
         self.comboDuree.set("Période")

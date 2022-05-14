@@ -200,42 +200,43 @@ class Application(Frame):
             ## Création des périodes
             for periode in data["periodes"]:
                 dataPeriode = data["periodes"][periode]
-                # On crée la période
                 p = Periode.load(dataPeriode, self.getPeriodManager())
-                # On l'ajoute
                 self.getPeriodManager().ajouter(p)
+
+            # Si aucune périodes dans le fichier :
+            else:
+                print("Pas de périodes dans le fichier : TODO")
     
-            ## On met en place une période active adéquate :
-            # Si la value existe :
-            if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
-                # Si on doit charger la dernière période
-                lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
-                self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
-            else: # Sinon :
-                # On va faire un code qui prend la période dont le début se rapproche le plus d'aujourd'hui
-                # et dont la fin est après aujourd'hui
-                # Sinon la période dont le début se trouve le plus proche d'aujourd'hui
-                # Sinon la période dont la fin se trouve la plus proche d'aujourd'hui
-                # Else c'est la première période chargé
-                now = datetime.date.today()
-                listPeriodeOK = [] # Pour le else
-                # On cherche ce qu'on peut faire
-                if (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() < now and p.getFin() > now]) != []:
-                    listPeriodeOK.sort(key = lambda p : p.getDebut())
-                elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() > now]) != []:
-                    listPeriodeOK.sort(key = lambda p : p.getDebut())
-                elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getFin() < now]) != []:
-                    listPeriodeOK.sort(key = lambda p : p.getFin(), reverse = True)
-    
-                # On applique s'il y a quelque chose dans listPeriodeOK
-                if listPeriodeOK != []:
-                    self.getPeriodManager().setActivePeriode(listPeriodeOK[0])
-                else:
-                    # Enfaite la première période que l'on rajoute est automatiquement la période active
+            if len(self.getPeriodManager().getPeriodes()) > 0:
+                ## On met en place une période active adéquate :
+                # Si la value existe :
+                if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+                    # Si on doit charger la dernière période
+                    lastPeriode = [p for p in self.getPeriodManager().getPeriodes() if p.getUniqueID() == self.getData().getOneValue("General", "General", "id")]
+                    self.getPeriodManager().setActivePeriode(lastPeriode[0]) if len(lastPeriode) == 1 else showerror("Échec du chargement de la période", "Échec lors du chargement de la dernière période utilisé.")
+                else: # Sinon :
+                    # On va faire un code qui prend la période dont le début se rapproche le plus d'aujourd'hui
+                    # et dont la fin est après aujourd'hui
+                    # Sinon la période dont le début se trouve le plus proche d'aujourd'hui
+                    # Sinon la période dont la fin se trouve la plus proche d'aujourd'hui
+                    # Else c'est la première période chargé
+                    now = datetime.date.today()
+                    listPeriodeOK = [] # Pour le else
+                    # On cherche ce qu'on peut faire
+                    if (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() < now and p.getFin() > now]) != []:
+                        listPeriodeOK.sort(key = lambda p : p.getDebut())
+                    elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getDebut() > now]) != []:
+                        listPeriodeOK.sort(key = lambda p : p.getDebut())
+                    elif (listPeriodeOK := [p for p in self.getPeriodManager().getPeriodes() if p.getFin() < now]) != []:
+                        listPeriodeOK.sort(key = lambda p : p.getFin(), reverse = True)
+        
+                    # On applique s'il y a quelque chose dans listPeriodeOK
+                    if listPeriodeOK != []:
+                        self.getPeriodManager().setActivePeriode(listPeriodeOK[0])
+                    # En fait la première période que l'on rajoute est automatiquement la période active
                     # Donc si on a rien trouvé plus haut, on a rien à faire
-                    pass
-            ## On active une période.
-            self.getDonneeCalendrier().switchPeriode()
+                ## On active une période.
+                self.getDonneeCalendrier().switchPeriode()
         except Exception as e:
             import traceback
             traceback.print_exc()
@@ -286,12 +287,13 @@ class Application(Frame):
             with open(self.getData().getProfilFolder() + "periodes.json", "w", encoding="utf-8") as f:
                 json.dump(d, f, indent=4) # indent pour pouvoir plus facilement lire le fichier avec nos yeux d'humains.
     
-            # Doit - on enregistrer la période active ?
-            if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
-                # Si on doit enregistrer la dernière période
-                self.getData().readFile("General", lireDef = False, lireCfg = True) # de toute il n'y a pas de def, qu'un cfg
-                self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
-                self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
+            # Doit-on enregistrer la période active ?
+            if self.getPeriodManager().getActivePeriode() is not None:
+                if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
+                    # Si on doit enregistrer la dernière période
+                    self.getData().readFile("General", lireDef = False, lireCfg = True) # de toute il n'y a pas de def, qu'un cfg
+                    self.getData()["General"]["id"] = self.getPeriodManager().getActivePeriode().getUniqueID()
+                    self.getData().sauv(self.getData().getProfilFolder() + "General.cfg")
         except Exception as e:
             self._report_exception()
             showerror("Erreur", "Erreur lors de l'enregistrement :\n%s : %s"%(e.__class__.__name__, e))

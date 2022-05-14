@@ -213,6 +213,8 @@ class AbstractDisplayedCalendar(Frame):
         @return set() des schedulables sélectionnées. (permet d'éviter les doublons).
         """
         s = set()
+        if self.getPeriodeActive() is None:
+            return s
         for schedulable in self.getPeriodeActive().getInstanciatedSchedulables():
             if schedulable.isSelected():
                 s.add(schedulable)
@@ -259,6 +261,14 @@ class AbstractDisplayedCalendar(Frame):
     # Setters :  #
     ##############
     ""
+
+    def __clampJourFin(self):
+        jourFin = self.getJourFin()
+        finPeriode = self.getFinPeriode()
+        if None not in (jourFin, finPeriode):
+            if jourFin > finPeriode:
+                self.setJourFin(finPeriode)
+
     def setDureeJour(self, valeur):
         """
         Setter pour le nombre de jours affichés, via un timedelta.
@@ -270,9 +280,7 @@ class AbstractDisplayedCalendar(Frame):
         # Ne serait-ce pas en dehors de la fonction de faire cette vérification ?
         self.jourFin = (self.jourDebut + valeur - datetime.timedelta(days=1)) if self.jourDebut is not None else None
 
-        # TODO : À revoir. -> utiliser une nouvelle méthode.
-        if self.getJourFin() > self.getFinPeriode():
-            self.setJourFin(self.getFinPeriode())
+        self.__clampJourFin()
 
         self.updateAffichage()
 
@@ -299,7 +307,7 @@ class AbstractDisplayedCalendar(Frame):
         Permet de modifier le jour de début de l'affichage.
         @param valeur: Le datetime.time() à mettre
         """
-        self.jourDebut = valeur + datetime.timedelta()
+        self.jourDebut = (valeur + datetime.timedelta()) if valeur is not None else None
 
     def setJourFin(self, valeur):
         """
@@ -408,8 +416,9 @@ class AbstractDisplayedCalendar(Frame):
         """
         Méthode qui permet de désélectionner tout ce qui l'est actuellement.
         """
-        for s in self.getPeriodeActive().getInstanciatedSchedulables():
-            s.setSelected(False, andInside=True)
+        if self.getPeriodeActive() is not None:
+            for s in self.getPeriodeActive().getInstanciatedSchedulables():
+                s.setSelected(False, andInside=True)
         self.getDonneeCalendrier().deselectJours() # Appel updateColor au passage, donc tant mieux =) # TODO à revoir si c'est bien
         
         # Update du TaskEditor() et de son Treeview() :

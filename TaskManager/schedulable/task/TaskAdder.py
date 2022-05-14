@@ -275,11 +275,18 @@ class TaskAdder(Frame):
         nbrep = int(self.champNbRepetition.get())
         periode = self.getApplication().getPeriodManager().getActivePeriode()
         # On check si on est dans la période
-        if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin())\
-        or (duree is not None and (debut + duree + nbrep * rep).date() > periode.getFin()) \
-        or (debut + nbrep * rep).date() > periode.getFin()): # Si ne nombre de répétition fait que c'est après la fin de la période
-            if not askyesnowarning(title = "Tache hors période", message = "Vous voulez créer une tache qui n'est pas entièrement dans la période actuelle.\nVoulez-vous vraiment créer cette tache ?"):
+        if periode is not None:
+            if debut is not None and (debut.date() < periode.getDebut() or (duree is not None and (debut + duree).date() > periode.getFin())\
+            or (duree is not None and (debut + duree + nbrep * rep).date() > periode.getFin()) \
+            or (debut + nbrep * rep).date() > periode.getFin()): # Si ne nombre de répétition fait que c'est après la fin de la période
+                if not askyesnowarning(title = "Tache hors période", message = "Voulez-vous vraiment créer une tâche qui n'est pas entièrement dans la période actuelle ?"):
+                    return
+        else:
+            if not askyesnowarning(title = "Pas de période", message = "Voulez-vous vraiment créer une tâche qui n'est pas dans une période ?"):
                 return
+            showerror("Pas de période", "Et bah c'est pas possible dans tout les cas pour le moment de créer une tâche ou autre en dehors d'une période hahaha !")
+            return
+            #period = Period.NO_PERIOD   # TODO : Faire une "fake-period pour les tâches en dehors d'une période.
         nom = self.champNom.get()
         desc  = self.champDescription.get("0.0", END)
         color = self.boutonColor.get()
