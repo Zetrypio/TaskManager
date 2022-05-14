@@ -77,6 +77,7 @@ class BindingManager:
                 with open("Ressources/prefs/" + NOMFICHIER + ".json", "r", encoding="utf-8") as f:
                     self.__donneePref = load(f)
 
+        ## TODO : Il y a maintenant une syntaxe en python pour faire cette opération.
         ## Fusion des 2 dicts
         # Pour les section manquante
         for section in self.__donneePref:
