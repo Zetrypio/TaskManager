@@ -38,7 +38,11 @@ class AbstractDisplayedCalendar(Frame):
         self.config(bg = self.getPalette()["background"])
         # Note : self.master est référence vers DonneeCalendrier.
 
-        # infos des heures :
+        # Valeur par défaut des heures :
+        self.heureDebut = datetime.time( 0,  0,  0)
+        self.heureFin   = datetime.time(23, 59, 59)
+
+        # Chargement des infos des heures :
         if self.getData().testDataExist("Calendrier", "Classique", "heure de début"):
             h = self.getData().getOneValue("Calendrier", "Classique", "heure de début").split(":")
             self.heureDebut = datetime.time(int(h[0]), int(h[1]), 0)
