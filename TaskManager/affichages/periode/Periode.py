@@ -419,7 +419,7 @@ class Periode(ITaskEditorDisplayableObject):
         """
         if schedulable in self.getPrimitivesSchedulables():
             self.__primitivesSchedulables.remove(schedulable)
-        else: # On gere aussi les taches D&D
+        else: # On gère aussi les tâches D&D
             for t in self.getPrimitivesSchedulables():
                 if isinstance(t, Task) and t.isContainer() and schedulable in t.getSubTasks():
                     t.removeSubTask(schedulable)
@@ -446,7 +446,7 @@ class Periode(ITaskEditorDisplayableObject):
         @save desc  : <str> contient la description de la période
         @save color : <str> contient la couleur de la période
         @save group : <task> contient les tack du groupe
-        @save       : <int> l'id de la péridoe
+        @save       : <int> l'id de la période
 
         @return dico <dict> contient les couples clé-valeur ci-dessus
         """
