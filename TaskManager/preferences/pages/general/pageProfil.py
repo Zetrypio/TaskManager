@@ -56,7 +56,8 @@ class PageProfil(AbstractPage):
         self.__etProfil.config(state = "readonly")
 
         # Update le path :
-        self.__entryPathCustomFile.set(self.getProfilFolder(profil))
+        self.__entryPathCustomFile.delete(0, END)
+        self.__entryPathCustomFile.insert(0, self.getProfilFolder(profil))
 
     ""
     ##############################
