@@ -81,24 +81,46 @@ class Application(Frame):
         self.calendar.pack(side=LEFT, fill = BOTH, expand = YES)
 
         ## Bindings
-        # Les virtuels
-        self.bind_all("<<Application-preferences>>", lambda e=None:self.preferences())
-        self.bind_all("<<Application-save-file>>"  , lambda e=None:self.save())
-        self.bind_all("<<Application-restart>>"    , lambda e=None:self.restart())
-        self.bind_all("<<Application-open-file>>"  , lambda e=None:self.open())
-        self.bind_all("<<Application-quit>>"       , lambda e=None:self.quit())
-        self.bind_all("<<Application-annuler>>"    , lambda e=None:UndoRedo.undo())
-        self.bind_all("<<Application-retablir>>"   , lambda e=None:UndoRedo.redo())
-        self.bind_all("<<Application-coller>>"     , lambda e=None:self.getDonneeCalendrier().coller())
-        self.bind_all("<<Application-copier>>"     , lambda e=None:self.getDonneeCalendrier().copier())
-        self.bind_all("<<Application-couper>>"     , lambda e=None:self.getDonneeCalendrier().couper())
-        # Set des bindings mécanique en lien avec le bindingManager
-        for binding in self.getBindingIn("Application"):
-            for key in self.getBindingIn("Application")[binding]["bindings"]:
-                self.bind_all(key, lambda e, binding = binding : self.event_generate("<<Application-" + binding + ">>"), add=1)
-        # (!) D'autres bindings existent, ils sont rajouté par les calendriers
 
-        # Final
+        # Les virtuels
+        self.bind_all("<<Application-preferences>>", lambda e=None: self.preferences())
+        self.bind_all("<<Application-save-file>>"  , lambda e=None: self.save())
+        self.bind_all("<<Application-restart>>"    , lambda e=None: self.restart())
+        self.bind_all("<<Application-open-file>>"  , lambda e=None: self.open())
+        self.bind_all("<<Application-quit>>"       , lambda e=None: self.quit())
+        self.bind_all("<<Application-annuler>>"    , lambda e=None: UndoRedo.undo())
+        self.bind_all("<<Application-retablir>>"   , lambda e=None: UndoRedo.redo())
+        self.bind_all("<<Application-coller>>"     , lambda e=None: self.getDonneeCalendrier().coller())
+        self.bind_all("<<Application-copier>>"     , lambda e=None: self.getDonneeCalendrier().copier())
+        self.bind_all("<<Application-couper>>"     , lambda e=None: self.getDonneeCalendrier().couper())
+
+        # Fonction wrapper pour simplifier le travail :
+        def wrapBind(binding):
+
+            # Fonction qui reçoit l'événement du binding :
+            def bind(e=None):
+
+                # On vérifie que l'on n'est pas sur un widget sur lequel on peut écrire (ça pose des soucis sinon).
+                if (    e is None
+                     or not hasattr(e, "widget")
+                     or not isinstance(e.widget, (Entry, Text))
+                     or e.widget.cget("state") == DISABLED):
+                    
+                    # On génère alors dans ce cas l'événement virtuel correspondant :
+                    self.event_generate("<<Application-" + binding + ">>")
+
+            # On renvoie la fonction qui reçoit l'événement du binding.
+            return bind
+
+        # Set des bindings mécanique en lien avec le bindingManager
+        dictionnaire = self.getBindingIn("Application")
+        for binding in dictionnaire:
+            for key in dictionnaire[binding]["bindings"]:
+                self.bind_all(key, wrapBind(binding), add=1)
+
+        # /!\ D'autres bindings existent, ils sont rajouté par les calendriers
+
+        # Finalement :
         self.getData().endInit()
         if not CHARGERPRECONFIG:
             self.__load()
@@ -209,7 +231,7 @@ class Application(Frame):
             if not thereIsPeriods:
                 print("Pas de périodes dans le fichier : TODO")
     
-            if thereIsPeriods:
+            else:
                 ## On met en place une période active adéquate :
                 # Si la value existe :
                 if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
@@ -317,7 +339,6 @@ class Application(Frame):
     ""
     def changeProfile(self):
         askChangeProfil(self.getProfilManager())
-        pass # TODO
 
     def preferences(self):
         self.prefFen.activateandwait()

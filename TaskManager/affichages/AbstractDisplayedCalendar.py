@@ -365,11 +365,11 @@ class AbstractDisplayedCalendar(Frame):
                 # car celle-ci existe déjà, mais qui contiendrait les cadres/panneaux des classes
                 # que l'on va créer pour cette représentation. Cependant, on pourrais dire, si
                 # c'est possible, que cette classe pourrait être utilisée pour plusieurs dispositions
-                # si celles-cis sont similaires. Mais chaque disposition pourra aussi avoir sa classe
+                # si celles-ci sont similaires. Mais chaque disposition pourra aussi avoir sa classe
                 # d'affichage d'une tâche custom.
 
             return schedulable # on renvoie la tache avec son début et sa durée.
-            # C'était "TRÈS IMPORTANT", maintentant que c'est la période qui s'en occupe, ce n'est plus nécéssaire
+            # C'était "TRÈS IMPORTANT", maintentant que c'est la période qui s'en occupe, ce n'est plus nécessaire
 
         @param schedulable: le schedulable à rajouter
         @param region: datetime.datetime() correspondant au début du schedulable si celui-ci n'en a pas (notamment le cas via Drag&Drop)
@@ -453,7 +453,7 @@ class AbstractDisplayedCalendar(Frame):
     def removeSchedulable(self, obj):
         """
         Retire un schedulable
-        à redefinir dans chaque sous classe
+        à redéfinir dans chaque sous classe
         """
         raise NotImplementedError
 
@@ -557,13 +557,32 @@ class AbstractDisplayedCalendar(Frame):
     def _setBinding(self, nomCalendrier, aBinder):
         """
         Fonction qui va charger tous les bind a mettre
-        @param nomCalendrier : <str> nom du calendrier pour connaître le dictionnaire à aller chercher (!) avec majuscule (!)
+        @param nomCalendrier : <str> nom du calendrier pour connaître le dictionnaire à aller chercher (!) avec majuscules (!)
         @param aBinder       : <objet> a bind, un Canvas ou self tout simplement
         """
+        # Fonction wrapper pour simplifier le travail :
+        def wrapBind(binding):
+
+            # Fonction qui reçoit l'événement du binding :
+            def bind(e=None):
+
+                # On vérifie que l'on n'est pas sur un widget sur lequel on peut écrire (ça pose des soucis sinon).
+                if (    e is None
+                     or not hasattr(e, "widget")
+                     or not isinstance(e.widget, (Entry, Text)) # , TextWidget
+                     or e.widget.cget("state") == DISABLED):
+                    
+                    # On génère alors dans ce cas l'événement virtuel correspondant :
+                    self.event_generate("<<" + "Affichage-" + nomCalendrier + "-" + binding + ">>")
+
+            # On renvoie la fonction qui reçoit l'événement du binding.
+            return bind
+
+        # Ajout du binding proprement dit :
         dictionnaire = self.getApplication().getBindingIn("Affichage-" + nomCalendrier)
         for binding in dictionnaire:
             for key in dictionnaire[binding]["bindings"]:
-                aBinder.bind_all(key, lambda e, binding = binding : self.event_generate("<<" + "Affichage-" + nomCalendrier + "-" + binding + ">>"), add=1)
+                aBinder.bind_all(key, wrapBind(binding), add=1)
 
     def hasParent(self, parent, widget):
         """

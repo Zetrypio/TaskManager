@@ -12,7 +12,7 @@ class TextWidget(Canvas):
     data = None
     """
     Classe qui permet de faire des widgets de texte avec une taille fixée en pixel
-    L'astuce consite à mettre un Text dans un Frame.
+    L'astuce consiste à mettre un Text dans un Canvas.
     De plus on peux ainsi obtenir sa taille
     """
     def __init__(self, master, width = None, height = None, text = None, nbJour = None, bg = "#d3d3d3", mode = "highlightedWidget",  **kw):
@@ -87,7 +87,7 @@ class TextWidget(Canvas):
         """
         Permet de mettre la couleur sur le canvas et le texte
         + avoir les couleurs du thèmes
-        @param mode : <str> clé pour acceder à la couleur de TextWidget.data.getPalette()
+        @param mode : <str> clé pour accéder à la couleur de TextWidget.data.getPalette()
                     Si None, il ne se passe rien
         """
         if mode is None:
