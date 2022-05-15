@@ -51,7 +51,7 @@ class Data(ConfigParser):
     def read(self, fichier, add = False):
         """
         On efface ce qu'on avait en mémoire
-        et on relie tout
+        et on relit tout
         """
         if not add:
             self.clear()
@@ -65,19 +65,22 @@ class Data(ConfigParser):
         self.clear()
         if lireDef and lireCfg:
             self.read("Ressources/prefs/"+nom+".def")
-            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-                self.read(self.getProfilFolder() + nom + ".cfg", add=True) # Prise de conscience de ce qu'il y a dedans
+            path = self.getProfilFolder() + "/" + nom + ".cfg"
+            if os.path.exists(path):
+                self.read(path, add=True)   # Prise de conscience de ce qu'il y a dedans
 
         # On ne met pas le add sinon
         elif not lireDef and lireCfg:
-            if os.path.exists(self.getProfilFolder() + nom + ".cfg"):
-                self.read(self.getProfilFolder() + nom + ".cfg") # Prise de conscience de ce qu'il y a dedans
+            path = self.getProfilFolder() + "/" + nom + ".cfg"
+            if os.path.exists(path):
+                self.read(path)             # Prise de conscience de ce qu'il y a dedans
+
         elif lireDef and not lireCfg:
             self.read("Ressources/prefs/"+nom+".def")
 
     def sauv(self, fichier):
         """
-        Ecrit dans le fichier puis
+        Écrit dans le fichier puis
         @param fichier : <str> contient le path + nom + extension du fichier dans lequel Data doit écrire
         # Note : une lecture de ce fichier est conseillé avant afin de ne pas supprimer tout le contenu inutilement
         """
@@ -146,7 +149,7 @@ class Data(ConfigParser):
         return self.__palette.copy()
 
     def getProfilFolder(self):
-        return self.__profilFolder
+        return self.__profilFolder + "/" # au cas où
 
     def getStyleDayPrinting(self):
         """
@@ -231,5 +234,5 @@ class Data(ConfigParser):
         @param value : <str> contient le path
         """
         self.testString(value)
-        self.__profilFolder = value
+        self.__profilFolder = value + "/" # au cas où
         return

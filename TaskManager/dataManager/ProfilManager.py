@@ -71,7 +71,7 @@ class ProfilManager:
         """
         if profil is None:
             profil = self.getProfilActif()
-        return self.__donnee["profil"][profil]
+        return self.__donnee["profil"][profil] + "/" # au cas où
 
     ""
     #############
