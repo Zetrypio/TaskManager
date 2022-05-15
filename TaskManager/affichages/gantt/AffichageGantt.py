@@ -267,7 +267,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
     def __afficherLesTaches(self, force = False):
         """
         Permet d'afficher les tâches et autres schedulables et les liens.
-        @deprecated: va être renommé en __afficherLesSchedulable() ou un truc du genre.
+        @deprecated: TODO va être renommé en __afficherLesSchedulable() ou un truc du genre.
         """
         def getObjGantt(schedulable):
             """
@@ -290,14 +290,21 @@ class AffichageGantt(AbstractDisplayedCalendar):
 
         for displayable in self.listeDisplayableItem:
             displayable.redraw(self.can, force)
-            # Si le displayable a une dépendance
-            if isinstance(displayable, ObjetGantt) and displayable.getSchedulable().acceptLink() and displayable.getSchedulable().getDependantes():
-                for dep in displayable.getSchedulable().getDependantes():
+            # Si le displayable est un schedulable de gantt :
+            if isinstance(displayable, ObjetGantt):
+
+                # Si le schedulable a une dépendance
+                schedulable = displayable.getSchedulable()
+                if schedulable.acceptLink() and schedulable.getDependantes():
+
                     # Recherche des liens
-                    if not self.__getLien(displayable.getSchedulable(), dep):
-                        # Si la dep n'est pas encore dans la liste des listeDisplayableItem, on attends
-                        if getObjGantt(dep) is not None:
-                            self.createLink(displayable, getObjGantt(dep))
+                    for dep in schedulable.getDependantes():
+                        if not self.__getLien(schedulable, dep):
+
+                            # Si la dep n'est pas encore dans la liste des listeDisplayableItem, on attends
+                            objGanttDep = getObjGantt(dep)
+                            if objGanttDep is not None:
+                                self.createLink(displayable, objGanttDep)
 
     def __endLinkingLine(self):
         try:
@@ -383,6 +390,7 @@ class AffichageGantt(AbstractDisplayedCalendar):
         for displayable in self.listeDisplayableItem:
             if isinstance(displayable, AbstractMultiFrameItem):
                 self.__parts.extend(self.getVisiblePart(part) for part in displayable.getRepartition() if self.getVisiblePart(part))
+        self.__parts.sort(key=lambda e:e.getDebut())
 
     def __updateLinkingLine(self, event):
         """
