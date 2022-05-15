@@ -248,60 +248,60 @@ class CalendarZone(Frame):
         mapIDBeginTaskBefore = {}
         mapIDBeginTaskAfter  = {}
 
-        for tache in self.getDonneeCalendrier().getSelectedSchedulable():
-            if isinstance(tache, Task):
+        for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
+            if isinstance(schedulable, Task):
                 # map d'avant le déplacement :
-                mapIDBeginTaskBefore[tache.getUniqueID()] = tache.getDebut()
+                mapIDBeginTaskBefore[schedulable.getUniqueID()] = schedulable.getDebut()
                 
                 # Si tout va bien
-                if  (tache.getDebut()+datetime.timedelta(hours=nb)).date() == (tache.getFin()+datetime.timedelta(hours=nb)).date()\
-                and heureDebut <= (tache.getDebut()+datetime.timedelta(hours=nb)).time()\
-                and heureFin   >= (tache.getFin()+datetime.timedelta(hours=nb)).time():
-                    tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
+                if  (schedulable.getDebut()+datetime.timedelta(hours=nb)).date() == (schedulable.getFin()+datetime.timedelta(hours=nb)).date()\
+                and heureDebut <= (schedulable.getDebut()+datetime.timedelta(hours=nb)).time()\
+                and heureFin   >= (schedulable.getFin()+datetime.timedelta(hours=nb)).time():
+                    schedulable.setDebut(schedulable.getDebut()+datetime.timedelta(hours=nb))
 
                 # Si on dépasse, on cadre selon les limites et mode bloquer
                 elif param == "bloquer":
                     # Si on retire des heures au début
                     if nb < 0:
                         # On peut pas mettre un
-                        tache.setDebut(datetime.datetime.combine(tache.getDebut().date(), heureDebut))
+                        schedulable.setDebut(datetime.datetime.combine(schedulable.getDebut().date(), heureDebut))
                     # Si on ajoute pour mettre à la fin
                     else:
                         heureFin = heureFin # Time
-                        time = datetime.datetime.combine(tache.getFin().date(), heureFin) - tache.getDuree() # datetime - timedelta
-                        tache.setDebut(time)
+                        time = datetime.datetime.combine(schedulable.getFin().date(), heureFin) - schedulable.getDuree() # datetime - timedelta
+                        schedulable.setDebut(time)
 
                 # Si on dépasse et que l'on ne bloque pas
                 elif param == "duree":
-                    tache.setDebut(tache.getDebut()+datetime.timedelta(hours=nb))
+                    schedulable.setDebut(schedulable.getDebut()+datetime.timedelta(hours=nb))
                     horsChamp = True
 
-                # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s tache.s
+                # Si au final il y a des tâches hors champs on demande si on affiche les heures pour voir le.s schedulable.s
                 if horsChamp and askChangerHeure():
                     timeAvant = heureDebut
                     timeApres = heureFin
                     tacheAvant = None
                     tacheApres = None
-                    for tache in self.getDonneeCalendrier().getSelectedTask():
+                    for schedulable in self.getDonneeCalendrier().getSelectedSchedulable():
                         # Si le début est avant la fin (hors date) ET qu'il est avant le referent
-                        if tache.getDebut().time() < tache.getFin().time() and tache.getDebut().time() < timeAvant:
-                            tacheAvant = tache
-                            timeAvant  = tache.getDebut().time()
+                        if schedulable.getDebut().time() < schedulable.getFin().time() and schedulable.getDebut().time() < timeAvant:
+                            tacheAvant = schedulable
+                            timeAvant  = schedulable.getDebut().time()
 
                         # Si la fin est avant le début (hors date) ET qu'il est avant le referent
-                        elif tache.getDebut().time() > tache.getFin().time() and tache.getFin().time() < timeAvant:
-                            tacheAvant = tache
-                            timeAvant  = tache.getFin().time()
+                        elif schedulable.getDebut().time() > schedulable.getFin().time() and schedulable.getFin().time() < timeAvant:
+                            tacheAvant = schedulable
+                            timeAvant  = schedulable.getFin().time()
 
                         # Si la fin est après le début (hors date) ET qu'il est après le referent
-                        if tache.getDebut().time() < tache.getFin().time() and tache.getFin().time() > timeApres:
-                            tacheApres = tache
-                            timeApres  = tache.getFin().time()
+                        if schedulable.getDebut().time() < schedulable.getFin().time() and schedulable.getFin().time() > timeApres:
+                            tacheApres = schedulable
+                            timeApres  = schedulable.getFin().time()
 
                         # Si le début est après la fin (hors date) ET qu'il est après le referent
-                        elif tache.getDebut().time() > tache.getFin().time() and tache.getDebut().time() > timeApres:
-                            tacheApres = tache
-                            timeApres  = tache.getDebut().time()
+                        elif schedulable.getDebut().time() > schedulable.getFin().time() and schedulable.getDebut().time() > timeApres:
+                            tacheApres = schedulable
+                            timeApres  = schedulable.getDebut().time()
 
                     # Maintenant on applique les changements
                     if tacheAvant is not None:
@@ -312,7 +312,7 @@ class CalendarZone(Frame):
                         self.gestionHeure(addApres, "Apres")
 
                 # map d'après le déplacement :
-                mapIDBeginTaskAfter[tache.getUniqueID()] = tache.getDebut()
+                mapIDBeginTaskAfter[schedulable.getUniqueID()] = schedulable.getDebut()
 
         # Undo-redo :
         UndoRedoDecaler(self.getPeriodeActive(), mapIDBeginTaskBefore, mapIDBeginTaskAfter)
