@@ -198,16 +198,18 @@ class Application(Frame):
                 data = load(f)
     
             ## Création des périodes
+            thereIsPeriods = False
             for periode in data["periodes"]:
                 dataPeriode = data["periodes"][periode]
                 p = Periode.load(dataPeriode, self.getPeriodManager())
                 self.getPeriodManager().ajouter(p)
+                thereIsPeriods = True
 
             # Si aucune périodes dans le fichier :
-            else:
+            if not thereIsPeriods:
                 print("Pas de périodes dans le fichier : TODO")
     
-            if len(self.getPeriodManager().getPeriodes()) > 0:
+            if thereIsPeriods:
                 ## On met en place une période active adéquate :
                 # Si la value existe :
                 if self.getData().testDataExist("General", "General", "charger dernière période") and self.getData().getOneValue("General", "General", "charger dernière période") == "True":
@@ -238,10 +240,8 @@ class Application(Frame):
                 ## On active une période.
                 self.getDonneeCalendrier().switchPeriode()
         except Exception as e:
-            import traceback
-            traceback.print_exc()
-            showerror("Erreur", "Erreur lors de l'ouverture :\n%s : %s"%(e.__class__.__name__, e))
             self._report_exception()
+            showerror("Erreur", "Erreur lors de l'ouverture :\n%s : %s"%(e.__class__.__name__, e))
         UndoRedo.reset()
         # On enlève le titre :
         try:
