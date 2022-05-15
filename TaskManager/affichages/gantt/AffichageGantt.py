@@ -669,11 +669,16 @@ class AffichageGantt(AbstractDisplayedCalendar):
         @param objB : <ObjetGantt> arrivée de la flèche
         Sens de la flèche : objA --> objB
         """
-        self.listeDisplayableItem.append(
-            DependanceLink(
-                self,
-                self.getVisiblePart(objA.getLastPart()),
-                self.getVisiblePart(objB.getFirstPart())))
+        partA = self.getVisiblePart(objA.getLastPart())
+        partB = self.getVisiblePart(objB.getFirstPart())
+        if None in (partA, partB):
+            print("Cannot create link between %s and %s because one part is not visible."%(objA, objB))
+        else:
+            self.listeDisplayableItem.append(
+                DependanceLink(
+                    self,
+                    partA,
+                    partB))
         self.__highlightLinks(None)
         self.__endLinkingLine()
 
