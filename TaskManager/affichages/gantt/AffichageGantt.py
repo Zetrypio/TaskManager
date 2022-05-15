@@ -282,9 +282,6 @@ class AffichageGantt(AbstractDisplayedCalendar):
             else :
                 return None
 
-        # Va changer :
-        #self.listeTaskAffichees.sort(key=lambda t:t.task.getDebut()) # trie par début des tâches
-
         if force is True:
             self.listeDisplayableItem = [i for i in self.listeDisplayableItem if isinstance(i, ObjetGantt)] # efface les liens de la liste.
 
