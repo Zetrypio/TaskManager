@@ -37,7 +37,7 @@ class ZoneAffichage(Frame):
         for duree in self.getData().sections():
             self.__listeValue.append([self.getData()[duree]["nom"], self.getData()[duree]["Duree en jour"]])
 
-        # On retire la période pour car sinon il essate d'afficher -1 jour, et il a un peu de mal
+        # On retire la période pour car sinon il essaye d'afficher -1 jour, et il a un peu de mal
         self.__listeValue.remove(['Période', '-1'])
 
     "" # Marque pour que le repli fasse ce que je veux
