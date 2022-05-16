@@ -495,25 +495,17 @@ class AffichageGantt(AbstractDisplayedCalendar):
         indiceJour = pos.x//self.tailleColonne;
         decalageJour = datetime.timedelta(days = indiceJour)
         jour = self.getJourDebut() + decalageJour
+        nbTacheJour = self.getNbTacheJour(jour)
 
         # Heures :
         y = pos.y - AffichageGantt.TAILLE_BANDEAU_JOUR
-        if y < 0:
-            heure = datetime.time(self.getHeureDebut())
-        elif y > self.getNbTacheJour(jour) * AffichageGantt.TAILLE_LIGNE:
+        ligne = min(y//AffichageGantt.TAILLE_LIGNE, nbTacheJour-1)
+        heure = self.getHeureDebut()
+        if y > 0 and ligne >= 0:
             try:
-                heure = self.getTache(jour, self.getNbTacheJour(jour)-1).getSchedulable().getFin().time()
+                heure = list(self.getPartsOfDay(jour))[ligne].getSchedulable().getFin().time()
             except ValueError:
-                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
-                (datetime.datetime.combine(jour, self.getHeureFin  ())
-                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
-        else:
-            try:
-                heure = self.getTache(jour, y//AffichageGantt.TAILLE_LIGNE).getSchedulable().getFin().time()
-            except ValueError:
-                heure = (datetime.datetime.combine(jour, self.getHeureDebut()) + \
-                (datetime.datetime.combine(jour, self.getHeureFin  ())
-                -datetime.datetime.combine(jour, self.getHeureDebut()) ) /2).time()
+                heure = self.getHeureDebut()
 
         date = datetime.datetime.combine(jour, heure)
         return date
