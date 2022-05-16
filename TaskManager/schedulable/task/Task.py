@@ -87,12 +87,13 @@ class Task(AbstractSchedulableObject):
     ###############################
     ""
     @staticmethod
-    def load(d, p):
+    def load(d, p, mapChangementUID):
         """
         Constructeur alternatif (en tant que méthode statique) qui crée une tache
         à partir des informations d'enregistrement que cette tâche aurait pu produire.
         @param d : dictionnaire qu'aurait créé cette tâche si on lui demandait d'enregistrer...
         @param p : période de la tâche.
+        @param mapChangementUID: map des changements d'ID pour garder une trace
         @return la tâche nouvellement créée.
         """
         t = Task(nom     = d["nom"],
@@ -109,8 +110,12 @@ class Task(AbstractSchedulableObject):
         # On crée les sous tâches si elles existent :
         if d["subtasks"] is not None:
             for dataSubTask in d["subtasks"]:
-                subTask = Task.load(dataSubTask, p)
+                subTask = Task.load(dataSubTask, p, mapChangementUID)
                 t.addSubTask(subTask)
+
+        # Indication de correction de l'UID
+        mapChangementUID[d["id"]] = t.getUniqueID()
+
         return t
     ""
     #######################################################

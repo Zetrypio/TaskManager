@@ -61,6 +61,8 @@ class Periode(ITaskEditorDisplayableObject):
             @param p  : <periode> celle qui contient la tache
             @return <task> recherché, None si non trouvé
             """
+            # On corrige l'UID potentiellement modifié
+            id = mapChangementUID[id]
             for t in p.getPrimitivesSchedulables():
                 if isinstance(t, Task):
                     if id == t.getUniqueID():
@@ -79,16 +81,20 @@ class Periode(ITaskEditorDisplayableObject):
                     data["color"],
                     id = data["id"])
 
+        ## Pour corriger un bug dans la duplication des périodes (au niveau des liens):
+        # On doit tenir compte de tout les changements automatiques de UniqueID
+        mapChangementUID = {}
+
         ## On crée ses schedulables standards
         for dataSchedulable in data["schedulables"]:
             # Si c'est un groupe :
             if "listTasks" in dataSchedulable:
-                g = Groupe.load(dataSchedulable, p)
+                g = Groupe.load(dataSchedulable, p, mapChangementUID)
                 p.addPrimitiveSchedulable(g)
 
             # Sinon c'est une tâche standard :
             else :
-                t = Task.load(dataSchedulable, p)
+                t = Task.load(dataSchedulable, p, mapChangementUID)
                 p.addPrimitiveSchedulable(t)
 
         ## Maintenant on passe au lien de dépendances :

@@ -100,7 +100,6 @@ class PeriodManager:
             if p.getNom() == name:
                 self.setActivePeriode(p)
 
-    
     def setTaskEditor(self, taskEditor):
         """
         Setter pour le TaskEditor() car celui-ci n'existait

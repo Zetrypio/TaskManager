@@ -34,13 +34,14 @@ class Groupe(AbstractSchedulableObject):
     ###############################
     ""
     @staticmethod
-    def load(data, periode):
+    def load(data, periode, mapChangementUID):
         """
         Constructeur alternatif des groupes, via lecture d'un json.
         Normalement la lecture d'un json donné via la méthode saveByDict()
         doit redonner une copie complète et profonde de ce groupe.
         @param data: le json à lire.
         @param periode: la période du groupe.
+        @param mapChangementUID: map des changements d'ID pour garder une trace
         @return le groupe.
         """
         # Création de l'instance :
@@ -48,7 +49,10 @@ class Groupe(AbstractSchedulableObject):
 
         # Ajout des sous-tâches :
         for t in data["listTasks"]:
-            g.addTask(Task.load(t, periode))
+            g.addTask(Task.load(t, periode, mapChangementUID))
+
+        # Indication de correction de l'UID
+        mapChangementUID[int(d["id"])] = g.getUniqueID()
 
         return g
 
