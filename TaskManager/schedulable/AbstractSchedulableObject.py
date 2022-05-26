@@ -60,7 +60,7 @@ class AbstractSchedulableObject(ITaskEditorDisplayableObject):
         """
         Permet d'obtenir la description de l'objet
         qui a été donné par l'utilisateur lors de
-        sa création. (ou changé après TODO).
+        sa création.
         @return la description de cet objet.
         """
         return self.__desc
